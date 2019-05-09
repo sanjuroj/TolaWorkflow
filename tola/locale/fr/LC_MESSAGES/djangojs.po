@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-12-24 11:25-0800\n"
-"PO-Revision-Date: 2019-05-08 17:52-0700\n"
+"POT-Creation-Date: 2019-05-08 17:54-0700\n"
+"PO-Revision-Date: 2019-05-09 08:25-0700\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -13,603 +13,1020 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 2.2.1\n"
 
-msgid "Your changes will be recorded in a change log. For future reference, please share your reason for these changes."
-msgstr "Vos modifications seront enregistrées dans un journal des modifications. À titre de référence, veuillez partager votre justification pour ces modifications."
+#: js/base.js:327 js/base.js:328
+msgid ""
+"Your changes will be recorded in a change log. For future reference, please "
+"share your reason for these changes."
+msgstr ""
+"Vos modifications seront enregistrées dans un journal des modifications. À "
+"titre de référence, veuillez partager votre justification pour ces "
+"modifications."
 
+#: js/base.js:329
 msgid "This action cannot be undone"
 msgstr "Cette action est irréversible"
 
-msgid "Removing this target means that %s result will no longer have targets associated with it."
-msgid_plural "Removing this target means that %s results will no longer have targets associated with them."
-msgstr[0] "La suppression de cette cible signifie que %s résultat ne sera plus associé à des cibles."
-msgstr[1] "La suppression de cette cible signifie que %s résultats ne seront plus associés à des cibles."
-
+#: js/base.js:335
+#, python-format
 msgid ""
-"If we make these changes, %s data record will no longer be associated with the Life of Program target, and will need to be reassigned to a new target.\n"
+"Removing this target means that %s result will no longer have targets "
+"associated with it."
+msgid_plural ""
+"Removing this target means that %s results will no longer have targets "
+"associated with them."
+msgstr[0] ""
+"La suppression de cette cible signifie que %s résultat ne sera plus associé "
+"à des cibles."
+msgstr[1] ""
+"La suppression de cette cible signifie que %s résultats ne seront plus "
+"associés à des cibles."
+
+#: js/base.js:344
+#, python-format
+msgid ""
+"If we make these changes, %s data record will no longer be associated with "
+"the Life of Program target, and will need to be reassigned to a new target.\n"
 "\n"
 " Proceed anyway?"
 msgid_plural ""
-"If we make these changes, %s data records will no longer be associated with the Life of Program target, and will need to be reassigned to new targets.\n"
+"If we make these changes, %s data records will no longer be associated with "
+"the Life of Program target, and will need to be reassigned to new targets.\n"
 "\n"
 " Proceed anyway?"
 msgstr[0] ""
-"Si nous apportons ces modifications, %s enregistrement de données ne sera plus associé à la cible de durée de vie du programme et devra être réassigné à de nouvelles cibles.\n"
+"Si nous apportons ces modifications, %s enregistrement de données ne sera "
+"plus associé à la cible de durée de vie du programme et devra être réassigné "
+"à de nouvelles cibles.\n"
 "\n"
 " Continuer quand même ?"
 msgstr[1] ""
-"Si nous apportons ces modifications, %s enregistrements de données ne seront plus associés à la cible de durée de vie du programme et devront être réassignés à de nouvelles cibles.\n"
+"Si nous apportons ces modifications, %s enregistrements de données ne seront "
+"plus associés à la cible de durée de vie du programme et devront être "
+"réassignés à de nouvelles cibles.\n"
 "\n"
 " Continuer quand même ?"
 
 #. Translators: Button to approve a form
+#: js/base.js:356 js/base.js:455 js/base.js:505 js/base.js:549
 msgid "Ok"
 msgstr "Confirmer"
 
 #. Translators: Button to cancel a form submission
+#: js/base.js:358 js/base.js:457 js/base.js:507 js/base.js:551
 msgid "Cancel"
 msgstr "Annuler"
 
+#: js/base.js:403
 msgid "A reason is required."
 msgstr "Une justification est nécessaire."
 
+#: js/base.js:464 js/base.js:556
 msgid "This action cannot be undone."
 msgstr "Cette action est irréversible."
 
+#: js/base.js:468 js/base.js:560
 msgid "Warning"
 msgstr "Attention"
 
+#: js/base.js:514 js/pages/tola_management_pages/audit_log/views.js:132
 msgid "Reason for change"
 msgstr "Justification de la modification"
 
+#: js/components/changelog.js:110
 msgid "Date"
 msgstr "Date"
 
+#: js/components/changelog.js:111
 msgid "Admin"
 msgstr "Administrateur"
 
+#: js/components/changelog.js:112
 msgid "Change Type"
 msgstr "Type de modification"
 
+#: js/components/changelog.js:113
 msgid "Previous Entry"
 msgstr "Entrée précédente"
 
+#: js/components/changelog.js:114
 msgid "New Entry"
 msgstr "Nouvelle entrée"
 
+#: js/components/checkboxed-multi-select.js:55
 msgid "selected"
 msgstr "sélectionné"
 
+#: js/components/checkboxed-multi-select.js:67
 msgid "Search"
 msgstr "Rechercher"
 
+#: js/pages/document_list/components/document_list.js:59
 msgid "Filter by program"
 msgstr "Filtrer par programme"
 
+#: js/pages/document_list/components/document_list.js:97
 msgid "Find a document"
 msgstr "Trouver un document"
 
+#: js/pages/document_list/components/document_list.js:119
 msgid "Add document"
 msgstr "Ajouter un document"
 
+#: js/pages/document_list/components/document_list.js:147
 msgid "Document"
 msgstr "Document"
 
+#: js/pages/document_list/components/document_list.js:155
 msgid "Date added"
 msgstr "Date ajoutée"
 
+#: js/pages/document_list/components/document_list.js:163
 msgid "Project"
 msgstr "Projet"
 
+#: js/pages/document_list/components/document_list.js:175
+#: js/pages/tola_management_pages/country/components/edit_disaggregations.js:172
+#: js/pages/tola_management_pages/country/components/edit_objectives.js:129
 msgid "Delete"
 msgstr "Effacer"
 
+#: js/pages/document_list/components/document_list.js:177
 msgid "Edit"
 msgstr "Modifier"
 
 #. Translators: Ex. Showing rows 1 to 50 of 92 */
+#: js/pages/document_list/components/document_list.js:201
+#, python-format
 msgid "Showing rows %(fromCount)s to %(toCount)s of %(totalCount)s"
 msgstr "Affichage des rangs %(fromCount)s à %(toCount)s sur %(totalCount)s"
 
 #. Translators: The number of indicators that do not have targets defined on them
+#: js/pages/program_page/components/indicator_list.js:21
+#, python-format
 msgid "%s indicator has missing targets"
 msgid_plural "%s indicators have missing targets"
 msgstr[0] "%s indicateur a des cibles manquantes"
 msgstr[1] "%s indicateurs ont des cibles manquantes"
 
 #. Translators: The number of indicators that no one has entered in any results for
+#: js/pages/program_page/components/indicator_list.js:25
+#, python-format
 msgid "%s indicator has missing results"
 msgid_plural "%s indicators have missing results"
 msgstr[0] "%s indicateur a des résultats manquants"
 msgstr[1] "%s indicateurs ont des résultats manquants"
 
 #. Translators: The number of indicators that contain results that are not backed up with evidence
+#: js/pages/program_page/components/indicator_list.js:29
+#, python-format
 msgid "%s indicator has missing evidence"
 msgid_plural "%s indicators have missing evidence"
 msgstr[0] "%s indicateur a des preuves manquantes"
 msgstr[1] "%s indicateurs ont des preuves manquantes"
 
 #. Translators: shows what number of indicators are a certain percentage above target. Example: 3 indicators are >15% above target
+#: js/pages/program_page/components/indicator_list.js:33
 msgid "%s indicator is >15% above target"
 msgid_plural "%s indicators are >15% above target"
 msgstr[0] "%s indicateur est >15% au-dessus de la cible"
 msgstr[1] "%s indicateurs sont >15% au-dessus de la cible"
 
 #. Translators: shows what number of indicators are a certain percentage below target. Example: 3 indicators are >15% below target
+#: js/pages/program_page/components/indicator_list.js:37
 msgid "%s indicator is >15% below target"
 msgid_plural "%s indicators are >15% below target"
 msgstr[0] "%s indicateur est >15% en dessous de la cible"
 msgstr[1] "%s indicateurs sont >15% en dessous de la cible"
 
 #. Translators: shows what number of indicators are within a set range of target. Example: 3 indicators are on track
+#: js/pages/program_page/components/indicator_list.js:41
+#, python-format
 msgid "%s indicator is on track"
 msgid_plural "%s indicators are on track"
 msgstr[0] "%s indicateur est en bonne voie"
 msgstr[1] "%s Indicateurs sont en bonne voie"
 
 #. Translators: the number of indicators in a list. Example: 3 indicators
+#: js/pages/program_page/components/indicator_list.js:46
+#, python-format
 msgid "%s indicator"
 msgid_plural "%s indicators"
 msgstr[0] "%s indicateur"
 msgstr[1] "%s indicateurs"
 
+#: js/pages/program_page/components/indicator_list.js:78
 msgid "Show all"
 msgstr "Tout afficher"
 
+#: js/pages/program_page/components/indicator_list.js:85
 msgid "Add indicator"
 msgstr "Ajouter un indicateur"
 
+#: js/pages/program_page/components/indicator_list.js:122
 msgid "Find an indicator:"
 msgstr "Trouver un indicateur :"
 
+#: js/pages/program_page/components/indicator_list.js:129
 msgid "None"
 msgstr "Aucun"
 
+#: js/pages/program_page/components/indicator_list.js:174
+#: js/pages/tola_management_pages/audit_log/views.js:126
 msgid "Indicator"
 msgstr "Indicateur"
 
+#: js/pages/program_page/components/indicator_list.js:176
 msgid "Level"
 msgstr "Niveau"
 
+#: js/pages/program_page/components/indicator_list.js:177
 msgid "Unit of measure"
 msgstr "Unité de mesure"
 
+#: js/pages/program_page/components/indicator_list.js:178
 msgid "Baseline"
 msgstr "Base de référence"
 
+#: js/pages/program_page/components/indicator_list.js:179
 msgid "Target"
 msgstr "Cible"
 
-msgid "Some indicators have missing targets. To enter these values, click the target icon near the indicator name."
-msgstr "Certains indicateurs ont des cibles manquantes. Pour entrer ces valeurs, cliquez sur licône de la cible près du nom de lindicateur."
+#: js/pages/program_page/components/indicator_list.js:274
+msgid ""
+"Some indicators have missing targets. To enter these values, click the "
+"target icon near the indicator name."
+msgstr ""
+"Certains indicateurs ont des cibles manquantes. Pour entrer ces valeurs, "
+"cliquez sur licône de la cible près du nom de lindicateur."
 
+#: js/pages/program_page/components/program_metrics.js:140
 msgid "Indicators on track"
 msgstr "Indicateurs en bonne voie"
 
 #. Translators: variable %s shows what percentage of indicators have no targets reporting data. Example: 31% unavailable */
+#: js/pages/program_page/components/program_metrics.js:153
 msgid "%(percentNonReporting)s% unavailable"
 msgstr "%(percentNonReporting)s% indisponible"
 
 #. Translators: help text for the percentage of indicators with no targets reporting data. */
-msgid "The indicator has no targets, no completed target periods, or no results reported."
-msgstr "Lindicateur na pas de cibles, pas de périodes cibles terminées ni de résultats rapportés."
+#: js/pages/program_page/components/program_metrics.js:164
+msgid ""
+"The indicator has no targets, no completed target periods, or no results "
+"reported."
+msgstr ""
+"Lindicateur na pas de cibles, pas de périodes cibles terminées ni de "
+"résultats rapportés."
 
 #. Translators: Help text explaining what an "on track" indicator is. */
-msgid "The actual value matches the target value, plus or minus 15%. So if your target is 100 and your result is 110, the indicator is 10% above target and on track.  <br><br>Please note that if your indicator has a decreasing direction of change, then above and below are switched. In that case, if your target is 100 and your result is 200, your indicator is 50% below target and not on track.<br><br><a href='https://docs.google.com/document/d/1Gl9bxJJ6hdhCXeoOCoR1mnVKZa2FlEOhaJcjexiHzY0' target='_blank'>See our documentation for more information.</a>"
-msgstr "La valeur réelle correspond à la valeur cible, à plus ou moins 15 %. Donc, si votre cible est 100 et votre résultat 110, l´indicateur est 10 % au-dessus de la cible et sur la bonne voie.  <br><br>Veuillez noter que si le sens de changement de votre indicateur est décroissant, les indicateurs « au-dessus » et «  en dessous » sont alors inversés. Dans ce cas, si votre cible est 100 et votre résultat 200, votre indicateur est 50 % en dessous de la cible et n´est pas en bonne voie.<br><br><a href='https://docs.google.com/document/d/1Gl9bxJJ6hdhCXeoOCoR1mnVKZa2FlEOhaJcjexiHzY0' target='_blank'>Consultez notre documentation pour plus d´informations.</a>"
+#: js/pages/program_page/components/program_metrics.js:188
+msgid ""
+"The actual value matches the target value, plus or minus 15%. So if your "
+"target is 100 and your result is 110, the indicator is 10% above target and "
+"on track.  <br><br>Please note that if your indicator has a decreasing "
+"direction of change, then “above” and “below” are switched. In that case, if "
+"your target is 100 and your result is 200, your indicator is 50% below "
+"target and not on track.<br><br><a href='https://docs.google.com/document/"
+"d/1Gl9bxJJ6hdhCXeoOCoR1mnVKZa2FlEOhaJcjexiHzY0' target='_blank'>See our "
+"documentation for more information.</a>"
+msgstr ""
+"La valeur réelle correspond à la valeur cible, à plus ou moins 15 %. Donc, "
+"si votre cible est 100 et votre résultat 110, l´indicateur est 10 % au-"
+"dessus de la cible et sur la bonne voie.  <br><br>Veuillez noter que si le "
+"sens de changement de votre indicateur est décroissant, les indicateurs « au-"
+"dessus » et «  en dessous » sont alors inversés. Dans ce cas, si votre cible "
+"est 100 et votre résultat 200, votre indicateur est 50 % en dessous de la "
+"cible et n´est pas en bonne voie.<br><br><a href='https://docs.google.com/"
+"document/d/1Gl9bxJJ6hdhCXeoOCoR1mnVKZa2FlEOhaJcjexiHzY0' "
+"target='_blank'>Consultez notre documentation pour plus d´informations.</a>"
 
 #. Translators: variable %(percentHigh)s shows what percentage of indicators are a certain percentage above target percent %(marginPercent)s. Example: 31% are >15% above target */
+#: js/pages/program_page/components/program_metrics.js:207
 msgid "<strong>%(percentHigh)s%</strong> are >%(marginPercent)s% above target"
-msgstr "<strong>%(percentHigh)s%</strong> sont >%(marginPercent)s% au-dessus de la cible"
+msgstr ""
+"<strong>%(percentHigh)s%</strong> sont >%(marginPercent)s% au-dessus de la "
+"cible"
 
 #. Translators: variable %s shows what percentage of indicators are within a set range of target. Example: 31%  are on track */
+#: js/pages/program_page/components/program_metrics.js:213
 msgid "<strong>%s%</strong> are on track"
 msgstr "<strong>%s%</strong> sont en bonne voie"
 
 #. Translators: variable %(percentBelow)s shows what percentage of indicators are a certain percentage below target. The variable %(marginPercent)s is that percentage. Example: 31% are >15% below target */
+#: js/pages/program_page/components/program_metrics.js:219
 msgid "<strong>%(percentBelow)s%</strong> are >%(marginPercent)s% below target"
-msgstr "<strong>%(percentBelow)s%</strong> sont >%(marginPercent)s% en dessous de la cible"
+msgstr ""
+"<strong>%(percentBelow)s%</strong> sont >%(marginPercent)s% en dessous de la "
+"cible"
 
 #. Translators: message describing why this display does not show any data. # */}
+#: js/pages/program_page/components/program_metrics.js:241
 msgid "Unavailable until the first target period ends with results reported."
-msgstr "Indisponible jusqu’à la fin de la première période cible avec publication des résultats."
+msgstr ""
+"Indisponible jusqu’à la fin de la première période cible avec publication "
+"des résultats."
 
 #. Translators: title of a graphic showing indicators with targets */
+#: js/pages/program_page/components/program_metrics.js:263
 msgid "Indicators with targets"
 msgstr "Indicateurs avec cibles"
 
 #. Translators: a label in a graphic. Example: 31% have targets */
+#: js/pages/program_page/components/program_metrics.js:266
 msgid "have targets"
 msgstr "ont des cibles"
 
 #. Translators: a label in a graphic. Example: 31% no targets */
+#: js/pages/program_page/components/program_metrics.js:269
 msgid "no targets"
 msgstr "pas de cibles"
 
+#. Translators: a link that displays a filtered list of indicators which are missing targets */
+#: js/pages/program_page/components/program_metrics.js:272
+msgid "Indicators missing targets"
+msgstr "﻿Indicateurs avec cibles manquantes"
+
+#: js/pages/program_page/components/program_metrics.js:274
 msgid "No targets"
 msgstr "Pas de cibles"
 
 #. Translators: title of a graphic showing indicators with results */
+#: js/pages/program_page/components/program_metrics.js:279
 msgid "Indicators with results"
 msgstr "Indicateurs avec résultats"
 
 #. Translators: a label in a graphic. Example: 31% have results */
+#: js/pages/program_page/components/program_metrics.js:282
 msgid "have results"
 msgstr "ont des résultats"
 
 #. Translators: a label in a graphic. Example: 31% no results */
+#: js/pages/program_page/components/program_metrics.js:285
 msgid "no results"
 msgstr "aucun résultat"
 
+#. Translators: a link that displays a filtered list of indicators which are missing results */
+#: js/pages/program_page/components/program_metrics.js:288
+msgid "Indicators missing results"
+msgstr "﻿Indicateurs avec résultats manquants"
+
+#: js/pages/program_page/components/program_metrics.js:290
 msgid "No results"
 msgstr "Aucun résultat"
 
 #. Translators: title of a graphic showing results with evidence */
+#: js/pages/program_page/components/program_metrics.js:295
 msgid "Results with evidence"
 msgstr "Résultats avec preuves"
 
 #. Translators: a label in a graphic. Example: 31% have evidence */
+#: js/pages/program_page/components/program_metrics.js:298
 msgid "have evidence"
 msgstr "ont des preuves"
 
 #. Translators: a label in a graphic. Example: 31% no evidence */
+#: js/pages/program_page/components/program_metrics.js:301
 msgid "no evidence"
 msgstr "aucune preuve"
 
+#. Translators: a link that displays a filtered list of indicators which are missing evidence */
+#: js/pages/program_page/components/program_metrics.js:304
+msgid "Indicators missing evidence"
+msgstr "﻿Indicateurs avec preuves manquantes"
+
+#: js/pages/program_page/components/program_metrics.js:306
 msgid "No evidence"
 msgstr "Aucune preuve"
 
-msgid "Warning: This action cannot be undone. Are you sure you want to delete this pinned report?"
-msgstr "Attention : Cette action ne peut pas être annulée. Êtes-vous sûr de vouloir supprimer ce rapport épinglé ?"
+#: js/pages/program_page/pinned_reports.js:9
+msgid ""
+"Warning: This action cannot be undone. Are you sure you want to delete this "
+"pinned report?"
+msgstr ""
+"Attention : Cette action ne peut pas être annulée. Êtes-vous sûr de vouloir "
+"supprimer ce rapport épinglé ?"
 
+#: js/pages/tola_management_pages/audit_log/views.js:14
 msgid "Disaggregated values changed"
 msgstr "Valeurs désagrégées modifiées"
 
+#: js/pages/tola_management_pages/audit_log/views.js:34
 msgid "Targets changed"
 msgstr "Cibles modifiées"
 
+#: js/pages/tola_management_pages/audit_log/views.js:41
+#: js/pages/tola_management_pages/audit_log/views.js:142
+#: js/pages/tola_management_pages/audit_log/views.js:143
 msgid "N/A"
 msgstr "N/A"
 
 #. Translators: button label to show the details of all rows in a list */}
+#: js/pages/tola_management_pages/audit_log/views.js:79
 msgid "Expand all"
 msgstr "Développer"
 
 #. Translators: button label to hide the details of all rows in a list */}
+#: js/pages/tola_management_pages/audit_log/views.js:92
 msgid "Collapse all"
 msgstr "Masquer"
 
+#: js/pages/tola_management_pages/audit_log/views.js:101
 msgid "Indicator change log:"
 msgstr "Journal des modifications de l´indicateur :"
 
+#: js/pages/tola_management_pages/audit_log/views.js:114
 msgid "Excel"
 msgstr "Excel"
 
+#: js/pages/tola_management_pages/audit_log/views.js:124
 msgid "Date and time"
 msgstr "Date et heure"
 
+#: js/pages/tola_management_pages/audit_log/views.js:125
 msgid "No."
 msgstr "Nº"
 
+#: js/pages/tola_management_pages/audit_log/views.js:127
+#: js/pages/tola_management_pages/user/views.js:258
 msgid "User"
 msgstr "Utilisateur"
 
+#: js/pages/tola_management_pages/audit_log/views.js:128
+#: js/pages/tola_management_pages/organization/views.js:109
+#: js/pages/tola_management_pages/user/components/edit_user_profile.js:183
+#: js/pages/tola_management_pages/user/views.js:202
+#: js/pages/tola_management_pages/user/views.js:259
 msgid "Organization"
 msgstr "Société"
 
+#: js/pages/tola_management_pages/audit_log/views.js:129
 msgid "Change type"
 msgstr "Type de modification"
 
+#: js/pages/tola_management_pages/audit_log/views.js:130
 msgid "Previous entry"
 msgstr "Entrée précédente"
 
+#: js/pages/tola_management_pages/audit_log/views.js:131
 msgid "New entry"
 msgstr "Nouvelle entrée"
 
+#: js/pages/tola_management_pages/audit_log/views.js:181
 msgid "entries"
 msgstr "entrées"
 
+#: js/pages/tola_management_pages/country/components/country_editor.js:23
+#: js/pages/tola_management_pages/organization/components/edit_organization_profile.js:114
+#: js/pages/tola_management_pages/organization/components/organization_editor.js:26
+#: js/pages/tola_management_pages/program/components/edit_program_profile.js:70
+#: js/pages/tola_management_pages/program/components/program_editor.js:26
+#: js/pages/tola_management_pages/user/components/edit_user_profile.js:132
+#: js/pages/tola_management_pages/user/components/user_editor.js:26
 msgid "Profile"
 msgstr "Profil"
 
+#: js/pages/tola_management_pages/country/components/country_editor.js:32
+#: js/pages/tola_management_pages/country/components/edit_objectives.js:214
 msgid "Strategic Objectives"
 msgstr "Objectifs stratégiques"
 
+#: js/pages/tola_management_pages/country/components/country_editor.js:41
+#: js/pages/tola_management_pages/country/components/edit_disaggregations.js:245
 msgid "Country Disaggregations"
 msgstr "Désagrégations du pays"
 
+#: js/pages/tola_management_pages/country/components/edit_country_profile.js:69
 msgid "Country name"
 msgstr "Nom du pays"
 
+#: js/pages/tola_management_pages/country/components/edit_country_profile.js:80
+#: js/pages/tola_management_pages/country/components/edit_objectives.js:92
+#: js/pages/tola_management_pages/program/components/edit_program_profile.js:108
 msgid "Description"
 msgstr "Description"
 
+#: js/pages/tola_management_pages/country/components/edit_country_profile.js:90
 msgid "Country Code"
 msgstr "Code pays"
 
+#: js/pages/tola_management_pages/country/components/edit_country_profile.js:101
+#: js/pages/tola_management_pages/country/components/edit_country_profile.js:108
+#: js/pages/tola_management_pages/country/components/edit_disaggregations.js:163
+#: js/pages/tola_management_pages/country/components/edit_disaggregations.js:165
+#: js/pages/tola_management_pages/country/components/edit_objectives.js:118
+#: js/pages/tola_management_pages/country/components/edit_objectives.js:123
+#: js/pages/tola_management_pages/organization/components/edit_organization_history.js:69
+#: js/pages/tola_management_pages/organization/components/edit_organization_profile.js:210
+#: js/pages/tola_management_pages/organization/components/edit_organization_profile.js:217
+#: js/pages/tola_management_pages/program/components/edit_program_profile.js:141
+#: js/pages/tola_management_pages/program/components/edit_program_profile.js:148
+#: js/pages/tola_management_pages/program/components/program_history.js:64
+#: js/pages/tola_management_pages/user/components/edit_user_history.js:74
 msgid "Save Changes"
 msgstr "Enregistrer les modifications"
 
+#: js/pages/tola_management_pages/country/components/edit_country_profile.js:103
+#: js/pages/tola_management_pages/country/components/edit_country_profile.js:109
+#: js/pages/tola_management_pages/country/components/edit_disaggregations.js:167
+#: js/pages/tola_management_pages/country/components/edit_objectives.js:124
+#: js/pages/tola_management_pages/country/views.js:65
+#: js/pages/tola_management_pages/organization/components/edit_organization_history.js:70
+#: js/pages/tola_management_pages/organization/components/edit_organization_profile.js:212
+#: js/pages/tola_management_pages/organization/components/edit_organization_profile.js:218
+#: js/pages/tola_management_pages/organization/views.js:85
+#: js/pages/tola_management_pages/program/components/edit_program_profile.js:143
+#: js/pages/tola_management_pages/program/components/edit_program_profile.js:149
+#: js/pages/tola_management_pages/program/components/program_history.js:65
+#: js/pages/tola_management_pages/program/views.js:200
+#: js/pages/tola_management_pages/user/components/edit_user_history.js:75
+#: js/pages/tola_management_pages/user/components/edit_user_profile.js:248
+#: js/pages/tola_management_pages/user/components/edit_user_profile.js:254
+#: js/pages/tola_management_pages/user/views.js:232
 msgid "Reset"
 msgstr "Réinitialiser"
 
+#: js/pages/tola_management_pages/country/components/edit_disaggregations.js:121
 msgid "Disaggregation Type"
 msgstr "Type de désagrégation"
 
+#: js/pages/tola_management_pages/country/components/edit_disaggregations.js:151
 msgid "Remove"
 msgstr "Supprimer"
 
+#: js/pages/tola_management_pages/country/components/edit_disaggregations.js:157
 msgid "Add another option"
 msgstr "Ajouter une autre option"
 
+#: js/pages/tola_management_pages/country/components/edit_disaggregations.js:204
+#: js/pages/tola_management_pages/country/components/edit_objectives.js:158
+#: js/pages/tola_management_pages/country/models.js:190
+#: js/pages/tola_management_pages/organization/models.js:112
+#: js/pages/tola_management_pages/program/models.js:72
+#: js/pages/tola_management_pages/user/models.js:178
 msgid "You have unsaved changes. Are you sure you want to discard them?"
-msgstr "Vos modifications n´ont pas été enregistrées. Voulez-vous vraiment les supprimer ?"
+msgstr ""
+"Vos modifications n´ont pas été enregistrées. Voulez-vous vraiment les "
+"supprimer ?"
 
+#: js/pages/tola_management_pages/country/components/edit_disaggregations.js:263
 msgid "Add country disaggregation"
 msgstr "Ajouter une désagrégation de pays"
 
+#: js/pages/tola_management_pages/country/components/edit_objectives.js:9
 msgid "Proposed"
 msgstr "Proposé"
 
+#: js/pages/tola_management_pages/country/components/edit_objectives.js:10
+#: js/pages/tola_management_pages/organization/components/edit_organization_history.js:9
+#: js/pages/tola_management_pages/organization/models.js:56
+#: js/pages/tola_management_pages/organization/views.js:176
+#: js/pages/tola_management_pages/program/components/program_history.js:9
+#: js/pages/tola_management_pages/program/views.js:64
+#: js/pages/tola_management_pages/program/views.js:156
+#: js/pages/tola_management_pages/program/views.js:162
+#: js/pages/tola_management_pages/user/components/edit_user_history.js:8
+#: js/pages/tola_management_pages/user/models.js:74
+#: js/pages/tola_management_pages/user/views.js:346
 msgid "Active"
 msgstr "Actif"
 
+#: js/pages/tola_management_pages/country/components/edit_objectives.js:11
 msgid "Achieved"
 msgstr "Effectué"
 
+#: js/pages/tola_management_pages/country/components/edit_objectives.js:78
 msgid "Short name"
 msgstr "Nom court"
 
 #. Translators: Label for column identifying "active" or "inactive" user status */}
+#: js/pages/tola_management_pages/country/components/edit_objectives.js:105
+#: js/pages/tola_management_pages/organization/components/edit_organization_history.js:59
+#: js/pages/tola_management_pages/organization/views.js:74
+#: js/pages/tola_management_pages/organization/views.js:112
+#: js/pages/tola_management_pages/program/components/program_history.js:53
+#: js/pages/tola_management_pages/program/views.js:68
+#: js/pages/tola_management_pages/program/views.js:229
+#: js/pages/tola_management_pages/user/components/edit_user_history.js:64
+#: js/pages/tola_management_pages/user/views.js:211
+#: js/pages/tola_management_pages/user/views.js:263
 msgid "Status"
 msgstr "Statut"
 
+#: js/pages/tola_management_pages/country/components/edit_objectives.js:191
 msgid "Delete Strategic Objective?"
 msgstr "Supprimer lobjectif stratégique ?"
 
 #. Translators: This is a button that allows the user to add a strategic objective. */}
+#: js/pages/tola_management_pages/country/components/edit_objectives.js:233
 msgid "Add strategic objective"
 msgstr "Ajouter un objectif stratégique"
 
 #. Translators: Saving to the server succeeded
+#: js/pages/tola_management_pages/country/models.js:174
+#: js/pages/tola_management_pages/organization/models.js:108
+#: js/pages/tola_management_pages/user/models.js:197
 msgid "Successfully Saved"
 msgstr "Enregistré avec succès"
 
 #. Translators: Saving to the server failed
+#: js/pages/tola_management_pages/country/models.js:178
+#: js/pages/tola_management_pages/organization/models.js:104
+#: js/pages/tola_management_pages/user/models.js:190
 msgid "Saving Failed"
 msgstr "Échec de lenregistrement"
 
+#: js/pages/tola_management_pages/country/models.js:182
 msgid "Successfully Deleted"
 msgstr "Supprimé avec succès"
 
+#: js/pages/tola_management_pages/country/views.js:16
+#: js/pages/tola_management_pages/country/views.js:70
+#: js/pages/tola_management_pages/organization/views.js:18
+#: js/pages/tola_management_pages/program/components/edit_program_profile.js:118
+#: js/pages/tola_management_pages/program/views.js:28
 msgid "Countries"
 msgstr "Pays"
 
 #. Translators: Nothing selected by user
+#: js/pages/tola_management_pages/country/views.js:21
+#: js/pages/tola_management_pages/country/views.js:33
+#: js/pages/tola_management_pages/country/views.js:45
+#: js/pages/tola_management_pages/organization/components/edit_organization_profile.js:137
+#: js/pages/tola_management_pages/organization/views.js:23
+#: js/pages/tola_management_pages/organization/views.js:35
+#: js/pages/tola_management_pages/organization/views.js:47
+#: js/pages/tola_management_pages/organization/views.js:59
+#: js/pages/tola_management_pages/organization/views.js:79
+#: js/pages/tola_management_pages/program/views.js:21
+#: js/pages/tola_management_pages/program/views.js:33
+#: js/pages/tola_management_pages/program/views.js:45
+#: js/pages/tola_management_pages/program/views.js:57
+#: js/pages/tola_management_pages/program/views.js:74
+#: js/pages/tola_management_pages/program/views.js:86
+#: js/pages/tola_management_pages/user/views.js:16
 msgid "None Selected"
 msgstr "Aucune sélection"
 
+#: js/pages/tola_management_pages/country/views.js:28
+#: js/pages/tola_management_pages/country/views.js:92
+#: js/pages/tola_management_pages/country/views.js:170
+#: js/pages/tola_management_pages/organization/views.js:42
+#: js/pages/tola_management_pages/organization/views.js:90
+#: js/pages/tola_management_pages/program/views.js:40
+#: js/pages/tola_management_pages/program/views.js:227
 msgid "Organizations"
 msgstr "Sociétés"
 
+#: js/pages/tola_management_pages/country/views.js:40
+#: js/pages/tola_management_pages/country/views.js:93
+#: js/pages/tola_management_pages/country/views.js:178
+#: js/pages/tola_management_pages/organization/views.js:30
+#: js/pages/tola_management_pages/organization/views.js:110
+#: js/pages/tola_management_pages/program/views.js:81
+#: js/pages/tola_management_pages/program/views.js:205
+#: js/pages/tola_management_pages/user/views.js:59
+#: js/pages/tola_management_pages/user/views.js:260
 msgid "Programs"
 msgstr "Programmes"
 
+#: js/pages/tola_management_pages/country/views.js:64
+#: js/pages/tola_management_pages/organization/views.js:84
+#: js/pages/tola_management_pages/program/views.js:141
+#: js/pages/tola_management_pages/program/views.js:199
+#: js/pages/tola_management_pages/user/views.js:162
+#: js/pages/tola_management_pages/user/views.js:231
 msgid "Apply"
 msgstr "Appliquer"
 
+#: js/pages/tola_management_pages/country/views.js:70
+#: js/pages/tola_management_pages/organization/views.js:90
+#: js/pages/tola_management_pages/program/views.js:205
+#: js/pages/tola_management_pages/user/views.js:237
 msgid "Admin:"
 msgstr "Administrateur :"
 
+#: js/pages/tola_management_pages/country/views.js:77
 msgid "Add Country"
 msgstr "Ajouter un pays"
 
+#: js/pages/tola_management_pages/country/views.js:91
 msgid "Country"
 msgstr "Pays"
 
+#: js/pages/tola_management_pages/country/views.js:94
+#: js/pages/tola_management_pages/country/views.js:186
+#: js/pages/tola_management_pages/organization/views.js:111
+#: js/pages/tola_management_pages/program/views.js:16
+#: js/pages/tola_management_pages/program/views.js:228
+#: js/pages/tola_management_pages/user/views.js:19
+#: js/pages/tola_management_pages/user/views.js:237
 msgid "Users"
 msgstr "Utilisateurs"
 
+#: js/pages/tola_management_pages/country/views.js:196
 msgid "countries"
 msgstr "pays"
 
+#: js/pages/tola_management_pages/organization/components/edit_organization_history.js:10
+#: js/pages/tola_management_pages/organization/models.js:57
+#: js/pages/tola_management_pages/organization/views.js:176
+#: js/pages/tola_management_pages/program/components/program_history.js:10
+#: js/pages/tola_management_pages/program/views.js:65
+#: js/pages/tola_management_pages/program/views.js:157
+#: js/pages/tola_management_pages/program/views.js:162
+#: js/pages/tola_management_pages/user/components/edit_user_history.js:9
+#: js/pages/tola_management_pages/user/models.js:75
+#: js/pages/tola_management_pages/user/views.js:346
 msgid "Inactive"
 msgstr "Inactif"
 
+#: js/pages/tola_management_pages/organization/components/edit_organization_history.js:57
 msgid "Status and history"
 msgstr "Statut et historique"
 
+#: js/pages/tola_management_pages/organization/components/edit_organization_profile.js:117
 msgid "Organization name"
 msgstr "Nom de la société"
 
+#: js/pages/tola_management_pages/organization/components/edit_organization_profile.js:141
 msgid "Primary Address"
 msgstr "Adresse principale"
 
+#: js/pages/tola_management_pages/organization/components/edit_organization_profile.js:155
 msgid "Primary Contact Name"
 msgstr "Nom du contact principal"
 
+#: js/pages/tola_management_pages/organization/components/edit_organization_profile.js:170
 msgid "Primary Contact Email"
 msgstr "Adresse e-mail du contact principal"
 
+#: js/pages/tola_management_pages/organization/components/edit_organization_profile.js:185
 msgid "Primary Contact Phone Number"
 msgstr "Numéro de téléphone du contact principal"
 
+#: js/pages/tola_management_pages/organization/components/edit_organization_profile.js:200
+#: js/pages/tola_management_pages/user/components/edit_user_profile.js:235
 msgid "Preferred Mode of Contact"
 msgstr "Moyen de contact préféré"
 
+#: js/pages/tola_management_pages/organization/components/edit_organization_profile.js:211
 msgid "Save and Add Another"
 msgstr "Enregistrer et ajouter à nouveau"
 
+#: js/pages/tola_management_pages/organization/components/organization_editor.js:30
+#: js/pages/tola_management_pages/program/components/program_editor.js:32
+#: js/pages/tola_management_pages/program/components/program_history.js:51
+#: js/pages/tola_management_pages/user/components/edit_user_history.js:59
+#: js/pages/tola_management_pages/user/components/user_editor.js:38
 msgid "Status and History"
 msgstr "Statut et historique"
 
+#: js/pages/tola_management_pages/organization/views.js:54
+#: js/pages/tola_management_pages/program/components/edit_program_profile.js:129
+#: js/pages/tola_management_pages/program/views.js:52
 msgid "Sectors"
 msgstr "Secteurs"
 
+#: js/pages/tola_management_pages/organization/views.js:96
 msgid "Add Organization"
 msgstr "Ajouter une société"
 
+#: js/pages/tola_management_pages/organization/views.js:167
+#: js/pages/tola_management_pages/program/views.js:309
+#: js/pages/tola_management_pages/user/views.js:343
 msgid "programs"
 msgstr "programmes"
 
+#: js/pages/tola_management_pages/organization/views.js:173
+#: js/pages/tola_management_pages/program/views.js:300
+#: js/pages/tola_management_pages/user/views.js:353
 msgid "users"
 msgstr "utilisateurs"
 
+#: js/pages/tola_management_pages/organization/views.js:183
 msgid "organizations"
 msgstr "sociétés"
 
+#: js/pages/tola_management_pages/program/components/edit_program_profile.js:73
 msgid "Program name"
 msgstr "Nom du programme"
 
+#: js/pages/tola_management_pages/program/components/edit_program_profile.js:84
 msgid "GAIT ID"
 msgstr "ID GAIT"
 
+#: js/pages/tola_management_pages/program/components/edit_program_profile.js:96
 msgid "Fund Code"
 msgstr "Code du fonds"
 
+#: js/pages/tola_management_pages/program/models.js:189
 msgid "Successfully saved"
 msgstr "Enregistré avec succès"
 
+#: js/pages/tola_management_pages/program/models.js:193
 msgid "Saving failed"
 msgstr "Échec de l´enregistrement"
 
 #. Translators: Notify user that the program start and end date were successfully retrieved from the GAIT service and added to the newly saved Program
+#: js/pages/tola_management_pages/program/models.js:198
 msgid "Successfully synced GAIT program start and end dates"
-msgstr "Les dates de début et de fin du programme GAIT ont été synchronisées avec succès"
+msgstr ""
+"Les dates de début et de fin du programme GAIT ont été synchronisées avec "
+"succès"
 
 #. Translators: Notify user that the program start and end date failed to be retrieved from the GAIT service with a specific reason appended after the :
+#: js/pages/tola_management_pages/program/models.js:204
 msgid "Failed to sync GAIT program start and end dates: "
-msgstr "Échec de la synchronisation des dates de début et de fin du programme GAIT : "
+msgstr ""
+"Échec de la synchronisation des dates de début et de fin du programme GAIT : "
 
 #. Translators: A request failed, ask the user if they want to try the request again
+#: js/pages/tola_management_pages/program/models.js:212
 msgid "Retry"
 msgstr "Réessayer"
 
 #. Translators: button label - ignore the current warning modal on display
+#: js/pages/tola_management_pages/program/models.js:221
 msgid "Ignore"
 msgstr "Ignorer"
 
+#: js/pages/tola_management_pages/program/models.js:268
 msgid "The GAIT ID for this program is shared with at least one other program."
-msgstr "L´ID GAIT de ce programme est partagé avec au moins un autre programme."
+msgstr ""
+"L´ID GAIT de ce programme est partagé avec au moins un autre programme."
 
+#: js/pages/tola_management_pages/program/models.js:269
 msgid "View programs with this ID in GAIT."
 msgstr "Afficher les programmes avec le même ID dans GAIT."
 
+#: js/pages/tola_management_pages/program/models.js:272
 msgid "Are you sure you want to continue?"
 msgstr "Voulez-vous vraiment continuer ?"
 
 #. Translators: error message when trying to connect to the server
+#: js/pages/tola_management_pages/program/models.js:304
 msgid "There was a network or server connection error."
-msgstr "Une erreur est survenue lors de la tentative de connexion au réseau ou au serveur."
+msgstr ""
+"Une erreur est survenue lors de la tentative de connexion au réseau ou au "
+"serveur."
 
+#: js/pages/tola_management_pages/program/views.js:127
+#: js/pages/tola_management_pages/user/views.js:148
 msgid "Bulk Actions"
 msgstr "Actions groupées"
 
+#: js/pages/tola_management_pages/program/views.js:133
+#: js/pages/tola_management_pages/user/views.js:154
 msgid "Select..."
 msgstr "Sélectionnez..."
 
+#: js/pages/tola_management_pages/program/views.js:138
+#: js/pages/tola_management_pages/user/views.js:159
 msgid "No options"
 msgstr "Aucun options"
 
+#: js/pages/tola_management_pages/program/views.js:166
 msgid "Set program status"
 msgstr "Définir le statut du programme"
 
+#: js/pages/tola_management_pages/program/views.js:211
 msgid "Add Program"
 msgstr "Ajouter un programme"
 
+#: js/pages/tola_management_pages/program/views.js:226
 msgid "Program"
 msgstr "Programme"
 
+#: js/pages/tola_management_pages/user/components/edit_user_history.js:61
 msgid "Resend Registration Email"
 msgstr "Envoyer une nouvelle fois un e-mail dinscription"
 
+#: js/pages/tola_management_pages/user/components/edit_user_profile.js:135
 msgid "Preferred First Name"
 msgstr "Prénom dusage"
 
+#: js/pages/tola_management_pages/user/components/edit_user_profile.js:151
 msgid "Preferred Last Name"
 msgstr "Nom dusage"
 
+#: js/pages/tola_management_pages/user/components/edit_user_profile.js:167
 msgid "Username"
 msgstr "Nom d´utilisateur"
 
+#: js/pages/tola_management_pages/user/components/edit_user_profile.js:199
 msgid "Title"
 msgstr "Titre"
 
+#: js/pages/tola_management_pages/user/components/edit_user_profile.js:210
 msgid "Email"
 msgstr "Adresse e-mail"
 
+#: js/pages/tola_management_pages/user/components/edit_user_profile.js:225
 msgid "Phone"
 msgstr "Numéro de téléphone"
 
+#: js/pages/tola_management_pages/user/components/edit_user_profile.js:246
+#: js/pages/tola_management_pages/user/components/edit_user_profile.js:253
 msgid "Save changes"
 msgstr "Enregistrer les modifications"
 
+#: js/pages/tola_management_pages/user/components/edit_user_profile.js:247
 msgid "Save And Add Another"
 msgstr "Enregistrer et ajouter à nouveau"
 
+#: js/pages/tola_management_pages/user/components/edit_user_programs.js:13
+msgid "Individual programs only"
+msgstr "Programmes individuels seulement"
+
+#: js/pages/tola_management_pages/user/components/edit_user_programs.js:416
+#: js/pages/tola_management_pages/user/components/user_editor.js:32
 msgid "Programs and Roles"
 msgstr "Programmes et rôles"
 
+#: js/pages/tola_management_pages/user/components/edit_user_programs.js:418
 msgid "More information on Program Roles"
 msgstr "Plus d´informations sur les programmes et les rôles"
 
+#: js/pages/tola_management_pages/user/components/edit_user_programs.js:423
 msgid "Filter countries"
 msgstr "Filtrer les pays"
 
+#: js/pages/tola_management_pages/user/components/edit_user_programs.js:427
 msgid "Filter programs"
 msgstr "Filtrer les programmes"
 
+#. Translators: Column header for a checkbox indicating if a user has access to a program */
+#: js/pages/tola_management_pages/user/components/edit_user_programs.js:452
+msgid "Has access?"
+msgstr "A accès?"
+
+#: js/pages/tola_management_pages/user/components/edit_user_programs.js:469
 msgid "Deselect All"
 msgstr "Tout déselectionner"
 
+#: js/pages/tola_management_pages/user/components/edit_user_programs.js:469
 msgid "Select All"
 msgstr "Tout sélectionner"
 
+#: js/pages/tola_management_pages/user/components/edit_user_programs.js:482
 msgid "Countries and Programs"
 msgstr "Pays et programmes"
 
+#: js/pages/tola_management_pages/user/components/edit_user_programs.js:498
 msgid "Roles and Permissions"
 msgstr "Rôles et autorisations"
 
+#: js/pages/tola_management_pages/user/models.js:79
 msgid "Yes"
 msgstr "Oui"
 
+#: js/pages/tola_management_pages/user/models.js:80
 msgid "No"
 msgstr "Non"
 
 #. Translators: An email was sent to the user to verify that the email address is valid
+#: js/pages/tola_management_pages/user/models.js:438
 msgid "Verification email sent"
 msgstr "E-mail de vérification envoyé"
 
 #. Translators: Sending an email to the user did not work
+#: js/pages/tola_management_pages/user/models.js:442
 msgid "Verification email send failed"
 msgstr "Échec dans lenvoi de le-mail de vérification"
 
 #. Translators: The countries a user is allowed to access */}
+#: js/pages/tola_management_pages/user/views.js:33
 msgid "Countries Permitted"
 msgstr "Pays autorisés"
 
 #. Translators: Primary country of the user */}
+#: js/pages/tola_management_pages/user/views.js:47
 msgid "Base Country"
 msgstr "Pays principal"
 
 #. Translators: Set an account to active or inactive
+#: js/pages/tola_management_pages/user/views.js:173
 msgid "Set account status"
 msgstr "Définir le statut du compte"
 
 #. Translators: Associate a user with a program granting permission
+#: js/pages/tola_management_pages/user/views.js:175
 msgid "Add to program"
 msgstr "Ajouter au programme"
 
 #. Translators: Disassociate a user with a program removing permission
+#: js/pages/tola_management_pages/user/views.js:177
 msgid "Remove from program"
 msgstr "Supprimer du programme"
 
+#: js/pages/tola_management_pages/user/views.js:220
 msgid "Administrator?"
 msgstr "Administrateur ?"
 
+#: js/pages/tola_management_pages/user/views.js:244
 msgid "Add user"
 msgstr "Ajouter un utilisateur"
 
 #. Translators: The highest level of administrator in the system */}
+#: js/pages/tola_management_pages/user/views.js:332
 msgid "Super Admin"
 msgstr "Super-administrateur"
