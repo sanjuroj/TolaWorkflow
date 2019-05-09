@@ -8275,6 +8275,10 @@ span[data-toggle="popover"]:hover {
   margin-top: 7.5px;
   padding-inline-start: 1rem; }
 
+input[type=checkbox]:disabled,
+input[type=radio]:disabled {
+  opacity: 0.7; }
+
 .nav-tabs {
   margin-bottom: 15px; }
   .nav-tabs .nav-link:hover, .nav-tabs .nav-link:focus {
@@ -8438,6 +8442,10 @@ span[data-toggle="popover"]:hover {
 .virtualized-table__wrapper {
   height: 50vh;
   margin-bottom: 15px; }
+
+.ReactVirtualized__Table__headerRow {
+  font-size: 0.875rem;
+  text-transform: none !important; }
 
 .ReactVirtualized__Table__Grid {
   background-color: #fff;
