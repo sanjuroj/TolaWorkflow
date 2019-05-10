@@ -4,7 +4,7 @@
 {% block title %}{{ program.name }} | {% endblock %}
 {% block page_title %}{{ program.name }}{% endblock %}
 {% block header_extras %}
-    {% program_complete %}
+    {% program_complete readonly %}
 {% endblock %}
 
 {% block content %}
@@ -41,8 +41,8 @@
                 {% endif %}
                 {% if not readonly %}
                     <li class="pt-2"><a href="{% url 'siteprofile_add' %}" class="btn-link text-success"><i class="fas fa-plus-circle"></i> {% trans "Add site" %}</a></li>
+                {% endif %}
             </ul>
-            {% endif %}
         </section>
         <section class="sidebar__detail">
             <h3>{% trans "Pinned reports" %}</h3>

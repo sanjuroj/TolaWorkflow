@@ -406,7 +406,9 @@ class UserAdminSerializer(ModelSerializer):
         return new_user
 
     def update(self, instance, validated_data):
-        if instance.organization_id == 1 and not self.context["request"].user.is_superuser:
+        is_superuser = self.context["request"].user.is_superuser
+
+        if (instance.organization_id == 1 or validated_data['organization_id'] == 1) and not is_superuser:
             raise PermissionDenied(_("Only superusers can edit Mercy Corps staff profiles."))
 
         user = instance

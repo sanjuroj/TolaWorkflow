@@ -7,13 +7,7 @@ export default class EditUserProfile extends React.Component {
     constructor(props) {
         super(props)
         const {userData} = props
-        const organization_listing = (() => {
-            if(props.new) {
-                return props.organizations.filter(o => o.value != 1 || props.is_superuser)
-            } else {
-                return props.organizations
-            }
-        })()
+        const organization_listing = props.organizations.filter(o => o.value != 1 || props.is_superuser)
         const selected_organization = organization_listing.find(o => o.value == userData.organization_id)
         this.state = {
             original_user_data: {...userData},
@@ -187,7 +181,6 @@ export default class EditUserProfile extends React.Component {
                     </div>
                     <div className="form-group">
                         <label className="label--required" htmlFor="user-organization-input">{gettext("Organization")}</label>
-                        { /* TODO: log changes to this field */ }
                         <Select
                             isDisabled={disabled}
                             className={"react-select "+error_classes.organization}

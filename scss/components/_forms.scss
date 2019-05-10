@@ -24,3 +24,8 @@
     margin-top: $grid-gutter-width/4;
     padding-inline-start: 1rem;
 }
+// disabled elements should have less opacity
+input[type=checkbox]:disabled,
+input[type=radio]:disabled {
+    opacity: 0.7;
+}
