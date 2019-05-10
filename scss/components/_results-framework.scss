@@ -1,0 +1,46 @@
+// # FROM level_cards.js
+
+.level-card {} // Unused but reserved
+
+// component LevelCardCollapsed
+.level-card--collapsed {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    background-color: white;
+    margin: 2em;
+}
+.level-card--collapsed__name {
+    margin: .75em 0 .75em .75em;
+}
+.level-card--collapsed__title {}
+.level-card--collapsed__actions {
+    // contains: actions__*
+    margin: .75em 0 .75em .75em;
+}
+.actions__top {}
+.actions__bottom {}
+
+// component LevelCardExpanded
+.level-card--expanded {
+    display: flex;
+    flex-direction: column;
+}
+.level-card--expanded__form {
+    display: flex;
+    flex-direction: column;
+}
+
+// component LevelTitle
+.level-title {}
+.level-title--collapsed {}
+.level-title--expanded {
+    font-weight: bold;
+}
+
+// component ButtonBar
+.button-bar {}
+
+// component LevelButton
+.level-button {}
+

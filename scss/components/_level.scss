@@ -25,38 +25,6 @@
     padding: .5em;
     margin: .75em 0;
 }
-
-.levelcard-collapsed {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    background-color: white;
-    margin: 2em;
-}
-
-.levelcard-collapsed__name {
-    margin: .75em 0 .75em .75em;
-}
-
-.levelcard-collapsed__rightbuttons {
-    margin: .75em 0 .75em .75em;
-}
-
-.levelcard-expanded {
-    display: flex;
-    flex-direction: column;
-}
-
-.levelcard-expanded__title {
-    font-weight: bold;
-}
-
-.levelcard-expanded__form {
-    display: flex;
-    flex-direction: column;
-
-}
-
 .new-leveltier {
     margin-left: 1em;
 }
