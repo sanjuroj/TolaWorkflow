@@ -4,6 +4,41 @@
 }
 
 
+// # from leveltier_picker.js
+
+// component LevelTierList
+.leveltier-list {
+    list-style: none;
+    background-color: $white;
+    padding: 1em;
+}
+
+// component LevelTier
+.leveltier {
+    background-color: $gray-150;
+    padding: .5em;
+    margin: .75em 0;
+}
+
+// component LevelTierPicker
+.leveltier-picker {
+    margin-right: 3em;
+    min-width: 20em;
+}
+
+// component Picker
+.leveltier-picker__selectbox {
+    background-color: $teal-100;
+    padding: 2em;
+}
+
+
+// # from level_list.js
+.leveltier--new { // ???
+    margin-left: 1em;
+}
+
+
 // # from level_cards.js
 .level-card {} // Unused but reserved
 
