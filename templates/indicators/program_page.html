@@ -12,8 +12,7 @@
 <aside class="program__status">
     <h3>
         {% blocktrans %}Program metrics <small>for target periods completed to date</small>{% endblocktrans %}
-        {% include "indicators/program_target_period_info_helptext.html" %}
-        </small>
+        <small>{% include "indicators/program_target_period_info_helptext.html" %}</small>
     </h3>
     <div id="program-metrics-react-component"></div>
 </aside>
@@ -23,6 +22,9 @@
         <section class="sidebar__detail">
             <h3>{% trans "Program details" %}</h3>
             <ul class="list-unstyled">
+                {% if not readonly %}
+                <li><a href="{% url 'results_framework_builder' program.id %}"><i class="fas fa-sitemap"></i> {% trans "Results framework" %}</a></li>
+                {% endif %}
                 <li><a href="{% url 'indicator_plan' program.id %}">{% trans "Indicator plan" %}</a></li>
                 <li><a href="{% url 'tola_management_audit_log' program_id=program.id %}"><i class="fas fa-history"></i> {% trans "Change log" %}</a> </li>
             {% if program.gait_url %}
