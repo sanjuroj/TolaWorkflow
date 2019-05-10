@@ -78,7 +78,7 @@ function (_React$Component) {
         label: this.props.rootStore.chosenTierSetName
       };
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "rfpicker__selectbox"
+        className: "leveltier-picker__selectbox"
       }, "Results framework template", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_3__["default"], {
         options: options,
         value: selectedOption,
@@ -105,7 +105,7 @@ function (_React$Component2) {
     key: "render",
     value: function render() {
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "rfpicker__tierlist__tier"
+        className: "leveltier"
       }, " ", this.props.tierName, " ");
     }
   }]);
@@ -129,7 +129,7 @@ function (_React$Component3) {
     value: function render() {
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         id: "leveltier-list",
-        className: "rfpicker__tierlist"
+        className: "leveltier-list"
       }, this.props.rootStore.tierList.length > 0 ? this.props.rootStore.tierList.map(function (tier, index) {
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(LevelTier, {
           key: index,
@@ -144,7 +144,7 @@ function (_React$Component3) {
 var LevelTierPicker = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function (props) {
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     id: "leveltier-picker",
-    className: "rfpicker"
+    className: "leveltier-picker"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Picker, null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(LevelTierList, null));
 });
 
@@ -216,7 +216,7 @@ function (_React$Component) {
     key: "render",
     value: function render() {
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
-        className: this.props.classes
+        className: 'level-title ' + this.props.classes
       }, this.props.tierName, this.props.ontologyLabel ? " " + this.props.ontologyLabel : null, ":");
     }
   }]);
@@ -255,18 +255,18 @@ function (_React$Component2) {
     key: "render",
     value: function render() {
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "levelcard-collapsed",
+        className: "level-card--collapsed",
         id: this.props.level.id
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "levelcard-collapsed__name"
+        className: "level-card--collapsed__name"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(LevelTitle, {
         tierName: this.props.levelProps.tierName,
         ontologyLabel: this.props.levelProps.ontologyLabel,
-        classes: null
+        classes: "level-title--collapsed"
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, "\xA0", this.props.level.name)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "levelcard-collapsed__rightbuttons"
+        className: "level-card--collapsed__actions"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "topButtons",
+        className: "actions__top",
         style: {
           display: "flex",
           justifyContent: "flex-end"
@@ -282,7 +282,7 @@ function (_React$Component2) {
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
         className: "fas fa-edit"
       }), "\xA0", gettext("Edit"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "bottomButtons",
+        className: "actions__bottom",
         style: {
           display: "flex",
           justifyContent: "flex-end"
@@ -339,14 +339,14 @@ function (_React$Component3) {
     key: "render",
     value: function render() {
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "levelcard-expanded",
+        className: "level-card--expanded",
         id: this.props.level.id
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(LevelTitle, {
         tierName: this.props.levelProps.tierName,
         ontologyLabel: this.props.levelProps.ontologyLabel,
-        classes: "levelcard-expanded__title"
+        classes: "level-title--expanded"
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("form", {
-        className: "levelcard-expanded__form"
+        className: "level-card--expanded__form"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         type: "text",
         id: "level-name",
@@ -382,11 +382,16 @@ function (_React$Component4) {
   _createClass(ButtonBar, [{
     key: "render",
     value: function render() {
-      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(LevelButton, {
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "button-bar"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(LevelButton, {
+        classes: "",
         text: "Save and close"
       }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(LevelButton, {
+        classes: "",
         text: "Save and another"
       }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(LevelButton, {
+        classes: "",
         text: "Save and link"
       }));
     }
@@ -410,7 +415,7 @@ function (_React$Component5) {
     key: "render",
     value: function render() {
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
-        className: this.props.classes
+        className: this.props.classes + ' level-button'
       }, this.props.text);
     }
   }]);
@@ -797,7 +802,7 @@ function (_React$Component) {
 
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
           key: elem.id,
-          className: "new-leveltier"
+          className: "leveltier--new"
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_level_cards__WEBPACK_IMPORTED_MODULE_8__["LevelCardExpanded"], {
           level: elem,
           levelProps: _this.props.rootStore.levelProperties[elem.id]
@@ -826,4 +831,4 @@ var LevelListing = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])(f
 /***/ })
 
 },[["QTZG","runtime","vendors"]]]);
-//# sourceMappingURL=results_framework-1371777a476af5077c2b.js.map
+//# sourceMappingURL=results_framework-ca8ed0cd3d6ca600de7c.js.map
