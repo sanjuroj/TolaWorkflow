@@ -14,7 +14,7 @@ export class LevelTitle extends React.Component {
 
     render() {
         return (
-            <span className={this.props.classes}>
+            <span className={'level-title ' + this.props.classes}>
                 {this.props.tierName}
                 {/*if we don't check whether there is an ontology, there ill be an extra
                 space before the colon */}
@@ -46,19 +46,19 @@ export class LevelCardCollapsed extends React.Component {
 
     render(){
         return (
-            <div className="levelcard-collapsed" id={this.props.level.id}>
-                <div className="levelcard-collapsed__name">
+            <div className="level-card--collapsed" id={this.props.level.id}>
+                <div className="level-card--collapsed__name">
                     <strong>
                         <LevelTitle
                             tierName={this.props.levelProps.tierName}
                             ontologyLabel={this.props.levelProps.ontologyLabel}
-                            classes={null}
+                            classes="level-title--collapsed"
                         />
                     </strong>
                     <span>&nbsp;{this.props.level.name}</span>
                 </div>
-                <div className="levelcard-collapsed__rightbuttons">
-                    <div className="topButtons" style={{display: "flex", justifyContent: "flex-end"}}>
+                <div className="level-card--collapsed__actions">
+                    <div className="actions__top" style={{display: "flex", justifyContent: "flex-end"}}>
                         { this.props.levelProps.canDelete &&
                             <button
                                 className="btn btn-sm btn-link btn-danger"
@@ -70,7 +70,7 @@ export class LevelCardCollapsed extends React.Component {
                         <button className="btn btn-sm btn-link btn-text" onClick={this.editLevel}>
                         <i className="fas fa-edit"/>&nbsp;{gettext("Edit")}</button>
                     </div>
-                    <div className="bottomButtons" style={{display: "flex", justifyContent: "flex-end"}}>
+                    <div className="actions__bottom" style={{display: "flex", justifyContent: "flex-end"}}>
                         <button className="btn btn-sm btn-link">Indicators</button>
                     </div>
                 </div>
@@ -113,16 +113,16 @@ export class LevelCardExpanded extends React.Component {
     render(){
 
         return (
-            <div className="levelcard-expanded" id={this.props.level.id}>
+            <div className="level-card--expanded" id={this.props.level.id}>
                 <div>
                     <LevelTitle
                         tierName={this.props.levelProps.tierName}
                         ontologyLabel={this.props.levelProps.ontologyLabel}
-                        classes="levelcard-expanded__title"
+                        classes="level-title--expanded"
                     />
 
                 </div>
-                <form className="levelcard-expanded__form">
+                <form className="level-card--expanded__form">
                     <input
                         type="text"
                         id="level-name"
@@ -148,10 +148,10 @@ export class LevelCardExpanded extends React.Component {
 class ButtonBar extends React.Component {
     render() {
         return (
-            <div>
-                <LevelButton text="Save and close" />
-                <LevelButton text="Save and another" />
-                <LevelButton text="Save and link" />
+            <div className="button-bar">
+                <LevelButton classes="" text="Save and close" />
+                <LevelButton classes="" text="Save and another" />
+                <LevelButton classes="" text="Save and link" />
             </div>
         )
 
@@ -162,7 +162,7 @@ class LevelButton extends React.Component {
 
     render() {
         return (
-            <button className={this.props.classes}>
+            <button className={this.props.classes + ' level-button'}>
                 {this.props.text}
             </button>
         )

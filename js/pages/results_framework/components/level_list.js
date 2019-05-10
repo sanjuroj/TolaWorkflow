@@ -28,7 +28,7 @@ class LevelList extends React.Component {
         let returnVals = renderList.map((elem) => {
             let children = this.props.rootStore.levels.filter(level => level.parent == elem.id);
             return (
-                <div key={elem.id} className="new-leveltier">
+                <div key={elem.id} className="leveltier--new">
                     <LevelCardExpanded
                         level={elem}
                         levelProps={this.props.rootStore.levelProperties[elem.id]} />
