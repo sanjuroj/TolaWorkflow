@@ -22,7 +22,7 @@
         <section class="sidebar__detail">
             <h3>{% trans "Program details" %}</h3>
             <ul class="list-unstyled">
-                {% if not readonly %}
+                {% if program.levels.first or not readonly %}
                 <li><a href="{% url 'results_framework_builder' program.id %}"><i class="fas fa-sitemap"></i> {% trans "Results framework" %}</a></li>
                 {% endif %}
                 <li><a href="{% url 'indicator_plan' program.id %}">{% trans "Indicator plan" %}</a></li>
