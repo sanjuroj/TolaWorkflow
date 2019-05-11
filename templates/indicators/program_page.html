@@ -23,8 +23,10 @@
             <h3>{% trans "Program details" %}</h3>
             <ul class="list-unstyled">
                 {% if program.levels.first %}{# show RF link for all users, if RF is already built #}
+                {# Translators: a link to the results framework #}
                 <li><a href="{% url 'results_framework_builder' program.id %}"><i class="fas fa-sitemap"></i> {% trans "Results framework" %}</a></li>
                 {% elif not readonly %}{# otherwise prompt high-level users to create RF #}
+                {# Translators: a prompt to create the results framework #}
                 <li><a href="{% url 'results_framework_builder' program.id %}"><i class="fas fa-sitemap"></i> {% trans "Create results framework" %}</a></li>
                 {% endif %}
                 <li><a href="{% url 'indicator_plan' program.id %}">{% trans "Indicator plan" %}</a></li>
