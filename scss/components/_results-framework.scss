@@ -1,6 +1,7 @@
 // # from results_framework_page.html
 .rf-page {
     display: flex;
+    align-items: flex-start;
 }
 
 
@@ -8,28 +9,36 @@
 
 // component LevelTierList
 .leveltier-list {
-    list-style: none;
     background-color: $white;
-    padding: 1em;
+    padding: $grid-gutter-width/2;
 }
 
 // component LevelTier
 .leveltier {
     background-color: $gray-150;
-    padding: .5em;
-    margin: .75em 0;
+    color: $gray-550;
+    padding: $grid-gutter-width/4;
+    & + & {
+        margin-top: $grid-gutter-width/4;
+    }
+}
+@for $i from 1 through 6 { // TODO: what is our max depth?
+    .leveltier--level-#{$i} {
+        margin-left: #{$grid-gutter-width/2 * $i}
+    }
 }
 
 // component LevelTierPicker
 .leveltier-picker {
-    margin-right: 3em;
-    min-width: 20em;
+    border: 1px solid $gray-400;
+    margin-right: $grid-gutter-width;
+    min-width: 20rem;
 }
 
 // component Picker
 .leveltier-picker__selectbox {
     background-color: $teal-100;
-    padding: 2em;
+    padding: $grid-gutter-width/2;
 }
 
 
