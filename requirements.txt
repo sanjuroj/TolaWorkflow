@@ -67,9 +67,9 @@ python-logstash==0.4.6
 python-openid==2.2.5
 python-saml==2.5.0
 pytz==2017.2
-PyYAML==3.12
+PyYAML==5.1
 regex==2018.8.29
-requests==2.18.1
+requests==2.21.0
 requests-oauthlib==0.8.0
 rsa==4.0
 selenium==3.14.1
@@ -84,7 +84,7 @@ tinycss2==0.6.1
 tzlocal==1.5.1
 unicodecsv==0.14.1
 uritemplate==3.0.0
-urllib3==1.21.1
+urllib3==1.24.3
 WeasyPrint==0.39
 webencodings==0.5.1
 xlrd==1.1.0
