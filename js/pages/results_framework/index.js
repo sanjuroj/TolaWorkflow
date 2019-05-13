@@ -14,14 +14,14 @@ import {RFPageStore, RFPageUIStore} from './models';
  */
 const {levels, levelTiers, tierPresets} = jsContext;
 const rootStore = new RFPageStore(levels, levelTiers, tierPresets);
-
+const uiStore = new RFPageUIStore();
 
 /*
  * React components on page
  */
 
 ReactDOM.render(
-    <Provider rootStore={rootStore}>
+    <Provider rootStore={rootStore} uiStore={uiStore}>
         <React.Fragment>
             <LevelTierPicker />
             <LevelListing />

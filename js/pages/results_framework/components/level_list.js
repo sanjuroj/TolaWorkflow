@@ -10,7 +10,7 @@ import {LevelCardCollapsed, LevelCardExpanded} from "./level_cards";
 
 library.add(faCaretDown, faCaretRight);
 
-@inject('rootStore')
+@inject('rootStore', 'uiStore')
 @observer
 class LevelList extends React.Component {
 
@@ -23,26 +23,38 @@ class LevelList extends React.Component {
             renderList = this.props.renderList.sort(elem => elem.customsort);
         }
 
-
-
-        let returnVals = renderList.map((elem) => {
-            let children = this.props.rootStore.levels.filter(level => level.parent == elem.id);
-            return (
-                <div key={elem.id} className="leveltier--new">
+        return renderList.map((elem) => {
+            let card = '';
+            if (elem.id in this.props.uiStore.expandedCards) {
+                card =
                     <LevelCardExpanded
                         level={elem}
-                        levelProps={this.props.rootStore.levelProperties[elem.id]} />
-                    {children.length > 0 &&
-                        <LevelList
-                            rootStore={this.props.rootStore}
-                            renderList={children} />
-                    }
+                        levelProps={this.props.rootStore.levelProperties[elem.id]}/>
+            }
+            else {
+                card =
+                    <LevelCardCollapsed
+                        level={elem}
+                        levelProps={this.props.rootStore.levelProperties[elem.id]}/>
+
+            }
+
+            let children = this.props.rootStore.levels.filter(level => level.parent == elem.id);
+            let childLevels = null;
+            if (children.length > 0){
+                childLevels =  <LevelList
+                    rootStore={this.props.rootStore}
+                    uiStore={this.props.uiStore}
+                    renderList={children}/>
+            }
+
+            return (
+                <div key={elem.id} className="leveltier--new">
+                    {card}
+                    {childLevels}
                 </div>
             )
-        });
-
-        return returnVals
-    }
+    })}
 }
 
 export const LevelListing = observer(function (props) {

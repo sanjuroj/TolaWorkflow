@@ -91,3 +91,10 @@ export class RFPageStore {
         return "Custom"
     }
 }
+
+
+export class RFPageUIStore {
+    @observable expandedCards = [];
+    @observable activeLevel = "";
+
+}
