@@ -280,7 +280,7 @@ class IndicatorUpdate(UpdateView):
     def form_invalid(self, form):
         if self.request.is_ajax():
             # print("...............%s.........................." % form.errors)
-            return HttpResponse(status=400)
+            return JsonResponse(form.errors, status=400)
         else:
             messages.error(self.request, _('Invalid Form'), fail_silently=False)
             # print("...............%s.........................." % form.errors)

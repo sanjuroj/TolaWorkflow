@@ -1384,7 +1384,7 @@ class SiteProfileForm(forms.ModelForm):
 
             ), submit_section,
 
-             HTML("""
+             HTML(u"""
                   <div class='card mt-4'>
 
                   <!-- Default panel contents -->

@@ -22,7 +22,8 @@ from django.views.generic import TemplateView
 from rest_framework import routers
 from django.conf import settings
 from django.conf.urls.static import static
-from rest_framework.authtoken import views as auth_views
+from rest_framework.authtoken import views as authtoken_views
+from django.contrib.auth import views as authviews
 
 from tola import views as tolaviews
 from indicators.views.views_indicators import ProgramPage, old_program_page
@@ -90,7 +91,7 @@ urlpatterns = [
                 # rest framework
                 url(r'^api/', include(router.urls)),
                 url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-                url(r'^api-token-auth/', auth_views.obtain_auth_token),
+                url(r'^api-token-auth/', authtoken_views.obtain_auth_token),
 
                 # enable the admin:
                 url(r'^admin/', include(admin.site.urls)),
@@ -140,6 +141,8 @@ urlpatterns = [
 
                 # Auth backend URL's
                 url(r'^accounts/invalid_user/$', views.invalid_user_view, name='invalid_user'),
+                url(r'^accounts/invalid_user/okta/$', TemplateView.as_view(template_name='registration/invalid_okta_user.html'), name='invalid_user_okta'),
+                url(r'^accounts/password_reset/$', views.TolaPasswordResetView.as_view(), name='password_reset'),
                 url(r'accounts/', include('django.contrib.auth.urls')),
                 url('', include('social_django.urls', namespace='social')),
 

@@ -18,7 +18,7 @@ class Picker extends React.Component {
         const selectedOption = {value:this.props.rootStore.chosenTierSet, label: this.props.rootStore.chosenTierSetName};
 
         return (
-            <div className="rfpicker__selectbox">
+            <div className="leveltier-picker__selectbox">
                 Results framework template
                 <Select
                     options={options}
@@ -34,7 +34,7 @@ class LevelTier extends React.Component {
 
     render() {
         return (
-            <div className="rfpicker__tierlist__tier"> {this.props.tierName} </div>
+            <div className="leveltier"> {this.props.tierName} </div>
     )}
 }
 
@@ -43,7 +43,7 @@ class LevelTier extends React.Component {
 class LevelTierList extends React.Component{
     render() {
         return (
-            <div id="leveltier-list" className="rfpicker__tierlist">
+            <div id="leveltier-list" className="leveltier-list">
                 {
                     this.props.rootStore.tierList.length > 0 ?
                         this.props.rootStore.tierList.map((tier, index) => {
@@ -61,7 +61,7 @@ class LevelTierList extends React.Component{
 export const LevelTierPicker = observer(function (props) {
 
     return (
-        <div id="leveltier-picker" className="rfpicker">
+        <div id="leveltier-picker" className="leveltier-picker">
             <Picker />
             <LevelTierList />
         </div>

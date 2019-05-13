@@ -1,0 +1,86 @@
+// # from results_framework_page.html
+.rf-page {
+    display: flex;
+}
+
+
+// # from leveltier_picker.js
+
+// component LevelTierList
+.leveltier-list {
+    list-style: none;
+    background-color: $white;
+    padding: 1em;
+}
+
+// component LevelTier
+.leveltier {
+    background-color: $gray-150;
+    padding: .5em;
+    margin: .75em 0;
+}
+
+// component LevelTierPicker
+.leveltier-picker {
+    margin-right: 3em;
+    min-width: 20em;
+}
+
+// component Picker
+.leveltier-picker__selectbox {
+    background-color: $teal-100;
+    padding: 2em;
+}
+
+
+// # from level_list.js
+.leveltier--new { // ???
+    margin-left: 1em;
+}
+
+
+// # from level_cards.js
+.level-card {} // Unused but reserved
+
+// component LevelCardCollapsed
+.level-card--collapsed {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    background-color: white;
+    margin: 2em;
+}
+.level-card--collapsed__name {
+    margin: .75em 0 .75em .75em;
+}
+.level-card--collapsed__title {}
+.level-card--collapsed__actions {
+    // contains: actions__*
+    margin: .75em 0 .75em .75em;
+}
+.actions__top {}
+.actions__bottom {}
+
+// component LevelCardExpanded
+.level-card--expanded {
+    display: flex;
+    flex-direction: column;
+}
+.level-card--expanded__form {
+    display: flex;
+    flex-direction: column;
+}
+
+// component LevelTitle
+.level-title {}
+.level-title--collapsed {}
+.level-title--expanded {
+    font-weight: bold;
+}
+
+// component ButtonBar
+.button-bar {}
+
+// component LevelButton
+.level-button {}
+

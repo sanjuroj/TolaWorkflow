@@ -242,7 +242,7 @@ export default class EditDisaggregations extends React.Component {
         const {expanded_id} = this.state
         return (
             <div className="tab-pane--react">
-                <h3>Country Disaggregations</h3>
+                <h3>{gettext('Country Disaggregations')}</h3>
                 {disaggregations.map(disaggregation =>
                     <DisaggregationType
                         key={disaggregation.id}

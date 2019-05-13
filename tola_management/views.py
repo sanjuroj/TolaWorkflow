@@ -254,10 +254,13 @@ def send_new_user_registration_email(user, request):
     gmail_url = request.build_absolute_uri(reverse('social:begin', args=['google-oauth2']))
     c = {'one_time_url': one_time_url, 'user': user, 'gmail_url': gmail_url}
     subject=_('Mercy Corps - Tola New Account Registration')
-    email_template_name='registration/one_time_login_email.html'
-    email = loader.render_to_string(email_template_name, c)
+    html_email_template_name='registration/one_time_login_email.html'
+    text_email_template_name='registration/one_time_login_email.txt'
+    html_email = loader.render_to_string(html_email_template_name, c)
+    text_email = loader.render_to_string(text_email_template_name, c)
 
-    send_mail(subject, email, settings.DEFAULT_FROM_EMAIL, [user.email], fail_silently=False, html_message=email)
+    send_mail( subject=subject, message=text_email, from_email=settings.DEFAULT_FROM_EMAIL,
+              recipient_list=[user.email], fail_silently=False, html_message=html_email)
 
 # Create your views here.
 @login_required(login_url='/accounts/login/')

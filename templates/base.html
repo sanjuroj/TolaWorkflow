@@ -116,20 +116,22 @@
                         {% endif %}
 
                         <ul class="navbar-nav ml-auto">
+                            <li class="nav-item">
+                                  <span class="nav-link" >
+                                        {% if "demo" in request.build_absolute_uri %}
+                                            <span class="badge badge-warning text-uppercase">Demo</span>
+                                        {% elif  "qa" in request.build_absolute_uri %}
+                                            <span class="badge badge-warning text-uppercase">QA</span>
+                                        {% elif "dev" in request.build_absolute_uri %}
+                                            <span class="badge badge-warning text-uppercase">Dev</span>
+                                        {% elif  "127." in request.build_absolute_uri %}
+                                            <span class="badge badge-warning text-uppercase">Local</span>
+                                        {% elif "local" in request.build_absolute_uri %}
+                                            <span class="badge badge-warning text-uppercase">Local</span>
+                                        {% endif %}
+                                  </span>
+                            </li>
                             {% if user.is_authenticated  %}
-                                <li class="nav-item">
-                                      <span class="nav-link" >
-                                            {% if "demo" in request.build_absolute_uri %}
-                                                <span class="badge badge-warning text-uppercase">Demo server</span>
-                                            {% elif  "127." in request.build_absolute_uri %}
-                                                <span class="badge badge-warning text-uppercase">Local server</span>
-                                            {% elif "dev" in request.build_absolute_uri %}
-                                                <span class="badge badge-warning text-uppercase">Dev server</span>
-                                            {% elif "local" in request.build_absolute_uri %}
-                                                <span class="badge badge-warning text-uppercase">Local</span>
-                                            {% endif %}
-                                      </span>
-                                </li>
                                 <li class="nav-item dropdown">
                                     <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspop="true" aria-expanded="false" id="navbarUserDropdown">
                                         {% if user.is_superuser %}
@@ -232,7 +234,7 @@
                         <div class="navbar-expand-md">
                             <ul class="navbar-nav justify-content-end">
                                 <li class="nav-item">
-                                    <a href="https://learn.mercycorps.org/index.php/TOLA:Mainpage/en"
+                                    <a href="https://learn.mercycorps.org/site/tola/index.php/TOLA:Section_01/en"
                                     class="nav-link help-link"
                                     target="_blank">{% trans "Documentation" %}</a>
                                 </li>
@@ -242,7 +244,7 @@
                                     target="_blank">{% trans "FAQ" %}</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="https://learn.mercycorps.org/index.php/TOLA:Section_06/en"
+                                    <a href="https://learn.mercycorps.org/site/tola/index.php/TOLA:Section_06/en"
                                     class="nav-link help-link"
                                     target="_blank">{% trans "Feedback" %}</a>
                                 </li>

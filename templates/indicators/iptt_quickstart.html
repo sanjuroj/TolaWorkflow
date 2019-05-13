@@ -60,6 +60,22 @@
 {% block extra_js_in_body %}
     <script>
         let jsContext = {{ js_context|js }};
+            $("#id_div_top_quickstart_iptt").on("submit", "#id_form_program_indicator_overview, #id_form_program_target_overview", function(e){
+                if (this.id == 'id_form_program_target_overview') {
+                    if (mostRecentTargets.prop('checked') == true && numRecentPeriodsTargets.val() == ''){
+                        e.preventDefault();
+                        $("#id_validation_numrecent_targets").text("{% trans 'Please complete this field.' %}");
+                        return;
+                    }
+                } else {
+                    if (numRecentPeriods.attr('disabled') == null && !numRecentPeriods.val()){
+                        e.preventDefault();
+                        $("#id_validation_numrecent_timeperiods").text("{% trans 'Please complete this field.' %}");
+                        return;
+                    }
+                }
+            });
+        });
     </script>
 
     {% render_bundle 'iptt_quickstart' %}
