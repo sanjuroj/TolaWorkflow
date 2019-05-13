@@ -5,6 +5,7 @@
 
 import {observable, action, computed} from "mobx";
 import { trimOntology } from '../../level_utils'
+import { BLANK_LABEL, TVA, TIMEPERIODS } from '../../constants';
 
 /**
  * models list:
@@ -12,24 +13,6 @@ import { trimOntology } from '../../level_utils'
  * ProgramStore (observable - all program options)
  */
 
-const BLANK_LABEL = '---------';
-const TVA = 1;
-const TIMEPERIODS = 2;
-
-export class ReportAPI {
-    constructor(ajaxUrl) {
-        this.url = ajaxUrl;
-    }
-    
-    callForData(programId, frequency, tva) {
-        let params = {
-            programId: programId,
-            frequency: frequency,
-            reportType: tva ? 'tva' : 'timeperiods'
-        };
-        return $.get(this.url, params);
-    }
-}
 
 class Level {
     constructor(program, levelJSON) {

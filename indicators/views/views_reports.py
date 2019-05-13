@@ -334,7 +334,7 @@ class IPTTReportData(LoginRequiredMixin, View):
         return indicator_qs, level_data
 
     def get(self, request):
-        self.tva = request.GET.get('reportType') == 'tva'
+        self.tva = request.GET.get('reportType') == '1'
         self.frequency = int(request.GET.get('frequency'))
         indicator_qs, level_data = self.get_context_data(request)
         indicators = []
