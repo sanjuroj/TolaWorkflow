@@ -15,6 +15,7 @@ library.add(faCaretDown, faCaretRight);
 class LevelList extends React.Component {
 
     render() {
+        console.log('prerender', this.props.uiStore.expandedCards)
         let renderList = [];
         if (this.props.renderList == 'initial') {
             renderList = this.props.rootStore.levels.filter(level => level.parent == null).sort(elem => elem.customsort)
@@ -25,6 +26,7 @@ class LevelList extends React.Component {
 
         return renderList.map((elem) => {
             let card = '';
+            console.log('expandedlist', this.props.uiStore.expandedCards)
             if (elem.id in this.props.uiStore.expandedCards) {
                 card =
                     <LevelCardExpanded

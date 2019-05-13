@@ -25,7 +25,7 @@ export class LevelTitle extends React.Component {
     }
 }
 
-@inject('rootStore')
+@inject('rootStore', 'uiStore')
 @observer
 export class LevelCardCollapsed extends React.Component {
     constructor(props){
@@ -39,10 +39,10 @@ export class LevelCardCollapsed extends React.Component {
         console.log("You clicked delete level")
     }
 
-    editLevel() {
-        const currentElement =  document.getElementById(this.props.level.id);
+    editLevel = () => {
         console.log("You clicked to edit level")
-    }
+        this.props.uiStore.addExpandedCard(this.props.level.id)
+    };
 
     render(){
         return (

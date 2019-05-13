@@ -97,4 +97,12 @@ export class RFPageUIStore {
     @observable expandedCards = [];
     @observable activeLevel = "";
 
+    @action
+    addExpandedCard = (levelId) => {
+        if (!this.expandedCards.includes(levelId)) {
+            this.expandedCards.push(levelId);
+        }
+        console.log('inaction expand', toJS(this.expandedCards))
+    }
+
 }
