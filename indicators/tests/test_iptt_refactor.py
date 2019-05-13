@@ -50,7 +50,7 @@ Unit:
 # )
 
 from indicators.tests.iptt_tests.iptt_api_tests import (
-    TestLevelAPIData
+    TestOldStyleLevelAPIData
 )
 
 #  needs to be overhauled to not use outdate methods
