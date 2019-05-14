@@ -68,9 +68,9 @@ class IndicatorForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         indicator = kwargs.get('instance', None)
-        if not indicator.unit_of_measure_type:
+        if indicator and not indicator.unit_of_measure_type:
             kwargs['initial']['unit_of_measure_type'] = Indicator.UNIT_OF_MEASURE_TYPES[0][0]
-        if indicator.lop_target:
+        if indicator and indicator.lop_target:
             lop_stripped = str(indicator.lop_target)
             lop_stripped = lop_stripped.rstrip('0').rstrip('.') if '.' in lop_stripped else lop_stripped
             kwargs['initial']['lop_target'] = lop_stripped

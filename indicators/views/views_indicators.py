@@ -77,25 +77,20 @@ logger = logging.getLogger(__name__)
 
 @login_required
 @has_indicator_write_access
-def indicator_create(request, program=0):
+def indicator_create(request, program):
     """
-    url: indicator_create/<program>
-    Step one in Indicator creation.
-    Passed on to IndicatorCreate to do the creation [or  not]
+    Create an Indicator in a modal via a 2 step form
     """
     if not request.has_write_access:
         raise PermissionDenied
-    get_indicator_types = IndicatorType.objects.all()
+
     program = Program.objects.get(pk=program)
-    countries = ', '.join(program.country.all().order_by('country').values_list('country', flat=True))
-    get_services = ExternalService.objects.all()
+    # program_countries = ', '.join(program.country.all().order_by('country').values_list('country', flat=True))
 
     if request.method == 'POST':
         indicator_type, created = IndicatorType.objects.get_or_create(indicator_type="custom")
         program = Program.objects.get(id=request.POST['program'])
-        service = request.POST['services']
         level = None
-        node_id = request.POST.get('service_indicator')
         sector = None
         # add a temp name for custom indicators
         name = request.POST.get('name', _("Temporary"))
@@ -103,28 +98,12 @@ def indicator_create(request, program=0):
         definition = None
         external_service_record = None
 
-        # check for service indicator and update based on values
-        if node_id is not None and node_id != "" and int(node_id) != 0:
-            get_imported_indicators = import_indicator(service)
-            for item in get_imported_indicators:
-                if item['nid'] == node_id:
-                    sector, created = Sector.objects.get_or_create(sector=item['sector']) if item['sector'] is not None else (None, False)
-                    level, created = Level.objects.get_or_create(name=item['level'].title()) if item['level'] is not None else (None, False)
-                    name = item['title']
-                    source = item['source']
-                    definition = item['definition']
-                    # replace HTML tags if they are in the string
-                    definition = re.sub("<.*?>", "", definition)
-                    getService = ExternalService.objects.get(id=service)
-                    full_url = getService.url + "/" + item['nid']
-                    external_service_record = ExternalServiceRecord(
-                        record_id=item['nid'], external_service=getService, full_url=full_url
-                    )
-                    external_service_record.save()
-                    indicator_type, created = IndicatorType.objects.get_or_create(indicator_type=item['type'].title())
         # save form
         new_indicator = Indicator(
-            sector=sector, name=name, source=source, definition=definition,
+            sector=sector,
+            name=name,
+            source=source,
+            definition=definition,
             external_service_record=external_service_record,
             program=program,
             level=level
@@ -132,27 +111,30 @@ def indicator_create(request, program=0):
         new_indicator.save()
         new_indicator.indicator_type.add(indicator_type)
 
-
         ProgramAuditLog.log_indicator_created(
             request.user,
             new_indicator,
             'N/A'
         )
 
-        latest = new_indicator.id
-
         # redirect to update page
         messages.success(request, _('Success, Basic Indicator Created!'))
-        redirect_url = reverse_lazy('indicator_update', kwargs={'pk': latest})
+        redirect_url = reverse_lazy('indicator_update', kwargs={'pk': new_indicator.id})
         return HttpResponseRedirect(redirect_url)
 
-    # send the keys and vars from the json data to the template along with
-    # submitted feed info and silos for new form
-    return render(request, "indicators/indicator_create.html",
-                  {'country': countries, 'program': program,
-                   'getIndicatorTypes': get_indicator_types,
-                   'getServices': get_services,
-                   'result_count': 0})
+    # TODO: Form guidance obj???
+
+    form = IndicatorForm(request=request, program=program)
+
+    return render(request, 'indicators/indicator_form_modal.html', {
+        'program': program,
+        # 'program_countries': program_countries,
+
+        'form': form,
+
+        'periodic_targets': [],
+        'targets_sum': 0,
+    })
 
 
 class IndicatorUpdate(UpdateView):
