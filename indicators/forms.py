@@ -101,7 +101,6 @@ class IndicatorForm(forms.ModelForm):
         self.fields['name'].widget = forms.Textarea(attrs={'rows': 3})
         self.fields['unit_of_measure'].required = True
         self.fields['target_frequency'].required = True
-        self.fields['target_frequency_start'].widget.attrs['class'] = 'monthPicker'
         # self.fields['is_cumulative'].widget = forms.RadioSelect()
         if self.instance.target_frequency and self.instance.target_frequency != Indicator.LOP:
             self.fields['target_frequency'].widget.attrs['readonly'] = True
