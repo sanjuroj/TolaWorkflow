@@ -164,9 +164,7 @@ class IndicatorUpdate(UpdateView):
     form_class = IndicatorForm
 
     def get_template_names(self):
-        if self.request.GET.get('modal'):
-            return 'indicators/indicator_form_modal.html'
-        return 'indicators/indicator_form.html'
+        return 'indicators/indicator_form_modal.html'
 
     @method_decorator(login_required)
     @method_decorator(group_excluded('ViewOnly', url='workflow/permission'))

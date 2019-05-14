@@ -76,22 +76,6 @@
         scrollToIndicatorFormBottom();
     }
     
-    $("#indicator_form").on("click", "#id_delete_indicator_btn", function(e){
-        e.preventDefault();
-        const delete_indicator = (rationale) => {
-            var url = $(this).attr('href');
-            $.post(url, {rationale: rationale, redirect: true})
-             .done(function(data, textStatus, jqXHR){
-                 if (data.status == "success") {
-                    window.location = data.redirect_url;
-                 } else {
-                     createAlert("danger", data.msg, true, "#modalmessages");
-                     $('#indicator_modal_div').animate({ scrollTop: 0 }, 'slow');
-                 }
-             });
-        }
-        confirmAndRedirect(delete_indicator);
-    });
     $('#indicator_modal_content').on("click", "#id_delete_indicator_btn", function(e) {
         e.preventDefault();
         var url = $(this).attr('href');
@@ -146,7 +130,7 @@
         confirmAndRedirect(delete_indicator);
     });
     
-    $('#indicator_modal_content, #indicator_form').on('click', '.event-target-delete-button', function(e) {
+    $('#indicator_modal_content').on('click', '.event-target-delete-button', function(e) {
         e.preventDefault();
         const updateIfLastEvent = () => {
             if ($('.periodic-target').length == 0) {
@@ -209,37 +193,6 @@
     });
 
 
-    $("#indicator_form").on("submit", "#indicator_update_form", function(e){
-        e.preventDefault();
-        if (validateForm() === false) {
-            showValidations("#alerts");
-            return;
-        }
-        var has_results = parseInt($('#numDataPoints').text()) > 0;
-        if(has_results && hasTrackedFieldsChanged()) {
-            if(hasTargetsChanged()) {
-                window.create_destructive_changeset_notice({
-                    message_text: MODIFY_TARGETS_MESSAGE,
-                    no_preamble: true,
-                    context: document.getElementById('indicator_update_form'),
-                    on_submit: (rationale) => {
-                        submitForm(false, rationale);
-                    }
-                });
-            } else {
-                window.create_nondestructive_changeset_notice({
-                    context: document.getElementById('indicator_update_form'),
-                    on_submit: (rationale) => {
-                        submitForm(false, rationale);
-                    }
-                });
-            }
-            scrollToIndicatorFormBottom();
-        } else {
-            submitForm(false, '');
-        }
-    });
-
     // Intercept IndicatorUpdate form submission and then use ajax to submit it.
     $("#indicator_modal_content").on("submit", "#indicator_update_form", function(e){
         e.preventDefault();
@@ -274,7 +227,7 @@
     });
 
 
-    $("#indicator_modal_content, #indicator_form").on("keyup keypress", "#indicator_update_form", function(e){
+    $("#indicator_modal_content").on("keyup keypress", "#indicator_update_form", function(e){
         var keyCode = e.keyCode || e.which;
         if (keyCode === 13 ){
             e.preventDefault();
@@ -283,7 +236,7 @@
 
     });
 
-    $("#indicator_modal_content, #indicator_form").on("click", "#id_create_targets_btn", function(e) {
+    $("#indicator_modal_content").on("click", "#id_create_targets_btn", function(e) {
         e.preventDefault();
         if (validateForm() === false) {
             showValidations("#modalmessages");
@@ -293,21 +246,6 @@
 
         submitForm(true, "{% trans 'N/A' %}");
     });
-
-    $("#indicator_form").on("click", "#id_create_targets_btn", function(e) {
-        e.preventDefault();
-        if (validateForm() === false) {
-            showValidations("#alerts");
-            return;
-        }
-        $(this).attr("disabled", true);
-
-        // Even though #indicator_form selector catches case when not a modal, pretend like it's a modal
-        // The reason being is to not display the link to program page when creating targets, regardless of context
-
-        submitForm(true, "{% trans 'N/A' %}");
-    });
-
 
     function createPeriodicTargetRow(pt, isLastIteration, rowNum) {
         var markup = `
@@ -337,7 +275,7 @@
     }
 
     // delete periodic_target
-    $("#indicator_modal_content, #indicator_form").on("click", "#id_delete_targets_btn", function(e) {
+    $("#indicator_modal_content").on("click", "#id_delete_targets_btn", function(e) {
         e.preventDefault();
         var form_url = $("#indicator_update_form").attr('action');
         var indicator_id = form_url.split('/').slice(-2, -1)[0];
@@ -376,7 +314,7 @@
     });
 
     // add new periodic target
-    $("#indicator_modal_content, #indicator_form").on("click", "#addNewPeriodicTarget", function(e) {
+    $("#indicator_modal_content").on("click", "#addNewPeriodicTarget", function(e) {
         e.preventDefault();
         var numTargets = $("#periodic_targets_table tbody tr").length-1;
         var form_url = $("#indicator_update_form").attr('action');
@@ -389,7 +327,7 @@
         });
     });
 
-    $('#indicator_modal_content, #indicator_form').on('click', "input[type='reset']", function(e) {
+    $('#indicator_modal_content').on('click', "input[type='reset']", function(e) {
     })
 
  function submitForm(isModal, rationale = '') {
@@ -584,7 +522,7 @@ function formSubmitContinue(isModal, rationale = '') {
         }
     }
 
-    $("#indicator_modal_content, #indicator_form").on("change blur", "#id_target_frequency", function(e){
+    $("#indicator_modal_content").on("change blur", "#id_target_frequency", function(e){
       if ($("#id_target_frequency option:selected").text().indexOf("---") < 0) {
         $("#id_target_frequency").removeClass('is-invalid');
         $("#validation_id_target_frequency").text(" ");
@@ -835,13 +773,13 @@ function formSubmitContinue(isModal, rationale = '') {
         return validationsTargetTab && validationsSummaryTab && validationsPerformanceTab;
     }
 
-    $("#indicator_modal_content, #indicator_form").on("keypress", "input[type=number]", function(e){
+    $("#indicator_modal_content").on("keypress", "input[type=number]", function(e){
         if (e.which == 69 || e.which == 101){ //69 = e | 101 = E
             e.preventDefault();
         }
     });
 
-    $("#indicator_modal_content, #indicator_form").on("input", "#periodic_targets_table input[type=number]", function(e){
+    $("#indicator_modal_content").on("input", "#periodic_targets_table input[type=number]", function(e){
         if ($(this).val() && $(this).val() >= 0) {
             $(this).removeClass('is-invalid');
             $("#id_pt_errors").text('');
@@ -854,7 +792,7 @@ function formSubmitContinue(isModal, rationale = '') {
         }
     });
 
-    $("#indicator_modal_content, #indicator_form").on("input", "#periodic_targets_table input[type=text]", function(e){
+    $("#indicator_modal_content").on("input", "#periodic_targets_table input[type=text]", function(e){
         if ($(this).val()) {
             $(this).removeClass('is-invalid');
             $("#id_pt_errors").text('');
@@ -866,32 +804,32 @@ function formSubmitContinue(isModal, rationale = '') {
         }
     });
 
-    $("#indicator_modal_content, #indicator_form").on("blur", "#id_unit_of_measure", function(e){
+    $("#indicator_modal_content").on("blur", "#id_unit_of_measure", function(e){
         validateForEmptyField("id_unit_of_measure");
     });
 
-    $("#indicator_modal_content, #indicator_form").on("blur", "#id_level", function(e){
+    $("#indicator_modal_content").on("blur", "#id_level", function(e){
         validateForEmptyField("id_level");
     });
 
-    $("#indicator_modal_content, #indicator_form").on("blur", "#id_target_frequency", function(e){
+    $("#indicator_modal_content").on("blur", "#id_target_frequency", function(e){
         validateForEmptyField("id_target_frequency");
     });
 
-    $("#indicator_modal_content, #indicator_form").on("blur", "#id_lop_target", function(e){
+    $("#indicator_modal_content").on("blur", "#id_lop_target", function(e){
         validate_loptarget();
     });
 
-    $("#indicator_modal_content, #indicator_form").on("blur", "#id_baseline", function(e){
+    $("#indicator_modal_content").on("blur", "#id_baseline", function(e){
         $("#id_baseline_na").prop('checked', false);
         validate_baseline();
     });
 
-    $("#indicator_modal_content, #indicator_form").on("input", "#id_baseline", function(e){
+    $("#indicator_modal_content").on("input", "#id_baseline", function(e){
         $("#id_baseline_na").prop('checked', false);
     });
 
-    $("#indicator_modal_content, #indicator_form").on("change", "#id_baseline_na", function(e){
+    $("#indicator_modal_content").on("change", "#id_baseline_na", function(e){
         $("#id_baseline").val('');
         if (!$(this).is(':checked')){
             validate_baseline()
@@ -900,7 +838,7 @@ function formSubmitContinue(isModal, rationale = '') {
         }
     });
 
-    $("#indicator_modal_content, #indicator_form").on("blur", "#id_target_frequency_custom", function(e){
+    $("#indicator_modal_content").on("blur", "#id_target_frequency_custom", function(e){
         var is_valid = validateForEmptyField("id_target_frequency_custom");
         if (!is_valid) {
           $("#div_id_target_frequency_custom").addClass('mb-5')
@@ -912,12 +850,12 @@ function formSubmitContinue(isModal, rationale = '') {
         }
     });
 
-    $("#indicator_modal_content, #indicator_form").on("blur", "#id_target_frequency_num_periods", function(e){
+    $("#indicator_modal_content").on("blur", "#id_target_frequency_num_periods", function(e){
         validateNumPeriods();
 
     });
 
-    $("#indicator_modal_content, #indicator_form").on("blur", "#id_name", function(e){
+    $("#indicator_modal_content").on("blur", "#id_name", function(e){
         var is_valid = validateForEmptyField("id_name");
         if (!is_valid) {
           $("#div_id_name").addClass('marginbottom-225')

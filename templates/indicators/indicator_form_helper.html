@@ -533,7 +533,7 @@
     toggle Percent sign and cumulative options accordingly.
     #id_fieldgroup_unit_of_measure
     */
-    $("#indicator_modal_content, #indicator_form").on("change", ":input[name='unit_of_measure_type']", function(e){
+    $("#indicator_modal_content").on("change", ":input[name='unit_of_measure_type']", function(e){
         var unit_of_measure_type = parseInt(e.target.value);
         togglePercentSymbol();
         toggleCummulativeOptions(unit_of_measure_type);
@@ -546,7 +546,7 @@
     sum or targets average
     #periodic-targets-tablediv
     */
-    $("#indicator_modal_content, #indicator_form").on("blur", "#periodic_targets_table input[data-periodictarget]", function(e) {
+    $("#indicator_modal_content").on("blur", "#periodic_targets_table input[data-periodictarget]", function(e) {
         updateAggregateRowValueAndLabel();
     });
 
@@ -556,7 +556,7 @@
     targets_sum row accordingly.
     #id_div_is_cumulative
     */
-    $("#indicator_modal_content, #indicator_form").on("change", ":input[type='radio'][name='is_cumulative']", function(e){
+    $("#indicator_modal_content").on("change", ":input[type='radio'][name='is_cumulative']", function(e){
         updateAggregateRowValueAndLabel(e.target.value);
     });
 
