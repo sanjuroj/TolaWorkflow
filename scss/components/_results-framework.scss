@@ -44,7 +44,7 @@
 
 // # from level_list.js
 .leveltier--new { // ???
-    margin-left: 1em;
+    margin-left: $grid-gutter-width/2;
 }
 
 
@@ -72,8 +72,12 @@
 
 // component LevelCardExpanded
 .level-card--expanded {
+    background-color: $teal-100;
+    border: 1px solid $teal-150;
     display: flex;
     flex-direction: column;
+    margin-bottom: $grid-gutter-width/2;
+    padding: $card-spacer-x;
 }
 .level-card--expanded__form {
     display: flex;
@@ -81,15 +85,20 @@
 }
 
 // component LevelTitle
-.level-title {}
+.level-title {
+}
 .level-title--collapsed {}
 .level-title--expanded {
-    font-weight: bold;
+    font-weight: normal;
 }
 
 // component ButtonBar
 .button-bar {}
 
 // component LevelButton
-.level-button {}
+.level-button {
+    & + & {
+        margin-left: $grid-gutter-width/4;
+    }
+}
 

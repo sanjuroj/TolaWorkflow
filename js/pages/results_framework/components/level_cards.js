@@ -14,12 +14,12 @@ export class LevelTitle extends React.Component {
 
     render() {
         return (
-            <span className={'level-title ' + this.props.classes}>
+            <h3 className={'level-title ' + this.props.classes}>
                 {this.props.tierName}
                 {/*if we don't check whether there is an ontology, there ill be an extra
                 space before the colon */}
-                {this.props.ontologyLabel ? " " + this.props.ontologyLabel : null}:
-            </span>
+                {this.props.ontologyLabel ? " " + this.props.ontologyLabel : null}
+            </h3>
         )
 
     }
@@ -46,7 +46,7 @@ export class LevelCardCollapsed extends React.Component {
 
     render(){
         return (
-            <div className="level-card--collapsed" id={this.props.level.id}>
+            <div className="level-card level-card--collapsed" id={this.props.level.id}>
                 <div className="level-card--collapsed__name">
                     <strong>
                         <LevelTitle
@@ -113,7 +113,7 @@ export class LevelCardExpanded extends React.Component {
     render(){
 
         return (
-            <div className="level-card--expanded" id={this.props.level.id}>
+            <div className="level-card level-card--expanded" id={this.props.level.id}>
                 <div>
                     <LevelTitle
                         tierName={this.props.levelProps.tierName}
@@ -123,19 +123,25 @@ export class LevelCardExpanded extends React.Component {
 
                 </div>
                 <form className="level-card--expanded__form">
-                    <input
-                        type="text"
-                        id="level-name"
-                        name="name"
-                        value={this.props.level.name || ""}
-                        onChange={this.onFormChange}    />
-                    <label htmlFor="assumptions">Assumptions</label>
-                    <input
-                        type="text"
-                        id="level-assumptions"
-                        name="assumptions"
-                        value={this.props.level.assumptions || ""}
-                        onChange={this.onFormChange}/>
+                    <div className="form-group">
+                        <textarea
+                            className="form-control"
+                            type="text"
+                            id="level-name"
+                            name="name"
+                            value={this.props.level.name || ""}
+                            onChange={this.onFormChange}    />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="assumptions">Assumptions</label>
+                        <textarea
+                            className="form-control"
+                            type="text"
+                            id="level-assumptions"
+                            name="assumptions"
+                            value={this.props.level.assumptions || ""}
+                            onChange={this.onFormChange}/>
+                    </div>
                     <ButtonBar />
                 </form>
             </div>
@@ -149,9 +155,9 @@ class ButtonBar extends React.Component {
     render() {
         return (
             <div className="button-bar">
-                <LevelButton classes="" text="Save and close" />
-                <LevelButton classes="" text="Save and another" />
-                <LevelButton classes="" text="Save and link" />
+                <LevelButton classes="btn-primary" text={gettext("Save and close")} />
+                <LevelButton classes="btn-primary" text={gettext("Save and another")} />
+                <LevelButton classes="btn-primary" text={gettext("Save and link")} />
             </div>
         )
 
@@ -162,7 +168,7 @@ class LevelButton extends React.Component {
 
     render() {
         return (
-            <button className={this.props.classes + ' level-button'}>
+            <button className={this.props.classes + ' level-button btn'}>
                 {this.props.text}
             </button>
         )
