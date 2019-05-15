@@ -7,21 +7,20 @@ import browserPlugin from 'router5-plugin-browser';
 
 import {LevelListing} from './components/level_list';
 import {LevelTierPicker} from './components/leveltier_picker';
-import {RFPageStore, RFPageUIStore} from './models';
+import {RootStore} from './models';
 
 /*
  * Model/Store setup
  */
 const {levels, levelTiers, tierPresets} = jsContext;
-const rootStore = new RFPageStore(levels, levelTiers, tierPresets);
-const uiStore = new RFPageUIStore();
+const rootStore = new RootStore(levels, levelTiers, tierPresets);
 
 /*
  * React components on page
  */
 
 ReactDOM.render(
-    <Provider rootStore={rootStore} uiStore={uiStore}>
+    <Provider rootStore={rootStore}>
         <React.Fragment>
             <LevelTierPicker />
             <LevelListing />

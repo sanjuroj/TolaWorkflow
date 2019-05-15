@@ -10,15 +10,15 @@ import {LevelCardCollapsed, LevelCardExpanded} from "./level_cards";
 
 library.add(faCaretDown, faCaretRight);
 
-@inject('rootStore', 'uiStore')
+@inject('rootStore')
 @observer
 class LevelList extends React.Component {
 
     render() {
-        console.log('prerender', this.props.uiStore.expandedCards)
         let renderList = [];
+        // console.log('store=', toJS(this.props.rootStore.levels))
         if (this.props.renderList == 'initial') {
-            renderList = this.props.rootStore.levels.filter(level => level.parent == null).sort(elem => elem.customsort)
+            renderList = this.props.rootStore.levelStore.levels.filter(level => level.parent == null).sort(elem => elem.customsort)
         }
         else{
             renderList = this.props.renderList.sort(elem => elem.customsort);
@@ -26,27 +26,25 @@ class LevelList extends React.Component {
 
         return renderList.map((elem) => {
             let card = '';
-            console.log('expandedlist', this.props.uiStore.expandedCards)
-            if (elem.id in this.props.uiStore.expandedCards) {
+            // console.log('expandedlist', this.props.uiStore.expandedCards)
+            if (this.props.rootStore.uiStore.expandedCards.indexOf(elem.id) !== -1) {
                 card =
                     <LevelCardExpanded
                         level={elem}
-                        levelProps={this.props.rootStore.levelProperties[elem.id]}/>
+                        levelProps={this.props.rootStore.levelStore.levelProperties[elem.id]}/>
             }
             else {
                 card =
                     <LevelCardCollapsed
                         level={elem}
-                        levelProps={this.props.rootStore.levelProperties[elem.id]}/>
-
+                        levelProps={this.props.rootStore.levelStore.levelProperties[elem.id]}/>
             }
 
-            let children = this.props.rootStore.levels.filter(level => level.parent == elem.id);
+            let children = this.props.rootStore.levelStore.levels.filter(level => level.parent == elem.id);
             let childLevels = null;
             if (children.length > 0){
                 childLevels =  <LevelList
                     rootStore={this.props.rootStore}
-                    uiStore={this.props.uiStore}
                     renderList={children}/>
             }
 
