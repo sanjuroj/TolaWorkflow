@@ -209,20 +209,20 @@
                     no_preamble: true,
                     context: document.getElementById('indicator_update_form'),
                     on_submit: (rationale) => {
-                        submitForm(true, rationale);
+                        submitForm(rationale);
                     }
                 });
             } else {
                 window.create_nondestructive_changeset_notice({
                     context: document.getElementById('indicator_update_form'),
                     on_submit: (rationale) => {
-                        submitForm(true, rationale);
+                        submitForm(rationale);
                     }
                 });
             }
             scrollToIndicatorFormBottom();
         } else {
-            submitForm(true, '');
+            submitForm('');
         }
     });
 
@@ -244,7 +244,7 @@
         }
         $(this).attr("disabled", true);
 
-        submitForm(true, "{% trans 'N/A' %}");
+        submitForm("{% trans 'N/A' %}");
     });
 
     function createPeriodicTargetRow(pt, isLastIteration, rowNum) {
@@ -330,7 +330,7 @@
     $('#indicator_modal_content').on('click', "input[type='reset']", function(e) {
     })
 
- function submitForm(isModal, rationale = '') {
+ function submitForm(rationale = '') {
         var numDataPoints = parseInt($("#numDataPoints").text());
         var initalTargetFrequency = parseInt($("#initialTargetFrequencyValue").text());
         var target_frequency = $("#id_target_frequency").val();
@@ -343,7 +343,7 @@
                 message_text: message_text,
                 context: document.getElementById('indicator_update_form'),
                 on_submit: () => {
-                    formSubmitContinue(isModal, rationale);
+                    formSubmitContinue(rationale);
                 },
                 on_cancel: () => {
                     $('#id_target_frequency').val('1');
@@ -352,11 +352,11 @@
                 }
             });
         } else {
-            formSubmitContinue(isModal, rationale);
+            formSubmitContinue(rationale);
         }
  }
  
-function formSubmitContinue(isModal, rationale = '') {
+function formSubmitContinue(rationale = '') {
         let $form = $('#indicator_update_form');
         var submitBtnName = $form.find("input[type=submit]:focus" );
         var form_url = $form.attr('action');
@@ -400,12 +400,7 @@ function formSubmitContinue(isModal, rationale = '') {
 
             $(alertsElement).html('');
 
-            if (isModal) {
-                createAlert("success", "{% trans 'Success, form data saved.'|escapejs %}", true, alertsElement);
-            } else {
-                let programId = $form.find('[name="program"]').val();
-                createAlert("success", `{% trans 'Success!' %} <a href='/program/${programId}/0/0/'>{% trans 'View your indicator on the program page.' %}</a>`, true, alertsElement);
-            }
+            createAlert("success", "{% trans 'Success, form data saved.'|escapejs %}", true, alertsElement);
 
             var jsondata = $.parseJSON(data);
             var indicator = $.parseJSON(jsondata["indicatorjson"])[0];
