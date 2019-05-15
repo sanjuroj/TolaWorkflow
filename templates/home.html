@@ -82,9 +82,11 @@
                         </ul>
                     {% endif %}
                 </div>
-                {% if has_high_role %}
-                    {% if program.reporting_period_start and program.reporting_period_end %}
+                {% if program.reporting_period_start and program.reporting_period_end %}
+                    {% if has_high_role %}
                         {% program_complete %}
+                    {% else %}
+                        {% program_complete True %}
                     {% endif %}
                 {% endif %}
             </div>

@@ -1214,9 +1214,9 @@ function (_React$Component2) {
 
     _this2 = _possibleConstructorReturn(this, _getPrototypeOf(GaugeBand).call(this, props));
 
-    _this2.onFilterLinkClick = function (e) {
+    _this2.onFilterLinkClick = function (e, filterType) {
       e.preventDefault();
-      _eventbus__WEBPACK_IMPORTED_MODULE_3__["default"].emit('nav-apply-gauge-tank-filter', parseInt(e.target.getAttribute('data-filter-type')));
+      _eventbus__WEBPACK_IMPORTED_MODULE_3__["default"].emit('nav-apply-gauge-tank-filter', filterType);
     };
 
     _this2.handledFilterTypes = new Set([_models__WEBPACK_IMPORTED_MODULE_4__["IndicatorFilterType"].aboveTarget, _models__WEBPACK_IMPORTED_MODULE_4__["IndicatorFilterType"].belowTarget, _models__WEBPACK_IMPORTED_MODULE_4__["IndicatorFilterType"].onTarget]);
@@ -1306,15 +1306,17 @@ function (_React$Component2) {
           className: "gauge__label"
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
           className: "gauge__value--above filter-trigger--band",
-          "data-filter-type": _models__WEBPACK_IMPORTED_MODULE_4__["IndicatorFilterType"].aboveTarget,
-          onClick: _this3.onFilterLinkClick,
+          onClick: function onClick(e) {
+            return _this3.onFilterLinkClick(e, _models__WEBPACK_IMPORTED_MODULE_4__["IndicatorFilterType"].aboveTarget);
+          },
           dangerouslySetInnerHTML: aboveTargetMarkup()
         })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
           className: "gauge__label"
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
           className: "gauge__value filter-trigger--band",
-          "data-filter-type": _models__WEBPACK_IMPORTED_MODULE_4__["IndicatorFilterType"].onTarget,
-          onClick: _this3.onFilterLinkClick,
+          onClick: function onClick(e) {
+            return _this3.onFilterLinkClick(e, _models__WEBPACK_IMPORTED_MODULE_4__["IndicatorFilterType"].onTarget);
+          },
           dangerouslySetInnerHTML: onTargetMarkup()
         }), ' ', react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
           href: "#",
@@ -1334,8 +1336,9 @@ function (_React$Component2) {
           className: "gauge__label"
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
           className: "gauge__value--below filter-trigger--band",
-          "data-filter-type": _models__WEBPACK_IMPORTED_MODULE_4__["IndicatorFilterType"].belowTarget,
-          onClick: _this3.onFilterLinkClick,
+          onClick: function onClick(e) {
+            return _this3.onFilterLinkClick(e, _models__WEBPACK_IMPORTED_MODULE_4__["IndicatorFilterType"].belowTarget);
+          },
           dangerouslySetInnerHTML: belowTargetMarkup()
         })));
       }; // Handle strings containing HTML markup
@@ -1503,4 +1506,4 @@ var ProgramMetrics = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])
 /***/ })
 
 },[["aJgA","runtime","vendors"]]]);
-//# sourceMappingURL=program_page-6641c6fc747014eb2c71.js.map
+//# sourceMappingURL=program_page-a2c30b401e06d8b25ff8.js.map

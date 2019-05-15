@@ -13,7 +13,8 @@
                 data-progend="{{ program.end_date }}"
                 data-rptstart="{{ program.reporting_period_start }}"
                 data-rptend="{{ program.reporting_period_end }}"
-                data-target="#id_reporting_period_modal">
+                data-target="#id_reporting_period_modal"
+                data-read-only="{{ read_only }}">
                 Program period
             </a>
             is <br><strong class="text-dark">{{ program.percent_complete }}% complete</strong>
