@@ -122,8 +122,6 @@ def indicator_create(request, program):
         redirect_url = reverse_lazy('indicator_update', kwargs={'pk': new_indicator.id})
         return HttpResponseRedirect(redirect_url)
 
-    # TODO: Form guidance obj???
-
     form = IndicatorForm(request=request, program=program)
 
     return render(request, 'indicators/indicator_form_modal.html', {
@@ -134,36 +132,49 @@ def indicator_create(request, program):
 
         'periodic_targets': [],
         'targets_sum': 0,
+
+        # Replicate attaching form guidance to a CBV attribute for form_guidance.html
+        'view': {
+            'guidance': FormGuidance.objects.filter(form="Indicator").first(),
+        }
     })
 
 
-class IndicatorUpdate(UpdateView):
+class IndicatorFormMixin(object):
+    model = Indicator
+    form_class = IndicatorForm
+
+    def __init__(self):
+        self.guidance = None
+
+    def set_form_guidance(self):
+        self.guidance = FormGuidance.objects.filter(form="Indicator").first()
+
+    def get_template_names(self):
+        return 'indicators/indicator_form_modal.html'
+
+    def form_invalid(self, form):
+        return JsonResponse(form.errors, status=400)
+
+
+class IndicatorUpdate(IndicatorFormMixin, UpdateView):
     """
     Update and Edit Indicators.
     url: indicator_update/<pk>
     """
-    model = Indicator
-    form_class = IndicatorForm
-
-    def get_template_names(self):
-        return 'indicators/indicator_form_modal.html'
 
     @method_decorator(login_required)
     @method_decorator(group_excluded('ViewOnly', url='workflow/permission'))
     @method_decorator(indicator_pk_adapter(has_indicator_write_access))
     @transaction.atomic
     def dispatch(self, request, *args, **kwargs):
-
         if request.method == 'GET':
             # If target_frequency is set but not targets are saved then
             # unset target_frequency too.
             indicator = self.get_object()
             reset_indicator_target_frequency(indicator)
 
-        try:
-            self.guidance = FormGuidance.objects.get(form="Indicator")
-        except FormGuidance.DoesNotExist:
-            self.guidance = None
+        self.set_form_guidance()
 
         return super(IndicatorUpdate, self).dispatch(request, *args, **kwargs)
 
@@ -244,15 +255,6 @@ class IndicatorUpdate(UpdateView):
         program = self.object.program
         kwargs['program'] = program
         return kwargs
-
-    def form_invalid(self, form):
-        if self.request.is_ajax():
-            # print("...............%s.........................." % form.errors)
-            return JsonResponse(form.errors, status=400)
-        else:
-            messages.error(self.request, _('Invalid Form'), fail_silently=False)
-            # print("...............%s.........................." % form.errors)
-            return self.render_to_response(self.get_context_data(form=form))
 
     def form_valid(self, form, **kwargs):
         periodic_targets = self.request.POST.get('periodic_targets', None)
