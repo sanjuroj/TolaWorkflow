@@ -40,7 +40,7 @@
         {% if indicator %}
             action="{% url 'indicator_update' indicator.id %}"
         {% else %}
-            action=""
+            action="{% url 'indicator_create' program.id %}"
         {% endif %}
             id="indicator_update_form"
             class="form-horizontal"

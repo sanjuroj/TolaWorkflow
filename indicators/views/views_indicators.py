@@ -157,6 +157,50 @@ class IndicatorFormMixin(object):
         return JsonResponse(form.errors, status=400)
 
 
+class IndicatorCreate(IndicatorFormMixin, CreateView):
+
+    @method_decorator(login_required)
+    @method_decorator(has_indicator_write_access)
+    @transaction.atomic
+    def dispatch(self, request, *args, **kwargs):
+        self.set_form_guidance()
+        self.program = Program.objects.get(pk=kwargs['program'])
+        return super(IndicatorCreate, self).dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(IndicatorCreate, self).get_context_data(**kwargs)
+
+        context['program'] = self.program
+
+        context['periodic_targets'] = []
+        context['targets_sum'] = 0
+
+        return context
+
+    def get_initial(self):
+        return {
+            'unit_of_measure_type': Indicator.NUMBER,
+            'program': self.program,
+        }
+
+    def get_form_kwargs(self):
+        kwargs = super(IndicatorCreate, self).get_form_kwargs()
+        kwargs['request'] = self.request
+        kwargs['program'] = self.program
+        return kwargs
+
+    def form_valid(self, form, **kwargs):
+        indicator = form.save()
+
+        ProgramAuditLog.log_indicator_created(
+            self.request.user,
+            indicator,
+            'N/A'
+        )
+
+        return JsonResponse({'success': True})
+
+
 class IndicatorUpdate(IndicatorFormMixin, UpdateView):
     """
     Update and Edit Indicators.
@@ -185,7 +229,7 @@ class IndicatorUpdate(IndicatorFormMixin, UpdateView):
         program = getIndicator.program
 
         context.update({'i_name': getIndicator.name})
-        context['programId'] = program.id
+        # context['programId'] = program.id
 
         pts = PeriodicTarget.objects.filter(indicator=getIndicator) \
             .annotate(num_data=Count('result')).order_by('customsort', 'create_date', 'period')
@@ -389,8 +433,9 @@ class IndicatorUpdate(IndicatorFormMixin, UpdateView):
                 "content": content,
             }
             return HttpResponse(json.dumps(data))
-        else:
-            messages.success(self.request, _('Success, Indicator Updated!'))
+        # else:
+        #     messages.success(self.request, _('Success, Indicator Updated!'))
+
         return self.render_to_response(self.get_context_data(form=form))
 
 

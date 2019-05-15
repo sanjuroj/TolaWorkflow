@@ -86,11 +86,19 @@ class IndicatorForm(forms.ModelForm):
         countries = getCountry(self.request.user)
         self.fields['disaggregation'].queryset = DisaggregationType.objects\
             .filter(country__in=countries, standard=False)
-        self.fields['program'].queryset = Program.objects.filter(
-            Q(country__in=countries) | Q(user_access=self.request.user.tola_user),
-            funding_status="Funded"
-        ).distinct()
-        self.fields['program'].disabled = True
+
+        # on update, the indicator.program field allows save to work
+        # on create, having the field be disabled breaks save() even if a program id is in POST data
+        # and the program is set in "initial"
+        if indicator:
+            self.fields['program'].queryset = Program.objects.filter(
+                Q(country__in=countries) | Q(user_access=self.request.user.tola_user),
+                funding_status="Funded"
+            ).distinct()
+            self.fields['program'].disabled = True
+        else:
+            self.fields['program'].queryset = Program.objects.filter(pk=self.programval.id)
+
         self.fields['objectives'].queryset = Objective.objects.filter(program__id__in=[self.programval.id])
         self.fields['strategic_objectives'].queryset = StrategicObjective.objects.filter(country__in=countries)
         self.fields['approved_by'].queryset = TolaUser.objects.filter(country__in=countries).distinct()

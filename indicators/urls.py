@@ -1,7 +1,7 @@
 from django.conf.urls import url
 
 from indicators.views import (
-    indicator_create,
+    IndicatorCreate,
     IndicatorUpdate,
     IndicatorDelete,
     PeriodicTargetView,
@@ -36,7 +36,7 @@ from .views.views_results_framework import ResultsFrameworkBuilder
 
 
 urlpatterns = [
-    url(r'^indicator_create/(?P<program>\d+)/$', indicator_create, name='indicator_create'),
+    url(r'^indicator_create/(?P<program>\d+)/$', IndicatorCreate.as_view(), name='indicator_create'),
 
     url(r'^indicator_update/(?P<pk>\d+)/$', IndicatorUpdate.as_view(), name='indicator_update'),
 
