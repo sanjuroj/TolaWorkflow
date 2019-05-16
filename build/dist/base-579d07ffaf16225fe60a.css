@@ -8594,6 +8594,78 @@ input[type=radio]:disabled {
     right: 41px;
     top: 8px; }
 
+.rf-page {
+  display: flex;
+  align-items: flex-start; }
+
+.leveltier-list {
+  background-color: #fff;
+  padding: 15px; }
+
+.leveltier {
+  background-color: #f5f5f5;
+  color: #94979c;
+  padding: 7.5px; }
+  .leveltier + .leveltier {
+    margin-top: 7.5px; }
+
+.leveltier--level-1 {
+  margin-left: 15px; }
+
+.leveltier--level-2 {
+  margin-left: 30px; }
+
+.leveltier--level-3 {
+  margin-left: 45px; }
+
+.leveltier--level-4 {
+  margin-left: 60px; }
+
+.leveltier--level-5 {
+  margin-left: 75px; }
+
+.leveltier--level-6 {
+  margin-left: 90px; }
+
+.leveltier-picker {
+  border: 1px solid #d2d5d9;
+  margin-right: 30px;
+  min-width: 20rem; }
+
+.leveltier-picker__selectbox {
+  background-color: #ccefee;
+  padding: 15px; }
+
+.leveltier--new > .leveltier--new {
+  margin-left: 30px; }
+
+.level-card {
+  margin-bottom: 15px;
+  padding: 0.9375rem; }
+
+.level-card--collapsed {
+  background-color: white;
+  border: 1px solid #E5E6E8;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between; }
+
+.level-card--expanded {
+  background-color: #ccefee;
+  border: 1px solid #b5e0df;
+  display: flex;
+  flex-direction: column; }
+
+.level-card--expanded__form {
+  display: flex;
+  flex-direction: column; }
+
+.level-title--expanded {
+  font-weight: normal; }
+
+.level-button + .level-button {
+  margin-left: 7.5px; }
+
 /* Local custom CSS and overloads for non-BS libraries */
 .help-block {
   color: #71757b !important;
@@ -9275,5 +9347,3 @@ a:hover {
 
 /* Unsorted custom selectors */
 
-
-/*# sourceMappingURL=base-2e2db6f73bfac7723e8e.css.map*/

@@ -1462,7 +1462,7 @@ function (_React$Component) {
         tabIndex: "0"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_4__["FontAwesomeIcon"], {
         icon: expanded ? 'caret-down' : 'caret-right'
-      }), objective.id == 'new' ? "New Strategic Objective" : objective.name), expanded && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("form", {
+      }), objective.id == 'new' ? gettext("New Strategic Objective") : objective.name), expanded && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("form", {
         className: "form card card-body bg-white"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group"
@@ -3117,4 +3117,4 @@ function (_React$Component) {
 /***/ })
 
 },[["NlW9","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_country-9a0c92131f48b14787b6.js.map
+//# sourceMappingURL=tola_management_country-bae94418e010a4ed92e0.js.map

@@ -58,7 +58,7 @@ function (_React$Component) {
     _this = _possibleConstructorReturn(this, (_getPrototypeOf2 = _getPrototypeOf(Picker)).call.apply(_getPrototypeOf2, [this].concat(args)));
 
     _this.handleChange = function (selectedPreset) {
-      _this.props.rootStore.changeTierSet(selectedPreset.value);
+      _this.props.rootStore.levelStore.changeTierSet(selectedPreset.value);
     };
 
     return _this;
@@ -67,15 +67,15 @@ function (_React$Component) {
   _createClass(Picker, [{
     key: "render",
     value: function render() {
-      var options = Object.keys(this.props.rootStore.tierPresets).map(function (val) {
+      var options = Object.keys(this.props.rootStore.levelStore.tierPresets).map(function (val) {
         return {
           value: val,
           label: val
         };
       });
       var selectedOption = {
-        value: this.props.rootStore.chosenTierSet,
-        label: this.props.rootStore.chosenTierSetName
+        value: this.props.rootStore.levelStore.chosenTierSet,
+        label: this.props.rootStore.levelStore.chosenTierSetName
       };
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "leveltier-picker__selectbox"
@@ -105,8 +105,8 @@ function (_React$Component2) {
     key: "render",
     value: function render() {
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "leveltier"
-      }, " ", this.props.tierName, " ");
+        className: 'leveltier leveltier--level-' + this.props.tierLevel
+      }, this.props.tierName, " ");
     }
   }]);
 
@@ -130,7 +130,7 @@ function (_React$Component3) {
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         id: "leveltier-list",
         className: "leveltier-list"
-      }, this.props.rootStore.tierList.length > 0 ? this.props.rootStore.tierList.map(function (tier, index) {
+      }, this.props.rootStore.levelStore.tierList.length > 0 ? this.props.rootStore.levelStore.tierList.map(function (tier, index) {
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(LevelTier, {
           key: index,
           tierName: tier
@@ -172,7 +172,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @fortawesome/react-fontawesome */ "IP2g");
 /* harmony import */ var _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @fortawesome/free-solid-svg-icons */ "wHSu");
 /* harmony import */ var react_select__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! react-select */ "y2Vs");
-var _dec, _class, _dec2, _class2;
+var _dec, _class, _temp, _dec2, _class3, _temp2;
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
@@ -215,15 +215,15 @@ function (_React$Component) {
   _createClass(LevelTitle, [{
     key: "render",
     value: function render() {
-      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h3", {
         className: 'level-title ' + this.props.classes
-      }, this.props.tierName, this.props.ontologyLabel ? " " + this.props.ontologyLabel : null, ":");
+      }, this.props.tierName, this.props.ontologyLabel ? " " + this.props.ontologyLabel : null);
     }
   }]);
 
   return LevelTitle;
 }(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component);
-var LevelCardCollapsed = (_dec = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["inject"])('rootStore'), _dec(_class = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])(_class =
+var LevelCardCollapsed = (_dec = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["inject"])('rootStore'), _dec(_class = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])(_class = (_temp =
 /*#__PURE__*/
 function (_React$Component2) {
   _inherits(LevelCardCollapsed, _React$Component2);
@@ -234,6 +234,13 @@ function (_React$Component2) {
     _classCallCheck(this, LevelCardCollapsed);
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(LevelCardCollapsed).call(this, props));
+
+    _this.editLevel = function () {
+      console.log("You clicked to edit level");
+
+      _this.props.rootStore.uiStore.addExpandedCard(_this.props.level.id);
+    };
+
     _this.deleteLevel = _this.deleteLevel.bind(_assertThisInitialized(_assertThisInitialized(_this)));
     _this.editLevel = _this.editLevel.bind(_assertThisInitialized(_assertThisInitialized(_this)));
     return _this;
@@ -246,16 +253,10 @@ function (_React$Component2) {
       console.log("You clicked delete level");
     }
   }, {
-    key: "editLevel",
-    value: function editLevel() {
-      var currentElement = document.getElementById(this.props.level.id);
-      console.log("You clicked to edit level");
-    }
-  }, {
     key: "render",
     value: function render() {
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "level-card--collapsed",
+        className: "level-card level-card--collapsed",
         id: this.props.level.id
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "level-card--collapsed__name"
@@ -294,8 +295,8 @@ function (_React$Component2) {
   }]);
 
   return LevelCardCollapsed;
-}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component)) || _class) || _class);
-var LevelCardExpanded = (_dec2 = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["inject"])('rootStore'), _dec2(_class2 = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])(_class2 =
+}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component), _temp)) || _class) || _class);
+var LevelCardExpanded = (_dec2 = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["inject"])('rootStore'), _dec2(_class3 = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])(_class3 = (_temp2 =
 /*#__PURE__*/
 function (_React$Component3) {
   _inherits(LevelCardExpanded, _React$Component3);
@@ -306,6 +307,16 @@ function (_React$Component3) {
     _classCallCheck(this, LevelCardExpanded);
 
     _this2 = _possibleConstructorReturn(this, _getPrototypeOf(LevelCardExpanded).call(this, props));
+
+    _this2.saveLevel = function (e) {
+      e.preventDefault();
+      console.log('event in save', e);
+      console.log("You clicked save level");
+      console.log('edata', e.target);
+
+      _this2.props.rootStore.levelStore.saveLevelToDB(_this2.props.level.id);
+    };
+
     _this2.onFormChange = _this2.onFormChange.bind(_assertThisInitialized(_assertThisInitialized(_this2))); // this.saveLevel = this.saveLevel.bind(this);
     // this.saveLevel = this.saveLevel.bind(this);
 
@@ -313,22 +324,16 @@ function (_React$Component3) {
   }
 
   _createClass(LevelCardExpanded, [{
-    key: "saveLevel",
-    value: function saveLevel() {
-      var currentElement = document.getElementById(this.props.level.id);
-      console.log("You clicked delete level");
-    }
-  }, {
     key: "saveAndCreateChild",
     value: function saveAndCreateChild() {
-      var currentElement = document.getElementById(this.props.level.id);
       console.log("You clicked to save and and a child level");
+      this.props.rootStore.levelStore.saveAndAddChildLevel(this.props.level.id);
     }
   }, {
     key: "saveAndCreateSibling",
     value: function saveAndCreateSibling() {
-      var currentElement = document.getElementById(this.props.level.id);
       console.log("You clicked to save and and a sibling level");
+      this.props.rootStore.levelStore.saveAndAddChildLevel(this.props.level.id);
     }
   }, {
     key: "onFormChange",
@@ -339,15 +344,17 @@ function (_React$Component3) {
     key: "render",
     value: function render() {
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "level-card--expanded",
+        className: "level-card level-card--expanded",
         id: this.props.level.id
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(LevelTitle, {
         tierName: this.props.levelProps.tierName,
         ontologyLabel: this.props.levelProps.ontologyLabel,
         classes: "level-title--expanded"
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("form", {
-        className: "level-card--expanded__form"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+        className: "level-card--expanded__form",
+        onSubmit: this.saveLevel
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("textarea", {
+        className: "form-control",
         type: "text",
         id: "level-name",
         name: "name",
@@ -355,7 +362,8 @@ function (_React$Component3) {
         onChange: this.onFormChange
       }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
         htmlFor: "assumptions"
-      }, "Assumptions"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+      }, "Assumptions"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("textarea", {
+        className: "form-control",
         type: "text",
         id: "level-assumptions",
         name: "assumptions",
@@ -366,7 +374,7 @@ function (_React$Component3) {
   }]);
 
   return LevelCardExpanded;
-}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component)) || _class2) || _class2);
+}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component), _temp2)) || _class3) || _class3);
 
 var ButtonBar =
 /*#__PURE__*/
@@ -385,14 +393,14 @@ function (_React$Component4) {
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "button-bar"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(LevelButton, {
-        classes: "",
-        text: "Save and close"
+        classes: "btn-primary",
+        text: gettext("Save and close")
       }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(LevelButton, {
-        classes: "",
-        text: "Save and another"
+        classes: "btn-primary",
+        text: gettext("Save and another")
       }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(LevelButton, {
-        classes: "",
-        text: "Save and link"
+        classes: "btn-primary",
+        text: gettext("Save and link")
       }));
     }
   }]);
@@ -415,7 +423,8 @@ function (_React$Component5) {
     key: "render",
     value: function render() {
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
-        className: this.props.classes + ' level-button'
+        type: "submit",
+        className: this.props.classes + ' level-button btn'
       }, this.props.text);
     }
   }]);
@@ -429,19 +438,20 @@ function (_React$Component5) {
 /*!**********************************************!*\
   !*** ./js/pages/results_framework/models.js ***!
   \**********************************************/
-/*! exports provided: RFPageStore */
+/*! exports provided: RootStore, LevelStore, UIStore */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "RFPageStore", function() { return RFPageStore; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "RootStore", function() { return RootStore; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "LevelStore", function() { return LevelStore; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UIStore", function() { return UIStore; });
 /* harmony import */ var mobx__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! mobx */ "2vnA");
-/* harmony import */ var _level_utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../level_utils */ "IzLX");
-var _class, _descriptor, _descriptor2, _descriptor3, _temp;
+/* harmony import */ var _api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../api.js */ "XoI5");
+/* harmony import */ var _level_utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../level_utils */ "IzLX");
+var _class, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _temp, _class3, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _temp2;
 
 function _initializerDefineProperty(target, property, descriptor, context) { if (!descriptor) return; Object.defineProperty(target, property, { enumerable: descriptor.enumerable, configurable: descriptor.configurable, writable: descriptor.writable, value: descriptor.initializer ? descriptor.initializer.call(context) : void 0 }); }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
@@ -451,13 +461,24 @@ function _applyDecoratedDescriptor(target, property, decorators, descriptor, con
 
 function _initializerWarningHelper(descriptor, context) { throw new Error('Decorating class property failed. Please ensure that ' + 'proposal-class-properties is enabled and set to use loose mode. ' + 'To use proposal-class-properties in spec mode with decorators, wait for ' + 'the next major version of decorators in stage 2.'); }
 
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 
-var RFPageStore = (_class = (_temp =
+
+
+var RootStore = function RootStore(levels, levelTiers, tierPresets) {
+  _classCallCheck(this, RootStore);
+
+  this.levelStore = new LevelStore(levels, levelTiers, tierPresets, this);
+  this.uiStore = new UIStore(this);
+};
+var LevelStore = (_class = (_temp =
 /*#__PURE__*/
 function () {
-  function RFPageStore(levels, levelTiers, tierPresets) {
-    _classCallCheck(this, RFPageStore);
+  function LevelStore(levels, levelTiers, tierPresets, rootStore) {
+    var _this = this;
+
+    _classCallCheck(this, LevelStore);
 
     _initializerDefineProperty(this, "levels", _descriptor, this);
 
@@ -466,18 +487,46 @@ function () {
     _initializerDefineProperty(this, "chosenTierSetName", _descriptor3, this);
 
     this.tierPresets = {};
-    // Set and sort levels
-    this.levels = levels.sort(function (a, b) {
-      if (a.ontology < b.ontology) {
-        return -1;
+
+    _initializerDefineProperty(this, "saveAndAddSiblingLevel", _descriptor4, this);
+
+    _initializerDefineProperty(this, "createNewLevelFromSibling", _descriptor5, this);
+
+    this.saveLevelToDB = function (levelId) {
+      console.log('this', levelId);
+      var levelData = Object(mobx__WEBPACK_IMPORTED_MODULE_0__["toJS"])(_this.levels).filter(function (l) {
+        return l.id == levelId;
+      })[0];
+
+      if (levelId == "new") {
+        console.log('want to create a new level');
+      } else {
+        console.log('in update, id=', levelId);
+        _api_js__WEBPACK_IMPORTED_MODULE_1__["api"].put("/level/".concat(levelId, "/"), levelData).then(function (response) {
+          var targetLevel = _this.levels.find(function (level) {
+            return level.id == levelId;
+          });
+
+          Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
+            Object.assign(targetLevel, response.data);
+          });
+
+          _this.rootStore.uiStore.removeExpandedCard(levelId);
+        }).catch(function (error) {
+          console.log("There was an error:", error);
+        });
       }
 
-      if (b.ontology < a.ontology) {
-        return 1;
-      }
+      var targetLevelFinal = _this.levels.find(function (level) {
+        return level.id == levelId;
+      });
 
-      return 0;
-    }); // Set the stored tierset and its name, if they exist
+      console.log('final target', Object(mobx__WEBPACK_IMPORTED_MODULE_0__["toJS"])(targetLevelFinal));
+    };
+
+    this.rootStore = rootStore;
+    this.levels = levels;
+    this.tierPresets = tierPresets; // Set the stored tierset and its name, if they exist
 
     if (levelTiers.length > 0) {
       this.chosenTierSet = levelTiers;
@@ -487,20 +536,12 @@ function () {
     //     this.chosenLevelTierSet = tierPresets[this.defaultPreset];
     // }
 
-
-    this.tierPresets = tierPresets;
-    this.addChildLevel = this.addChildLevel.bind(this);
   }
 
-  _createClass(RFPageStore, [{
+  _createClass(LevelStore, [{
     key: "changeTierSet",
     value: function changeTierSet(newTierSetName) {
       this.chosenTierSetName = newTierSetName;
-    }
-  }, {
-    key: "addChildLevel",
-    value: function addChildLevel(level_id) {
-      console.log('yay', level_id);
     }
   }, {
     key: "derive_preset_name",
@@ -544,7 +585,7 @@ function () {
   }, {
     key: "levelProperties",
     get: function get() {
-      var _this = this;
+      var _this2 = this;
 
       var levelProperties = {};
       var _iteratorNormalCompletion = true;
@@ -555,10 +596,10 @@ function () {
         var _loop = function _loop() {
           var level = _step.value;
           var properties = {};
-          properties['ontologyLabel'] = Object(_level_utils__WEBPACK_IMPORTED_MODULE_1__["trimOntology"])(level.ontology);
-          properties['tierName'] = _this.tierList[level.get_level_depth - 1];
+          properties['ontologyLabel'] = Object(_level_utils__WEBPACK_IMPORTED_MODULE_2__["trimOntology"])(level.ontology);
+          properties['tierName'] = _this2.tierList[level.level_depth - 1];
 
-          var childCount = _this.levels.filter(function (l) {
+          var childCount = _this2.levels.filter(function (l) {
             return l.parent == level.id;
           }).length;
 
@@ -584,12 +625,11 @@ function () {
         }
       }
 
-      console.log("levelTierNameMap", Object(mobx__WEBPACK_IMPORTED_MODULE_0__["toJS"])(levelProperties));
       return levelProperties;
     }
   }]);
 
-  return RFPageStore;
+  return LevelStore;
 }(), _temp), (_descriptor = _applyDecoratedDescriptor(_class.prototype, "levels", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
@@ -611,7 +651,92 @@ function () {
   initializer: function initializer() {
     return "";
   }
-}), _applyDecoratedDescriptor(_class.prototype, "tierList", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "tierList"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "levelProperties", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "levelProperties"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeTierSet", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeTierSet"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "addChildLevel", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "addChildLevel"), _class.prototype)), _class);
+}), _applyDecoratedDescriptor(_class.prototype, "tierList", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "tierList"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "levelProperties", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "levelProperties"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeTierSet", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeTierSet"), _class.prototype), _descriptor4 = _applyDecoratedDescriptor(_class.prototype, "saveAndAddSiblingLevel", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    var _this3 = this;
+
+    return function (level_id) {
+      console.log('yay', level_id);
+      level = _this3.levels.find(function (l) {
+        return l.id = level_id;
+      });
+      console.log(level);
+
+      _this3.saveLevelToDB(level_id);
+
+      _this3.createNewLevel(level_id);
+    };
+  }
+}), _descriptor5 = _applyDecoratedDescriptor(_class.prototype, "createNewLevelFromSibling", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    var _this4 = this;
+
+    return function (sibling_id) {
+      sibling = _this4.levels.find(function (l) {
+        return l.id == sibling_id;
+      });
+    };
+  }
+})), _class);
+var UIStore = (_class3 = (_temp2 = function UIStore(rootStore) {
+  _classCallCheck(this, UIStore);
+
+  _initializerDefineProperty(this, "expandedCards", _descriptor6, this);
+
+  _initializerDefineProperty(this, "activeLevel", _descriptor7, this);
+
+  _initializerDefineProperty(this, "addExpandedCard", _descriptor8, this);
+
+  _initializerDefineProperty(this, "removeExpandedCard", _descriptor9, this);
+
+  this.rootStore = rootStore;
+}, _temp2), (_descriptor6 = _applyDecoratedDescriptor(_class3.prototype, "expandedCards", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    return [];
+  }
+}), _descriptor7 = _applyDecoratedDescriptor(_class3.prototype, "activeLevel", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    return "";
+  }
+}), _descriptor8 = _applyDecoratedDescriptor(_class3.prototype, "addExpandedCard", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    var _this5 = this;
+
+    return function (levelId) {
+      if (!_this5.expandedCards.includes(levelId)) {
+        _this5.expandedCards.push(levelId);
+      }
+    };
+  }
+}), _descriptor9 = _applyDecoratedDescriptor(_class3.prototype, "removeExpandedCard", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    var _this6 = this;
+
+    return function (levelId) {
+      _this6.expandedCards = _this6.expandedCards.filter(function (level_id) {
+        return level_id != levelId;
+      });
+    };
+  }
+})), _class3);
 
 /***/ }),
 
@@ -625,17 +750,6 @@ function () {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "trimOntology", function() { return trimOntology; });
-/*
-  Some nice helper functions to help with date parsing and localization
-
-  In the future it may make sense to use moment.js, luxon, or date-fns,
-  but for now, just get by with the native browser APIs and save some bytes.
-
-  Confusingly, native Date() objects are actually date/time objects.
-
-  Surprisingly, the Django i18n/l10n JS tools do not provide access to the language code
-  of the current language in use.
- */
 // Returns a trimmed level ontology for display purposes
 function trimOntology(ontologyStr) {
   var ontologyArray = ontologyStr.split(".");
@@ -683,7 +797,7 @@ var _jsContext = jsContext,
     levels = _jsContext.levels,
     levelTiers = _jsContext.levelTiers,
     tierPresets = _jsContext.tierPresets;
-var rootStore = new _models__WEBPACK_IMPORTED_MODULE_8__["RFPageStore"](levels, levelTiers, tierPresets);
+var rootStore = new _models__WEBPACK_IMPORTED_MODULE_8__["RootStore"](levels, levelTiers, tierPresets);
 /*
  * React components on page
  */
@@ -693,6 +807,29 @@ react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render(react__WEBPACK_IMPORTED_
 }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_leveltier_picker__WEBPACK_IMPORTED_MODULE_7__["LevelTierPicker"], null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_level_list__WEBPACK_IMPORTED_MODULE_6__["LevelListing"], null))), document.querySelector('#level-builder-react-component')); // ReactDOM.render(<LevelList rootStore={rootStore}
 //                                 uiStore={uiStore} />,
 //     document.querySelector('#level-list-react-component'));
+
+/***/ }),
+
+/***/ "XoI5":
+/*!*******************!*\
+  !*** ./js/api.js ***!
+  \*******************/
+/*! exports provided: api */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "api", function() { return api; });
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "vDqi");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
+
+var api = axios__WEBPACK_IMPORTED_MODULE_0___default.a.create({
+  withCredentials: true,
+  baseURL: '/api/',
+  headers: {
+    "X-CSRFToken": document.cookie.replace(/(?:(?:^|.*;\s*)csrftoken\s*\=\s*([^;]*).*$)|^.*$/, "$1")
+  }
+});
 
 /***/ }),
 
@@ -781,10 +918,10 @@ function (_React$Component) {
     value: function render() {
       var _this = this;
 
-      var renderList = [];
+      var renderList = []; // console.log('store=', toJS(this.props.rootStore.levels))
 
       if (this.props.renderList == 'initial') {
-        renderList = this.props.rootStore.levels.filter(function (level) {
+        renderList = this.props.rootStore.levelStore.levels.filter(function (level) {
           return level.parent == null;
         }).sort(function (elem) {
           return elem.customsort;
@@ -795,23 +932,39 @@ function (_React$Component) {
         });
       }
 
-      var returnVals = renderList.map(function (elem) {
-        var children = _this.props.rootStore.levels.filter(function (level) {
+      return renderList.map(function (elem) {
+        var card = ''; // console.log('expandedlist', this.props.uiStore.expandedCards)
+
+        if (_this.props.rootStore.uiStore.expandedCards.indexOf(elem.id) !== -1) {
+          card = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_level_cards__WEBPACK_IMPORTED_MODULE_8__["LevelCardExpanded"], {
+            level: elem,
+            levelProps: _this.props.rootStore.levelStore.levelProperties[elem.id]
+          });
+        } else {
+          card = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_level_cards__WEBPACK_IMPORTED_MODULE_8__["LevelCardCollapsed"], {
+            level: elem,
+            levelProps: _this.props.rootStore.levelStore.levelProperties[elem.id]
+          });
+        }
+
+        var children = _this.props.rootStore.levelStore.levels.filter(function (level) {
           return level.parent == elem.id;
         });
+
+        var childLevels = null;
+
+        if (children.length > 0) {
+          childLevels = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(LevelList, {
+            rootStore: _this.props.rootStore,
+            renderList: children
+          });
+        }
 
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
           key: elem.id,
           className: "leveltier--new"
-        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_level_cards__WEBPACK_IMPORTED_MODULE_8__["LevelCardExpanded"], {
-          level: elem,
-          levelProps: _this.props.rootStore.levelProperties[elem.id]
-        }), children.length > 0 && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(LevelList, {
-          rootStore: _this.props.rootStore,
-          renderList: children
-        }));
+        }, card, childLevels);
       });
-      return returnVals;
     }
   }]);
 
@@ -831,4 +984,4 @@ var LevelListing = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])(f
 /***/ })
 
 },[["QTZG","runtime","vendors"]]]);
-//# sourceMappingURL=results_framework-ca8ed0cd3d6ca600de7c.js.map
+//# sourceMappingURL=results_framework-022605c319936fde51f1.js.map
