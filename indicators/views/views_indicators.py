@@ -492,8 +492,11 @@ class PeriodicTargetView(View):
             numTargets = PeriodicTarget.objects.filter(
                 indicator=indicator).count() + 1
 
+        # If this is ever false, a real start date should be given to generate_periodic_target_single()
+        assert indicator.target_frequency == Indicator.EVENT
+
         pt_generated = generate_periodic_target_single(
-            indicator.target_frequency, indicator.target_frequency_start,
+            indicator.target_frequency, None,
             (numTargets - 1), ''
         )
 

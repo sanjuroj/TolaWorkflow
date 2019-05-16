@@ -632,6 +632,7 @@ class Indicator(SafeDeleteModel):
         verbose_name=_("First event name"), help_text=" "
     )
 
+    # Deprecated - can probably be safely deleted
     target_frequency_start = models.DateField(
         blank=True, null=True, auto_now=False, auto_now_add=False,
         verbose_name=_("First target period begins*"), help_text=" "
