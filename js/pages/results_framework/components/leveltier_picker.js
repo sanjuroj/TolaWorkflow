@@ -8,14 +8,14 @@ import Select from 'react-select';
 @observer
 class Picker extends React.Component {
     handleChange = selectedPreset => {
-        this.props.rootStore.changeTierSet(selectedPreset.value);
+        this.props.rootStore.levelStore.changeTierSet(selectedPreset.value);
     };
 
     render() {
-        const options = Object.keys(this.props.rootStore.tierPresets).map(val=>{
+        const options = Object.keys(this.props.rootStore.levelStore.tierPresets).map(val=>{
             return {value:val, label:val};
         });
-        const selectedOption = {value:this.props.rootStore.chosenTierSet, label: this.props.rootStore.chosenTierSetName};
+        const selectedOption = {value:this.props.rootStore.levelStore.chosenTierSet, label: this.props.rootStore.levelStore.chosenTierSetName};
 
         return (
             <div className="leveltier-picker__selectbox">
@@ -45,8 +45,8 @@ class LevelTierList extends React.Component{
         return (
             <div id="leveltier-list" className="leveltier-list">
                 {
-                    this.props.rootStore.tierList.length > 0 ?
-                        this.props.rootStore.tierList.map((tier, index) => {
+                    this.props.rootStore.levelStore.tierList.length > 0 ?
+                        this.props.rootStore.levelStore.tierList.map((tier, index) => {
                             return <LevelTier key={index} tierName={tier}/>
                         })
                         : null

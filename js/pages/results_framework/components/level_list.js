@@ -16,33 +16,45 @@ class LevelList extends React.Component {
 
     render() {
         let renderList = [];
+        // console.log('store=', toJS(this.props.rootStore.levels))
         if (this.props.renderList == 'initial') {
-            renderList = this.props.rootStore.levels.filter(level => level.parent == null).sort(elem => elem.customsort)
+            renderList = this.props.rootStore.levelStore.levels.filter(level => level.parent == null).sort(elem => elem.customsort)
         }
         else{
             renderList = this.props.renderList.sort(elem => elem.customsort);
         }
 
-
-
-        let returnVals = renderList.map((elem) => {
-            let children = this.props.rootStore.levels.filter(level => level.parent == elem.id);
-            return (
-                <div key={elem.id} className="leveltier--new">
+        return renderList.map((elem) => {
+            let card = '';
+            // console.log('expandedlist', this.props.uiStore.expandedCards)
+            if (this.props.rootStore.uiStore.expandedCards.indexOf(elem.id) !== -1) {
+                card =
                     <LevelCardExpanded
                         level={elem}
-                        levelProps={this.props.rootStore.levelProperties[elem.id]} />
-                    {children.length > 0 &&
-                        <LevelList
-                            rootStore={this.props.rootStore}
-                            renderList={children} />
-                    }
+                        levelProps={this.props.rootStore.levelStore.levelProperties[elem.id]}/>
+            }
+            else {
+                card =
+                    <LevelCardCollapsed
+                        level={elem}
+                        levelProps={this.props.rootStore.levelStore.levelProperties[elem.id]}/>
+            }
+
+            let children = this.props.rootStore.levelStore.levels.filter(level => level.parent == elem.id);
+            let childLevels = null;
+            if (children.length > 0){
+                childLevels =  <LevelList
+                    rootStore={this.props.rootStore}
+                    renderList={children}/>
+            }
+
+            return (
+                <div key={elem.id} className="leveltier--new">
+                    {card}
+                    {childLevels}
                 </div>
             )
-        });
-
-        return returnVals
-    }
+    })}
 }
 
 export const LevelListing = observer(function (props) {

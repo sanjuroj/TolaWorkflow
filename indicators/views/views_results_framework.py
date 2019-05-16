@@ -4,6 +4,8 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.views.generic.list import ListView
 
+from rest_framework import viewsets
+
 from indicators.serializers import LevelTierSerializer, LevelSerializer
 from indicators.models import Level, LevelTier
 from workflow.models import Program
@@ -38,3 +40,9 @@ class ResultsFrameworkBuilder(ListView):
             'js_context': js_context,
         }
         return render(request, self.template_name, context_data)
+
+
+class LevelViewSet (viewsets.ModelViewSet):
+
+    serializer_class = LevelSerializer
+    queryset = Level.objects.all()

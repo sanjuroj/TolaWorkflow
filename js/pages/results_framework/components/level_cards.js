@@ -39,10 +39,10 @@ export class LevelCardCollapsed extends React.Component {
         console.log("You clicked delete level")
     }
 
-    editLevel() {
-        const currentElement =  document.getElementById(this.props.level.id);
+    editLevel = () => {
         console.log("You clicked to edit level")
-    }
+        this.props.rootStore.uiStore.addExpandedCard(this.props.level.id)
+    };
 
     render(){
         return (
@@ -91,19 +91,23 @@ export class LevelCardExpanded extends React.Component {
         // this.saveLevel = this.saveLevel.bind(this);
     }
 
-    saveLevel() {
-        const currentElement =  document.getElementById(this.props.level.id);
-        console.log("You clicked delete level")
+    saveLevel = (e) => {
+        e.preventDefault()
+        console.log('event in save', e)
+        console.log("You clicked save level")
+        console.log('edata', e.target)
+        this.props.rootStore.levelStore.saveLevelToDB(this.props.level.id)
+
     }
 
     saveAndCreateChild() {
-        const currentElement =  document.getElementById(this.props.level.id);
         console.log("You clicked to save and and a child level")
+        this.props.rootStore.levelStore.saveAndAddChildLevel(this.props.level.id)
     }
 
     saveAndCreateSibling() {
-        const currentElement =  document.getElementById(this.props.level.id);
         console.log("You clicked to save and and a sibling level")
+        this.props.rootStore.levelStore.saveAndAddChildLevel(this.props.level.id)
     }
 
     onFormChange(event){
@@ -122,7 +126,7 @@ export class LevelCardExpanded extends React.Component {
                     />
 
                 </div>
-                <form className="level-card--expanded__form">
+                <form className="level-card--expanded__form" onSubmit={this.saveLevel}>
                     <input
                         type="text"
                         id="level-name"
@@ -162,7 +166,7 @@ class LevelButton extends React.Component {
 
     render() {
         return (
-            <button className={this.props.classes + ' level-button'}>
+            <button type="submit" className={this.props.classes + ' level-button'}>
                 {this.props.text}
             </button>
         )
