@@ -302,18 +302,19 @@ class IndicatorUpdate(IndicatorFormMixin, UpdateView):
 
     def form_valid(self, form, **kwargs):
         periodic_targets = self.request.POST.get('periodic_targets', None)
-        indicatr = Indicator.objects.get(pk=self.kwargs.get('pk'))
+        indicator = Indicator.objects.get(pk=self.kwargs.get('pk'))
         generatedTargets = []
-        existing_target_frequency = indicatr.target_frequency
+        existing_target_frequency = indicator.target_frequency
         new_target_frequency = form.cleaned_data.get('target_frequency', None)
         lop = form.cleaned_data.get('lop_target', None)
         program = pk=form.cleaned_data.get('program')
         rationale = form.cleaned_data.get('rationale')
-        old_indicator_values = indicatr.logged_fields
+        old_indicator_values = indicator.logged_fields
 
+        # Generate target objects to populate form (this also runs for LoP target frequency)
         if periodic_targets == 'generateTargets':
             # handle (delete) association of colelctedData records if necessary
-            handleDataCollectedRecords(indicatr, lop, existing_target_frequency, new_target_frequency)
+            handleDataCollectedRecords(indicator, lop, existing_target_frequency, new_target_frequency)
 
             event_name = form.cleaned_data.get('target_frequency_custom', '')
             start_date = ''
@@ -333,6 +334,7 @@ class IndicatorUpdate(IndicatorFormMixin, UpdateView):
             generatedTargets = generate_periodic_targets(
                 new_target_frequency, start_date, target_frequency_num_periods, event_name)
 
+        # Save completed PeriodicTargets to the DB
         if periodic_targets and periodic_targets != 'generateTargets':
             # now create/update periodic targets
             pt_json = json.loads(periodic_targets)
@@ -366,10 +368,10 @@ class IndicatorUpdate(IndicatorFormMixin, UpdateView):
                 # Validate PeriodicTarget target field is > 0... throws with ValidationError
                 # Needed to be done here since the form itself does not check
                 # Front-end validation exists which is why we are not bothering with UI feedback
-                PeriodicTarget(indicator=indicatr, **defaults).clean_fields()
+                PeriodicTarget(indicator=indicator, **defaults).clean_fields()
 
                 periodic_target, created = PeriodicTarget.objects \
-                    .update_or_create(indicator=indicatr, id=pk, defaults=defaults)
+                    .update_or_create(indicator=indicator, id=pk, defaults=defaults)
 
                 if created:
                     periodic_target.create_date = timezone.now()
@@ -377,7 +379,7 @@ class IndicatorUpdate(IndicatorFormMixin, UpdateView):
                     generated_pt_ids.append(periodic_target.id)
 
             # handle related result objects for new periodic targets
-            handleDataCollectedRecords(indicatr, lop, existing_target_frequency, new_target_frequency,
+            handleDataCollectedRecords(indicator, lop, existing_target_frequency, new_target_frequency,
                                        generated_pt_ids)
 
         # save the indicator form
@@ -409,7 +411,7 @@ class IndicatorUpdate(IndicatorFormMixin, UpdateView):
                 )
 
         # fetch all existing periodic_targets for this indicator
-        periodic_targets = PeriodicTarget.objects.filter(indicator=indicatr) \
+        periodic_targets = PeriodicTarget.objects.filter(indicator=indicator) \
             .annotate(num_data=Count('result')) \
             .order_by('customsort', 'create_date', 'period')
 
