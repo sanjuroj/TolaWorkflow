@@ -12,8 +12,9 @@ from django.utils import timezone
 
 logger = logging.getLogger(__name__)
 
-def handleDataCollectedRecords(indicator, lop, existing_target_frequency,
-                               new_target_frequency, generated_pt_ids=None):
+
+def update_existing_results_to_new_targets(indicator, lop, existing_target_frequency, new_target_frequency,
+                                           generated_pt_ids=None):
     """
     If the target_frequency is changed from LOP to something else then
     disassociate all results from the LOP periodic_target and then
@@ -21,10 +22,11 @@ def handleDataCollectedRecords(indicator, lop, existing_target_frequency,
     if existing_target_frequency == Indicator.LOP
     and new_target_frequency != Indicator.LOP:
     """
+    # Disassociate existing records and delete old PeriodicTargets
     if existing_target_frequency != new_target_frequency:
-        Result.objects.filter(indicator=indicator) \
-            .update(periodic_target=None)
-
+        Result.objects.filter(indicator=indicator).update(periodic_target=None)
+        # In theory this should never happen since target frequency can only change after
+        # existing targets are deleted in the UI, except in case of LoP -> something else
         PeriodicTarget.objects.filter(indicator=indicator).delete()
 
     # If the user sets target_frequency to LOP then create a LOP
@@ -37,17 +39,16 @@ def handleDataCollectedRecords(indicator, lop, existing_target_frequency,
             indicator=indicator, period=PeriodicTarget.LOP_PERIOD,
             target=lop, create_date=timezone.now()
         )
-        Result.objects.filter(indicator=indicator) \
-            .update(periodic_target=lop_pt)
+        Result.objects.filter(indicator=indicator).update(periodic_target=lop_pt)
 
     if generated_pt_ids:
-        pts = PeriodicTarget.objects.filter(indicator=indicator,
-                                            pk__in=generated_pt_ids)
+        pts = PeriodicTarget.objects.filter(indicator=indicator, pk__in=generated_pt_ids)
+
         for pt in pts:
             Result.objects.filter(
                 indicator=indicator,
-                date_collected__range=[pt.start_date, pt.end_date]) \
-                .update(periodic_target=pt)
+                date_collected__range=[pt.start_date, pt.end_date]
+            ).update(periodic_target=pt)
 
 
 def import_indicator(service=1):

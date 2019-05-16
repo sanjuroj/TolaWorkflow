@@ -32,7 +32,7 @@ from tola.util import getCountry, group_excluded
 
 from indicators.serializers import IndicatorSerializer, ProgramSerializer
 from indicators.views.view_utils import (
-    handleDataCollectedRecords,
+    update_existing_results_to_new_targets,
     import_indicator,
     generate_periodic_targets,
     generate_periodic_target_single,
@@ -314,7 +314,7 @@ class IndicatorUpdate(IndicatorFormMixin, UpdateView):
         # Generate target objects to populate form (this also runs for LoP target frequency)
         if periodic_targets == 'generateTargets':
             # handle (delete) association of colelctedData records if necessary
-            handleDataCollectedRecords(indicator, lop, existing_target_frequency, new_target_frequency)
+            update_existing_results_to_new_targets(indicator, lop, existing_target_frequency, new_target_frequency)
 
             event_name = form.cleaned_data.get('target_frequency_custom', '')
             start_date = ''
@@ -379,8 +379,8 @@ class IndicatorUpdate(IndicatorFormMixin, UpdateView):
                     generated_pt_ids.append(periodic_target.id)
 
             # handle related result objects for new periodic targets
-            handleDataCollectedRecords(indicator, lop, existing_target_frequency, new_target_frequency,
-                                       generated_pt_ids)
+            update_existing_results_to_new_targets(indicator, lop, existing_target_frequency, new_target_frequency,
+                                                   generated_pt_ids)
 
         # save the indicator form
         self.object = form.save()
@@ -502,6 +502,8 @@ class IndicatorDelete(DeleteView):
 class PeriodicTargetView(View):
     """
     This view generates periodic targets or deleting them (via POST)
+
+    Seems to only be used for adding an event. All other PTs are generated elsewhere.
     """
     model = PeriodicTarget
 

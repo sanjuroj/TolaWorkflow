@@ -313,7 +313,7 @@
         scrollToIndicatorFormBottom();
     });
 
-    // add new periodic target
+    // add new periodic target. Actually, add an event. That is the only use for this button.
     $("#indicator_modal_content").on("click", "#addNewPeriodicTarget", function(e) {
         e.preventDefault();
         var numTargets = $("#periodic_targets_table tbody tr").length-1;
