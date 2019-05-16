@@ -74,10 +74,13 @@
             $('#submit-id-submit').attr('disabled', 'disabled');
             let form_url = $(this).attr('action');
 
-            let form_data = getResultFormAsObject();
+            let form_data = getResultFormAsArray();
 
             // tack on rationale
-            form_data['rationale'] = rationale;
+            form_data.push({
+                name: 'rationale',
+                value: rationale
+            });
 
             // mark that the form data has changed so that when the modal is closed the list view can be updated
             $(this).data('recordchanged', true);
@@ -377,48 +380,38 @@
      */
 
     // return a JS obj of key/vals of indicator form
-    function getResultFormAsObject() {
-        let $form = $('#result_update_form');
-        let formObj = {};
-        $form.serializeArray().forEach(function (x) {
-            formObj[x.name] = x.value;
-        });
-
-        return formObj;
+    function getResultFormAsArray() {
+        return $('#result_update_form').serializeArray();
     }
 
     // same as getIndicatorFormAsObject() but containing only tracked fields
     // can be used to snapshot form state for later comparison
-    function getTrackedResultFieldsObject() {
-        let formObj = getResultFormAsObject();
+    function getTrackedResultFieldsArray() {
+        let formArr = getResultFormAsArray();
 
-        let excluded_fields = [
+        let excluded_fields = new Set([
             'csrfmiddlewaretoken',
             'comments',
             'complete',
-        ];
+        ]);
 
-        excluded_fields.forEach(function(key) {
-            delete formObj[key];
-        });
-
-        return formObj;
+        return formArr.filter(e => !excluded_fields.has(e.name));
     }
 
     // remember the initial state of the form
     function recordResultFormSnapshot() {
-        resultFormSnapshot = getTrackedResultFieldsObject();
+        resultFormSnapshot = getTrackedResultFieldsArray();
     }
 
     // have any tracked fields changed in the form?
     function hasResultFormChanged() {
         let prevState = JSON.stringify(resultFormSnapshot);
-        let currState = JSON.stringify(getTrackedResultFieldsObject());
+        let currState = JSON.stringify(getTrackedResultFieldsArray());
         return prevState !== currState;
     }
 
     function hasResultDateFormFieldChanged() {
-        return resultFormSnapshot.date_collected !== getResultFormAsObject().date_collected;
+        return resultFormSnapshot.find(e => e.name === 'date_collected').value !== getResultFormAsArray().find(e => e.name === 'date_collected').value;
     }
 
 </script>

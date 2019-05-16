@@ -8,6 +8,7 @@ class LevelSerializer(serializers.ModelSerializer):
     """
     Level serializer for Program Page
     """
+    level_depth = serializers.CharField(source='get_level_depth', read_only=True)
 
     class Meta:
         model = Level
@@ -18,8 +19,9 @@ class LevelSerializer(serializers.ModelSerializer):
             'assumptions',
             'customsort',
             'ontology',
-            'get_level_depth'
+            'level_depth'
         ]
+        read_only_fields = ['level_depth', 'ontology']
 
 
 class LevelTierSerializer(serializers.ModelSerializer):

@@ -321,10 +321,13 @@ class TolaUser(models.Model):
 
     @property
     def logged_program_fields(self):
-        country_access = {
+        country_access = {}
+        if self.country:
+            country_access[self.country.id] = {"country": self.country.country, "role": 'user'}
+        country_access.update({
             access.country_id: {"country": access.country.country, "role": access.role}
             for access in self.countryaccess_set.all()
-        }
+        })
 
         program_access = {
             (str(access.country_id)+'_'+str(access.program_id)): {"role": access.role, "program": access.program.name, "country": access.country.country}
@@ -338,10 +341,13 @@ class TolaUser(models.Model):
 
     @property
     def access_data(self):
-        country_access = {
+        country_access = {}
+        if self.country:
+            country_access[self.country.id] = {"role": 'user'}
+        country_access.update({
             country.country_id: {"role": country.role}
             for country in self.countryaccess_set.all()
-        }
+        })
 
         program_access = [
             {"role": access.role, "program": access.program_id, "country": access.country_id}
@@ -355,8 +361,8 @@ class TolaUser(models.Model):
 
 
 COUNTRY_ROLE_CHOICES = (
-    ('user', _('User')),
-    ('basic_admin', _('Basic Admin')),
+    ('user', _('User (all programs)')),
+    ('basic_admin', _('Basic Admin (all programs)')),
 )
 
 class CountryAccess(models.Model):
