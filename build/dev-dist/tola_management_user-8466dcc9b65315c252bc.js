@@ -69,7 +69,7 @@ var create_country_objects = function create_country_objects(countries, store) {
     return _objectSpread({}, countries, _defineProperty({}, id, _objectSpread({}, country, {
       type: 'country',
       options: [{
-        label: '',
+        label: gettext('Individual programs only'),
         value: 'none'
       }].concat(_toConsumableArray(store.country_role_choices)),
       admin_access: store.is_superuser,
@@ -714,6 +714,9 @@ function (_React$Component) {
           rowCount: _this9.state.flattened_programs.length
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_virtualized__WEBPACK_IMPORTED_MODULE_2__["Column"], {
           dataKey: "not_applicable_but_required",
+          label:
+          /* # Translators: Column header for a checkbox indicating if a user has access to a program */
+          gettext("Has access?"),
           width: 100,
           cellDataGetter: function cellDataGetter(_ref39) {
             var rowData = _ref39.rowData;
@@ -1020,17 +1023,9 @@ function (_React$Component) {
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(EditUserProfile).call(this, props));
     var userData = props.userData;
-
-    var organization_listing = function () {
-      if (props.new) {
-        return props.organizations.filter(function (o) {
-          return o.value != 1 || props.is_superuser;
-        });
-      } else {
-        return props.organizations;
-      }
-    }();
-
+    var organization_listing = props.organizations.filter(function (o) {
+      return o.value != 1 || props.is_superuser;
+    });
     var selected_organization = organization_listing.find(function (o) {
       return o.value == userData.organization_id;
     });
@@ -4357,4 +4352,4 @@ function (_React$Component) {
 /***/ })
 
 },[["9KAa","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_user-63ab4ff665d2612bee86.js.map
+//# sourceMappingURL=tola_management_user-8466dcc9b65315c252bc.js.map

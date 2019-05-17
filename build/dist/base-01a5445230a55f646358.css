@@ -8275,6 +8275,10 @@ span[data-toggle="popover"]:hover {
   margin-top: 7.5px;
   padding-inline-start: 1rem; }
 
+input[type=checkbox]:disabled,
+input[type=radio]:disabled {
+  opacity: 0.7; }
+
 .nav-tabs {
   margin-bottom: 15px; }
   .nav-tabs .nav-link:hover, .nav-tabs .nav-link:focus {
@@ -8439,6 +8443,10 @@ span[data-toggle="popover"]:hover {
   height: 50vh;
   margin-bottom: 15px; }
 
+.ReactVirtualized__Table__headerRow {
+  font-size: 0.875rem;
+  text-transform: none !important; }
+
 .ReactVirtualized__Table__Grid {
   background-color: #fff;
   border: 1px solid #dbdcde; }
@@ -8585,54 +8593,6 @@ span[data-toggle="popover"]:hover {
     position: absolute;
     right: 41px;
     top: 8px; }
-
-.rf-page {
-  display: flex; }
-
-.leveltier-list {
-  list-style: none;
-  background-color: #fff;
-  padding: 1em; }
-
-.leveltier {
-  background-color: #f5f5f5;
-  padding: .5em;
-  margin: .75em 0; }
-
-.leveltier-picker {
-  margin-right: 3em;
-  min-width: 20em; }
-
-.leveltier-picker__selectbox {
-  background-color: #ccefee;
-  padding: 2em; }
-
-.leveltier--new {
-  margin-left: 1em; }
-
-.level-card--collapsed {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  background-color: white;
-  margin: 2em; }
-
-.level-card--collapsed__name {
-  margin: .75em 0 .75em .75em; }
-
-.level-card--collapsed__actions {
-  margin: .75em 0 .75em .75em; }
-
-.level-card--expanded {
-  display: flex;
-  flex-direction: column; }
-
-.level-card--expanded__form {
-  display: flex;
-  flex-direction: column; }
-
-.level-title--expanded {
-  font-weight: bold; }
 
 /* Local custom CSS and overloads for non-BS libraries */
 .help-block {

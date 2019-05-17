@@ -10,7 +10,7 @@ const create_country_objects = (countries, store) => Object.entries(countries)
                                                         [id]: {
                                                             ...country,
                                                             type: 'country',
-                                                            options: [{label: '', value: 'none'}, ...store.country_role_choices],
+                                                            options: [{label: gettext('Individual programs only'), value: 'none'}, ...store.country_role_choices],
                                                             admin_access: store.is_superuser,
                                                             programs: new Set(country.programs)
                                                         }
@@ -447,6 +447,10 @@ export default class EditUserPrograms extends React.Component {
 
                                 <Column
                                 dataKey="not_applicable_but_required"
+                                label={
+                                    /* # Translators: Column header for a checkbox indicating if a user has access to a program */
+                                    gettext("Has access?")
+                                }
                                 width={100}
                                 cellDataGetter={({rowData}) => ({
                                     checked: is_checked(rowData),

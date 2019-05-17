@@ -6,6 +6,11 @@
 // The following are overloaded styles
 // React Virtualized Tables generally load styles in the style attribute
 .ReactVirtualized__Table {
+    &__headerRow {
+        // Overloads this module's styles.scss
+        font-size: $font-size-sm;
+        text-transform: none !important;
+    }
     &__Grid {
         background-color: $white;
         border: 1px solid $gray-300;
