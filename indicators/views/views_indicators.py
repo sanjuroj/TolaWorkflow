@@ -179,6 +179,56 @@ class IndicatorCreate(IndicatorFormMixin, CreateView):
     def form_valid(self, form, **kwargs):
         indicator = form.save()
 
+        periodic_targets = self.request.POST.get('periodic_targets')
+
+        # Save completed PeriodicTargets to the DB (will be empty [] for LoP)
+        if periodic_targets:
+            # now create/update periodic targets
+            pt_json = json.loads(periodic_targets)
+
+            for i, pt in enumerate(pt_json):
+                try:
+                    start_date = dateparser.parse(pt.get('start_date', None))
+                    start_date = datetime.strftime(start_date, '%Y-%m-%d')
+                except (ValueError, TypeError):
+                    # raise ValueError("Incorrect data value")
+                    start_date = None
+
+                try:
+                    end_date = dateparser.parse(pt.get('end_date', None))
+                    end_date = datetime.strftime(end_date, '%Y-%m-%d')
+                except (ValueError, TypeError):
+                    # raise ValueError("Incorrect data value")
+                    end_date = None
+
+                values = dict(
+                    period=pt.get('period', ''),
+                    target=pt.get('target', 0),
+                    start_date=start_date,
+                    end_date=end_date,
+                )
+
+                # Validate PeriodicTarget target field is > 0... throws with ValidationError
+                # Needed to be done here since the form itself does not check
+                # Front-end validation exists which is why we are not bothering with UI feedback
+                PeriodicTarget(indicator=indicator, **values).clean_fields()
+
+                PeriodicTarget.objects.create(
+                    indicator=indicator,
+                    customsort=i,
+                    create_date=timezone.now(),
+                    **values
+                )
+        else:
+            assert indicator.target_frequency == Indicator.LOP
+            PeriodicTarget.objects.create(
+                indicator=indicator,
+                period=PeriodicTarget.LOP_PERIOD,
+                target=indicator.lop_target,
+                create_date=timezone.now(),
+            )
+
+
         ProgramAuditLog.log_indicator_created(
             self.request.user,
             indicator,

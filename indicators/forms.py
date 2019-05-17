@@ -57,6 +57,7 @@ class PTFormInputsForm(forms.ModelForm):
             'is_cumulative',
             'unit_of_measure_type',
             'target_frequency_num_periods',
+            'target_frequency_custom',
         )
 
 
