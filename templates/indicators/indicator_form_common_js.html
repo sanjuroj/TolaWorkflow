@@ -363,9 +363,9 @@
     });
 
     $('#indicator_modal_content').on('click', "input[type='reset']", function(e) {
-    })
+    });
 
- function submitForm(rationale = '') {
+    function submitForm(rationale = '') {
         var numDataPoints = parseInt($("#numDataPoints").text());
         var initalTargetFrequency = parseInt($("#initialTargetFrequencyValue").text());
         var target_frequency = $("#id_target_frequency").val();
@@ -389,9 +389,9 @@
         } else {
             formSubmitContinue(rationale);
         }
- }
+    }
  
-function formSubmitContinue(rationale = '') {
+    function formSubmitContinue(rationale = '') {
         let $form = $('#indicator_update_form');
         var submitBtnName = $form.find("input[type=submit]:focus" );
         var form_url = $form.attr('action');
