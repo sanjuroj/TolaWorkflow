@@ -21,7 +21,9 @@ from .views.views_indicators import (
     DisaggregationReport,
     DisaggregationReportQuickstart,
     DisaggregationPrint,
-    api_indicator_view)
+    api_indicator_view,
+    periodic_targets_form
+)
 
 from .views.views_reports import (
     IPTTReportQuickstartView,
@@ -36,6 +38,8 @@ from .views.views_results_framework import ResultsFrameworkBuilder
 
 
 urlpatterns = [
+    url(r'^periodic_targets_form/(?P<program>\d+)/$', periodic_targets_form, name='periodic_targets_form'),
+
     url(r'^indicator_create/(?P<program>\d+)/$', IndicatorCreate.as_view(), name='indicator_create'),
 
     url(r'^indicator_update/(?P<pk>\d+)/$', IndicatorUpdate.as_view(), name='indicator_update'),

@@ -44,6 +44,21 @@ class LocaleDateField(DateField):
                 self.error_messages['invalid'], code='invalid')
 
 
+class PTFormInputsForm(forms.ModelForm):
+    """
+    Partial IndicatorForm submit for use in generating periodic target form
+    sub-section of the full Indicator form
+    """
+    class Meta:
+        model = Indicator
+        fields = (
+            'target_frequency',
+            'lop_target',
+            'is_cumulative',
+            'unit_of_measure_type',
+        )
+
+
 class IndicatorForm(forms.ModelForm):
     unit_of_measure_type = forms.ChoiceField(
         choices=Indicator.UNIT_OF_MEASURE_TYPES,
@@ -51,6 +66,8 @@ class IndicatorForm(forms.ModelForm):
     )
 
     rationale = forms.CharField(required=False)
+
+    program_id = forms.IntegerField(widget=forms.HiddenInput())
 
     class Meta:
         model = Indicator
@@ -112,6 +129,8 @@ class IndicatorForm(forms.ModelForm):
         # self.fields['is_cumulative'].widget = forms.RadioSelect()
         if self.instance.target_frequency and self.instance.target_frequency != Indicator.LOP:
             self.fields['target_frequency'].widget.attrs['readonly'] = True
+
+        self.fields['program_id'].initial = self.programval.id
 
     def clean_lop_target(self):
         data = self.cleaned_data['lop_target']

@@ -41,7 +41,7 @@ from indicators.views.view_utils import (
 from workflow.models import (
     Program, Sector, TolaSites, FormGuidance
 )
-from ..forms import IndicatorForm, ResultForm
+from ..forms import IndicatorForm, ResultForm, PTFormInputsForm
 from ..models import (
     Indicator, PeriodicTarget, DisaggregationLabel, DisaggregationValue,
     Result, IndicatorType, Level, ExternalServiceRecord,
@@ -137,6 +137,59 @@ def indicator_create(request, program):
         'view': {
             'guidance': FormGuidance.objects.filter(form="Indicator").first(),
         }
+    })
+
+
+@login_required
+@has_indicator_write_access
+def periodic_targets_form(request, program):
+    """
+    Returns a form for the periodic targets sub-section,
+    used by the Indicator Form
+
+    For historical reasons, the input is a POST of the whole indicator form sent via ajax
+    from which a subset of fields are used to generate the returned template
+    """
+    if not request.has_write_access:
+        raise PermissionDenied
+
+    program = get_object_or_404(Program, pk=program)
+
+    form = PTFormInputsForm(data=request.POST)
+
+    if not form.is_valid():
+        return JsonResponse(form.errors)
+
+    event_name = form.cleaned_data.get('target_frequency_custom', '')
+    start_date = ''
+    target_frequency_num_periods = 1
+    target_frequency_type = form.cleaned_data.get('target_frequency', 1)
+
+    if target_frequency_type in Indicator.REGULAR_TARGET_FREQUENCIES:
+        start_date = program.reporting_period_start
+        target_frequency_num_periods = IPTT_ReportView._get_num_periods(
+            start_date, program.reporting_period_end, target_frequency_type)
+    elif target_frequency_type == Indicator.EVENT:
+        # This is only case in which target frequency comes from the form
+        target_frequency_num_periods = form.cleaned_data.get('target_frequency_num_periods', 1)
+
+    generated_targets = generate_periodic_targets(
+        target_frequency_type, start_date, target_frequency_num_periods, event_name)
+
+    dummy_indicator = Indicator(
+        target_frequency=target_frequency_type,
+        unit_of_measure_type=form.cleaned_data.get('unit_of_measure_type'),
+        lop_target=form.cleaned_data.get('unit_of_measure_type'),
+        is_cumulative=form.cleaned_data.get('unit_of_measure_type'),
+    )
+
+    content = render_to_string('indicators/indicatortargets.html', {
+        'indicator': dummy_indicator,
+        'periodic_targets': generated_targets
+    })
+
+    return JsonResponse({
+        'content': content,
     })
 
 

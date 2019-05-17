@@ -244,8 +244,43 @@
         }
         $(this).attr("disabled", true);
 
-        submitForm("{% trans 'N/A' %}");
+        getPeriodicTargetsForm();
     });
+
+    function getPeriodicTargetsForm() {
+        //let $form = $('#indicator_update_form');
+
+        let formObj = getIndicatorFormAsObject();
+
+        $.ajax({
+            method: 'POST',
+            url: "/indicators/periodic_targets_form/" + formObj.program_id + "/",
+            data: formObj,
+        }).done(function (data, textStatus, jqXHR) {
+            $('#id_create_targets_btn').attr('disabled', false);
+
+            //var indicator = $.parseJSON(jsondata["indicatorjson"])[0];
+            //var targets_sum = jsondata["targets_sum"];
+            let content = data["content"];
+
+            if ($("#id_target_frequency").val() != 1) {
+                $("#id_div_periodic_tables_placeholder").empty();
+                $("#id_div_periodic_tables_placeholder").append(content);
+
+                /*
+                if (indicator.fields.unit_of_measure_type == 1) {
+                    $("#id_span_targets_sum").text(parseFloat(targets_sum).toFixed(2).replace(/[.,]00$/, ""));
+                }
+                */
+            }
+
+            show_hide_frequency_fields(true);
+            toggleTargetsSumOrAvgRow()
+
+        }).fail((xhr, text, error) => {
+            $('#id_create_targets_btn').attr('disabled', false);
+        });
+    }
 
     function createPeriodicTargetRow(pt, isLastIteration, rowNum) {
         var markup = `
