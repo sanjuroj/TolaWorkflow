@@ -266,16 +266,19 @@
             if ($("#id_target_frequency").val() != 1) {
                 $("#id_div_periodic_tables_placeholder").empty();
                 $("#id_div_periodic_tables_placeholder").append(content);
-
-                /*
-                if (indicator.fields.unit_of_measure_type == 1) {
-                    $("#id_span_targets_sum").text(parseFloat(targets_sum).toFixed(2).replace(/[.,]00$/, ""));
-                }
-                */
             }
 
             show_hide_frequency_fields(true);
-            toggleTargetsSumOrAvgRow()
+            toggleTargetsSumOrAvgRow();
+
+            if ($("#id_unit_of_measure_type_1").is(":checked")) {
+                show_hide_cummulative_inputs('percent')
+            }
+            else {
+                show_hide_cummulative_inputs('number')
+            }
+
+            updateAggregateRowValueAndLabel();
 
         }).fail((xhr, text, error) => {
             $('#id_create_targets_btn').attr('disabled', false);
@@ -401,8 +404,7 @@
 
         let formArr = $form.serializeArray();
         let form_periodic_targets = getFormPeriodicTargets();
-        let periodic_targets_to_submit = $.isEmptyObject(form_periodic_targets) ?
-            'generateTargets' : JSON.stringify(form_periodic_targets);
+        let periodic_targets_to_submit = JSON.stringify(form_periodic_targets);
         formArr.push({"name": "periodic_targets", "value": periodic_targets_to_submit});
 
         if (formArr.find(e => e.name === 'is_cumulative') === undefined) {
@@ -437,31 +439,30 @@
 
             createAlert("success", "{% trans 'Success, form data saved.'|escapejs %}", true, alertsElement);
 
+            /*
             var jsondata = $.parseJSON(data);
             var indicator = $.parseJSON(jsondata["indicatorjson"])[0];
             var targets_sum = jsondata["targets_sum"];
-            var content = jsondata["content"];
+            */
 
-            $("#initialTargetFrequencyValue").text(indicator.fields.target_frequency);
+            let content = data["content"];
+
             if ($("#id_target_frequency").val() != 1) {
                 $("#id_div_periodic_tables_placeholder").empty();
                 $("#id_div_periodic_tables_placeholder").append(content);
-                if (indicator.fields.unit_of_measure_type == 1) {
-                    $("#id_span_targets_sum").text(parseFloat(targets_sum).toFixed(2).replace(/[.,]00$/, ""));
-                }
-
             }
 
-            scrollToTop();
-
             show_hide_frequency_fields(true);
-            toggleTargetsSumOrAvgRow()
+            toggleTargetsSumOrAvgRow();
+
             if ($("#id_unit_of_measure_type_1").is(":checked")) {
                 show_hide_cummulative_inputs('percent')
             }
             else {
                 show_hide_cummulative_inputs('number')
             }
+
+            updateAggregateRowValueAndLabel();
 
             // this is our new base state
             recordTrackedFieldsSnapshot();
@@ -977,7 +978,7 @@
 
         let periodic_targets = getFormPeriodicTargets();
 
-        formObj['periodic_targets'] = $.isEmptyObject(periodic_targets) ? 'generateTargets' : JSON.stringify(periodic_targets);
+        formObj['periodic_targets'] = JSON.stringify(periodic_targets);
 
         return formObj;
     }
@@ -1005,7 +1006,7 @@
     // update just the targets portion of the form object:
     function updateTargetSnapshot() {
         let periodic_targets = getFormPeriodicTargets();
-        initialTrackedFieldsFormState.periodic_targets = $.isEmptyObject(periodic_targets) ? 'generateTargets' : JSON.stringify(periodic_targets);
+        initialTrackedFieldsFormState.periodic_targets = JSON.stringify(periodic_targets);
     }
 
     // have any tracked fields changed in the form?

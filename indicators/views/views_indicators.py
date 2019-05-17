@@ -32,7 +32,6 @@ from tola.util import getCountry, group_excluded
 
 from indicators.serializers import IndicatorSerializer, ProgramSerializer
 from indicators.views.view_utils import (
-    update_existing_results_to_new_targets,
     import_indicator,
     generate_periodic_targets,
     generate_periodic_target_single,
@@ -179,8 +178,8 @@ def periodic_targets_form(request, program):
     dummy_indicator = Indicator(
         target_frequency=target_frequency_type,
         unit_of_measure_type=form.cleaned_data.get('unit_of_measure_type'),
-        lop_target=form.cleaned_data.get('unit_of_measure_type'),
-        is_cumulative=form.cleaned_data.get('unit_of_measure_type'),
+        lop_target=form.cleaned_data.get('lop_target'),
+        is_cumulative=form.cleaned_data.get('is_cumulative'),
     )
 
     content = render_to_string('indicators/indicatortargets.html', {
@@ -355,40 +354,23 @@ class IndicatorUpdate(IndicatorFormMixin, UpdateView):
 
     def form_valid(self, form, **kwargs):
         periodic_targets = self.request.POST.get('periodic_targets', None)
-        indicator = Indicator.objects.get(pk=self.kwargs.get('pk'))
-        generatedTargets = []
-        existing_target_frequency = indicator.target_frequency
+        old_indicator = Indicator.objects.get(pk=self.kwargs.get('pk'))
+        existing_target_frequency = old_indicator.target_frequency
         new_target_frequency = form.cleaned_data.get('target_frequency', None)
         lop = form.cleaned_data.get('lop_target', None)
-        program = pk=form.cleaned_data.get('program')
         rationale = form.cleaned_data.get('rationale')
-        old_indicator_values = indicator.logged_fields
+        old_indicator_values = old_indicator.logged_fields
 
-        # Generate target objects to populate form (this also runs for LoP target frequency)
-        if periodic_targets == 'generateTargets':
-            # handle (delete) association of colelctedData records if necessary
-            update_existing_results_to_new_targets(indicator, lop, existing_target_frequency, new_target_frequency)
+        # if existing_target_frequency != new_target_frequency
+        # then either existing_target_frequency is None or LoP
+        # It shouldn't be anything else as the user should have to delete all targets first
 
-            event_name = form.cleaned_data.get('target_frequency_custom', '')
-            start_date = ''
-            target_frequency_num_periods = 1
-            target_frequency_type = form.cleaned_data.get('target_frequency', 1)
+        # Disassociate existing records and delete old PeriodicTargets
+        if existing_target_frequency != new_target_frequency:
+            PeriodicTarget.objects.filter(indicator=old_indicator).delete()
 
-            if target_frequency_type in [
-                    Indicator.ANNUAL, Indicator.SEMI_ANNUAL, Indicator.TRI_ANNUAL,
-                    Indicator.QUARTERLY, Indicator.MONTHLY]:
-                start_date = program.reporting_period_start
-                target_frequency_num_periods = IPTT_ReportView._get_num_periods(
-                    start_date, program.reporting_period_end, target_frequency_type)
-            elif target_frequency_type == Indicator.EVENT:
-                # This is only case in which target fequency comes from the form
-                target_frequency_num_periods = form.cleaned_data.get('target_frequency_num_periods', 1)
-
-            generatedTargets = generate_periodic_targets(
-                new_target_frequency, start_date, target_frequency_num_periods, event_name)
-
-        # Save completed PeriodicTargets to the DB
-        if periodic_targets and periodic_targets != 'generateTargets':
+        # Save completed PeriodicTargets to the DB (will be empty [] for LoP)
+        if periodic_targets:
             # now create/update periodic targets
             pt_json = json.loads(periodic_targets)
             generated_pt_ids = []
@@ -421,77 +403,71 @@ class IndicatorUpdate(IndicatorFormMixin, UpdateView):
                 # Validate PeriodicTarget target field is > 0... throws with ValidationError
                 # Needed to be done here since the form itself does not check
                 # Front-end validation exists which is why we are not bothering with UI feedback
-                PeriodicTarget(indicator=indicator, **defaults).clean_fields()
+                PeriodicTarget(indicator=old_indicator, **defaults).clean_fields()
 
                 periodic_target, created = PeriodicTarget.objects \
-                    .update_or_create(indicator=indicator, id=pk, defaults=defaults)
+                    .update_or_create(indicator=old_indicator, id=pk, defaults=defaults)
 
                 if created:
                     periodic_target.create_date = timezone.now()
                     periodic_target.save()
                     generated_pt_ids.append(periodic_target.id)
 
-            # handle related result objects for new periodic targets
-            update_existing_results_to_new_targets(indicator, lop, existing_target_frequency, new_target_frequency,
-                                                   generated_pt_ids)
+            # Reassign results to newly created PTs
+            if generated_pt_ids:
+                pts = PeriodicTarget.objects.filter(indicator=old_indicator, pk__in=generated_pt_ids)
+                for pt in pts:
+                    Result.objects.filter(
+                        indicator=old_indicator,
+                        date_collected__range=[pt.start_date, pt.end_date]
+                    ).update(periodic_target=pt)
+        else:
+            assert new_target_frequency == Indicator.LOP
+            lop_pt, created = PeriodicTarget.objects.update_or_create(
+                indicator=old_indicator,
+                period=PeriodicTarget.LOP_PERIOD,
+                defaults={
+                    'target': lop,
+
+                }
+            )
+
+            if created:
+                lop_pt.create_date = timezone.now()
+                lop_pt.save()
+
+                # Redirect results to new LoP target
+                Result.objects.filter(indicator=old_indicator).update(periodic_target=lop_pt)
 
         # save the indicator form
-        self.object = form.save()
+        form.save()
         self.object.refresh_from_db()
 
+        # Write to audit log if results attached
         results_count = Result.objects.filter(indicator=self.object).count()
-
-        # Logging now happens when either when the "save changes" or "create targets" is pressed
-        # this is done since other form changes could have happened when the create targets button was pressed
-        # Conditions for logging:
-        # * Results are attached
-        # * tracked fields have changed
         if results_count > 0:
-            previous_entry_json = json.dumps(old_indicator_values, cls=DjangoJSONEncoder)
-            new_entry_json = json.dumps(self.object.logged_fields, cls=DjangoJSONEncoder)
-            if new_entry_json != previous_entry_json:
-                if rationale == '':
-                    # front end validation was bypassed?
-                    # raise exception here instead of returning an HttpResponse to rollback DB transaction
-                    raise Exception('rationale string missing on indicator form')
+            if rationale == '':
+                # front end validation was bypassed?
+                # raise exception here instead of returning an HttpResponse to rollback DB transaction
+                raise Exception('rationale string missing on indicator form')
 
-                ProgramAuditLog.log_indicator_updated(
-                    self.request.user,
-                    self.object,
-                    old_indicator_values,
-                    self.object.logged_fields,
-                    rationale
-                )
+            ProgramAuditLog.log_indicator_updated(
+                self.request.user,
+                self.object,
+                old_indicator_values,
+                self.object.logged_fields,
+                rationale
+            )
 
-        # fetch all existing periodic_targets for this indicator
-        periodic_targets = PeriodicTarget.objects.filter(indicator=indicator) \
-            .annotate(num_data=Count('result')) \
-            .order_by('customsort', 'create_date', 'period')
+        # refresh the periodic targets form such that pkids of new PeriodicTargets are submitted in the future
+        content = render_to_string('indicators/indicatortargets.html', {
+            'indicator': self.object,
+            'periodic_targets': PeriodicTarget.objects.filter(indicator=self.object).annotate(num_data=Count('result'))
+        })
 
-        if self.request.is_ajax():
-            indicatorjson = serializers.serialize('json', [self.object])
-
-            if generatedTargets:
-                params = {'indicator': self.object, 'periodic_targets': generatedTargets}
-                content = render_to_string('indicators/indicatortargets.html', params)
-            else:
-                params = {'indicator': self.object, 'periodic_targets': periodic_targets}
-                content = render_to_string('indicators/indicatortargets.html', params)
-
-            targets_sum = self.get_context_data().get('targets_sum')
-            if targets_sum is None:
-                targets_sum = "0"
-
-            data = {
-                "indicatorjson": str(indicatorjson),
-                "targets_sum": str(targets_sum),
-                "content": content,
-            }
-            return HttpResponse(json.dumps(data))
-        # else:
-        #     messages.success(self.request, _('Success, Indicator Updated!'))
-
-        return self.render_to_response(self.get_context_data(form=form))
+        return JsonResponse({
+            'content': content,
+        })
 
 
 class IndicatorDelete(DeleteView):
