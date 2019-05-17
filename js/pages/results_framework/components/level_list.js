@@ -16,17 +16,16 @@ class LevelList extends React.Component {
 
     render() {
         let renderList = [];
-        // console.log('store=', toJS(this.props.rootStore.levels))
         if (this.props.renderList == 'initial') {
-            renderList = this.props.rootStore.levelStore.levels.filter(level => level.parent == null).sort(elem => elem.customsort)
+            renderList = this.props.rootStore.levelStore.sortedLevels
+                .filter(level => level.parent == null)
         }
         else{
-            renderList = this.props.renderList.sort(elem => elem.customsort);
+            renderList = this.props.renderList.sort((a, b) => a.customsort - b.customsort);
         }
 
         return renderList.map((elem) => {
             let card = '';
-            // console.log('expandedlist', this.props.uiStore.expandedCards)
             if (this.props.rootStore.uiStore.expandedCards.indexOf(elem.id) !== -1) {
                 card =
                     <LevelCardExpanded
@@ -40,7 +39,7 @@ class LevelList extends React.Component {
                         levelProps={this.props.rootStore.levelStore.levelProperties[elem.id]}/>
             }
 
-            let children = this.props.rootStore.levelStore.levels.filter(level => level.parent == elem.id);
+            let children = this.props.rootStore.levelStore.sortedLevels.filter(level => level.parent == elem.id);
             let childLevels = null;
             if (children.length > 0){
                 childLevels =  <LevelList

@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import { observer, inject } from "mobx-react"
-import { toJS } from 'mobx';
+import { toJS, extendObservable } from 'mobx';
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCaretDown, faCaretRight } from '@fortawesome/free-solid-svg-icons'
@@ -35,12 +35,10 @@ export class LevelCardCollapsed extends React.Component {
     }
 
     deleteLevel() {
-        const currentElement =  document.getElementById(this.props.level.id);
         console.log("You clicked delete level")
     }
 
     editLevel = () => {
-        console.log("You clicked to edit level")
         this.props.rootStore.uiStore.addExpandedCard(this.props.level.id)
     };
 
@@ -86,33 +84,36 @@ export class LevelCardCollapsed extends React.Component {
 export class LevelCardExpanded extends React.Component {
     constructor(props){
         super(props);
-        this.onFormChange = this.onFormChange.bind(this);
-        // this.saveLevel = this.saveLevel.bind(this);
-        // this.saveLevel = this.saveLevel.bind(this);
+        this.submitType = "saveOnly";
+        extendObservable(this, {
+            name: props.level.name,
+            assumptions: props.level.assumptions,
+        })
     }
+
+    /*
+    Using this allows us to use the same submit function for all three buttons.  Shame the function has to
+    be passed all the way down to the button to work.
+     */
+    updateSubmitType = (newType) => {
+        this.submitType = newType;
+    };
 
     saveLevel = (e) => {
-        e.preventDefault()
-        console.log('event in save', e)
-        console.log("You clicked save level")
-        console.log('edata', e.target)
-        this.props.rootStore.levelStore.saveLevelToDB(this.props.level.id)
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        this.props.rootStore.levelStore.saveLevelToDB(
+            this.submitType,
+            this.props.level.id,
+            {name: this.name, assumptions: this.assumptions}
+        )
 
-    }
+    };
 
-    saveAndCreateChild() {
-        console.log("You clicked to save and and a child level")
-        this.props.rootStore.levelStore.saveAndAddChildLevel(this.props.level.id)
-    }
-
-    saveAndCreateSibling() {
-        console.log("You clicked to save and and a sibling level")
-        this.props.rootStore.levelStore.saveAndAddChildLevel(this.props.level.id)
-    }
-
-    onFormChange(event){
-        this.props.level[event.target.name] = event.target.value;
-    }
+    onFormChange = (event) => {
+        event.preventDefault();
+        this[event.target.name] = event.target.value;
+    };
 
     render(){
 
@@ -131,16 +132,16 @@ export class LevelCardExpanded extends React.Component {
                         type="text"
                         id="level-name"
                         name="name"
-                        value={this.props.level.name || ""}
+                        value={this.name || ""}
                         onChange={this.onFormChange}    />
                     <label htmlFor="assumptions">Assumptions</label>
                     <input
                         type="text"
                         id="level-assumptions"
                         name="assumptions"
-                        value={this.props.level.assumptions || ""}
+                        value={this.assumptions || ""}
                         onChange={this.onFormChange}/>
-                    <ButtonBar />
+                    <ButtonBar submitFunc={this.updateSubmitType}/>
                 </form>
             </div>
 
@@ -153,9 +154,9 @@ class ButtonBar extends React.Component {
     render() {
         return (
             <div className="button-bar">
-                <LevelButton classes="" text="Save and close" />
-                <LevelButton classes="" text="Save and another" />
-                <LevelButton classes="" text="Save and link" />
+                <LevelButton classes="" text="Save and close" submitType="saveOnly" submitFunc={this.props.submitFunc} />
+                <LevelButton classes="" text="Save and another" submitType="saveAndAddSibling"  submitFunc={this.props.submitFunc} />
+                <LevelButton classes="" text="Save and link" submitType="saveAndAddChild" submitFunc={this.props.submitFunc} />
             </div>
         )
 
@@ -166,7 +167,10 @@ class LevelButton extends React.Component {
 
     render() {
         return (
-            <button type="submit" className={this.props.classes + ' level-button'}>
+            <button
+                type="submit"
+                className={this.props.classes + ' level-button'}
+                onClick={() =>this.props.submitFunc(this.props.submitType)}>
                 {this.props.text}
             </button>
         )

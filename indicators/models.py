@@ -118,6 +118,7 @@ class Objective(models.Model):
     def save(self):
         if self.create_date is None:
             self.create_date = timezone.now()
+        self.edit_date = timezone.now()
         super(Objective, self).save()
 
 

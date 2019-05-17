@@ -1,6 +1,6 @@
 import { observable, computed, action, toJS, runInAction } from "mobx";
-import { api } from "../../api.js";
 import { trimOntology } from '../../level_utils'
+import { api } from "../../api.js"
 
 export class RootStore {
     constructor (levels, levelTiers, tierPresets) {
@@ -19,6 +19,7 @@ export class LevelStore {
         this.rootStore = rootStore;
         this.levels = levels;
         this.tierPresets = tierPresets;
+        // this.levels.forEach((l) => console.log(toJS(l)))
 
         // Set the stored tierset and its name, if they exist
         if (levelTiers.length > 0) {
@@ -46,11 +47,15 @@ export class LevelStore {
         }
     }
 
+    @computed get sortedLevels () {
+        return this.levels.slice().sort((a, b) => {a.level_depth - b.level_depth || a.customsort - b.customsort})
+    }
+
     @computed get levelProperties () {
         let levelProperties = {};
         for (let level of this.levels) {
             let properties = {};
-            properties['ontologyLabel'] = trimOntology(level.ontology);
+            properties['ontologyLabel'] = this.buildOntology(level.id);
             properties['tierName'] = this.tierList[level.level_depth-1];
             const childCount =  this.levels.filter(l => l.parent == level.id).length;
             properties['canDelete'] = childCount==0;
@@ -65,42 +70,60 @@ export class LevelStore {
     }
 
     @action
-    saveAndAddSiblingLevel = (level_id) =>{
-        console.log('yay', level_id);
-        level = this.levels.find( l => l.id = level_id);
-        console.log(level)
-        this.saveLevelToDB(level_id);
-        this.createNewLevel(level_id);
+    createNewLevelFromSibling = (siblingId) => {
 
-    }
+        // Copy sibling data for the new level and then clear some of it out
+        let sibling = toJS(this.levels.find( l => l.id == siblingId));
+        let newLevel = Object.assign({}, sibling)
+        newLevel.customsort +=1;
+        newLevel.id = "new";
+        newLevel.name = "";
+        newLevel.assumptions = "";
 
-    @action
-    createNewLevelFromSibling = (sibling_id) => {
-        sibling = this.levels.find( l => l.id == sibling_id);
-    }
+        // bump the customsort field for siblings that come after the inserted Level
+        let siblingsToReorder = this.levels.filter( l => {
+            return l.customsort > sibling.customsort && l.parent == sibling.parent;
+        })
+        siblingsToReorder.forEach( sib => sib.customsort+=1)
 
-    saveLevelToDB = (levelId) => {
-        console.log('this', levelId)
-        let levelData = toJS(this.levels).filter( l => l.id == levelId)[0];
+        // add new Level to the various Store components
+        this.rootStore.uiStore.expandedCards.push("new")
+        this.rootStore.uiStore.activeCard = "new"
+        this.levels.push(newLevel)
+
+    };
+
+    saveLevelToDB = (submitType, levelId, formData) => {
+        let targetLevel = this.levels.find(level => level.id == levelId);
+        let levelToSave = Object.assign(toJS(targetLevel), formData);
         if (levelId == "new") {
-            console.log('want to create a new level')
-        } else {
-            console.log('in update, id=', levelId)
-            api.put(`/level/${levelId}/`, levelData)
+            delete levelToSave.id;
+
+            api.post(`/insert_new_level/`, levelToSave)
                 .then(response => {
-                    let targetLevel = this.levels.find(level => level.id == levelId);
+                    runInAction(() => {
+                        this.levels.replace(response.data)
+            })
+                })
+                .catch(error => console.log('error', error))
+
+        } else {
+            api.put(`/level/${levelId}/`, levelToSave)
+                .then(response => {
                     runInAction( () => {
-                        Object.assign(targetLevel, response.data)
+                        Object.assign(targetLevel, response.data);
                     });
                     this.rootStore.uiStore.removeExpandedCard(levelId)
+                    if (submitType == "saveAndAddSibling"){
+                        this.createNewLevelFromSibling(levelId)
+                    }
 
                 })
                 .catch( error => {
                     console.log("There was an error:", error)
                 })
         }
-        let targetLevelFinal = this.levels.find(level => level.id == levelId);
-        console.log('final target', toJS(targetLevelFinal))
+
     };
 
 
@@ -121,6 +144,19 @@ export class LevelStore {
         }
         return "Custom"
     }
+
+
+    buildOntology = (levelId, ontologyArray = []) => {
+        let level = toJS(this.levels.find( l => l.id == levelId))
+        if (level.parent) {
+            ontologyArray.unshift(level.customsort)
+            return this.buildOntology(level.parent, ontologyArray)
+        }
+        else {
+            return ontologyArray.join(".")
+        }
+    }
+
 }
 
 
