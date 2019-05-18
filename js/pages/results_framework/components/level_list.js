@@ -18,8 +18,9 @@ class LevelList extends React.Component {
         let renderList = [];
         if (this.props.renderList == 'initial') {
             renderList = this.props.rootStore.levelStore.sortedLevels
-                .filter(level => level.parent == null)
+                .filter(level => ['root', null].indexOf(level.parent) != -1)
         }
+
         else{
             renderList = this.props.renderList.sort((a, b) => a.customsort - b.customsort);
         }

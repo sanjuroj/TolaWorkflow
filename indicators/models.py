@@ -211,6 +211,7 @@ class LevelTier(models.Model):
     def save(self, *args, **kwargs):
         if self.create_date is None:
             self.create_date = timezone.now()
+        self.edit_date = timezone.now()
         super(LevelTier, self).save(*args, **kwargs)
 
 

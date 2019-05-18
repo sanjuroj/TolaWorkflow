@@ -1,5 +1,5 @@
 import logging
-
+import copy
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.views.generic.list import ListView
@@ -53,25 +53,45 @@ class LevelViewSet (viewsets.ModelViewSet):
 @api_view(http_method_names=['POST'])
 def insert_new_level(request):
 
+    level_data = copy.copy(request.data)
     # Update new Level data in preparation for saving
     program = Program.objects.get(id=request.data['program'])
-    parent = Level.objects.get(id=request.data['parent'])
-    request.data['parent'] = parent
-    request.data['program'] = program
-    del request.data['ontology']
-    del request.data['level_depth']
+    if request.data['parent'] == "root":
+        parent = None
+    else:
+        parent = Level.objects.get(id=request.data['parent'])
+    level_data['parent'] = parent
+    level_data['program'] = program
+    if 'ontology' in request.data:
+        del level_data['ontology']
+    del level_data['level_depth']
 
-    # First update the customsort values of all Levels that getting pushed down by the new Level
-    levels_to_shift = Level.objects\
-        .filter(program=program, parent_id=parent.id, customsort__gte=request.data['customsort'])\
-        .order_by('-customsort')
-    for s_level in levels_to_shift:
-        s_level.customsort += 1
-        s_level.save()
+    # First update the customsort values of all Levels that getting pushed down by the new Level.
+    # No need to do it if the top tier level is being saved
+    if request.data['parent'] != "root":
+        levels_to_shift = Level.objects\
+            .filter(program=program, parent_id=parent.id, customsort__gte=request.data['customsort'])\
+            .order_by('-customsort')
+        for s_level in levels_to_shift:
+            s_level.customsort += 1
+            s_level.save()
 
     # Now the new level can be saved
-    new_level = Level.objects.create(**request.data)
+    new_level = Level.objects.create(**level_data)
     new_level.save()
 
     # Return all Levels for the program. There shouldn't be so much that it slows things down much.
     return Response(LevelSerializer(Level.objects.filter(program=program), many=True).data)
+
+# TODO: add security
+@api_view(http_method_names=['POST'])
+def save_leveltiers(request):
+    program = Program.objects.get(id=request.data['program_id'])
+    for n, tier in enumerate(request.data['tiers']):
+        tierObj = LevelTier.objects.create(
+            program=program,
+            tier_depth=n+1,
+            name=tier
+        )
+        tierObj.save()
+    return Response({"message": "success"})

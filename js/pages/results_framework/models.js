@@ -25,23 +25,12 @@ export class LevelStore {
 
         // Set the stored tierset and its name, if they exist.  Use the default if they don't.
         if (levelTiers.length > 0) {
-            this.chosenTierSet = levelTiers;
+            this.chosenTierSet = levelTiers.map( t => t.name);
             this.chosenTierSetName = this.derive_preset_name(levelTiers, tierPresets);
         }
         else {
             this.chosenTierSetName = this.defaultPreset;
-        }
-    }
-
-    @computed get tierList () {
-        if (!this.chosenTierSet && !this.chosenTierSetName){
-            return [];
-        }
-        else if (this.chosenTierSetName in this.tierPresets){
-            return this.tierPresets[this.chosenTierSetName];
-        }
-        else {
-            return this.chosenTierSet;
+            this.chosenTierSet = this.tierPresets[this.defaultPreset]
         }
     }
 
@@ -54,7 +43,7 @@ export class LevelStore {
         for (let level of this.levels) {
             let properties = {};
             properties['ontologyLabel'] = this.buildOntology(level.id);
-            properties['tierName'] = this.tierList[level.level_depth-1];
+            properties['tierName'] = this.chosenTierSet[level.level_depth-1];
             const childCount =  this.levels.filter(l => l.parent == level.id).length;
             properties['canDelete'] = childCount==0;
             levelProperties[level.id] = properties
@@ -65,11 +54,18 @@ export class LevelStore {
     @action
     changeTierSet(newTierSetName) {
         this.chosenTierSetName = newTierSetName;
+        this.chosenTierSet = this.tierPresets[newTierSetName]
     }
 
     @action
-    createNewLevelFromSibling = (siblingId) => {
+    cancelEdit = levelId => {
+        this.rootStore.uiStore.removeExpandedCard(levelId)
 
+        this.levels.replace(this.levels.filter((element) => element.id != "new"))
+    };
+
+    @action
+    createNewLevelFromSibling = (siblingId) => {
         // Copy sibling data for the new level and then clear some of it out
         let sibling = toJS(this.levels.find( l => l.id == siblingId));
         let newLevel = Object.assign({}, sibling)
@@ -93,6 +89,7 @@ export class LevelStore {
 
     @action
     createFirstLevel = () => {
+        // Using "root" for parent id so the Django view can distinguish between top tier level and 2nd tier level
         let newLevel = {
             id: "new",
             program: this.program_id,
@@ -106,19 +103,31 @@ export class LevelStore {
         this.rootStore.uiStore.expandedCards.push("new")
     }
 
-    // TODO: better error handling for API
+    saveLevelTiersToDB = () => {
+        const tier_data = {program_id: this.program_id, tiers: this.chosenTierSet}
+        api.post(`/save_leveltiers/`, tier_data)
+            .then(response => {
+                console.log("Level Tiers Saved!")
+            })
+            .catch(error => console.log('error', error))
+    }
 
+
+    // TODO: better error handling for API
     saveLevelToDB = (submitType, levelId, formData) => {
         let targetLevel = this.levels.find(level => level.id == levelId);
         let levelToSave = Object.assign(toJS(targetLevel), formData);
         if (levelId == "new") {
+            if (levelToSave.parent == "root") {
+                this.saveLevelTiersToDB()
+            }
             delete levelToSave.id;
 
             api.post(`/insert_new_level/`, levelToSave)
                 .then(response => {
                     runInAction(() => {
                         this.levels.replace(response.data)
-            })
+                    })
                 })
                 .catch(error => console.log('error', error))
 
@@ -162,7 +171,10 @@ export class LevelStore {
 
     buildOntology = (levelId, ontologyArray = []) => {
         let level = toJS(this.levels.find( l => l.id == levelId))
-        if (level.parent) {
+        /*  If there is no parent (saved top tier level) or the parent is "root" (unsaved top tier level)
+            then we should return with adding to the ontology because there is no ontology entry for the top tier
+         */
+        if (level.parent && level.parent != "root") {
             ontologyArray.unshift(level.customsort)
             return this.buildOntology(level.parent, ontologyArray)
         }

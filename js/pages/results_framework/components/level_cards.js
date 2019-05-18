@@ -110,13 +110,16 @@ export class LevelCardExpanded extends React.Component {
 
     };
 
+    cancelEdit = (e) => {
+        this.props.rootStore.levelStore.cancelEdit(this.props.level.id)
+    }
+
     onFormChange = (event) => {
         event.preventDefault();
         this[event.target.name] = event.target.value;
     };
 
     render(){
-
         return (
             <div className="level-card--expanded" id={this.props.level.id}>
                 <div>
@@ -141,7 +144,11 @@ export class LevelCardExpanded extends React.Component {
                         name="assumptions"
                         value={this.assumptions || ""}
                         onChange={this.onFormChange}/>
-                    <ButtonBar submitFunc={this.updateSubmitType}/>
+                    <ButtonBar
+                        level={this.props.level}
+                        submitFunc={this.updateSubmitType}
+                        cancelFunc={this.cancelEdit}
+                        tierCount={this.props.rootStore.levelStore.chosenTierSet.length}/>
                 </form>
             </div>
 
@@ -152,11 +159,21 @@ export class LevelCardExpanded extends React.Component {
 
 class ButtonBar extends React.Component {
     render() {
+        let addAnotherButton = null;
+        if (this.props.level.parent != null && this.props.level.parent != "root") {
+            addAnotherButton = <LevelButton classes="" text="Save and another" submitType="saveAndAddSibling"  submitFunc={this.props.submitFunc} />
+        }
+
+        let addAndLinkButton = null;
+        if (this.props.level.level_depth < this.props.tierCount) {
+            addAndLinkButton = <LevelButton classes="" text="Save and link" submitType="saveAndAddChild" submitFunc={this.props.submitFunc} />
+        }
         return (
             <div className="button-bar">
                 <LevelButton classes="" text="Save and close" submitType="saveOnly" submitFunc={this.props.submitFunc} />
-                <LevelButton classes="" text="Save and another" submitType="saveAndAddSibling"  submitFunc={this.props.submitFunc} />
-                <LevelButton classes="" text="Save and link" submitType="saveAndAddChild" submitFunc={this.props.submitFunc} />
+                {addAnotherButton}
+                {addAndLinkButton}
+                <LevelButton classes="" text="Cancel" submitType="cancel" submitFunc={this.props.cancelFunc} />
             </div>
         )
 
@@ -166,9 +183,10 @@ class ButtonBar extends React.Component {
 class LevelButton extends React.Component {
 
     render() {
+        const buttonType = this.props.submitType == "cancel" ? "button" : "submit";
         return (
             <button
-                type="submit"
+                type={buttonType}
                 className={this.props.classes + ' level-button'}
                 onClick={() =>this.props.submitFunc(this.props.submitType)}>
                 {this.props.text}

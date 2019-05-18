@@ -57,8 +57,8 @@ class LevelTierList extends React.Component{
             <React.Fragment>
                 <div id="leveltier-list" className="leveltier-list">
                     {
-                        this.props.rootStore.levelStore.tierList.length > 0 ?
-                            this.props.rootStore.levelStore.tierList.map((tier, index) => {
+                        this.props.rootStore.levelStore.chosenTierSet.length > 0 ?
+                            this.props.rootStore.levelStore.chosenTierSet.map((tier, index) => {
                                 return <LevelTier key={index} tierName={tier}/>
                             })
                             : null
