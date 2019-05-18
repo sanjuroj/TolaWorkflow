@@ -3,8 +3,8 @@ import { trimOntology } from '../../level_utils'
 import { api } from "../../api.js"
 
 export class RootStore {
-    constructor (levels, levelTiers, tierPresets) {
-        this.levelStore =  new LevelStore(levels, levelTiers, tierPresets, this);
+    constructor (program_id, levels, levelTiers, tierPresets) {
+        this.levelStore =  new LevelStore(program_id, levels, levelTiers, tierPresets, this);
         this.uiStore = new UIStore(this);
     }
 }
@@ -14,26 +14,24 @@ export class LevelStore {
     @observable chosenTierSet = [];
     @observable chosenTierSetName = "";
     tierPresets = {};
+    defaultPreset = "Mercy Corps standard";
+    program_id = ""
 
-    constructor(levels, levelTiers, tierPresets, rootStore) {
+    constructor(program_id, levels, levelTiers, tierPresets, rootStore) {
         this.rootStore = rootStore;
         this.levels = levels;
         this.tierPresets = tierPresets;
-        // this.levels.forEach((l) => console.log(toJS(l)))
+        this.program_id = program_id;
 
-        // Set the stored tierset and its name, if they exist
+        // Set the stored tierset and its name, if they exist.  Use the default if they don't.
         if (levelTiers.length > 0) {
             this.chosenTierSet = levelTiers;
             this.chosenTierSetName = this.derive_preset_name(levelTiers, tierPresets);
         }
-        // else {
-        //     this.selectedTierSetName = none;
-        //     this.chosenLevelTierSet = tierPresets[this.defaultPreset];
-        // }
-
+        else {
+            this.chosenTierSetName = this.defaultPreset;
+        }
     }
-
-
 
     @computed get tierList () {
         if (!this.chosenTierSet && !this.chosenTierSetName){
@@ -93,6 +91,21 @@ export class LevelStore {
 
     };
 
+    @action
+    createFirstLevel = () => {
+        let newLevel = {
+            id: "new",
+            program: this.program_id,
+            name: "",
+            assumptons: "",
+            parent: null,
+            customsort: 1
+        }
+        this.levels.push(newLevel)
+    }
+
+    // TODO: better error handling for API
+
     saveLevelToDB = (submitType, levelId, formData) => {
         let targetLevel = this.levels.find(level => level.id == levelId);
         let levelToSave = Object.assign(toJS(targetLevel), formData);
@@ -125,7 +138,6 @@ export class LevelStore {
         }
 
     };
-
 
     derive_preset_name(levelTiers, tierPresets) {
         if (!levelTiers){

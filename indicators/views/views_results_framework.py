@@ -32,6 +32,7 @@ class ResultsFrameworkBuilder(ListView):
         levels = Level.objects.filter(program=program)
 
         js_context = {
+            'program_id': program.id,
             'levels': LevelSerializer(levels, many=True).data,
             'levelTiers': LevelTierSerializer(tiers, many=True).data,
             'tierPresets': LevelTier.PRESETS,
