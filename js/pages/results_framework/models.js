@@ -97,11 +97,13 @@ export class LevelStore {
             id: "new",
             program: this.program_id,
             name: "",
-            assumptons: "",
-            parent: null,
-            customsort: 1
+            assumptions: "",
+            customsort: 1,
+            level_depth: 1,
+            parent: "root"
         }
         this.levels.push(newLevel)
+        this.rootStore.uiStore.expandedCards.push("new")
     }
 
     // TODO: better error handling for API
