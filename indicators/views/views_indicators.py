@@ -337,11 +337,11 @@ class IndicatorUpdate(IndicatorFormMixin, UpdateView):
         return kwargs
 
     def form_valid(self, form, **kwargs):
-        periodic_targets = self.request.POST.get('periodic_targets', None)
+        periodic_targets = self.request.POST.get('periodic_targets')
         old_indicator = Indicator.objects.get(pk=self.kwargs.get('pk'))
         existing_target_frequency = old_indicator.target_frequency
-        new_target_frequency = form.cleaned_data.get('target_frequency', None)
-        lop = form.cleaned_data.get('lop_target', None)
+        new_target_frequency = form.cleaned_data.get('target_frequency')
+        lop = form.cleaned_data.get('lop_target')
         rationale = form.cleaned_data.get('rationale')
         old_indicator_values = old_indicator.logged_fields
 
@@ -353,9 +353,25 @@ class IndicatorUpdate(IndicatorFormMixin, UpdateView):
         if existing_target_frequency != new_target_frequency:
             PeriodicTarget.objects.filter(indicator=old_indicator).delete()
 
-        # Save completed PeriodicTargets to the DB (will be empty [] for LoP)
-        if periodic_targets:
-            # now create/update periodic targets
+        # Save completed PeriodicTargets to the DB)
+        if new_target_frequency == Indicator.LOP:
+            lop_pt, created = PeriodicTarget.objects.update_or_create(
+                indicator=old_indicator,
+                period=PeriodicTarget.LOP_PERIOD,
+                defaults={
+                    'target': lop,
+
+                }
+            )
+
+            if created:
+                lop_pt.create_date = timezone.now()
+                lop_pt.save()
+
+                # Redirect results to new LoP target
+                Result.objects.filter(indicator=old_indicator).update(periodic_target=lop_pt)
+        else:
+            # now create/update periodic targets (will be empty u'[]' for LoP)
             pt_json = json.loads(periodic_targets)
             generated_pt_ids = []
             for i, pt in enumerate(pt_json):
@@ -405,23 +421,7 @@ class IndicatorUpdate(IndicatorFormMixin, UpdateView):
                         indicator=old_indicator,
                         date_collected__range=[pt.start_date, pt.end_date]
                     ).update(periodic_target=pt)
-        else:
-            assert new_target_frequency == Indicator.LOP
-            lop_pt, created = PeriodicTarget.objects.update_or_create(
-                indicator=old_indicator,
-                period=PeriodicTarget.LOP_PERIOD,
-                defaults={
-                    'target': lop,
 
-                }
-            )
-
-            if created:
-                lop_pt.create_date = timezone.now()
-                lop_pt.save()
-
-                # Redirect results to new LoP target
-                Result.objects.filter(indicator=old_indicator).update(periodic_target=lop_pt)
 
         # save the indicator form
         form.save()
