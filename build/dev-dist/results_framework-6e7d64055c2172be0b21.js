@@ -142,6 +142,7 @@ function (_React$Component3) {
       }, this.props.rootStore.levelStore.chosenTierSet.length > 0 ? this.props.rootStore.levelStore.chosenTierSet.map(function (tier, index) {
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(LevelTier, {
           key: index,
+          tierLevel: index,
           tierName: tier
         });
       }) : null), apply_button);
@@ -295,8 +296,8 @@ function (_React$Component2) {
           justifyContent: "flex-end"
         }
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
-        className: "btn btn-sm btn-link"
-      }, "Indicators"))));
+        className: "btn btn-sm btn-link no-bold"
+      }, "[n] ", gettext("indicators")))));
     }
   }]);
 
@@ -465,7 +466,7 @@ function (_React$Component5) {
       var buttonType = this.props.submitType == "cancel" ? "button" : "submit";
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         type: buttonType,
-        className: this.props.classes + ' level-button btn',
+        className: this.props.classes + ' level-button btn btn-sm',
         onClick: function onClick() {
           return _this3.props.submitFunc(_this3.props.submitType);
         }
@@ -1137,4 +1138,4 @@ function (_React$Component2) {
 /***/ })
 
 },[["QTZG","runtime","vendors"]]]);
-//# sourceMappingURL=results_framework-998eb5a35d46dabf4e74.js.map
+//# sourceMappingURL=results_framework-6e7d64055c2172be0b21.js.map
