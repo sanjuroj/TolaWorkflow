@@ -69,7 +69,7 @@ export class LevelCardCollapsed extends React.Component {
                         <i className="fas fa-edit"/>&nbsp;{gettext("Edit")}</button>
                     </div>
                     <div className="actions__bottom" style={{display: "flex", justifyContent: "flex-end"}}>
-                        <button className="btn btn-sm btn-link">Indicators</button>
+                        <button className="btn btn-sm btn-link no-bold">[n] {/*TODO: count of indicators */}{gettext("indicators")}</button>
                     </div>
                 </div>
             </div>
@@ -189,7 +189,7 @@ class LevelButton extends React.Component {
         return (
             <button
                 type={buttonType}
-                className={this.props.classes + ' level-button btn'}
+                className={this.props.classes + ' level-button btn btn-sm'}
                 onClick={() =>this.props.submitFunc(this.props.submitType)}>
                 {this.props.text}
             </button>

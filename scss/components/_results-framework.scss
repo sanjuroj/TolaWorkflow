@@ -66,7 +66,7 @@
 }
 .level-card--collapsed__name {
 }
-.level-card--collapsed__title {}
+.level-card--collapsed__title {} // unused?
 .level-card--collapsed__actions {
     // contains: actions__*
 }
@@ -88,13 +88,24 @@
 // component LevelTitle
 .level-title {
 }
-.level-title--collapsed {}
+.level-title--collapsed {
+    display: inline-block;
+    font-size: inherit;
+    line-height: inherit;
+    margin-bottom: 0;
+    text-transform: uppercase;
+    &:after {
+        content: ":";
+    }
+}
 .level-title--expanded {
     font-weight: normal;
 }
 
 // component ButtonBar
-.button-bar {}
+.button-bar {
+    margin-top: $grid-gutter-width/2;
+}
 
 // component LevelButton
 .level-button {
