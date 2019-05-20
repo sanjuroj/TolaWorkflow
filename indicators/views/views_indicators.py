@@ -228,7 +228,6 @@ class IndicatorCreate(IndicatorFormMixin, CreateView):
                 create_date=timezone.now(),
             )
 
-
         ProgramAuditLog.log_indicator_created(
             self.request.user,
             indicator,
@@ -262,13 +261,13 @@ class IndicatorUpdate(IndicatorFormMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super(IndicatorUpdate, self).get_context_data(**kwargs)
         context.update({'id': self.kwargs['pk']})
-        getIndicator = Indicator.objects.get(id=self.kwargs['pk'])
-        program = getIndicator.program
+        indicator = Indicator.objects.get(id=self.kwargs['pk'])
+        program = indicator.program
 
-        context.update({'i_name': getIndicator.name})
+        context.update({'i_name': indicator.name})
         # context['programId'] = program.id
 
-        pts = PeriodicTarget.objects.filter(indicator=getIndicator) \
+        pts = PeriodicTarget.objects.filter(indicator=indicator) \
             .annotate(num_data=Count('result')).order_by('customsort', 'create_date', 'period')
 
         ptargets = []
@@ -284,32 +283,32 @@ class IndicatorUpdate(IndicatorFormMixin, UpdateView):
             })
 
         # if the modal is loaded (not submitted) and the indicator frequency is a periodic
-        if self.request.method == 'GET' and getIndicator.target_frequency in [
+        if self.request.method == 'GET' and indicator.target_frequency in [
                 Indicator.ANNUAL, Indicator.SEMI_ANNUAL, Indicator.TRI_ANNUAL,
                 Indicator.QUARTERLY, Indicator.MONTHLY]:
 
-            latest_pt_end_date = getIndicator.periodictargets.aggregate(lastpt=Max('end_date'))['lastpt']
+            latest_pt_end_date = indicator.periodictargets.aggregate(lastpt=Max('end_date'))['lastpt']
             if latest_pt_end_date is None or latest_pt_end_date == 'None':
                 latest_pt_end_date = program.reporting_period_start
             else:
                 latest_pt_end_date += timedelta(days=1)
 
             target_frequency_num_periods = IPTT_ReportView._get_num_periods(
-                latest_pt_end_date, program.reporting_period_end, getIndicator.target_frequency)
+                latest_pt_end_date, program.reporting_period_end, indicator.target_frequency)
 
             num_existing_targets = pts.count()
             event_name = ''
 
-            generatedTargets = generate_periodic_targets(
-                getIndicator.target_frequency, latest_pt_end_date, target_frequency_num_periods, event_name,
+            generated_targets = generate_periodic_targets(
+                indicator.target_frequency, latest_pt_end_date, target_frequency_num_periods, event_name,
                 num_existing_targets)
 
             # combine the list of existing periodic_targets with the newly generated placeholder for missing targets
-            ptargets += generatedTargets
+            ptargets += generated_targets
 
         context['periodic_targets'] = ptargets
         context['targets_sum'] = PeriodicTarget.objects \
-            .filter(indicator=getIndicator).aggregate(Sum('target'))['target__sum']
+            .filter(indicator=indicator).aggregate(Sum('target'))['target__sum']
 
         # redirect user to certain tabs of the form given GET params
         if self.request.GET.get('targetsactive') == 'true':
