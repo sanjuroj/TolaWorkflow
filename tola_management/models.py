@@ -368,6 +368,9 @@ class ProgramAuditLog(models.Model, DiffableLog):
         previous_entry_json = json.dumps(old_indicator_values, cls=DjangoJSONEncoder)
         new_entry_json = json.dumps(new_indicator_values, cls=DjangoJSONEncoder)
         if new_entry_json != previous_entry_json:
+            if rationale == '':
+                raise Exception('rationale string missing when saving change to indicator audit log')
+
             new_program_log_entry = ProgramAuditLog(
                 program=indicator.program,
                 user=user.tola_user,

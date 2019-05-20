@@ -430,11 +430,6 @@ class IndicatorUpdate(IndicatorFormMixin, UpdateView):
         # Write to audit log if results attached
         results_count = Result.objects.filter(indicator=self.object).count()
         if results_count > 0:
-            if rationale == '':
-                # front end validation was bypassed?
-                # raise exception here instead of returning an HttpResponse to rollback DB transaction
-                raise Exception('rationale string missing on indicator form')
-
             ProgramAuditLog.log_indicator_updated(
                 self.request.user,
                 self.object,
