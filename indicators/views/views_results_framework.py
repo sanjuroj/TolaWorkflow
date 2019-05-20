@@ -39,6 +39,7 @@ class ResultsFrameworkBuilder(ListView):
         }
 
         context_data = {
+            'program': program,
             'js_context': js_context,
         }
         return render(request, self.template_name, context_data)

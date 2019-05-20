@@ -14,12 +14,12 @@ export class LevelTitle extends React.Component {
 
     render() {
         return (
-            <span className={'level-title ' + this.props.classes}>
+            <h3 className={'level-title ' + this.props.classes}>
                 {this.props.tierName}
                 {/*if we don't check whether there is an ontology, there ill be an extra
                 space before the colon */}
-                {this.props.ontologyLabel ? " " + this.props.ontologyLabel : null}:
-            </span>
+                {this.props.ontologyLabel ? " " + this.props.ontologyLabel : null}
+            </h3>
         )
 
     }
@@ -44,7 +44,7 @@ export class LevelCardCollapsed extends React.Component {
 
     render(){
         return (
-            <div className="level-card--collapsed" id={this.props.level.id}>
+            <div className="level-card level-card--collapsed" id={this.props.level.id}>
                 <div className="level-card--collapsed__name">
                     <strong>
                         <LevelTitle
@@ -121,7 +121,7 @@ export class LevelCardExpanded extends React.Component {
 
     render(){
         return (
-            <div className="level-card--expanded" id={this.props.level.id}>
+            <div className="level-card level-card--expanded" id={this.props.level.id}>
                 <div>
                     <LevelTitle
                         tierName={this.props.levelProps.tierName}
@@ -131,14 +131,16 @@ export class LevelCardExpanded extends React.Component {
 
                 </div>
                 <form className="level-card--expanded__form" onSubmit={this.saveLevel}>
-                    <input
+                    <textarea
+                        className="form-control"
                         type="text"
                         id="level-name"
                         name="name"
                         value={this.name || ""}
                         onChange={this.onFormChange}    />
                     <label htmlFor="assumptions">Assumptions</label>
-                    <input
+                    <textarea
+                        className="form-control"
                         type="text"
                         id="level-assumptions"
                         name="assumptions"
@@ -161,19 +163,19 @@ class ButtonBar extends React.Component {
     render() {
         let addAnotherButton = null;
         if (this.props.level.parent != null && this.props.level.parent != "root") {
-            addAnotherButton = <LevelButton classes="" text="Save and another" submitType="saveAndAddSibling"  submitFunc={this.props.submitFunc} />
+            addAnotherButton = <LevelButton classes="btn-primary" text={gettext("Save and another")} submitType="saveAndAddSibling"  submitFunc={this.props.submitFunc} />
         }
 
         let addAndLinkButton = null;
         if (this.props.level.level_depth < this.props.tierCount) {
-            addAndLinkButton = <LevelButton classes="" text="Save and link" submitType="saveAndAddChild" submitFunc={this.props.submitFunc} />
+            addAndLinkButton = <LevelButton classes="btn-primary" text={gettext("Save and link")} submitType="saveAndAddChild" submitFunc={this.props.submitFunc} />
         }
         return (
             <div className="button-bar">
-                <LevelButton classes="" text="Save and close" submitType="saveOnly" submitFunc={this.props.submitFunc} />
+                <LevelButton classes="btn-primary" text={gettext("Save and close")} submitType="saveOnly" submitFunc={this.props.submitFunc} />
                 {addAnotherButton}
                 {addAndLinkButton}
-                <LevelButton classes="" text="Cancel" submitType="cancel" submitFunc={this.props.cancelFunc} />
+                <LevelButton classes="btn-reset" text={gettext("Cancel")} submitType="cancel" submitFunc={this.props.cancelFunc} />
             </div>
         )
 
@@ -187,7 +189,7 @@ class LevelButton extends React.Component {
         return (
             <button
                 type={buttonType}
-                className={this.props.classes + ' level-button'}
+                className={this.props.classes + ' level-button btn'}
                 onClick={() =>this.props.submitFunc(this.props.submitType)}>
                 {this.props.text}
             </button>

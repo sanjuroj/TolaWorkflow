@@ -34,7 +34,7 @@ class LevelTier extends React.Component {
 
     render() {
         return (
-            <div className="leveltier"> {this.props.tierName} </div>
+            <div className={'leveltier leveltier--level-' + this.props.tierLevel}>{this.props.tierName} </div>
     )}
 }
 
