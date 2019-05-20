@@ -59,7 +59,7 @@ class LevelTierList extends React.Component{
                     {
                         this.props.rootStore.levelStore.chosenTierSet.length > 0 ?
                             this.props.rootStore.levelStore.chosenTierSet.map((tier, index) => {
-                                return <LevelTier key={index} tierName={tier}/>
+                                return <LevelTier key={index} tierLevel={index} tierName={tier}/>
                             })
                             : null
                     }
