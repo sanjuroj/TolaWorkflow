@@ -1,10 +1,10 @@
 import { observable, computed, action, toJS, runInAction } from "mobx";
-import { api } from "../../api.js";
 import { trimOntology } from '../../level_utils'
+import { api } from "../../api.js"
 
 export class RootStore {
-    constructor (levels, levelTiers, tierPresets) {
-        this.levelStore =  new LevelStore(levels, levelTiers, tierPresets, this);
+    constructor (program_id, levels, levelTiers, tierPresets) {
+        this.levelStore =  new LevelStore(program_id, levels, levelTiers, tierPresets, this);
         this.uiStore = new UIStore(this);
     }
 }
@@ -14,44 +14,36 @@ export class LevelStore {
     @observable chosenTierSet = [];
     @observable chosenTierSetName = "";
     tierPresets = {};
+    defaultPreset = "Mercy Corps standard";
+    program_id = ""
 
-    constructor(levels, levelTiers, tierPresets, rootStore) {
+    constructor(program_id, levels, levelTiers, tierPresets, rootStore) {
         this.rootStore = rootStore;
         this.levels = levels;
         this.tierPresets = tierPresets;
+        this.program_id = program_id;
 
-        // Set the stored tierset and its name, if they exist
+        // Set the stored tierset and its name, if they exist.  Use the default if they don't.
         if (levelTiers.length > 0) {
-            this.chosenTierSet = levelTiers;
+            this.chosenTierSet = levelTiers.map( t => t.name);
             this.chosenTierSetName = this.derive_preset_name(levelTiers, tierPresets);
         }
-        // else {
-        //     this.selectedTierSetName = none;
-        //     this.chosenLevelTierSet = tierPresets[this.defaultPreset];
-        // }
-
+        else {
+            this.chosenTierSetName = this.defaultPreset;
+            this.chosenTierSet = this.tierPresets[this.defaultPreset]
+        }
     }
 
-
-
-    @computed get tierList () {
-        if (!this.chosenTierSet && !this.chosenTierSetName){
-            return [];
-        }
-        else if (this.chosenTierSetName in this.tierPresets){
-            return this.tierPresets[this.chosenTierSetName];
-        }
-        else {
-            return this.chosenTierSet;
-        }
+    @computed get sortedLevels () {
+        return this.levels.slice().sort((a, b) => {a.level_depth - b.level_depth || a.customsort - b.customsort})
     }
 
     @computed get levelProperties () {
         let levelProperties = {};
         for (let level of this.levels) {
             let properties = {};
-            properties['ontologyLabel'] = trimOntology(level.ontology);
-            properties['tierName'] = this.tierList[level.level_depth-1];
+            properties['ontologyLabel'] = this.buildOntology(level.id);
+            properties['tierName'] = this.chosenTierSet[level.level_depth-1];
             const childCount =  this.levels.filter(l => l.parent == level.id).length;
             properties['canDelete'] = childCount==0;
             levelProperties[level.id] = properties
@@ -62,47 +54,101 @@ export class LevelStore {
     @action
     changeTierSet(newTierSetName) {
         this.chosenTierSetName = newTierSetName;
+        this.chosenTierSet = this.tierPresets[newTierSetName]
     }
 
     @action
-    saveAndAddSiblingLevel = (level_id) =>{
-        console.log('yay', level_id);
-        level = this.levels.find( l => l.id = level_id);
-        console.log(level)
-        this.saveLevelToDB(level_id);
-        this.createNewLevel(level_id);
+    cancelEdit = levelId => {
+        this.rootStore.uiStore.removeExpandedCard(levelId)
 
-    }
+        this.levels.replace(this.levels.filter((element) => element.id != "new"))
+    };
 
     @action
-    createNewLevelFromSibling = (sibling_id) => {
-        sibling = this.levels.find( l => l.id == sibling_id);
+    createNewLevelFromSibling = (siblingId) => {
+        // Copy sibling data for the new level and then clear some of it out
+        let sibling = toJS(this.levels.find( l => l.id == siblingId));
+        let newLevel = Object.assign({}, sibling)
+        newLevel.customsort +=1;
+        newLevel.id = "new";
+        newLevel.name = "";
+        newLevel.assumptions = "";
+
+        // bump the customsort field for siblings that come after the inserted Level
+        let siblingsToReorder = this.levels.filter( l => {
+            return l.customsort > sibling.customsort && l.parent == sibling.parent;
+        })
+        siblingsToReorder.forEach( sib => sib.customsort+=1)
+
+        // add new Level to the various Store components
+        this.rootStore.uiStore.expandedCards.push("new")
+        this.rootStore.uiStore.activeCard = "new"
+        this.levels.push(newLevel)
+
+    };
+
+    @action
+    createFirstLevel = () => {
+        // Using "root" for parent id so the Django view can distinguish between top tier level and 2nd tier level
+        let newLevel = {
+            id: "new",
+            program: this.program_id,
+            name: "",
+            assumptions: "",
+            customsort: 1,
+            level_depth: 1,
+            parent: "root"
+        }
+        this.levels.push(newLevel)
+        this.rootStore.uiStore.expandedCards.push("new")
     }
 
-    saveLevelToDB = (levelId) => {
-        console.log('this', levelId)
-        let levelData = toJS(this.levels).filter( l => l.id == levelId)[0];
+    saveLevelTiersToDB = () => {
+        const tier_data = {program_id: this.program_id, tiers: this.chosenTierSet}
+        api.post(`/save_leveltiers/`, tier_data)
+            .then(response => {
+                console.log("Level Tiers Saved!")
+            })
+            .catch(error => console.log('error', error))
+    }
+
+
+    // TODO: better error handling for API
+    saveLevelToDB = (submitType, levelId, formData) => {
+        let targetLevel = this.levels.find(level => level.id == levelId);
+        let levelToSave = Object.assign(toJS(targetLevel), formData);
         if (levelId == "new") {
-            console.log('want to create a new level')
-        } else {
-            console.log('in update, id=', levelId)
-            api.put(`/level/${levelId}/`, levelData)
+            if (levelToSave.parent == "root") {
+                this.saveLevelTiersToDB()
+            }
+            delete levelToSave.id;
+
+            api.post(`/insert_new_level/`, levelToSave)
                 .then(response => {
-                    let targetLevel = this.levels.find(level => level.id == levelId);
+                    runInAction(() => {
+                        this.levels.replace(response.data)
+                    })
+                })
+                .catch(error => console.log('error', error))
+
+        } else {
+            api.put(`/level/${levelId}/`, levelToSave)
+                .then(response => {
                     runInAction( () => {
-                        Object.assign(targetLevel, response.data)
+                        Object.assign(targetLevel, response.data);
                     });
                     this.rootStore.uiStore.removeExpandedCard(levelId)
+                    if (submitType == "saveAndAddSibling"){
+                        this.createNewLevelFromSibling(levelId)
+                    }
 
                 })
                 .catch( error => {
                     console.log("There was an error:", error)
                 })
         }
-        let targetLevelFinal = this.levels.find(level => level.id == levelId);
-        console.log('final target', toJS(targetLevelFinal))
-    };
 
+    };
 
     derive_preset_name(levelTiers, tierPresets) {
         if (!levelTiers){
@@ -121,6 +167,22 @@ export class LevelStore {
         }
         return "Custom"
     }
+
+
+    buildOntology = (levelId, ontologyArray = []) => {
+        let level = toJS(this.levels.find( l => l.id == levelId))
+        /*  If there is no parent (saved top tier level) or the parent is "root" (unsaved top tier level)
+            then we should return with adding to the ontology because there is no ontology entry for the top tier
+         */
+        if (level.parent && level.parent != "root") {
+            ontologyArray.unshift(level.customsort)
+            return this.buildOntology(level.parent, ontologyArray)
+        }
+        else {
+            return ontologyArray.join(".")
+        }
+    }
+
 }
 
 

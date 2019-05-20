@@ -41,19 +41,33 @@ class LevelTier extends React.Component {
 @inject('rootStore')
 @observer
 class LevelTierList extends React.Component{
+
     render() {
+        let apply_button = null
+        if (this.props.rootStore.levelStore.levels.length == 0) {
+            apply_button =
+                <button
+                    className="leveltier-button"
+                    onClick={this.props.rootStore.levelStore.createFirstLevel}>
+                    Apply
+                </button>
+        }
+
         return (
-            <div id="leveltier-list" className="leveltier-list">
-                {
-                    this.props.rootStore.levelStore.tierList.length > 0 ?
-                        this.props.rootStore.levelStore.tierList.map((tier, index) => {
-                            return <LevelTier key={index} tierName={tier}/>
-                        })
-                        : null
-                }
+            <React.Fragment>
+                <div id="leveltier-list" className="leveltier-list">
+                    {
+                        this.props.rootStore.levelStore.chosenTierSet.length > 0 ?
+                            this.props.rootStore.levelStore.chosenTierSet.map((tier, index) => {
+                                return <LevelTier key={index} tierName={tier}/>
+                            })
+                            : null
+                    }
 
 
-            </div>
+                </div>
+                {apply_button}
+            </React.Fragment>
         )
     }
 }

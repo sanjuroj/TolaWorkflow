@@ -16,17 +16,17 @@ class LevelList extends React.Component {
 
     render() {
         let renderList = [];
-        // console.log('store=', toJS(this.props.rootStore.levels))
         if (this.props.renderList == 'initial') {
-            renderList = this.props.rootStore.levelStore.levels.filter(level => level.parent == null).sort(elem => elem.customsort)
+            renderList = this.props.rootStore.levelStore.sortedLevels
+                .filter(level => ['root', null].indexOf(level.parent) != -1)
         }
+
         else{
-            renderList = this.props.renderList.sort(elem => elem.customsort);
+            renderList = this.props.renderList.sort((a, b) => a.customsort - b.customsort);
         }
 
         return renderList.map((elem) => {
             let card = '';
-            // console.log('expandedlist', this.props.uiStore.expandedCards)
             if (this.props.rootStore.uiStore.expandedCards.indexOf(elem.id) !== -1) {
                 card =
                     <LevelCardExpanded
@@ -40,7 +40,7 @@ class LevelList extends React.Component {
                         levelProps={this.props.rootStore.levelStore.levelProperties[elem.id]}/>
             }
 
-            let children = this.props.rootStore.levelStore.levels.filter(level => level.parent == elem.id);
+            let children = this.props.rootStore.levelStore.sortedLevels.filter(level => level.parent == elem.id);
             let childLevels = null;
             if (children.length > 0){
                 childLevels =  <LevelList
@@ -57,8 +57,29 @@ class LevelList extends React.Component {
     })}
 }
 
-export const LevelListing = observer(function (props) {
-    return (
-        <div id="level-list" style={{flexGrow:"2"}}><LevelList renderList='initial' /></div>
-    )
-});
+@inject('rootStore')
+@observer
+export class LevelListPanel  extends React.Component {
+
+    render() {
+        if (this.props.rootStore.levelStore.levels.length == 0) {
+            return (
+                <div style={{display: "flex",flexDirection: "row"}}>
+                    <img
+                        src="/static/img/tripleDrum.jpg"
+                        alt="Result logic tree"
+                        style={{maxWidth: "300px", maxHeight: "300px"}}
+                    />
+                    <div><span className="level-list__empty--warning">Choose your results framework template carefully!</span> Once you begin building your framework, it will not be possible to change templates without first deleting all saved levels.
+                    </div>
+                </div>
+            )
+        }
+        else {
+            return (
+                <div id="level-list" style={{flexGrow: "2"}}><LevelList renderList='initial'/></div>
+            )
+        }
+    }
+}
+

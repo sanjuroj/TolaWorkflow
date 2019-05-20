@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import { observer, inject } from "mobx-react"
-import { toJS } from 'mobx';
+import { toJS, extendObservable } from 'mobx';
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCaretDown, faCaretRight } from '@fortawesome/free-solid-svg-icons'
@@ -35,12 +35,10 @@ export class LevelCardCollapsed extends React.Component {
     }
 
     deleteLevel() {
-        const currentElement =  document.getElementById(this.props.level.id);
         console.log("You clicked delete level")
     }
 
     editLevel = () => {
-        console.log("You clicked to edit level")
         this.props.rootStore.uiStore.addExpandedCard(this.props.level.id)
     };
 
@@ -86,36 +84,42 @@ export class LevelCardCollapsed extends React.Component {
 export class LevelCardExpanded extends React.Component {
     constructor(props){
         super(props);
-        this.onFormChange = this.onFormChange.bind(this);
-        // this.saveLevel = this.saveLevel.bind(this);
-        // this.saveLevel = this.saveLevel.bind(this);
+        this.submitType = "saveOnly";
+        extendObservable(this, {
+            name: props.level.name,
+            assumptions: props.level.assumptions,
+        })
     }
+
+    /*
+    Using this allows us to use the same submit function for all three buttons.  Shame the function has to
+    be passed all the way down to the button to work.
+     */
+    updateSubmitType = (newType) => {
+        this.submitType = newType;
+    };
 
     saveLevel = (e) => {
-        e.preventDefault()
-        console.log('event in save', e)
-        console.log("You clicked save level")
-        console.log('edata', e.target)
-        this.props.rootStore.levelStore.saveLevelToDB(this.props.level.id)
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        this.props.rootStore.levelStore.saveLevelToDB(
+            this.submitType,
+            this.props.level.id,
+            {name: this.name, assumptions: this.assumptions}
+        )
 
+    };
+
+    cancelEdit = (e) => {
+        this.props.rootStore.levelStore.cancelEdit(this.props.level.id)
     }
 
-    saveAndCreateChild() {
-        console.log("You clicked to save and and a child level")
-        this.props.rootStore.levelStore.saveAndAddChildLevel(this.props.level.id)
-    }
-
-    saveAndCreateSibling() {
-        console.log("You clicked to save and and a sibling level")
-        this.props.rootStore.levelStore.saveAndAddChildLevel(this.props.level.id)
-    }
-
-    onFormChange(event){
-        this.props.level[event.target.name] = event.target.value;
-    }
+    onFormChange = (event) => {
+        event.preventDefault();
+        this[event.target.name] = event.target.value;
+    };
 
     render(){
-
         return (
             <div className="level-card level-card--expanded" id={this.props.level.id}>
                 <div>
@@ -132,7 +136,7 @@ export class LevelCardExpanded extends React.Component {
                         type="text"
                         id="level-name"
                         name="name"
-                        value={this.props.level.name || ""}
+                        value={this.name || ""}
                         onChange={this.onFormChange}    />
                     <label htmlFor="assumptions">Assumptions</label>
                     <textarea
@@ -140,9 +144,13 @@ export class LevelCardExpanded extends React.Component {
                         type="text"
                         id="level-assumptions"
                         name="assumptions"
-                        value={this.props.level.assumptions || ""}
+                        value={this.assumptions || ""}
                         onChange={this.onFormChange}/>
-                    <ButtonBar />
+                    <ButtonBar
+                        level={this.props.level}
+                        submitFunc={this.updateSubmitType}
+                        cancelFunc={this.cancelEdit}
+                        tierCount={this.props.rootStore.levelStore.chosenTierSet.length}/>
                 </form>
             </div>
 
@@ -153,11 +161,21 @@ export class LevelCardExpanded extends React.Component {
 
 class ButtonBar extends React.Component {
     render() {
+        let addAnotherButton = null;
+        if (this.props.level.parent != null && this.props.level.parent != "root") {
+            addAnotherButton = <LevelButton classes="btn-primary" text={gettext("Save and another")} submitType="saveAndAddSibling"  submitFunc={this.props.submitFunc} />
+        }
+
+        let addAndLinkButton = null;
+        if (this.props.level.level_depth < this.props.tierCount) {
+            addAndLinkButton = <LevelButton classes="btn-primary" text={gettext("Save and link")} submitType="saveAndAddChild" submitFunc={this.props.submitFunc} />
+        }
         return (
             <div className="button-bar">
-                <LevelButton classes="btn-primary" text={gettext("Save and close")} />
-                <LevelButton classes="btn-primary" text={gettext("Save and another")} />
-                <LevelButton classes="btn-primary" text={gettext("Save and link")} />
+                <LevelButton classes="btn-primary" text={gettext("Save and close")} submitType="saveOnly" submitFunc={this.props.submitFunc} />
+                {addAnotherButton}
+                {addAndLinkButton}
+                <LevelButton classes="btn-reset" text={gettext("Cancel")} submitType="cancel" submitFunc={this.props.cancelFunc} />
             </div>
         )
 
@@ -167,8 +185,12 @@ class ButtonBar extends React.Component {
 class LevelButton extends React.Component {
 
     render() {
+        const buttonType = this.props.submitType == "cancel" ? "button" : "submit";
         return (
-            <button type="submit" className={this.props.classes + ' level-button btn'}>
+            <button
+                type={buttonType}
+                className={this.props.classes + ' level-button btn'}
+                onClick={() =>this.props.submitFunc(this.props.submitType)}>
                 {this.props.text}
             </button>
         )
