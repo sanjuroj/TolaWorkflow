@@ -193,15 +193,14 @@
     });
 
 
-    // Intercept IndicatorUpdate form submission and then use ajax to submit it.
-    $("#indicator_modal_content").on("submit", "#indicator_update_form", function(e){
-        e.preventDefault();
+    // Button click handler for UPDATE form
+    $("#indicator_modal_content").on("click", "#id_update_indicator_btn", function(e){
         if (validateForm() === false) {
             showValidations("#modalmessages");
             return;
         }
 
-        var has_results = parseInt($('#numDataPoints').text()) > 0;
+        let has_results = parseInt($('#numDataPoints').text()) > 0;
         if(has_results && hasTrackedFieldsChanged()) {
             if(hasTargetsChanged()) {
                 window.create_destructive_changeset_notice({
@@ -224,6 +223,22 @@
         } else {
             submitForm('');
         }
+    });
+
+    // Button click handler for CREATE form
+    $("#indicator_modal_content").on("click", "#id_save_and_close_indicator_btn,#id_save_and_add_another_indicator_btn", function(e){
+        if (validateForm() === false) {
+            showValidations("#modalmessages");
+            return;
+        }
+
+        submitForm('');
+    });
+
+    // Cancel button
+    $("#indicator_modal_content").on("click", "#id_cancel_btn", function(e){
+        // closes the modal window
+        $('#indicator_modal_div').modal('hide');
     });
 
 

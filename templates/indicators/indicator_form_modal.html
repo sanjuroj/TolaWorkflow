@@ -456,15 +456,31 @@
 
         </div> <!-- /#indicator_modal_body -->
         {% if not readonly %}
+            {% if indicator %}
             <div class="form-actions">
                 <div>
-                    <!-- <input type="submit" class="btn btn-primary" value="Save changes"> -->
-                    <input type="submit" name="submit" value="{% trans 'Save changes' %}" class="btn btn-primary"
-                           id="submit-id-submit">
+                    <button type="button" id="id_update_indicator_btn" class="btn btn-primary">{% trans 'Save changes' %}</button>
                     <input type="reset" class="btn btn-inverse" value="{% trans 'Reset' %}">
                 </div>
                 <div class="text-muted">{% include "form_guidance.html" %}</div>
             </div>
+            {% else %}
+            <div class="form-actions">
+                <div>
+                    {# Translators: button label to save the item and then close a modal #}
+                    <button type="button" id="id_save_and_close_indicator_btn" class="btn btn-primary">
+                        {% trans 'Save and close' %}
+                    </button>
+                    {# Translators: button label to save the form and be redirected to a blank for to add another item #}
+                    <button type="button" id="id_save_and_add_another_indicator_btn" class="btn btn-secondary">
+                        {% trans 'Save and add another' %}
+                    </button>
+                    {# Translators: close a modal throwing away any changes to the form #}
+                    <button type="button" id="id_cancel_btn" class="btn btn-inverse">{% trans 'Cancel' %}</button>
+                </div>
+                <div class="text-muted">{% include "form_guidance.html" %}</div>
+            </div>
+            {% endif %}
         {% endif %}
     </form>
 
