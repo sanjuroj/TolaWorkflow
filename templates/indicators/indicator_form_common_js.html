@@ -56,6 +56,23 @@
     });
 
 
+    // auto scroll either a modal or the whole page to the top
+    function scrollToTop() {
+        if ($('#indicator_modal_div').length == 1) {
+            // for the modal version;
+            $("#indicator_modal_div").animate({ scrollTop: 0 }, 'slow');
+        } else {
+            // for the non-modal version;
+            $("html, body").animate({ scrollTop: 0 }, "slow");
+        }
+    }
+
+    function scrollToIndicatorFormBottom() {
+        // Handle either full page form or modal
+        let $el = $('#indicator_modal_div').length ? $('#indicator_modal_div') : $('html');
+        scrollToBottom($el);
+    }
+
     function confirmAndRedirect(delete_indicator) {
         var has_results = parseInt($('#numDataPoints').text()) > 0;
         if(!has_results) {
@@ -242,6 +259,7 @@
     });
 
 
+    // Disable default handling of ENTER key
     $("#indicator_modal_content").on("keyup keypress", "#indicator_update_form", function(e){
         var keyCode = e.keyCode || e.which;
         if (keyCode === 13 ){
@@ -251,6 +269,7 @@
 
     });
 
+    // Button click handler for Create Targets button
     $("#indicator_modal_content").on("click", "#id_create_targets_btn", function(e) {
         e.preventDefault();
         if (validateForm() === false) {
@@ -262,6 +281,7 @@
         getPeriodicTargetsForm();
     });
 
+    // Ask server for periodic targets form template, to insert into the indicator form
     function getPeriodicTargetsForm() {
         //let $form = $('#indicator_update_form');
 
@@ -300,6 +320,7 @@
         });
     }
 
+    // When adding an event, a row may need to be dynamically inserted
     function createPeriodicTargetRow(pt, isLastIteration, rowNum) {
         var markup = `
                 <tr class="periodic-target" data-collected-count="0" data-ptid="0">
@@ -327,7 +348,7 @@
         return markup;
     }
 
-    // delete periodic_target
+    // delete periodic_target (delete ALL targets)
     $("#indicator_modal_content").on("click", "#id_delete_targets_btn", function(e) {
         e.preventDefault();
         var form_url = $("#indicator_update_form").attr('action');
@@ -493,17 +514,6 @@
         });
     }
 
-    // auto scroll either a modal or the whole page to the top
-    function scrollToTop() {
-        if ($('#indicator_modal_div').length == 1) {
-            // for the modal version;
-            $("#indicator_modal_div").animate({ scrollTop: 0 }, 'slow');
-        } else {
-            // for the non-modal version;
-            $("html, body").animate({ scrollTop: 0 }, "slow");
-        }
-    }
-
 
     function reset_frequency_fields() {
         $("#id_target_frequency").val('');
@@ -581,6 +591,11 @@
       }
       show_hide_frequency_fields();
     });
+
+
+    /*
+     * Form validation
+     */
 
 
     function reset_baseline_errors(){
@@ -913,11 +928,6 @@
         }
     });
 
-    function scrollToIndicatorFormBottom() {
-        // Handle either full page form or modal
-        let $el = $('#indicator_modal_div').length ? $('#indicator_modal_div') : $('html');
-        scrollToBottom($el);
-    }
 
     /*
      * Change tracking functions
@@ -970,6 +980,7 @@
     }
 
     // return a JS obj of key/vals of indicator form
+    // WARNING: this totally doesn't work correctly with multi-selects (or any key w/ multiple values)
     function getIndicatorFormAsObject() {
         let $form = $('#indicator_update_form');
         let formObj = {};
