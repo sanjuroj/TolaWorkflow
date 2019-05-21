@@ -47,9 +47,10 @@ class LevelTierList extends React.Component{
         if (this.props.rootStore.levelStore.levels.length == 0) {
             apply_button =
                 <button
-                    className="leveltier-button"
+                    className="leveltier-button btn btn-primary btn-block"
                     onClick={this.props.rootStore.levelStore.createFirstLevel}>
-                    Apply
+                    {/* #Translators: this refers to an imperative verb on a button ("Apply filters")*/}
+                    {gettext("Apply")}
                 </button>
         }
 
@@ -66,7 +67,9 @@ class LevelTierList extends React.Component{
 
 
                 </div>
-                {apply_button}
+                <div className="leveltier-list__actions">
+                    {apply_button}
+                </div>
             </React.Fragment>
         )
     }
