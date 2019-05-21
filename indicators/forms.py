@@ -73,7 +73,7 @@ class IndicatorForm(forms.ModelForm):
 
     class Meta:
         model = Indicator
-        exclude = ['create_date', 'edit_date']
+        exclude = ['create_date', 'edit_date', 'program']
         widgets = {
             'definition': forms.Textarea(attrs={'rows': 4}),
             'justification': forms.Textarea(attrs={'rows': 4}),
@@ -106,18 +106,6 @@ class IndicatorForm(forms.ModelForm):
         self.fields['disaggregation'].queryset = DisaggregationType.objects\
             .filter(country__in=countries, standard=False)
 
-        # on update, the indicator.program field allows save to work
-        # on create, having the field be disabled breaks save() even if a program id is in POST data
-        # and the program is set in "initial"
-        if indicator:
-            self.fields['program'].queryset = Program.objects.filter(
-                Q(country__in=countries) | Q(user_access=self.request.user.tola_user),
-                funding_status="Funded"
-            ).distinct()
-            self.fields['program'].disabled = True
-        else:
-            self.fields['program'].queryset = Program.objects.filter(pk=self.programval.id)
-
         self.fields['objectives'].queryset = Objective.objects.filter(program__id__in=[self.programval.id])
         self.fields['strategic_objectives'].queryset = StrategicObjective.objects.filter(country__in=countries)
         self.fields['approved_by'].queryset = TolaUser.objects.filter(country__in=countries).distinct()
@@ -141,13 +129,11 @@ class IndicatorForm(forms.ModelForm):
             raise forms.ValidationError(_('Please enter a number larger than zero.'))
         return data
 
-    # def clean_rationale(self):
-    #     data = self.cleaned_data.get('rationale')
-    #     periodic_targets = self.request.POST.get('periodic_targets')
-    #     if not periodic_targets == 'generateTargets' and len(self.instance.result_set.all()) > 0 and (not data or len(data) <= 0):
-    #         # Translators: Input form error message that the "reason for change" form field is empty when results have already been saved
-    #         raise forms.ValidationError(_('Results have been recorded, reason for change is required.'))
-    #     return data
+    def save(self, commit=True):
+        # set the program on the indicator on create (it's already set on update)
+        if self.instance.program_id is None:
+            self.instance.program_id = self.programval.id
+        return super(IndicatorForm, self).save(commit)
 
 
 class ResultForm(forms.ModelForm):
