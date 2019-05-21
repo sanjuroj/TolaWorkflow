@@ -131,9 +131,9 @@ function (_React$Component3) {
 
       if (this.props.rootStore.levelStore.levels.length == 0) {
         apply_button = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
-          className: "leveltier-button",
+          className: "leveltier-button btn btn-primary btn-block",
           onClick: this.props.rootStore.levelStore.createFirstLevel
-        }, "Apply");
+        }, gettext("Apply"));
       }
 
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -145,7 +145,9 @@ function (_React$Component3) {
           tierLevel: index,
           tierName: tier
         });
-      }) : null), apply_button);
+      }) : null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "leveltier-list__actions"
+      }, apply_button));
     }
   }]);
 
@@ -1105,19 +1107,15 @@ function (_React$Component2) {
     value: function render() {
       if (this.props.rootStore.levelStore.levels.length == 0) {
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-          style: {
-            display: "flex",
-            flexDirection: "row"
-          }
-        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("img", {
-          src: "/static/img/tripleDrum.jpg",
-          alt: "Result logic tree",
-          style: {
-            maxWidth: "300px",
-            maxHeight: "300px"
-          }
-        }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
-          className: "level-list__empty--warning"
+          className: "level-list-panel"
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+          className: "level-list-panel__dingbat"
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+          className: "fas fa-sitemap"
+        })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+          className: "level-list-panel__text text-large"
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", {
+          className: "text-danger"
         }, "Choose your results framework template carefully!"), " Once you begin building your framework, it will not be possible to change templates without first deleting all saved levels."));
       } else {
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -1138,4 +1136,4 @@ function (_React$Component2) {
 /***/ })
 
 },[["QTZG","runtime","vendors"]]]);
-//# sourceMappingURL=results_framework-6e7d64055c2172be0b21.js.map
+//# sourceMappingURL=results_framework-c8a1cf3f9a5d3a22b7b5.js.map
