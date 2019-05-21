@@ -145,9 +145,9 @@ function (_React$Component3) {
           tierLevel: index,
           tierName: tier
         });
-      }) : null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      }) : null), apply_button ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "leveltier-list__actions"
-      }, apply_button));
+      }, apply_button) : null);
     }
   }]);
 
@@ -1136,4 +1136,4 @@ function (_React$Component2) {
 /***/ })
 
 },[["QTZG","runtime","vendors"]]]);
-//# sourceMappingURL=results_framework-c8a1cf3f9a5d3a22b7b5.js.map
+//# sourceMappingURL=results_framework-d3e59131902b92b752af.js.map
