@@ -67,9 +67,13 @@ class LevelTierList extends React.Component{
 
 
                 </div>
-                <div className="leveltier-list__actions">
-                    {apply_button}
-                </div>
+                {
+                    apply_button ?
+                        <div className="leveltier-list__actions">
+                            {apply_button}
+                        </div>
+                    : null
+                }
             </React.Fragment>
         )
     }
