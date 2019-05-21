@@ -19,18 +19,18 @@ import unittest
 class TestIndicatorCreateEndpoint(EndpointTestBase, test.TestCase):
     url = 'indicator_create'
     url_kwargs = {'program': None}
-    access_level = 'high'
+    access_level = None # access level changes get / post
     post_data = {
-        'services': 0,
         'name': 'endpoint test indicator',
-        'program': None
     }
 
     def setUp(self):
         self.init()
 
     def test_http_methods(self):
+        self.access_level = 'low'
         self.run_get_tests()
+        self.access_level = 'high'
         self.run_post_tests()
 
 class TestIndicatorUpdateEndpoint(EndpointTestBase, test.TestCase):
@@ -67,7 +67,7 @@ class TestIndicatorDeleteEndpoint(EndpointTestBase, test.TestCase):
 
 class TestPeriodicTargetGenerateEndpoint(EndpointTestBase, test.TestCase):
     url = 'pt_generate'
-    url_kwargs = {'indicator': None}
+    url_kwargs = {'indicator': 'event'}
     access_level = None # varies GET to POST
     post_data = {
         'rationale': 'pt generate delete endpoint test'
