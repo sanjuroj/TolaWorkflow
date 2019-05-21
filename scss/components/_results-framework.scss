@@ -49,6 +49,27 @@
     }
 }
 
+// component LevelListPanel
+.level-list-panel {
+    align-items: top;
+    display: flex;
+    @include media-breakpoint-only(md) {
+        align-items: center;
+        flex-direction: column;
+    }
+}
+.level-list-panel__dingbat {
+    color: $gray-300;
+    font-size: 200px;
+    line-height: 0;
+    margin-bottom: $grid-gutter-width;
+    margin-right: $grid-gutter-width;
+    @include media-breakpoint-down(sm) {
+        display: none;
+    }
+}
+.level-list-panel__text {}
+
 
 // # from level_cards.js
 .level-card {

@@ -64,13 +64,12 @@ export class LevelListPanel  extends React.Component {
     render() {
         if (this.props.rootStore.levelStore.levels.length == 0) {
             return (
-                <div style={{display: "flex",flexDirection: "row"}}>
-                    <img
-                        src="/static/img/tripleDrum.jpg"
-                        alt="Result logic tree"
-                        style={{maxWidth: "300px", maxHeight: "300px"}}
-                    />
-                    <div><span className="level-list__empty--warning">Choose your results framework template carefully!</span> Once you begin building your framework, it will not be possible to change templates without first deleting all saved levels.
+                <div className="level-list-panel">
+                    <div className="level-list-panel__dingbat">
+                        <i className="fas fa-sitemap"></i>
+                    </div>
+                    <div className="level-list-panel__text text-large">
+                        <strong className="text-danger">Choose your results framework template carefully!</strong> Once you begin building your framework, it will not be possible to change templates without first deleting all saved levels.
                     </div>
                 </div>
             )
