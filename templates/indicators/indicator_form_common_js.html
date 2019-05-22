@@ -39,6 +39,11 @@
         $("#indicator_modal_div").modal('show');
     }
 
+    // Close the modal window
+    function closeIndicatorFormModal() {
+        $('#indicator_modal_div').modal('hide');
+    }
+
     $( document ).ready(function() {
         show_hide_frequency_fields();
         if ($("#id_objectives option").length < 1) {
@@ -136,7 +141,7 @@
                             }
                             });
                         $('#indicator_modal_div').find('form').attr('deleted', true);
-                        $('#indicator_modal_div').modal('hide');
+                        closeIndicatorFormModal();
                      } else {
                          createAlert("danger", data.msg, true, "#modalmessages");
                          $('#indicator_modal_div').animate({ scrollTop: 0 }, 'slow');
@@ -225,41 +230,53 @@
                     no_preamble: true,
                     context: document.getElementById('indicator_update_form'),
                     on_submit: (rationale) => {
-                        submitForm(rationale);
+                        submitFormUpdate(rationale);
                     }
                 });
             } else {
                 window.create_nondestructive_changeset_notice({
                     context: document.getElementById('indicator_update_form'),
                     on_submit: (rationale) => {
-                        submitForm(rationale);
+                        submitFormUpdate(rationale);
                     }
                 });
             }
             scrollToIndicatorFormBottom();
         } else {
-            submitForm('');
+            submitFormUpdate('');
         }
     });
 
-    // Button click handler for CREATE form
-    $("#indicator_modal_content").on("click", "#id_save_and_close_indicator_btn,#id_save_and_add_another_indicator_btn", function(e){
+    // Button click handler for CREATE form (save and close)
+    $("#indicator_modal_content").on("click", "#id_save_and_close_indicator_btn", function(e){
         if (validateForm() === false) {
             showValidations("#modalmessages");
             return;
         }
 
-        submitForm('');
+        submitForm().done(() => {
+            closeIndicatorFormModal();
+        });
+    });
+
+    // Button click handler for CREATE form (save and add another)
+    $("#indicator_modal_content").on("click", "#id_save_and_add_another_indicator_btn", function(e){
+        if (validateForm() === false) {
+            showValidations("#modalmessages");
+            return;
+        }
+
+        submitForm().done(() => {
+
+        });
     });
 
     // Cancel button
-    $("#indicator_modal_content").on("click", "#id_cancel_btn", function(e){
-        // closes the modal window
-        $('#indicator_modal_div').modal('hide');
-    });
+    $("#indicator_modal_content").on("click", "#id_cancel_btn", closeIndicatorFormModal);
 
 
     // Disable default handling of ENTER key
+    /*
     $("#indicator_modal_content").on("keyup keypress", "#indicator_update_form", function(e){
         var keyCode = e.keyCode || e.which;
         if (keyCode === 13 ){
@@ -268,6 +285,7 @@
         }
 
     });
+    */
 
     // Button click handler for Create Targets button
     $("#indicator_modal_content").on("click", "#id_create_targets_btn", function(e) {
@@ -280,6 +298,26 @@
 
         getPeriodicTargetsForm();
     });
+
+    // Insert periodic target form template into indicator form DOM
+    function insertPeriodicTargetForm(content) {
+        if ($("#id_target_frequency").val() != 1) {
+            $("#id_div_periodic_tables_placeholder").empty();
+            $("#id_div_periodic_tables_placeholder").append(content);
+        }
+
+        show_hide_frequency_fields(true);
+        toggleTargetsSumOrAvgRow();
+
+        if ($("#id_unit_of_measure_type_1").is(":checked")) {
+            show_hide_cummulative_inputs('percent')
+        }
+        else {
+            show_hide_cummulative_inputs('number')
+        }
+
+        updateAggregateRowValueAndLabel();
+    }
 
     // Ask server for periodic targets form template, to insert into the indicator form
     function getPeriodicTargetsForm() {
@@ -298,22 +336,7 @@
             //var targets_sum = jsondata["targets_sum"];
             let content = data["content"];
 
-            if ($("#id_target_frequency").val() != 1) {
-                $("#id_div_periodic_tables_placeholder").empty();
-                $("#id_div_periodic_tables_placeholder").append(content);
-            }
-
-            show_hide_frequency_fields(true);
-            toggleTargetsSumOrAvgRow();
-
-            if ($("#id_unit_of_measure_type_1").is(":checked")) {
-                show_hide_cummulative_inputs('percent')
-            }
-            else {
-                show_hide_cummulative_inputs('number')
-            }
-
-            updateAggregateRowValueAndLabel();
+            insertPeriodicTargetForm(content);
 
         }).fail((xhr, text, error) => {
             $('#id_create_targets_btn').attr('disabled', false);
@@ -366,7 +389,7 @@
                 }
 
             });
-        }
+        };
 
         var has_results = parseInt($('#numDataPoints').text()) > 0;
         if(has_results) {
@@ -404,43 +427,18 @@
     $('#indicator_modal_content').on('click', "input[type='reset']", function(e) {
     });
 
+    // submits form - returns a jQuery deffered obj to attached callbacks onto
     function submitForm(rationale = '') {
-        var numDataPoints = parseInt($("#numDataPoints").text());
-        var initalTargetFrequency = parseInt($("#initialTargetFrequencyValue").text());
-        var target_frequency = $("#id_target_frequency").val();
+        // clear any success/failure messages
+        let alertElement = "#modalmessages";
+        $(alertElement).html('');
 
-        // warning when changing for LoP target value to something non-LoP
-        if (numDataPoints > 0 && initalTargetFrequency == 1 && target_frequency != 1) {
-            const message_text = window.lop_to_non_lop_with_results_text(numDataPoints);
-            window.create_no_rationale_changeset_notice({
-                preamble: DESTRUCTIVE_PREAMBLE,
-                message_text: message_text,
-                context: document.getElementById('indicator_update_form'),
-                on_submit: () => {
-                    formSubmitContinue(rationale);
-                },
-                on_cancel: () => {
-                    $('#id_target_frequency').val('1');
-                    $('#id_create_targets_btn').attr("disabled", false);
-                    show_hide_frequency_fields();
-                }
-            });
-        } else {
-            formSubmitContinue(rationale);
-        }
-    }
- 
-    function formSubmitContinue(rationale = '') {
         let $form = $('#indicator_update_form');
-        var submitBtnName = $form.find("input[type=submit]:focus" );
-        var form_url = $form.attr('action');
-
-        // if there are errors in periodic targets then do not submit the form
-        if ($("#id_div_periodic_tables_placeholder input").parent().hasClass('has-error')) { return; }
+        let form_url = $form.attr('action');
 
         let formArr = $form.serializeArray();
-        let form_periodic_targets = getFormPeriodicTargets();
-        let periodic_targets_to_submit = JSON.stringify(form_periodic_targets);
+        let periodic_targets_to_submit = JSON.stringify(getFormPeriodicTargets());
+
         formArr.push({"name": "periodic_targets", "value": periodic_targets_to_submit});
 
         if (formArr.find(e => e.name === 'is_cumulative') === undefined) {
@@ -450,67 +448,25 @@
         // user entered rationale for change
         formArr.push({name: 'rationale', value: rationale});
 
-        //disable submit button as we are posting and want to prevent double-saves while waiting:
-        submitBtnName.attr('disabled', true);
-
-        $.ajax({
+        return $.ajax({
             method: 'POST',
             url: form_url,
             data: formArr,
         }).done(function(data, textStatus, jqXHR) {
-            //undisable submit button as the response is returned:
-            submitBtnName.attr('disabled', false);
-            var alertsElement = "#alerts";
-            if ( $("#modalmessages").length) {
-                alertsElement = "#modalmessages";
-            }
-            // if there are any erros show them and then STOP
-            if (jqXHR.getResponseHeader('error') == "True") {
-                //$("#modalerrors").html(data);
-                createAlert("danger", data, true, alertsElement);
-                return;
-            }
+            insertPeriodicTargetForm(data["content"]);
+        });
+    }
 
-            $(alertsElement).html('');
-
-            createAlert("success", "{% trans 'Success, form data saved.'|escapejs %}", true, alertsElement);
-
-            /*
-            var jsondata = $.parseJSON(data);
-            var indicator = $.parseJSON(jsondata["indicatorjson"])[0];
-            var targets_sum = jsondata["targets_sum"];
-            */
-
-            let content = data["content"];
-
-            if ($("#id_target_frequency").val() != 1) {
-                $("#id_div_periodic_tables_placeholder").empty();
-                $("#id_div_periodic_tables_placeholder").append(content);
-            }
-
-            show_hide_frequency_fields(true);
-            toggleTargetsSumOrAvgRow();
-
-            if ($("#id_unit_of_measure_type_1").is(":checked")) {
-                show_hide_cummulative_inputs('percent')
-            }
-            else {
-                show_hide_cummulative_inputs('number')
-            }
-
-            updateAggregateRowValueAndLabel();
+    // Submit the the UPDATE form
+    function submitFormUpdate(rationale = '') {
+        submitForm(rationale).done((data) => {
+            let alertElement = "#modalmessages";
+            $(alertElement).html('');
+            createAlert("success", "{% trans 'Success, form data saved.'|escapejs %}", true, alertElement);
+            scrollToTop();
 
             // this is our new base state
             recordTrackedFieldsSnapshot();
-        }).fail((xhr, text, error) => {
-            var alertsElement = "#alerts";
-            if ( $("#modalmessages").length) {
-                alertsElement = "#modalmessages";
-            }
-
-            $(alertsElement).html('');
-
-            submitBtnName.attr('disabled', false);
         });
     }
 

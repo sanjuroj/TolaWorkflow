@@ -339,14 +339,6 @@ const target_with_results_text = (numResults) => {
 }
 window.target_with_results_text = target_with_results_text;
 
-const lop_to_non_lop_with_results_text = (numResults) => {
-    return interpolate(
-        ngettext('If we make these changes, %s data record will no longer be associated with the Life of Program target, and will need to be reassigned to a new target.\n\n Proceed anyway?',
-                 'If we make these changes, %s data records will no longer be associated with the Life of Program target, and will need to be reassigned to new targets.\n\n Proceed anyway?',
-                 numResults),
-        [numResults]);
-}
-window.lop_to_non_lop_with_results_text = lop_to_non_lop_with_results_text;
 
 const create_changeset_notice = ({
     message_text = DEFAULT_NONDESTRUCTIVE_MESSAGE,
