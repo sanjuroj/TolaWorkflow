@@ -45,7 +45,7 @@
     }
 
     $( document ).ready(function() {
-        show_hide_frequency_fields();
+        disable_target_frequency_field();
         if ($("#id_objectives option").length < 1) {
             $("#id_objectives").attr("disabled", true)
         }
@@ -57,7 +57,7 @@
     });
 
     $("#indicator_modal_div").on('shown.bs.tab', function() {
-        show_hide_frequency_fields();
+        disable_target_frequency_field();
     });
 
 
@@ -157,8 +157,8 @@
         const updateIfLastEvent = () => {
             if ($('.periodic-target').length == 0) {
                 $('.periodic-targets').remove();
-                reset_frequency_fields();
-                show_hide_frequency_fields();
+                enable_target_frequecy_field();
+                disable_target_frequency_field();
             }
         };
         var url = $(this).attr('href');
@@ -292,7 +292,7 @@
             $("#id_div_periodic_tables_placeholder").append(content);
         }
 
-        show_hide_frequency_fields(true);
+        disable_target_frequency_field(true);
 
         if ($("#id_unit_of_measure_type_1").is(":checked")) {
             show_hide_cummulative_inputs('percent')
@@ -359,8 +359,8 @@
                 var res = $.parseJSON(data);
                 if (res['status'] == 'success') {
                     $("#id_div_periodic_tables_placeholder").empty();
-                    reset_frequency_fields();
-                    show_hide_frequency_fields();
+                    enable_target_frequecy_field();
+                    disable_target_frequency_field();
                 }
 
             });
@@ -402,7 +402,7 @@
     $('#indicator_modal_content').on('click', "input[type='reset']", function(e) {
     });
 
-    // submits form - returns a jQuery deffered obj to attached callbacks onto
+    // submits form - returns a jQuery deferred obj to attached callbacks onto
     function submitForm(rationale = '') {
         // clear any success/failure messages
         let alertElement = "#modalmessages";
@@ -446,17 +446,17 @@
     }
 
 
-    function reset_frequency_fields() {
+    function enable_target_frequecy_field() {
         $("#id_target_frequency").val('');
         $("#id_target_frequency option:not(:selected)").attr("disabled", false);
         $("#id_target_frequency").attr("readonly", false);
     }
 
 
-    function show_hide_frequency_fields(lock = false) {
+    function disable_target_frequency_field(lock = false) {
         // set the text for the 'create new target' button.
         let selected_option = parseInt($("#id_target_frequency").find("option:selected").val()) || 0;
-        if ( (lock == true || $('#id_target_frequency').attr('readonly'))
+        if ( (lock || $('#id_target_frequency').attr('readonly'))
                  && selected_option != 1) {
             $("#id_target_frequency option:not(:selected)").attr("disabled", true);
             $("#id_target_frequency").attr("readonly", true);
@@ -476,7 +476,7 @@
             $("#div_id_target_frequency").addClass('marginbottom-225');
             $("#div_id_target_frequency").removeClass('mb-3');
         }
-        show_hide_frequency_fields();
+        disable_target_frequency_field();
     });
 
 
