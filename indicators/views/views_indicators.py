@@ -110,8 +110,7 @@ def periodic_targets_form(request, program):
     dummy_indicator = Indicator(
         target_frequency=target_frequency_type,
         unit_of_measure_type=form.cleaned_data.get('unit_of_measure_type'),
-        lop_target=form.cleaned_data.get('lop_target'),
-        is_cumulative=form.cleaned_data.get('is_cumulative'),
+        is_cumulative=False,
     )
 
     content = render_to_string('indicators/indicatortargets.html', {

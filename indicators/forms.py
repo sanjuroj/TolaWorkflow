@@ -53,8 +53,6 @@ class PTFormInputsForm(forms.ModelForm):
         model = Indicator
         fields = (
             'target_frequency',
-            'lop_target',
-            'is_cumulative',
             'unit_of_measure_type',
         )
 
