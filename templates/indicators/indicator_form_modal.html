@@ -573,35 +573,16 @@
     }
 
     /*
-    Toggles the Aggregate (Totals) row of the targets table depending on
-    whether the indicator is set as CUMULATIVE or NON-CUMULATIVE
-    */
-    function toggleTargetsSumOrAvgRow(cumulative = null) {
-        var is_cumulative = cumulative == null ? $("input[type='radio'][name='is_cumulative']:checked").val() : cumulative;
-        var uomType = $("#id_unit_of_measure_type_0").is(":checked") == true ? "number" : "percent";
-        if (is_cumulative == 2 || uomType == 'percent') {
-            $("#pt_sum_targets").hide();
-        } else {
-            $("#pt_sum_targets").show();
-        }
-    }
-
-    /*
-    Update the periodic_targets totals row depending on whether it a
-    Number (#) indicator or Percentage (%) indicator
+    Update the LoP total row to display total based off of Periodic Targets
     */
     function updateAggregateRowValueAndLabel(cumulative = null) {
-        toggleTargetsSumOrAvgRow();
-        var unit_of_measure_type = $("#id_unit_of_measure_type_1").is(":checked") ? 2 : 1;
-        if (unit_of_measure_type == 1) { // if unit_type is Number (#)
-            var targetsSum = getTargetsSumAndNum()[0];
-            $("#id_span_label_targets_sum").text("{% trans 'Sum of targets'|escapejs %}");
-            $("#id_span_targets_sum").text(targetsSum);
-        }
+        //let unit_of_measure_type = $("#id_unit_of_measure_type_1").is(":checked") ? 2 : 1;
+        let targetsSum = getTargetsSumAndNum()[0];
+        $("#id_span_loptarget").text(targetsSum);
     }
 
     $(document).ready(function () {
-        var unit_of_measure_type = $("#id_unit_of_measure_type_1").is(":checked") ? 2 : 1;
+        let unit_of_measure_type = $("#id_unit_of_measure_type_1").is(":checked") ? 2 : 1;
         if (unit_of_measure_type == 2) {
             show_hide_cummulative_inputs('percent')
             $('#span_id_lop_target').addClass('input-symbol-percent');
@@ -609,8 +590,6 @@
         } else {
             show_hide_cummulative_inputs('number')
         }
-
-        toggleTargetsSumOrAvgRow();
     });
 
     /*

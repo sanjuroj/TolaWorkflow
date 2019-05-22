@@ -66,23 +66,6 @@
                             <span id="hint_id_pt_{{pt.id}}" style="margin:0px;" class="help-block"> </span>{# TODO: this style attr #}
                         </td>
                     </tr>
-
-                    {% if forloop.last %}
-                    <tr class="" id="pt_sum_targets">
-                        <td class="periodic-targets__sum text-left align-middle td--stretch">
-                            <strong><span id="id_span_label_targets_sum">{% trans "Sum of targets" %}</span></strong>
-                        </td>
-                        <td class="periodic-targets__sum align-middle text-right">
-                            <strong>
-                                <span id="id_span_targets_sum" class="periodic-targets__sum__value {% if indicator.unit_of_measure_type == 2 %}input-symbol-percent{% endif %}">
-                                    {% if indicator.unit_of_measure_type == 1%}
-                                        {{ targets_sum|floatformat:"-2" }}
-                                    {% endif %}
-                                </span>
-                            </strong>
-                        </td>
-                    </tr>
-                    {% endif %}
                     {% endfor %}{# for pt in periodic_targets #}
 
                     <tr class="table-secondary">
@@ -92,7 +75,8 @@
                         <td class="periodic-targets__sum text-right ">
                             <strong class="periodic-targets__sum__value {% if indicator.unit_of_measure_type == 2 %}input-symbol-percent{% endif %}">
                                 <span id="id_span_loptarget" class="input-value">
-                                    {{ indicator.lop_target|floatformat:"-2" }}
+{#                                    {{ indicator.lop_target|floatformat:"-2" }}#}
+                                    {{ targets_sum|floatformat:"-2" }}
                                 </span>
                             </strong>
                         </td>
