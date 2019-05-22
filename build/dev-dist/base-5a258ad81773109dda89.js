@@ -5,9 +5,9 @@
   !*** ./scss/tola.scss ***!
   \************************/
 /*! no static exports found */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-throw new Error("Module build failed (from ./node_modules/mini-css-extract-plugin/dist/loader.js):\nModuleBuildError: Module build failed (from ./node_modules/sass-loader/lib/loader.js):\n\n  margin-bottom: $label-margin-bottom;\n                ^\n      Undefined variable: \"$label-margin-bottom\".\n      in /Users/paul/Repos/TolaActivity/node_modules/bootstrap/scss/_reboot.scss (line 293, column 18)\n    at /Users/paul/Repos/TolaActivity/node_modules/webpack/lib/NormalModule.js:301:20\n    at /Users/paul/Repos/TolaActivity/node_modules/loader-runner/lib/LoaderRunner.js:364:11\n    at /Users/paul/Repos/TolaActivity/node_modules/loader-runner/lib/LoaderRunner.js:230:18\n    at context.callback (/Users/paul/Repos/TolaActivity/node_modules/loader-runner/lib/LoaderRunner.js:111:13)\n    at Object.callback (/Users/paul/Repos/TolaActivity/node_modules/sass-loader/lib/loader.js:52:13)\n    at Object.done [as callback] (/Users/paul/Repos/TolaActivity/node_modules/neo-async/async.js:8077:18)\n    at options.error (/Users/paul/Repos/TolaActivity/node_modules/node-sass/lib/index.js:294:32)");
+// extracted by mini-css-extract-plugin
 
 /***/ }),
 
@@ -609,4 +609,4 @@ window.scrollToBottom = scrollToBottom;
 /***/ })
 
 },[["YqHn","runtime","vendors"]]]);
-//# sourceMappingURL=base-fbb86a0edcb47a668b13.js.map
+//# sourceMappingURL=base-5a258ad81773109dda89.js.map
