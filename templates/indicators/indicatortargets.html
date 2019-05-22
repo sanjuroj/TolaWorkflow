@@ -90,11 +90,20 @@
             </table>
         </div>
 
-        {% if indicator.target_frequency == 8 %}
-        <div class="text-right">
-            <a href="#" id="addNewPeriodicTarget" class="btn btn-add btn-link"><i class="fas fa-plus-circle"></i> {% trans "Add an event" %}</a>
+        <div class="d-flex">
+            <div class="mr-auto">
+                {% if indicator.target_frequency == 8 %}
+                <a href="#" id="addNewPeriodicTarget" class="btn btn-add btn-link"><i class="fas fa-plus-circle"></i> {% trans "Add an event" %}</a>
+                {% endif %}
+            </div>
+
+            {% if not readonly %}
+                <div class="form-group text-right" id="div_id_delete_targets_btn">
+                    <button type="button" id="id_delete_targets_btn" class="btn btn-sm btn-link btn-danger">
+                        <i class="fas fa-trash-alt"></i> {% trans "Remove all targets" %}</button>
+                </div>
+            {% endif %}
         </div>
-        {% endif %}
 
         <div class="form-group card card-body" id="id_div_is_cumulative">
             <!-- UNIT_OF_MEASURE_TYPE = 1 IS NUMBER AND 2 IS PERCENTAGE -->

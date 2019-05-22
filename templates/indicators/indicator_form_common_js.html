@@ -461,21 +461,9 @@
             $("#id_target_frequency option:not(:selected)").attr("disabled", true);
             $("#id_target_frequency").attr("readonly", true);
         }
-
-        $("#div_id_delete_targets_btn").show();
-
-        if (selected_option == 1 || selected_option == 0) {
-            $("#div_id_delete_targets_btn").hide();
-        } else {
-            if ($("#id_div_periodic_tables_placeholder").children().length > 0) {
-                $("#id_delete_targets_btn").show();
-            } else {
-                $("#id_delete_targets_btn").hide();
-            }
-        }
     }
 
-    $("#indicator_modal_content").on("change blur", "#id_target_frequency", function (e) {
+    $("#indicator_modal_content").on("change", "#id_target_frequency", function (e) {
         // if not default value of no-select
         if ($("#id_target_frequency option:selected").text().indexOf("---") < 0) {
             $("#id_target_frequency").removeClass('is-invalid');
