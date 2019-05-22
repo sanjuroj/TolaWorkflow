@@ -861,11 +861,19 @@ class Indicator(SafeDeleteModel):
         return self.baseline
 
     @property
-    def lop_target_display(self):
+    def lop_target_stripped(self):
         """adding logic to strip trailing zeros in case of a decimal with superfluous zeros to the right of the ."""
         if self.lop_target:
             lop_stripped = str(self.lop_target)
             lop_stripped = lop_stripped.rstrip('0').rstrip('.') if '.' in lop_stripped else lop_stripped
+            return lop_stripped
+        return self.lop_target
+
+    @property
+    def lop_target_display(self):
+        """Same as lop_target_stripped but with a trailing % if applicable"""
+        if self.lop_target:
+            lop_stripped = self.lop_target_stripped
             if self.unit_of_measure_type == self.PERCENTAGE:
                 return u"{0}%".format(lop_stripped)
             return lop_stripped

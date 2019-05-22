@@ -190,16 +190,19 @@
 {#                                </span>#}
 {#                            </strong>#}
 
-                            <input type="number"
-                                   name="lop_target"
-                                   id="id_lop_target"
-                                   class="form-control"
-                                   min="1"
-                                {% if indicator.lop_target != None %}
-                                   value="{{ indicator.lop_target|stringformat:'s' }}"
-                                {% endif %}
-                                   required
-                                   onblur="this.checkValidity();">
+                            <span id="span_id_lop_target">
+                                <input type="number"
+                                       name="lop_target"
+                                       id="id_lop_target"
+                                       class="form-control"
+                                       min="1"
+                                    {% if indicator.lop_target != None %}
+                                       value="{{ indicator.lop_target_stripped }}"
+                                    {% endif %}
+                                       required
+                                >
+                            </span>
+                            <span id="validation_id_lop_target" class="has-error"></span>
                         </td>
                     </tr>
                 </tbody>

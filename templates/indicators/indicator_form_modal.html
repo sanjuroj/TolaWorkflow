@@ -226,29 +226,29 @@
                             <span id="validation_id_unit_of_measure" class="has-error"></span>
                         </div>
 
-                        <div class="form-group" id="parent_div_id_lop_target">
-                            <label for="id_lop_target" class="label--required">{{ form.lop_target.label }} </label>
-                            <div class="" id="fieldgroup_id_lop_target">
-                                <div id="div_id_lop_target">
-                                    <!-- {% render_field form.lop_target class+="form-control" %} -->
-                                    <span id="span_{{ form.lop_target.id_for_label }}">
-                                    <input type="number"
-                                           name="{{ form.lop_target.name }}"
-                                           id="{{ form.lop_target.id_for_label }}"
-                                           class="form-control"
-                                           min="1"
-                                           {% if readonly %}disabled="disabled"{% endif %}
-                                        {% if form.lop_target.value != None %}
-                                           value="{{ form.lop_target.value|stringformat:'s' }}"{% endif %}
-                                           required
-                                           onblur="this.checkValidity();">
-                                </span>
-                                    <small class="form-text text-muted">{{ form.lop_target.help_text }}</small>
-                                    <span id="validation_id_lop_target" class="has-error"></span>
-                                </div>
+{#                        <div class="form-group" id="parent_div_id_lop_target">#}
+{#                            <label for="id_lop_target" class="label--required">{{ form.lop_target.label }} </label>#}
+{#                            <div class="" id="fieldgroup_id_lop_target">#}
+{#                                <div id="div_id_lop_target">#}
+{#                                    <!-- {% render_field form.lop_target class+="form-control" %} -->#}
+{#                                    <span id="span_{{ form.lop_target.id_for_label }}">#}
+{#                                    <input type="number"#}
+{#                                           name="{{ form.lop_target.name }}"#}
+{#                                           id="{{ form.lop_target.id_for_label }}"#}
+{#                                           class="form-control"#}
+{#                                           min="1"#}
+{#                                           {% if readonly %}disabled="disabled"{% endif %}#}
+{#                                        {% if form.lop_target.value != None %}#}
+{#                                           value="{{ form.lop_target.value|stringformat:'s' }}"{% endif %}#}
+{#                                           required#}
+{#                                           onblur="this.checkValidity();">#}
+{#                                </span>#}
+{#                                    <small class="form-text text-muted">{{ form.lop_target.help_text }}</small>#}
+{#                                    <span id="validation_id_lop_target" class="has-error"></span>#}
+{#                                </div>#}
 {#                                {% render_field form.direction_of_change class+="form-control mt-2" style="width:100%; border-radius: 0%" %}#}
-                            </div>
-                        </div>
+{#                            </div>#}
+{#                        </div>#}
 
                         <div class="form-group" id="div_id_rationale_for_target">
                             <label for="id_rationale_for_target" class="">{{ form.rationale_for_target.label }} </label>
@@ -486,20 +486,38 @@
     /*
     Adds/removes the percent symbol in several places
     */
-    function togglePercentSymbol() {
-        // toggle % sign on sum values
-        $(".periodic-targets__sum__value").toggleClass('input-symbol-percent')
+    function togglePercentSymbol(unit_of_measure_type) {
+        if (unit_of_measure_type == 2) {
+            // toggle % sign on sum values
+            $(".periodic-targets__sum__value").addClass('input-symbol-percent')
 
-        // toggle % sign on LoP target input
-        $("#span_id_lop_target").toggleClass('input-symbol-percent')
+            // toggle % sign on LoP target input
+            $("#span_id_lop_target").addClass('input-symbol-percent')
 
-        // toggle % sign on baseline input
-        $("#span_id_baseline").toggleClass('input-symbol-percent')
+            // toggle % sign on baseline input
+            $("#span_id_baseline").addClass('input-symbol-percent')
 
-        // toggle % sign to target inputs
-        $("#periodic_targets_table input[data-periodictarget]").each(function (index, element) {
-            $(element).parent().toggleClass('input-symbol-percent');
-        });
+            // toggle % sign to target inputs
+            $("#periodic_targets_table input[data-periodictarget]").each(function (index, element) {
+                $(element).parent().addClass('input-symbol-percent');
+            });
+        } else {
+            // toggle % sign on sum values
+            $(".periodic-targets__sum__value").removeClass('input-symbol-percent')
+
+            // toggle % sign on LoP target input
+            $("#span_id_lop_target").removeClass('input-symbol-percent')
+
+            // toggle % sign on baseline input
+            $("#span_id_baseline").removeClass('input-symbol-percent')
+
+            // toggle % sign to target inputs
+            $("#periodic_targets_table input[data-periodictarget]").each(function (index, element) {
+                $(element).parent().removeClass('input-symbol-percent');
+            });
+        }
+
+
     }
 
     /*
@@ -592,7 +610,7 @@
     */
     $("#indicator_modal_content").on("change", ":input[name='unit_of_measure_type']", function (e) {
         var unit_of_measure_type = parseInt(e.target.value);
-        togglePercentSymbol();
+        togglePercentSymbol(unit_of_measure_type);
         toggleCummulativeOptions(unit_of_measure_type);
         updateAggregateRowValueAndLabel();
     });
