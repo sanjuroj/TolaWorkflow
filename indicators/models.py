@@ -627,6 +627,7 @@ class Indicator(SafeDeleteModel):
         verbose_name=_("Target frequency"), help_text=" "
     )
 
+    # Deprecated - redundant to the event name of the first PeriodicTarget saved by the form
     target_frequency_custom = models.CharField(
         null=True, blank=True, max_length=100,
         verbose_name=_("First event name"), help_text=" "
