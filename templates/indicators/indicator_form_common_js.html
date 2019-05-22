@@ -276,7 +276,6 @@
 
 
     // Disable default handling of ENTER key
-    /*
     $("#indicator_modal_content").on("keyup keypress", "#indicator_update_form", function(e){
         var keyCode = e.keyCode || e.which;
         if (keyCode === 13 ){
@@ -284,19 +283,6 @@
             return false;
         }
 
-    });
-    */
-
-    // Button click handler for Create Targets button
-    $("#indicator_modal_content").on("click", "#id_create_targets_btn", function(e) {
-        e.preventDefault();
-        if (validateForm() === false) {
-            showValidations("#modalmessages");
-            return;
-        }
-        $(this).attr("disabled", true);
-
-        getPeriodicTargetsForm();
     });
 
     // Insert periodic target form template into indicator form DOM
@@ -321,8 +307,6 @@
 
     // Ask server for periodic targets form template, to insert into the indicator form
     function getPeriodicTargetsForm() {
-        //let $form = $('#indicator_update_form');
-
         let formObj = getIndicatorFormAsObject();
 
         $.ajax({
@@ -330,16 +314,8 @@
             url: "/indicators/periodic_targets_form/" + formObj.program_id + "/",
             data: formObj,
         }).done(function (data, textStatus, jqXHR) {
-            $('#id_create_targets_btn').attr('disabled', false);
+            insertPeriodicTargetForm(data['content']);
 
-            //var indicator = $.parseJSON(jsondata["indicatorjson"])[0];
-            //var targets_sum = jsondata["targets_sum"];
-            let content = data["content"];
-
-            insertPeriodicTargetForm(content);
-
-        }).fail((xhr, text, error) => {
-            $('#id_create_targets_btn').attr('disabled', false);
         });
     }
 
@@ -475,49 +451,45 @@
         $("#id_target_frequency").val('');
         $("#id_target_frequency option:not(:selected)").attr("disabled", false);
         $("#id_target_frequency").attr("readonly", false);
-        $("#id_create_targets_btn").attr("disabled", false);
     }
 
 
     function show_hide_frequency_fields(lock = false) {
         // set the text for the 'create new target' button.
-        var selected_option = parseInt($("#id_target_frequency").find("option:selected").val()) || 0;
+        let selected_option = parseInt($("#id_target_frequency").find("option:selected").val()) || 0;
         if ( (lock == true || $('#id_target_frequency').attr('readonly'))
                  && selected_option != 1) {
             $("#id_target_frequency option:not(:selected)").attr("disabled", true);
             $("#id_target_frequency").attr("readonly", true);
-            $("#id_create_targets_btn").attr("disabled", true);
-            lock = true;
         }
+
+        $("#div_id_delete_targets_btn").show();
+
         if (selected_option == 1 || selected_option == 0) {
-            $("#div_id_create_targets_btn").hide();
+            $("#div_id_delete_targets_btn").hide();
         } else {
             if ($("#id_div_periodic_tables_placeholder").children().length > 0) {
                 $("#id_delete_targets_btn").show();
             } else {
                 $("#id_delete_targets_btn").hide();
             }
-
-            if (selected_option == 8) {
-                $("#div_id_create_targets_btn").show();
-            } else {
-                $("#div_id_create_targets_btn").show();
-            }
         }
     }
 
-    $("#indicator_modal_content").on("change blur", "#id_target_frequency", function(e){
-      if ($("#id_target_frequency option:selected").text().indexOf("---") < 0) {
-        $("#id_target_frequency").removeClass('is-invalid');
-        $("#validation_id_target_frequency").text(" ");
-        $("#div_id_target_frequency").removeClass('marginbottom-225');
-        $("#div_id_target_frequency").addClass('mb-3');
-      }
-      else {
-        $("#div_id_target_frequency").addClass('marginbottom-225');
-        $("#div_id_target_frequency").removeClass('mb-3');
-      }
-      show_hide_frequency_fields();
+    $("#indicator_modal_content").on("change blur", "#id_target_frequency", function (e) {
+        // if not default value of no-select
+        if ($("#id_target_frequency option:selected").text().indexOf("---") < 0) {
+            $("#id_target_frequency").removeClass('is-invalid');
+            $("#validation_id_target_frequency").text(" ");
+            $("#div_id_target_frequency").removeClass('marginbottom-225');
+            $("#div_id_target_frequency").addClass('mb-3');
+
+            getPeriodicTargetsForm();
+        } else {
+            $("#div_id_target_frequency").addClass('marginbottom-225');
+            $("#div_id_target_frequency").removeClass('mb-3');
+        }
+        show_hide_frequency_fields();
     });
 
 
