@@ -43,6 +43,10 @@ export class LevelCardCollapsed extends React.Component {
     };
 
     render(){
+        const iCount = this.props.levelProps.indicators.length;
+        /* # Translators: This is a count of indicators associated with another object */
+        const indicatorCountText = interpolate(ngettext("%s indicator", "%s indicators", iCount), [iCount]);
+        // const indicatorCountText = 3;
         return (
             <div className="level-card level-card--collapsed" id={this.props.level.id}>
                 <div className="level-card--collapsed__name">
@@ -69,7 +73,7 @@ export class LevelCardCollapsed extends React.Component {
                         <i className="fas fa-edit"/>&nbsp;{gettext("Edit")}</button>
                     </div>
                     <div className="actions__bottom" style={{display: "flex", justifyContent: "flex-end"}}>
-                        <button className="btn btn-sm btn-link no-bold">[n] {/*TODO: count of indicators */}{gettext("indicators")}</button>
+                        <button className="btn btn-sm btn-link no-bold">{indicatorCountText}</button>
                     </div>
                 </div>
             </div>

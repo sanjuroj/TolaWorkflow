@@ -3,23 +3,25 @@ import { trimOntology } from '../../level_utils'
 import { api } from "../../api.js"
 
 export class RootStore {
-    constructor (program_id, levels, levelTiers, tierPresets) {
-        this.levelStore =  new LevelStore(program_id, levels, levelTiers, tierPresets, this);
+    constructor (program_id, levels, indicators, levelTiers, tierPresets) {
+        this.levelStore =  new LevelStore(program_id, levels, indicators, levelTiers, tierPresets, this);
         this.uiStore = new UIStore(this);
     }
 }
 
 export class LevelStore {
     @observable levels = [];
+    @observable indicators = []
     @observable chosenTierSet = [];
     @observable chosenTierSetName = "";
     tierPresets = {};
     defaultPreset = "Mercy Corps standard";
     program_id = ""
 
-    constructor(program_id, levels, levelTiers, tierPresets, rootStore) {
+    constructor(program_id, levels, indicators, levelTiers, tierPresets, rootStore) {
         this.rootStore = rootStore;
         this.levels = levels;
+        this.indicators = indicators;
         this.tierPresets = tierPresets;
         this.program_id = program_id;
 
@@ -42,6 +44,7 @@ export class LevelStore {
         let levelProperties = {};
         for (let level of this.levels) {
             let properties = {};
+            properties['indicators'] = this.getLevelIndicators(level.id)
             properties['ontologyLabel'] = this.buildOntology(level.id);
             properties['tierName'] = this.chosenTierSet[level.level_depth-1];
             properties['childTierName'] = null;
@@ -185,6 +188,10 @@ export class LevelStore {
         else {
             return ontologyArray.join(".")
         }
+    }
+
+    getLevelIndicators = (levelId) => {
+        return this.indicators.filter( i => i.level == levelId)
     }
 
 }
