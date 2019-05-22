@@ -66,9 +66,20 @@ export class LevelStore {
 
     @action
     cancelEdit = levelId => {
+        if (levelId == "new") {
+            const targetLevel = this.levels.find(l => l.id == levelId);
+
+            // First update any customsort values that were modified when this card was created
+            let siblingsToReorder = this.levels.filter(l => {
+                return l.customsort > targetLevel.customsort && l.parent == targetLevel.parent;
+            });
+            siblingsToReorder.forEach(sib => sib.customsort -= 1);
+
+            // Now remove the new card
+            this.levels.replace(this.levels.filter((element) => element.id != "new"))
+        }
         this.rootStore.uiStore.removeExpandedCard(levelId)
 
-        this.levels.replace(this.levels.filter((element) => element.id != "new"))
     };
 
     @action
@@ -76,23 +87,47 @@ export class LevelStore {
         // Copy sibling data for the new level and then clear some of it out
         let sibling = toJS(this.levels.find( l => l.id == siblingId));
         let newLevel = Object.assign({}, sibling)
-        newLevel.customsort +=1;
+        newLevel.customsort += 1;
         newLevel.id = "new";
         newLevel.name = "";
         newLevel.assumptions = "";
 
         // bump the customsort field for siblings that come after the inserted Level
         let siblingsToReorder = this.levels.filter( l => {
-            return l.customsort > sibling.customsort && l.parent == sibling.parent;
-        })
-        siblingsToReorder.forEach( sib => sib.customsort+=1)
-
+            return sibling && l.customsort > sibling.customsort && l.parent == sibling.parent;
+        });
+        siblingsToReorder.forEach( sib => sib.customsort+=1);
         // add new Level to the various Store components
-        this.rootStore.uiStore.expandedCards.push("new")
-        this.rootStore.uiStore.activeCard = "new"
-        this.levels.push(newLevel)
+        this.rootStore.uiStore.expandedCards.push("new");
+        this.rootStore.uiStore.activeCard = "new";
+        this.levels.push(newLevel);
+    };
+
+    @action
+    createNewLevelFromParent = (parentId) => {
+        // Copy data for the new level and then clear some of it out
+        let parent = toJS(this.levels.find( l => l.id == parentId));
+        let newLevel = {
+            id:"new",
+            customsort: 1,
+            name: "",
+            assumptions: "",
+            parent: parentId,
+            level_depth: parent.level_depth + 1,
+            program: this.program_id
+        }
+
+        // bump the customsort field for siblings that come after the inserted Level
+        let siblingsToReorder = this.levels.filter( l => l.parent == parentId);
+
+        siblingsToReorder.forEach( sib => sib.customsort+=1);
+        // add new Level to the various Store components
+        this.rootStore.uiStore.expandedCards.push("new");
+        this.rootStore.uiStore.activeCard = "new";
+        this.levels.push(newLevel);
 
     };
+
 
     @action
     createFirstLevel = () => {
@@ -123,7 +158,8 @@ export class LevelStore {
         const level_data = {level: levelId}
         api.delete(`/level/${levelId}`)
             .then(response => {
-                this.levels.replace(this.levels.filter((element) => element.id != levelId))
+                this.levels.replace(response.data)
+                // this.levels.replace(this.levels.filter((element) => element.id != levelId))
             })
             .catch(error => console.log('error', error))
     }
@@ -142,8 +178,15 @@ export class LevelStore {
             api.post(`/insert_new_level/`, levelToSave)
                 .then(response => {
                     runInAction(() => {
-                        this.levels.replace(response.data)
-                    })
+                        this.levels.replace(response.data['all_data'])
+                    });
+                    const newId = response.data["new_level"]["id"]
+                    if (submitType == "saveAndAddSibling"){
+                        this.createNewLevelFromSibling(newId)
+                    }
+                    else if (submitType == "saveAndAddChild"){
+                        this.createNewLevelFromParent(newId)
+                    }
                 })
                 .catch(error => console.log('error', error))
 
@@ -156,6 +199,9 @@ export class LevelStore {
                     this.rootStore.uiStore.removeExpandedCard(levelId)
                     if (submitType == "saveAndAddSibling"){
                         this.createNewLevelFromSibling(levelId)
+                    }
+                    else if (submitType == "saveAndAddChild"){
+                        this.createNewLevelFromParent(levelId)
                     }
 
                 })

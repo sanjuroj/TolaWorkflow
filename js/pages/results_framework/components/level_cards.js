@@ -103,9 +103,9 @@ export class LevelCardExpanded extends React.Component {
         this.submitType = newType;
     };
 
-    saveLevel = (e) => {
-        e.preventDefault();
-        const formData = new FormData(e.target);
+    saveLevel = (event) => {
+        event.preventDefault();
+        const formData = new FormData(event.target);
         this.props.rootStore.levelStore.saveLevelToDB(
             this.submitType,
             this.props.level.id,
@@ -114,9 +114,9 @@ export class LevelCardExpanded extends React.Component {
 
     };
 
-    cancelEdit = (e) => {
+    cancelEdit = () => {
         this.props.rootStore.levelStore.cancelEdit(this.props.level.id)
-    }
+    };
 
     onFormChange = (event) => {
         event.preventDefault();

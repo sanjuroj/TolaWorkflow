@@ -8,7 +8,7 @@ class LevelSerializer(serializers.ModelSerializer):
     """
     Level serializer for Program Page
     """
-    level_depth = serializers.CharField(source='get_level_depth', read_only=True)
+    level_depth = serializers.IntegerField(source='get_level_depth', read_only=True)
 
     class Meta:
         model = Level

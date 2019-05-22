@@ -13,7 +13,7 @@ from indicators.models import Level, LevelTier, Indicator
 from workflow.models import Program
 
 
-logger = logging.getLogger('django')
+logger = logging.getLogger('__name__')
 
 # TODO: add security
 class ResultsFrameworkBuilder(ListView):
@@ -52,6 +52,27 @@ class LevelViewSet (viewsets.ModelViewSet):
     serializer_class = LevelSerializer
     queryset = Level.objects.all()
 
+    def destroy(self, request, pk=None):
+        instance = self.get_object()
+        program = instance.program
+        parent = instance.parent
+        self.perform_destroy(instance)
+        try:
+            levels_to_shift = Level.objects \
+                .filter(program=program, parent=parent) \
+                .order_by('customsort')
+            for i, s_level in enumerate(levels_to_shift):
+                s_level.customsort = i+1
+                s_level.save()
+
+            all_levels = Level.objects.filter(program=instance.program)
+            return Response(LevelSerializer(all_levels, many=True).data)
+        except Exception as e:
+            logger.error(e)
+            return render(request, '500.html', status=500)
+
+
+
 # TODO: add security
 @api_view(http_method_names=['POST'])
 def insert_new_level(request):
@@ -84,7 +105,9 @@ def insert_new_level(request):
     new_level.save()
 
     # Return all Levels for the program. There shouldn't be so much that it slows things down much.
-    return Response(LevelSerializer(Level.objects.filter(program=program), many=True).data)
+    # Also return the newly created Level.
+    all_data = LevelSerializer(Level.objects.filter(program=program), many=True).data
+    return Response({'all_data': all_data, 'new_level': LevelSerializer(new_level).data})
 
 # TODO: add security
 @api_view(http_method_names=['POST'])
