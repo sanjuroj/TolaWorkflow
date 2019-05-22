@@ -35,7 +35,7 @@ export class LevelCardCollapsed extends React.Component {
     }
 
     deleteLevel() {
-        console.log("You clicked delete level")
+        this.props.rootStore.levelStore.deleteLevelFromDB(this.props.level.id)
     }
 
     editLevel = () => {

@@ -119,6 +119,15 @@ export class LevelStore {
             .catch(error => console.log('error', error))
     }
 
+    deleteLevelFromDB = (levelId) => {
+        const level_data = {level: levelId}
+        api.delete(`/level/${levelId}`)
+            .then(response => {
+                this.levels.replace(this.levels.filter((element) => element.id != levelId))
+            })
+            .catch(error => console.log('error', error))
+    }
+
 
     // TODO: better error handling for API
     saveLevelToDB = (submitType, levelId, formData) => {
