@@ -44,6 +44,10 @@ export class LevelStore {
             let properties = {};
             properties['ontologyLabel'] = this.buildOntology(level.id);
             properties['tierName'] = this.chosenTierSet[level.level_depth-1];
+            properties['childTierName'] = null;
+            if (this.chosenTierSet.length > level.level_depth) {
+                properties['childTierName'] = this.chosenTierSet[level.level_depth];
+            }
             const childCount =  this.levels.filter(l => l.parent == level.id).length;
             properties['canDelete'] = childCount==0;
             levelProperties[level.id] = properties

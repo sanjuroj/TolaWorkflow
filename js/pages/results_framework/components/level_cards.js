@@ -148,6 +148,7 @@ export class LevelCardExpanded extends React.Component {
                         onChange={this.onFormChange}/>
                     <ButtonBar
                         level={this.props.level}
+                        levelProps={this.props.levelProps}
                         submitFunc={this.updateSubmitType}
                         cancelFunc={this.cancelEdit}
                         tierCount={this.props.rootStore.levelStore.chosenTierSet.length}/>
@@ -159,16 +160,22 @@ export class LevelCardExpanded extends React.Component {
 }
 
 
+@inject('rootStore')
 class ButtonBar extends React.Component {
     render() {
         let addAnotherButton = null;
         if (this.props.level.parent != null && this.props.level.parent != "root") {
-            addAnotherButton = <LevelButton classes="btn-primary" text={gettext("Save and another")} submitType="saveAndAddSibling"  submitFunc={this.props.submitFunc} />
+            {/* # Translators: On a button, with a tiered set of objects, save current object and add another one in the same tier, e.g. "Save and add another Outcome" when the user is editing an Outcome */}
+            const buttonText = interpolate(gettext("Save and add another %s"), [this.props.levelProps.tierName])
+            addAnotherButton = <LevelButton classes="btn-primary" text={buttonText} submitType="saveAndAddSibling"  submitFunc={this.props.submitFunc} />
         }
 
         let addAndLinkButton = null;
-        if (this.props.level.level_depth < this.props.tierCount) {
-            addAndLinkButton = <LevelButton classes="btn-primary" text={gettext("Save and link")} submitType="saveAndAddChild" submitFunc={this.props.submitFunc} />
+        const tierCount = this.props.rootStore.levelStore.chosenTierSet.length;
+        if (this.props.level.level_depth < tierCount) {
+            {/* # Translators: On a button, with a tiered set of objects, save current object and add another one in the next lower tier, e.g. "Save and add another Activity" when the user is editing a Goal */}
+            const buttonText = interpolate(gettext("Save and link %s"), [this.props.levelProps.childTierName])
+            addAndLinkButton = <LevelButton classes="btn-primary" text={buttonText} submitType="saveAndAddChild" submitFunc={this.props.submitFunc} />
         }
         return (
             <div className="button-bar">
