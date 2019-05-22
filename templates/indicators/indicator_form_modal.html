@@ -294,23 +294,6 @@
                             <span id="validation_id_target_frequency" class="has-error"></span>
                         </div>
 
-                        <div class="form-group" id="div_id_target_frequency_custom">
-                            <label for="id_target_frequency_custom"
-                                   class="">{{ form.target_frequency_custom.label }} </label>
-                            {% render_field form.target_frequency_custom class+="form-control" %}
-                            <small class="form-text text-muted">{{ form.target_frequency_custom.help_text }}</small>
-                            <span id="validation_id_target_frequency_custom" class="has-error"></span>
-                        </div>
-
-                        <div class="form-group" id="div_id_target_frequency_num_periods">
-                            <label for="id_target_frequency_num_periods"
-                                   class="">{{ form.target_frequency_num_periods.label }} </label>
-                            {% render_field form.target_frequency_num_periods class+="form-control" %}
-                            <small
-                                class="form-text text-muted">{{ form.target_frequency_num_periods.help_text }}</small>
-                            <span id="validation_id_target_frequency_num_periods" class="has-error"></span>
-                        </div>
-
                         {% if not readonly %}
                             <div class="form-group" id="div_id_create_targets_btn">
                                 <button type="button" id="id_create_targets_btn"

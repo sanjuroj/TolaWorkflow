@@ -94,7 +94,7 @@ def periodic_targets_form(request, program):
     if not form.is_valid():
         return JsonResponse(form.errors)
 
-    event_name = form.cleaned_data.get('target_frequency_custom', '')
+    event_name = ''
     start_date = ''
     target_frequency_num_periods = 1
     target_frequency_type = form.cleaned_data.get('target_frequency', 1)
@@ -103,9 +103,6 @@ def periodic_targets_form(request, program):
         start_date = program.reporting_period_start
         target_frequency_num_periods = IPTT_ReportView._get_num_periods(
             start_date, program.reporting_period_end, target_frequency_type)
-    elif target_frequency_type == Indicator.EVENT:
-        # This is only case in which target frequency comes from the form
-        target_frequency_num_periods = form.cleaned_data.get('target_frequency_num_periods', 1)
 
     generated_targets = generate_periodic_targets(
         target_frequency_type, start_date, target_frequency_num_periods, event_name)
