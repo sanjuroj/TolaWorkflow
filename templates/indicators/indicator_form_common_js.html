@@ -63,13 +63,7 @@
 
     // auto scroll either a modal or the whole page to the top
     function scrollToTop() {
-        if ($('#indicator_modal_div').length == 1) {
-            // for the modal version;
-            $("#indicator_modal_div").animate({ scrollTop: 0 }, 'slow');
-        } else {
-            // for the non-modal version;
-            $("html, body").animate({ scrollTop: 0 }, "slow");
-        }
+        $("#indicator_modal_div").animate({ scrollTop: 0 }, 'slow');
     }
 
     function scrollToIndicatorFormBottom() {
