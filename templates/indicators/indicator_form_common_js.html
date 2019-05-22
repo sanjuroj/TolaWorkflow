@@ -281,10 +281,7 @@
 
     // Insert periodic target form template into indicator form DOM
     function insertPeriodicTargetForm(content) {
-        if ($("#id_target_frequency").val() != 1) {
-            $("#id_div_periodic_tables_placeholder").empty();
-            $("#id_div_periodic_tables_placeholder").append(content);
-        }
+        $("#id_div_periodic_tables_placeholder").html(content);
 
         disable_target_frequency_field(true);
 
@@ -449,9 +446,7 @@
 
     function disable_target_frequency_field(lock = false) {
         // set the text for the 'create new target' button.
-        let selected_option = parseInt($("#id_target_frequency").find("option:selected").val()) || 0;
-        if ( (lock || $('#id_target_frequency').attr('readonly'))
-                 && selected_option != 1) {
+        if (lock || $('#id_target_frequency').attr('readonly')) {
             $("#id_target_frequency option:not(:selected)").attr("disabled", true);
             $("#id_target_frequency").attr("readonly", true);
         }
