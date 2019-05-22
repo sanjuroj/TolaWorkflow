@@ -97,7 +97,7 @@ def periodic_targets_form(request, program):
     event_name = ''
     start_date = ''
     target_frequency_num_periods = 1
-    target_frequency_type = form.cleaned_data.get('target_frequency', 1)
+    target_frequency_type = form.cleaned_data.get('target_frequency')
 
     if target_frequency_type in Indicator.REGULAR_TARGET_FREQUENCIES:
         start_date = program.reporting_period_start
