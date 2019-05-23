@@ -5,7 +5,7 @@ from base import *
 
 def read_yaml(path):
     with open(path) as f:
-        data = yaml.load(f)
+        data = yaml.load(f, Loader=yaml.FullLoader)
     return data
 
 SETTINGS_DIR = os.path.dirname(os.path.abspath(__file__))
