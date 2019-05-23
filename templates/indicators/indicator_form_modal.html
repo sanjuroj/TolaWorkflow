@@ -474,7 +474,6 @@
         }
 
         if ($('#id_div_periodic_tables_placeholder').children().length > 0) {
-            $("#id_create_targets_btn").attr("disabled", true)
             $("#id_target_frequency").attr("readonly", true)
         }
 
@@ -596,11 +595,11 @@
         let unit_of_measure_type = $("#id_unit_of_measure_type_1").is(":checked") ? 2 : 1;
         if (unit_of_measure_type == 2) {
             show_hide_cummulative_inputs('percent')
-            $('#span_id_lop_target').addClass('input-symbol-percent');
-            $('#span_id_baseline').addClass('input-symbol-percent');
         } else {
             show_hide_cummulative_inputs('number')
         }
+
+        togglePercentSymbol(unit_of_measure_type);
     });
 
     /*
