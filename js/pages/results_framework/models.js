@@ -259,10 +259,15 @@ export class UIStore {
         this.rootStore = rootStore;
     }
 
-    @computed get tiersAreLocked () {
+    @computed get tierLockStatus () {
         let notNewLevels = this.rootStore.levelStore.levels.filter( l => l.id != "new");
-        return notNewLevels.length > 0 ? true : false;
-
+        if  (notNewLevels.length > 0) {
+            return "locked"
+        }
+        else if (this.rootStore.levelStore.levels.length == 1){
+            return "primed"
+        }
+        return null;
     }
 
     @action
