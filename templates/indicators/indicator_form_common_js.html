@@ -509,6 +509,12 @@
 
     function validate_loptarget() {
         const lop = $("#id_lop_target");
+
+        // The LoP field only exists if LoP is selected
+        if (lop.length === 0) {
+            return true;
+        }
+
         let errMsg = undefined;
         if (!lop.val()) {
             errMsg = "{% trans 'Please enter a number larger than zero.'|escapejs %}";
