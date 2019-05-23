@@ -464,6 +464,7 @@
 
     //Searchable select option for service indicator
     $(document).ready(function () {
+        // Redirect to tab based on URL
         var targetsactive = `{{targetsactive|safe}}`;
 
         if (targetsactive == 'True') {
@@ -473,125 +474,17 @@
             $("#indicator_modal_div").animate({scrollTop: target_periods_section_offset}, 'slow');
         }
 
+        // initial state of target frequency box if form is already populated
         if ($('#id_div_periodic_tables_placeholder').children().length > 0) {
             $("#id_target_frequency").attr("readonly", true)
         }
 
+        // Disabled objectives pulldown if nothing to choose
         if ($("#id_objectives option").length < 1) {
             $("#id_objectives").attr("disabled", true)
         }
-    });
 
-    /*
-    Adds/removes the percent symbol in several places
-    */
-    function togglePercentSymbol(unit_of_measure_type) {
-        if (unit_of_measure_type == 2) {
-            // toggle % sign on sum values
-            $(".periodic-targets__sum__value").addClass('input-symbol-percent')
-
-            // toggle % sign on LoP target input
-            $("#span_id_lop_target").addClass('input-symbol-percent')
-
-            // toggle % sign on baseline input
-            $("#span_id_baseline").addClass('input-symbol-percent')
-
-            // toggle % sign to target inputs
-            $("#periodic_targets_table input[data-periodictarget]").each(function (index, element) {
-                $(element).parent().addClass('input-symbol-percent');
-            });
-        } else {
-            // toggle % sign on sum values
-            $(".periodic-targets__sum__value").removeClass('input-symbol-percent')
-
-            // toggle % sign on LoP target input
-            $("#span_id_lop_target").removeClass('input-symbol-percent')
-
-            // toggle % sign on baseline input
-            $("#span_id_baseline").removeClass('input-symbol-percent')
-
-            // toggle % sign to target inputs
-            $("#periodic_targets_table input[data-periodictarget]").each(function (index, element) {
-                $(element).parent().removeClass('input-symbol-percent');
-            });
-        }
-
-
-    }
-
-    /*
-    toggles the label text of the is_cumulative radio inputs depending on
-    whether the unit_of_measure_type of the indicator.
-    params:
-        - unit_of_measure_type: it can have two possible values
-            1 = Number (#)
-            2 = Percentage (%)
-
-    This function also uses is_cumulative, which has one of these values:
-        - 1 = None
-        - 2 = Cumulative
-        - 3 = Non-cumulative
-    */
-    function toggleCummulativeOptions(unit_of_measure_type) {
-        // the top option is always the default option
-        if (unit_of_measure_type == 2) {
-            show_hide_cummulative_inputs('percent')
-            $("#id_is_cumulative_1").prop("checked", false);
-            // Although it's not displayed, when the measurement type is cumulative, the input should be set to true
-            // so the is_cumulative input can be submitted with the correct value
-            $("#id_is_cumulative_2").prop("checked", true);
-        } else {
-            show_hide_cummulative_inputs('number')
-            $("#id_is_cumulative_1").prop("checked", true);
-            $("#id_is_cumulative_2").prop("checked", false);
-        }
-    }
-
-    function show_hide_cummulative_inputs(type) {
-        //d-flex overrides display settings, so we need to apply and unapply depending on visibility
-        if (type == 'number') {
-            $("#id_span_is_cumulative_header").text("{% trans 'Options for number (#) indicators'|escapejs %}");
-            $("#id_div_is_cumulative_section1").show();
-            $("#id_div_is_cumulative_section2").show();
-            $("#id_div_is_cumulative_section3").hide();
-        } else {
-            {# Translators: This is the title of some informational text describing what it means when an indicator is being measured as a percentage e.g. % of population with access to water  #}
-            $("#id_span_is_cumulative_header").text("{% trans 'Percentage (%) indicators'|escapejs %}");
-            $("#id_div_is_cumulative_section3").show();
-            $("#id_div_is_cumulative_section1").hide();
-            $("#id_div_is_cumulative_section2").hide();
-            $("#id_is_cumulative_2").prop("checked", true);
-        }
-    }
-
-    /*
-    Calculates the sum and count of all targets
-    */
-    function getTargetsSumAndNum() {
-        let sum = 0;
-        let num = 0;
-        let targetValue;
-        $("#periodic_targets_table input[data-periodictarget]").each(function () {
-            targetValue = parseFloat($(this).val());
-            if (isNaN(targetValue)) {
-                targetValue = 0;
-            }
-            sum += targetValue;
-            num += 1;
-        });
-        return [sum, num];
-    }
-
-    /*
-    Update the LoP total row to display total based off of Periodic Targets
-    */
-    function updateLopTargetDisplay(cumulative = null) {
-        //let unit_of_measure_type = $("#id_unit_of_measure_type_1").is(":checked") ? 2 : 1;
-        let targetsSum = getTargetsSumAndNum()[0];
-        $("#id_span_loptarget").text(targetsSum);
-    }
-
-    $(document).ready(function () {
+        // Initial state of cumulative box and % symbols
         let unit_of_measure_type = $("#id_unit_of_measure_type_1").is(":checked") ? 2 : 1;
         if (unit_of_measure_type == 2) {
             show_hide_cummulative_inputs('percent')
@@ -600,64 +493,29 @@
         }
 
         togglePercentSymbol(unit_of_measure_type);
-    });
 
-    /*
-    Listen for change event of the UNIT_OF_MEASURE_TYPE radio buttons and
-    toggle Percent sign and cumulative options accordingly.
-    #id_fieldgroup_unit_of_measure
-    */
-    $("#indicator_modal_content").on("change", ":input[name='unit_of_measure_type']", function (e) {
-        var unit_of_measure_type = parseInt(e.target.value);
-        togglePercentSymbol(unit_of_measure_type);
-        toggleCummulativeOptions(unit_of_measure_type);
-        updateLopTargetDisplay();
-    });
+        //Use BS multiselect widget where needed
+        var multiselectOptions = {
+            includeSelectAllOption: true,
+            enableFiltering: true,
+            enableCaseInsensitiveFiltering: true,
+            numberDisplayed: 1,
+            maxHeight: 320,
+            buttonClass: 'btn form-control',
+            templates: {
+                filter: '<li class="multiselect-item filter"><div class="input-group"><input class="form-control multiselect-search" type="text"></div></li>',
+                filterClearBtn: '<span class="input-group-btn"><button class="btn btn-default multiselect-clear-filter" type="button"><i class="fas fa-times-circle"></i></button></span>',
+            }
+        };
 
-
-    /*
-    Listen for value changes in periodic targets and recalculate the targets
-    sum or targets average
-    #periodic-targets-tablediv
-    */
-    $("#indicator_modal_content").on("blur", "#periodic_targets_table input[data-periodictarget]", function (e) {
-        updateLopTargetDisplay();
-    });
+        $('#id_objectives').multiselect(multiselectOptions);
+        $('#id_disaggregation').multiselect(multiselectOptions);
+        $('#id_indicator_type').multiselect(multiselectOptions);
+        $('#id_strategic_objectives').multiselect(multiselectOptions);
 
 
-    /*
-    Listen for change event of the IS_CUMULATIVE radio buttons and toggle the
-    targets_sum row accordingly.
-    #id_div_is_cumulative
-    */
-    $("#indicator_modal_content").on("change", ":input[type='radio'][name='is_cumulative']", function (e) {
-        updateLopTargetDisplay(e.target.value);
-    });
-
-    /*
-    Use BS multiselect widget where needed
-    */
-    var multiselectOptions = {
-        includeSelectAllOption: true,
-        enableFiltering: true,
-        enableCaseInsensitiveFiltering: true,
-        numberDisplayed: 1,
-        maxHeight: 320,
-        buttonClass: 'btn form-control',
-        templates: {
-            filter: '<li class="multiselect-item filter"><div class="input-group"><input class="form-control multiselect-search" type="text"></div></li>',
-            filterClearBtn: '<span class="input-group-btn"><button class="btn btn-default multiselect-clear-filter" type="button"><i class="fas fa-times-circle"></i></button></span>',
-        }
-    };
-
-    $('#id_objectives').multiselect(multiselectOptions);
-    $('#id_disaggregation').multiselect(multiselectOptions);
-    $('#id_indicator_type').multiselect(multiselectOptions);
-    $('#id_strategic_objectives').multiselect(multiselectOptions);
-
-    // used for tracking if changes were made to the form
-    // see indicator_form_common_js.html for def
-    $(document).ready(function () {
+        // used for tracking if changes were made to the form
+        // see indicator_form_common_js.html for def
         recordTrackedFieldsSnapshot();
     });
 
