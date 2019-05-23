@@ -44,20 +44,13 @@
         $('#indicator_modal_div').modal('hide');
     }
 
-    $( document ).ready(function() {
-        disable_target_frequency_field();
-        if ($("#id_objectives option").length < 1) {
-            $("#id_objectives").attr("disabled", true)
-        }
-
-    });
 
     $("#indicator_modal_div").on('shown.bs.modal', function() {
 
     });
 
     $("#indicator_modal_div").on('shown.bs.tab', function() {
-        disable_target_frequency_field();
+
     });
 
 
