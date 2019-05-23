@@ -176,8 +176,15 @@ class IndicatorCreate(IndicatorFormMixin, CreateView):
 
         periodic_targets = self.request.POST.get('periodic_targets')
 
-        # Save completed PeriodicTargets to the DB (will be empty [] for LoP)
-        if periodic_targets:
+        # Save completed PeriodicTargets to the DB (will be empty u'[]' for LoP)
+        if indicator.target_frequency == Indicator.LOP:
+            PeriodicTarget.objects.create(
+                indicator=indicator,
+                period=PeriodicTarget.LOP_PERIOD,
+                target=indicator.lop_target,
+                create_date=timezone.now(),
+            )
+        else:
             # now create/update periodic targets
             pt_json = json.loads(periodic_targets)
 
@@ -214,14 +221,6 @@ class IndicatorCreate(IndicatorFormMixin, CreateView):
                     create_date=timezone.now(),
                     **values
                 )
-        else:
-            assert indicator.target_frequency == Indicator.LOP
-            PeriodicTarget.objects.create(
-                indicator=indicator,
-                period=PeriodicTarget.LOP_PERIOD,
-                target=indicator.lop_target,
-                create_date=timezone.now(),
-            )
 
         ProgramAuditLog.log_indicator_created(
             self.request.user,
@@ -255,12 +254,8 @@ class IndicatorUpdate(IndicatorFormMixin, UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super(IndicatorUpdate, self).get_context_data(**kwargs)
-        context.update({'id': self.kwargs['pk']})
-        indicator = Indicator.objects.get(id=self.kwargs['pk'])
+        indicator = self.object
         program = indicator.program
-
-        context.update({'i_name': indicator.name})
-        # context['programId'] = program.id
 
         pts = PeriodicTarget.objects.filter(indicator=indicator) \
             .annotate(num_data=Count('result')).order_by('customsort', 'create_date', 'period')
@@ -278,11 +273,9 @@ class IndicatorUpdate(IndicatorFormMixin, UpdateView):
             })
 
         # if the modal is loaded (not submitted) and the indicator frequency is a periodic
-        if self.request.method == 'GET' and indicator.target_frequency in [
-                Indicator.ANNUAL, Indicator.SEMI_ANNUAL, Indicator.TRI_ANNUAL,
-                Indicator.QUARTERLY, Indicator.MONTHLY]:
-
+        if self.request.method == 'GET' and indicator.target_frequency in Indicator.REGULAR_TARGET_FREQUENCIES:
             latest_pt_end_date = indicator.periodictargets.aggregate(lastpt=Max('end_date'))['lastpt']
+
             if latest_pt_end_date is None or latest_pt_end_date == 'None':
                 latest_pt_end_date = program.reporting_period_start
             else:
