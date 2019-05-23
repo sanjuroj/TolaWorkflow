@@ -16,13 +16,15 @@ class Picker extends React.Component {
             return {value:val, label:val};
         });
         const selectedOption = {value:this.props.rootStore.levelStore.chosenTierSet, label: this.props.rootStore.levelStore.chosenTierSetName};
-
+        let classes = "leveltier-picker__selectbox ";
+        classes += this.props.rootStore.uiStore.tiersAreLocked ? "leveltier-picker__selectbox--disabled" : "";
         return (
-            <div className="leveltier-picker__selectbox">
+            <div className={classes}>
                 Results framework template
                 <Select
                     options={options}
                     value={selectedOption}
+                    isDisabled={this.props.rootStore.uiStore.tiersAreLocked}
                     onChange={this.handleChange}
                 />
             </div>
@@ -79,12 +81,11 @@ class LevelTierList extends React.Component{
     }
 }
 
-export const LevelTierPicker = observer(function (props) {
-
+export const LevelTierPicker = inject("rootStore")(observer(function (props) {
     return (
         <div id="leveltier-picker" className="leveltier-picker">
             <Picker />
             <LevelTierList />
         </div>
     )
-});
+}));

@@ -260,6 +260,13 @@ export class UIStore {
         this.rootStore = rootStore;
     }
 
+    @computed get tiersAreLocked () {
+        let notNewLevels = this.rootStore.levelStore.levels.filter( l => l.id != "new");
+        console.log('not new levels', notNewLevels)
+        return notNewLevels.length > 0 ? true : false;
+
+    }
+
     @action
     addExpandedCard = (levelId) => {
         if (!this.expandedCards.includes(levelId)) {

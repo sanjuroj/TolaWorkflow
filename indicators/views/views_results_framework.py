@@ -66,6 +66,11 @@ class LevelViewSet (viewsets.ModelViewSet):
                 s_level.save()
 
             all_levels = Level.objects.filter(program=instance.program)
+
+            # Need to delete the leveltiers associated with the program when the last level is deleted.
+            if len(all_levels) == 0:
+                for tier in LevelTier.objects.filter(program=program):
+                    tier.delete()
             return Response(LevelSerializer(all_levels, many=True).data)
         except Exception as e:
             logger.error(e)
