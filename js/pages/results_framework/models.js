@@ -159,7 +159,9 @@ export class LevelStore {
         api.delete(`/level/${levelId}`)
             .then(response => {
                 this.levels.replace(response.data)
-                // this.levels.replace(this.levels.filter((element) => element.id != levelId))
+                if (this.levels.length == 0){
+                    this.createFirstLevel()
+                }
             })
             .catch(error => console.log('error', error))
     }
