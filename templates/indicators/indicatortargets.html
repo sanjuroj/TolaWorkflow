@@ -78,7 +78,7 @@
                         <td class="periodic-targets__sum text-right ">
                             <strong class="periodic-targets__sum__value {% if indicator.unit_of_measure_type == 2 %}input-symbol-percent{% endif %}">
                                 <span id="id_span_loptarget" class="input-value">
-                                    {{ targets_sum|floatformat:"-2" }}
+
                                 </span>
                             </strong>
                         </td>
@@ -184,12 +184,6 @@
                             <strong>{% trans "Life of Program (LoP) target" %}</strong>
                         </td>
                         <td class="periodic-targets__sum text-right ">
-{#                            <strong class="periodic-targets__sum__value {% if indicator.unit_of_measure_type == 2 %}input-symbol-percent{% endif %}">#}
-{#                                <span id="id_span_loptarget" class="input-value">#}
-{#                                    {{ targets_sum|floatformat:"-2" }}#}
-{#                                </span>#}
-{#                            </strong>#}
-
                             <span id="span_id_lop_target">
                                 <input type="number"
                                        name="lop_target"

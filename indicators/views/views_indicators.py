@@ -156,7 +156,6 @@ class IndicatorCreate(IndicatorFormMixin, CreateView):
         context['program'] = self.program
 
         context['periodic_targets'] = []
-        context['targets_sum'] = 0
 
         return context
 
@@ -303,8 +302,6 @@ class IndicatorUpdate(IndicatorFormMixin, UpdateView):
             ptargets += generated_targets
 
         context['periodic_targets'] = ptargets
-        context['targets_sum'] = PeriodicTarget.objects \
-            .filter(indicator=indicator).aggregate(Sum('target'))['target__sum']
 
         # redirect user to certain tabs of the form given GET params
         if self.request.GET.get('targetsactive') == 'true':

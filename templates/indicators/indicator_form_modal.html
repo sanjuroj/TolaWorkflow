@@ -492,6 +492,9 @@
 
         togglePercentSymbol(unit_of_measure_type);
 
+        // Compute LoP based on PTs
+        updateLopTargetDisplay();
+
         //Use BS multiselect widget where needed
         var multiselectOptions = {
             includeSelectAllOption: true,
