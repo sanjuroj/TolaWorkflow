@@ -414,6 +414,11 @@
         // user entered rationale for change
         formArr.push({name: 'rationale', value: rationale});
 
+        // If LoP target not explicit, submit computed value
+        if (formArr.find(e => e.name === 'lop_target') === undefined) {
+            formArr.push({name: 'lop_target', value: getTargetsSumAndNum()[0]});
+        }
+
         return $.ajax({
             method: 'POST',
             url: form_url,
@@ -824,6 +829,11 @@
         // 3: false
         if (formObj['is_cumulative'] === undefined) {
             formObj['is_cumulative'] = 3;
+        }
+
+        // Compute LoP if not explicit in form
+        if (formObj['lop_target'] === undefined) {
+            formObj['lop_target'] = getTargetsSumAndNum()[0];
         }
 
         let periodic_targets = getFormPeriodicTargets();
