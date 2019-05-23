@@ -495,38 +495,9 @@ class IndicatorDelete(DeleteView):
 @method_decorator(indicator_adapter(has_indicator_write_access), name='dispatch')
 class PeriodicTargetView(View):
     """
-    This view generates periodic targets or deleting them (via POST)
-
-    Seems to only be used for adding an event. All other PTs are generated elsewhere.
+    Delete all targets view
     """
     model = PeriodicTarget
-
-    def get(self, request, *args, **kwargs):
-        indicator = Indicator.objects.get(
-            pk=self.kwargs.get('indicator', None))
-
-        if request.GET.get('existingTargetsOnly'):
-            pts = FlatJsonSerializer().serialize(
-                indicator.periodictargets.all()
-                .order_by('customsort', 'create_date', 'period'))
-
-            return HttpResponse(pts)
-        try:
-            numTargets = int(request.GET.get('numTargets', None))
-        except Exception:
-            numTargets = PeriodicTarget.objects.filter(
-                indicator=indicator).count() + 1
-
-        # If this is ever false, a real start date should be given to generate_periodic_target_single()
-        assert indicator.target_frequency == Indicator.EVENT
-
-        pt_generated = generate_periodic_target_single(
-            indicator.target_frequency, None,
-            (numTargets - 1), ''
-        )
-
-        pt_generated_json = json.dumps(pt_generated, cls=DjangoJSONEncoder)
-        return HttpResponse(pt_generated_json)
 
     def post(self, request, *args, **kwargs):
         indicator = Indicator.objects.get(
@@ -578,6 +549,8 @@ def reset_indicator_target_frequency(ind):
 class PeriodicTargetDeleteView(DeleteView):
     """
     url periodic_target_delete/<pk>
+
+    Deletes a single target - used only for deleting individual events currently
     """
     model = PeriodicTarget
 

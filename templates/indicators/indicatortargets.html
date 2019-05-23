@@ -39,7 +39,7 @@
                                         <i class="fas fa-times text-danger"></i>
                                     </a>
                         {% endif %}
-                            <input type="text" name="{{ pt.period }}" value="{{ pt.period }}" class="form-control input-text">
+                            <input type="text" placeholder="{% trans 'Enter event name' %}" name="{{ pt.period }}" value="{{ pt.period }}" class="form-control input-text">
                             <span style="" class="help-block"> </span>
                         </td>
                     {% else %}

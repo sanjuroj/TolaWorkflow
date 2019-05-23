@@ -303,8 +303,8 @@
     }
 
     // When adding an event, a row may need to be dynamically inserted
-    function createPeriodicTargetRow(pt, isLastIteration, rowNum) {
-        var markup = `
+    function createPeriodicTargetRow() {
+        return `
                 <tr class="periodic-target" data-collected-count="0" data-ptid="0">
                     <td class="text-left d-flex align-items-center td--stretch">
                         <a href="#" class="deletebtn btn btn-sm event-target-delete-button">
@@ -318,16 +318,15 @@
                         <span class=${ $("#id_unit_of_measure_type_1").is(":checked")?"input-symbol-percent":""}>
                             <input
                                 type="number"
-                                id="pt-${pt.id}"
+                                id="pt-0"
                                 data-periodictarget="pt"
                                 placeholder="{% trans 'Enter target' %}"
                                 class="form-control input-value">
                         </span>
-                        <span id="hint_id_pt_${pt.period}" style="margin:0px;" class="help-block"> </span>
+                        <span id="hint_id_pt_0" style="margin:0px;" class="help-block"> </span>
                     </td>
                 </tr>
             `;
-        return markup;
     }
 
     // delete periodic_target (delete ALL targets)
@@ -369,18 +368,12 @@
         scrollToIndicatorFormBottom();
     });
 
-    // add new periodic target. Actually, add an event. That is the only use for this button.
+    // add new event periodic target markup to PT form
     $("#indicator_modal_content").on("click", "#addNewPeriodicTarget", function(e) {
         e.preventDefault();
-        var numTargets = $("#periodic_targets_table tbody tr").length-1;
-        var form_url = $("#indicator_update_form").attr('action');
-        var indicator_id = form_url.split('/').slice(-2, -1)[0]
-        $.get('/indicators/periodic_target_generate/' + indicator_id + '/?numTargets=' + numTargets, function(data){
-            var pt = $.parseJSON(data);
-            var isLastIteration = true;
-            var markup = createPeriodicTargetRow(pt, isLastIteration);
-            $("#periodic_targets_table tbody tr:nth-last-child(2)").before(markup);
-        });
+
+        let markup = createPeriodicTargetRow();
+        $("#periodic_targets_table tbody tr:nth-last-child(1)").before(markup);
     });
 
     $('#indicator_modal_content').on('click', "input[type='reset']", function(e) {

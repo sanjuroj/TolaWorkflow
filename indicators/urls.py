@@ -46,8 +46,6 @@ urlpatterns = [
 
     url(r'^indicator_delete/(?P<pk>\d+)/$', IndicatorDelete.as_view(), name='indicator_delete'),
 
-    url(r'^periodic_target_generate/(?P<indicator>\d+)/$', PeriodicTargetView.as_view(), name='pt_generate'),  # create event
-
     url(r'^periodic_target_delete/(?P<pk>\d+)/$', PeriodicTargetDeleteView.as_view(), name='pt_delete'),  # delete event
 
     url(r'^periodic_target_deleteall/(?P<indicator>\d+)/(?P<deleteall>\w+)/$',  # delete all targets button
