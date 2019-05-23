@@ -586,7 +586,7 @@
     /*
     Update the LoP total row to display total based off of Periodic Targets
     */
-    function updateAggregateRowValueAndLabel(cumulative = null) {
+    function updateLopTargetDisplay(cumulative = null) {
         //let unit_of_measure_type = $("#id_unit_of_measure_type_1").is(":checked") ? 2 : 1;
         let targetsSum = getTargetsSumAndNum()[0];
         $("#id_span_loptarget").text(targetsSum);
@@ -612,7 +612,7 @@
         var unit_of_measure_type = parseInt(e.target.value);
         togglePercentSymbol(unit_of_measure_type);
         toggleCummulativeOptions(unit_of_measure_type);
-        updateAggregateRowValueAndLabel();
+        updateLopTargetDisplay();
     });
 
 
@@ -622,7 +622,7 @@
     #periodic-targets-tablediv
     */
     $("#indicator_modal_content").on("blur", "#periodic_targets_table input[data-periodictarget]", function (e) {
-        updateAggregateRowValueAndLabel();
+        updateLopTargetDisplay();
     });
 
 
@@ -632,7 +632,7 @@
     #id_div_is_cumulative
     */
     $("#indicator_modal_content").on("change", ":input[type='radio'][name='is_cumulative']", function (e) {
-        updateAggregateRowValueAndLabel(e.target.value);
+        updateLopTargetDisplay(e.target.value);
     });
 
     /*
