@@ -42,6 +42,7 @@ export class LevelStore {
 
     @computed get levelProperties () {
         let levelProperties = {};
+        this.indicators.forEach( i => console.log(toJS(i)))
         for (let level of this.levels) {
             let properties = {};
             properties['indicators'] = this.getLevelIndicators(level.id)
@@ -52,7 +53,8 @@ export class LevelStore {
                 properties['childTierName'] = this.chosenTierSet[level.level_depth];
             }
             const childCount =  this.levels.filter(l => l.parent == level.id).length;
-            properties['canDelete'] = childCount==0;
+            const indicatorCount = this.indicators.filter( i => i.level == level.id);
+            properties['canDelete'] = childCount==0 && indicatorCount==0;
             levelProperties[level.id] = properties
         }
         return levelProperties
