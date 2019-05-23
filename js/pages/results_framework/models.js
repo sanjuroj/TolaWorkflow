@@ -76,7 +76,7 @@ export class LevelStore {
             siblingsToReorder.forEach(sib => sib.customsort -= 1);
 
             // Now remove the new card
-            this.levels.replace(this.levels.filter((element) => element.id != "new"))
+            this.levels.replace(this.levels.filter((element) => element.id != "new"));
         }
         this.rootStore.uiStore.removeExpandedCard(levelId)
 
@@ -86,7 +86,7 @@ export class LevelStore {
     createNewLevelFromSibling = (siblingId) => {
         // Copy sibling data for the new level and then clear some of it out
         let sibling = toJS(this.levels.find( l => l.id == siblingId));
-        let newLevel = Object.assign({}, sibling)
+        let newLevel = Object.assign({}, sibling);
         newLevel.customsort += 1;
         newLevel.id = "new";
         newLevel.name = "";
@@ -115,7 +115,7 @@ export class LevelStore {
             parent: parentId,
             level_depth: parent.level_depth + 1,
             program: this.program_id
-        }
+        };
 
         // bump the customsort field for siblings that come after the inserted Level
         let siblingsToReorder = this.levels.filter( l => l.parent == parentId);
@@ -140,13 +140,13 @@ export class LevelStore {
             customsort: 1,
             level_depth: 1,
             parent: "root"
-        }
-        this.levels.push(newLevel)
+        };
+        this.levels.push(newLevel);
         this.rootStore.uiStore.expandedCards.push("new")
     }
 
     saveLevelTiersToDB = () => {
-        const tier_data = {program_id: this.program_id, tiers: this.chosenTierSet}
+        const tier_data = {program_id: this.program_id, tiers: this.chosenTierSet};
         api.post(`/save_leveltiers/`, tier_data)
             .then(response => {
                 console.log("Level Tiers Saved!")
@@ -155,7 +155,7 @@ export class LevelStore {
     }
 
     deleteLevelFromDB = (levelId) => {
-        const level_data = {level: levelId}
+        const level_data = {level: levelId};
         api.delete(`/level/${levelId}`)
             .then(response => {
                 this.levels.replace(response.data)
@@ -180,12 +180,12 @@ export class LevelStore {
                     runInAction(() => {
                         this.levels.replace(response.data['all_data'])
                     });
-                    const newId = response.data["new_level"]["id"]
+                    const newId = response.data["new_level"]["id"];
                     if (submitType == "saveAndAddSibling"){
-                        this.createNewLevelFromSibling(newId)
+                        this.createNewLevelFromSibling(newId);
                     }
                     else if (submitType == "saveAndAddChild"){
-                        this.createNewLevelFromParent(newId)
+                        this.createNewLevelFromParent(newId);
                     }
                 })
                 .catch(error => console.log('error', error))
@@ -196,17 +196,17 @@ export class LevelStore {
                     runInAction( () => {
                         Object.assign(targetLevel, response.data);
                     });
-                    this.rootStore.uiStore.removeExpandedCard(levelId)
+                    this.rootStore.uiStore.removeExpandedCard(levelId);
                     if (submitType == "saveAndAddSibling"){
-                        this.createNewLevelFromSibling(levelId)
+                        this.createNewLevelFromSibling(levelId);
                     }
                     else if (submitType == "saveAndAddChild"){
-                        this.createNewLevelFromParent(levelId)
+                        this.createNewLevelFromParent(levelId);
                     }
 
                 })
                 .catch( error => {
-                    console.log("There was an error:", error)
+                    console.log("There was an error:", error);
                 })
         }
 
@@ -227,26 +227,26 @@ export class LevelStore {
                 return presetName;
             }
         }
-        return "Custom"
+        return "Custom";
     }
 
 
     buildOntology = (levelId, ontologyArray = []) => {
-        let level = toJS(this.levels.find( l => l.id == levelId))
+        let level = toJS(this.levels.find( l => l.id == levelId));
         /*  If there is no parent (saved top tier level) or the parent is "root" (unsaved top tier level)
             then we should return with adding to the ontology because there is no ontology entry for the top tier
          */
         if (level.parent && level.parent != "root") {
-            ontologyArray.unshift(level.customsort)
-            return this.buildOntology(level.parent, ontologyArray)
+            ontologyArray.unshift(level.customsort);
+            return this.buildOntology(level.parent, ontologyArray);
         }
         else {
-            return ontologyArray.join(".")
+            return ontologyArray.join(".");
         }
     }
 
     getLevelIndicators = (levelId) => {
-        return this.indicators.filter( i => i.level == levelId)
+        return this.indicators.filter( i => i.level == levelId);
     }
 
 }
@@ -254,7 +254,6 @@ export class LevelStore {
 
 export class UIStore {
     @observable expandedCards = [];
-    @observable activeLevel = "";
 
     constructor (rootStore) {
         this.rootStore = rootStore;
@@ -262,7 +261,6 @@ export class UIStore {
 
     @computed get tiersAreLocked () {
         let notNewLevels = this.rootStore.levelStore.levels.filter( l => l.id != "new");
-        console.log('not new levels', notNewLevels)
         return notNewLevels.length > 0 ? true : false;
 
     }
@@ -276,6 +274,6 @@ export class UIStore {
 
     @action
     removeExpandedCard = (levelId) => {
-        this.expandedCards = this.expandedCards.filter( level_id => level_id != levelId )
+        this.expandedCards = this.expandedCards.filter( level_id => level_id != levelId );
     }
 }

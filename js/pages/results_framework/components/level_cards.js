@@ -141,6 +141,7 @@ export class LevelCardExpanded extends React.Component {
                         id="level-name"
                         name="name"
                         value={this.name || ""}
+                        autoComplete="off"
                         onChange={this.onFormChange}    />
                     <label htmlFor="assumptions">Assumptions</label>
                     <textarea
@@ -148,11 +149,13 @@ export class LevelCardExpanded extends React.Component {
                         type="text"
                         id="level-assumptions"
                         name="assumptions"
+                        autoComplete="off"
                         value={this.assumptions || ""}
                         onChange={this.onFormChange}/>
                     <ButtonBar
                         level={this.props.level}
                         levelProps={this.props.levelProps}
+                        isActive={this.props.rootStore.uiStore.expandedCards[0] == this.props.level.id ? true : false}
                         submitFunc={this.updateSubmitType}
                         cancelFunc={this.cancelEdit}
                         tierCount={this.props.rootStore.levelStore.chosenTierSet.length}/>
@@ -167,23 +170,27 @@ export class LevelCardExpanded extends React.Component {
 @inject('rootStore')
 class ButtonBar extends React.Component {
     render() {
+        let disabledText = this.props.isActive ? "" : "disabled";
+
+        // Build the button text with the right sibling level name, then build the button.
         let addAnotherButton = null;
         if (this.props.level.parent != null && this.props.level.parent != "root") {
             {/* # Translators: On a button, with a tiered set of objects, save current object and add another one in the same tier, e.g. "Save and add another Outcome" when the user is editing an Outcome */}
             const buttonText = interpolate(gettext("Save and add another %s"), [this.props.levelProps.tierName])
-            addAnotherButton = <LevelButton classes="btn-primary" text={buttonText} submitType="saveAndAddSibling"  submitFunc={this.props.submitFunc} />
+            addAnotherButton = <LevelButton disabledText={disabledText} classes="btn-primary" text={buttonText} submitType="saveAndAddSibling"  submitFunc={this.props.submitFunc} />
         }
 
+        // Build the button text with the right child level name, then build the button.
         let addAndLinkButton = null;
         const tierCount = this.props.rootStore.levelStore.chosenTierSet.length;
         if (this.props.level.level_depth < tierCount) {
             {/* # Translators: On a button, with a tiered set of objects, save current object and add another one in the next lower tier, e.g. "Save and add another Activity" when the user is editing a Goal */}
             const buttonText = interpolate(gettext("Save and link %s"), [this.props.levelProps.childTierName])
-            addAndLinkButton = <LevelButton classes="btn-primary" text={buttonText} submitType="saveAndAddChild" submitFunc={this.props.submitFunc} />
+            addAndLinkButton = <LevelButton disabledText={disabledText} classes="btn-primary" text={buttonText} submitType="saveAndAddChild" submitFunc={this.props.submitFunc} />
         }
         return (
             <div className="button-bar">
-                <LevelButton classes="btn-primary" text={gettext("Save and close")} submitType="saveOnly" submitFunc={this.props.submitFunc} />
+                <LevelButton disabledText={disabledText} classes="btn-primary" text={gettext("Save and close")} submitType="saveOnly" submitFunc={this.props.submitFunc} />
                 {addAnotherButton}
                 {addAndLinkButton}
                 <LevelButton classes="btn-reset" text={gettext("Cancel")} submitType="cancel" submitFunc={this.props.cancelFunc} />
@@ -199,6 +206,7 @@ class LevelButton extends React.Component {
         const buttonType = this.props.submitType == "cancel" ? "button" : "submit";
         return (
             <button
+                disabled={this.props.disabledText}
                 type={buttonType}
                 className={this.props.classes + ' level-button btn btn-sm'}
                 onClick={() =>this.props.submitFunc(this.props.submitType)}>
