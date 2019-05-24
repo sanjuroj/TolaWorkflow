@@ -65,8 +65,6 @@ class IndicatorForm(forms.ModelForm):
 
     rationale = forms.CharField(required=False)
 
-    program_id = forms.IntegerField(widget=forms.HiddenInput())
-
     class Meta:
         model = Indicator
         exclude = ['create_date', 'edit_date', 'program']
@@ -115,8 +113,6 @@ class IndicatorForm(forms.ModelForm):
         # self.fields['is_cumulative'].widget = forms.RadioSelect()
         if self.instance.target_frequency and self.instance.target_frequency != Indicator.LOP:
             self.fields['target_frequency'].widget.attrs['readonly'] = True
-
-        self.fields['program_id'].initial = self.programval.id
 
     def clean_lop_target(self):
         data = self.cleaned_data['lop_target']

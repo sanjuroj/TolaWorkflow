@@ -257,6 +257,8 @@ class IndicatorUpdate(IndicatorFormMixin, UpdateView):
         indicator = self.object
         program = indicator.program
 
+        context['program'] = program
+
         pts = PeriodicTarget.objects.filter(indicator=indicator) \
             .annotate(num_data=Count('result')).order_by('customsort', 'create_date', 'period')
 

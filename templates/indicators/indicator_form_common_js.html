@@ -77,6 +77,10 @@
         return $('#indicatorId').text() ? parseInt($('#indicatorId').text()) : undefined;
     }
 
+    function programId() {
+        return $('#programId').text() ? parseInt($('#programId').text()) : undefined;
+    }
+
     function initialLopTarget() {
         return $('#initialLopTarget').text() ? parseInt($('#initialLopTarget').text()) : undefined;
     }
@@ -324,7 +328,7 @@
 
         $.ajax({
             method: 'POST',
-            url: "/indicators/periodic_targets_form/" + formObj.program_id + "/",
+            url: "/indicators/periodic_targets_form/" + programId() + "/",
             data: formObj,
         }).done(function (data, textStatus, jqXHR) {
             insertPeriodicTargetForm(data['content']);
