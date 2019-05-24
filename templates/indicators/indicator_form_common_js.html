@@ -286,14 +286,15 @@
 
 
     // Disable default handling of ENTER key
+    /*
     $("#indicator_modal_content").on("keyup keypress", "#indicator_update_form", function(e){
         var keyCode = e.keyCode || e.which;
         if (keyCode === 13 ){
             e.preventDefault();
             return false;
         }
-
     });
+    */
 
     // Insert periodic target form template into indicator form DOM
     function insertPeriodicTargetForm(content) {
