@@ -4,7 +4,7 @@ from indicators.views import (
     IndicatorCreate,
     IndicatorUpdate,
     IndicatorDelete,
-    PeriodicTargetView,
+    PeriodicTargetDeleteAllView,
     PeriodicTargetDeleteView
 )
 
@@ -14,7 +14,7 @@ from .views.views_indicators import (
     ResultDelete,
     IndicatorExport,
     service_json,
-    PeriodicTargetView,
+    PeriodicTargetDeleteAllView,
     PeriodicTargetDeleteView,
     result_view,
     indicator_plan,
@@ -49,7 +49,7 @@ urlpatterns = [
     url(r'^periodic_target_delete/(?P<pk>\d+)/$', PeriodicTargetDeleteView.as_view(), name='pt_delete'),  # delete event
 
     url(r'^periodic_target_deleteall/(?P<indicator>\d+)/(?P<deleteall>\w+)/$',  # delete all targets button
-        PeriodicTargetView.as_view(), name='pt_deleteall'),
+        PeriodicTargetDeleteAllView.as_view(), name='pt_deleteall'),
 
     url(r'^result_add/(?P<indicator>\d+)/$', ResultCreate.as_view(), name='result_add'),
 

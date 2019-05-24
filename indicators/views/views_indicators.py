@@ -493,7 +493,7 @@ class IndicatorDelete(DeleteView):
 
 @method_decorator(login_required, name='dispatch')
 @method_decorator(indicator_adapter(has_indicator_write_access), name='dispatch')
-class PeriodicTargetView(View):
+class PeriodicTargetDeleteAllView(View):
     """
     Delete all targets view
     """
@@ -530,8 +530,7 @@ class PeriodicTargetView(View):
             indicator.save()
             ProgramAuditLog.log_indicator_updated(self.request.user, indicator, old, indicator.logged_fields, rationale)
 
-        return HttpResponse('{"status": "success", \
-                            "message": "Request processed successfully!"}')
+        return JsonResponse({"status": "success"})
 
 
 def reset_indicator_target_frequency(ind):
@@ -585,7 +584,6 @@ class PeriodicTargetDeleteView(DeleteView):
                 rationale
             )
 
-        indicator = None
         return JsonResponse({"status": "success"})
 
 

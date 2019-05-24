@@ -2,7 +2,7 @@ from views_indicators import (
     IndicatorCreate,
     IndicatorUpdate,
     IndicatorDelete,
-    PeriodicTargetView,
+    PeriodicTargetDeleteAllView,
     PeriodicTargetDeleteView,
     ResultCreate,
     ResultUpdate

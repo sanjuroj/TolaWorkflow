@@ -65,9 +65,30 @@
         scrollToBottom($el);
     }
 
+    /*
+     * Data accessors about an instance of the form/indicator
+     */
+
+    function indicatorHasResults() {
+        return parseInt($('#numDataPoints').text()) > 0;
+    }
+
+    function indicatorId() {
+        return $('#indicatorId').text() ? parseInt($('#indicatorId').text()) : undefined;
+    }
+
+    function initialLopTarget() {
+        return $('#initialLopTarget').text() ? parseInt($('#initialLopTarget').text()) : undefined;
+    }
+
+    // differentiate between create and udpate form
+    function isCreateForm() {
+        return !indicatorId();
+    }
+
+    // delete indicator helper
     function confirmAndRedirect(delete_indicator) {
-        var has_results = parseInt($('#numDataPoints').text()) > 0;
-        if(!has_results) {
+        if(! indicatorHasResults()) {
             create_no_rationale_changeset_notice({
                 preamble: [DESTRUCTIVE_PREAMBLE, DELETE_INDICATOR_PREAMBLE].join(' '),
                 message_text: DELETE_INDICATOR_NO_RATIONALE,
@@ -84,7 +105,8 @@
         }
         scrollToIndicatorFormBottom();
     }
-    
+
+    // delete indicator on click
     $('#indicator_modal_content').on("click", "#id_delete_indicator_btn", function(e) {
         e.preventDefault();
         var url = $(this).attr('href');
@@ -138,7 +160,9 @@
         }
         confirmAndRedirect(delete_indicator);
     });
-    
+
+
+    // on delete event target
     $('#indicator_modal_content').on('click', '.event-target-delete-button', function(e) {
         e.preventDefault();
         const updateIfLastEvent = () => {
@@ -150,7 +174,7 @@
         };
         var url = $(this).attr('href');
         let row = $(e.currentTarget).closest('tr');
-        let numDataTarget = parseInt(row.data('collected-count'));
+        let numResultsLinkedToEventTarget = parseInt(row.data('collected-count'));
         // if no other targets have changed, we'll update the snapshot so we don't double-prompt for rationale
         const updateSnapshot = !(
             JSON.stringify(getFormPeriodicTargets(row)) == initialTrackedFieldsFormState.periodic_targets &&
@@ -174,20 +198,20 @@
                         }
                     });
             };
-        let numDataIndicator = parseInt($('#numDataPoints').text());
+        let hasResults = indicatorHasResults();
         /* If target has results, message refers to number of results,
          * Otherwise, if indicator has results and target is not brand new, record rationale
          * otherwise merely confirm:
          */
-        const preamble = numDataTarget == 0 ? DESTRUCTIVE_PREAMBLE :
-            window.target_with_results_text(numDataTarget);
-        const message_text = (url == '#' || numDataIndicator == 0) ?
+        const preamble = numResultsLinkedToEventTarget == 0 ? DESTRUCTIVE_PREAMBLE :
+            window.target_with_results_text(numResultsLinkedToEventTarget);
+        const message_text = (url == '#' || !hasResults) ?
                 DELETE_TARGET_NO_RATIONALE :
                 DELETE_TARGET_MESSAGE;
         /* If the indicator has any results linked to it, we prompt for a rationale,
          * otherwise we do not.
          */
-        const changeset_notice_function = (url == '#' || numDataIndicator === 0) ?
+        const changeset_notice_function = (url == '#' || !hasResults) ?
                 window.create_no_rationale_changeset_notice :
                 window.create_destructive_changeset_notice;
         changeset_notice_function({
@@ -209,8 +233,7 @@
             return;
         }
 
-        let has_results = parseInt($('#numDataPoints').text()) > 0;
-        if(has_results && hasTrackedFieldsChanged()) {
+        if(indicatorHasResults() && hasTrackedFieldsChanged()) {
             if(hasTargetsChanged()) {
                 window.create_destructive_changeset_notice({
                     message_text: MODIFY_TARGETS_MESSAGE,
@@ -332,25 +355,24 @@
     // delete periodic_target (delete ALL targets)
     $("#indicator_modal_content").on("click", "#id_delete_targets_btn", function(e) {
         e.preventDefault();
-        var form_url = $("#indicator_update_form").attr('action');
-        var indicator_id = form_url.split('/').slice(-2, -1)[0];
-        var dataCountAttribute = $("#periodic_targets_table tr").attr("data-collected-count");
-        var msg = '';
+
+        if (isCreateForm()) {
+            $("#id_div_periodic_tables_placeholder").empty();
+            enable_target_frequecy_field();
+            return;
+        }
 
         const save = (rationale) => {
-            $.post('/indicators/periodic_target_deleteall/' + indicator_id + '/true/', {rationale}, function(data){
-                var res = $.parseJSON(data);
-                if (res['status'] == 'success') {
+            $.post('/indicators/periodic_target_deleteall/' + indicatorId() + '/true/', {rationale}, function(data){
+                if (data['status'] === 'success') {
                     $("#id_div_periodic_tables_placeholder").empty();
                     enable_target_frequecy_field();
-                    disable_target_frequency_field();
                 }
 
             });
         };
 
-        var has_results = parseInt($('#numDataPoints').text()) > 0;
-        if(has_results) {
+        if(indicatorHasResults()) {
             window.create_destructive_changeset_notice({
                 message_text: DELETE_ALL_TARGETS_MESSAGE,
                 context: document.getElementById('indicator_update_form'),
