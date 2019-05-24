@@ -29,6 +29,7 @@
     ]);
 
     // Open the modal with a create form (as opposed to an update form)
+    // form isn't laoded yet, so programId must come from somewhere else
     function openCreateIndicatorFormModal(programId) {
         let url = `/indicators/indicator_create/${programId}/`;
 
@@ -42,6 +43,16 @@
     // Close the modal window
     function closeIndicatorFormModal() {
         $('#indicator_modal_div').modal('hide');
+    }
+
+    // reload the create form (modal remains open)
+    function reloadCreateIndicatorForm() {
+        let url = `/indicators/indicator_create/${programId()}/`;
+
+        //$("#indicator_modal_content").empty();
+        $("#modalmessages").empty();
+
+        $("#indicator_modal_content").load(url);
     }
 
 
@@ -281,7 +292,7 @@
         }
 
         submitForm().done(() => {
-
+            reloadCreateIndicatorForm();
         });
     });
 
