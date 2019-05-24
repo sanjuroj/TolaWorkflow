@@ -81,7 +81,7 @@
         return $('#initialLopTarget').text() ? parseInt($('#initialLopTarget').text()) : undefined;
     }
 
-    // differentiate between create and udpate form
+    // differentiate between create and update form
     function isCreateForm() {
         return !indicatorId();
     }
@@ -166,24 +166,24 @@
     $('#indicator_modal_content').on('click', '.event-target-delete-button', function(e) {
         e.preventDefault();
         const updateIfLastEvent = () => {
-            if ($('.periodic-target').length == 0) {
-                $('.periodic-targets').remove();
-                enable_target_frequecy_field();
-                disable_target_frequency_field();
+            if ($('.periodic-target').length === 0) {
+                clearPeriodicTargetsForm();
             }
         };
-        var url = $(this).attr('href');
+        let url = $(this).attr('href');
         let row = $(e.currentTarget).closest('tr');
         let numResultsLinkedToEventTarget = parseInt(row.data('collected-count'));
+
         // if no other targets have changed, we'll update the snapshot so we don't double-prompt for rationale
         const updateSnapshot = !(
             JSON.stringify(getFormPeriodicTargets(row)) == initialTrackedFieldsFormState.periodic_targets &&
             initialTrackedFieldsFormState.target_frequency == getTrackedFieldsObject().target_frequency
             );
+
          /* If target is new, delete means just remove row,
          * If target is saved, delete means call to delete
          */
-        const delete_callback = url == '#' ?
+        const delete_callback = url === '#' ?
             (url, row) => () => {
                 row.remove();
                 updateIfLastEvent();
@@ -191,7 +191,7 @@
             (url, row) => (rationale) => {
                 $.post(url, {rationale: rationale})
                     .done((data) => {
-                        if (data.status == "success") {
+                        if (data.status === "success") {
                             row.remove();
                             if (updateSnapshot) updateTargetSnapshot();
                             updateIfLastEvent();
@@ -211,7 +211,7 @@
         /* If the indicator has any results linked to it, we prompt for a rationale,
          * otherwise we do not.
          */
-        const changeset_notice_function = (url == '#' || !hasResults) ?
+        const changeset_notice_function = (url === '#' || !hasResults) ?
                 window.create_no_rationale_changeset_notice :
                 window.create_destructive_changeset_notice;
         changeset_notice_function({
@@ -311,6 +311,12 @@
         updateLopTargetDisplay();
     }
 
+    // remove the periodic targest from from form UI and reset target frequency
+    function clearPeriodicTargetsForm() {
+        $("#id_div_periodic_tables_placeholder").empty();
+        enable_target_frequecy_field();
+    }
+
     // Ask server for periodic targets form template, to insert into the indicator form
     function getPeriodicTargetsForm() {
         let formObj = getIndicatorFormAsObject();
@@ -363,13 +369,7 @@
         }
 
         const save = (rationale) => {
-            $.post('/indicators/periodic_target_deleteall/' + indicatorId() + '/true/', {rationale}, function(data){
-                if (data['status'] === 'success') {
-                    $("#id_div_periodic_tables_placeholder").empty();
-                    enable_target_frequecy_field();
-                }
-
-            });
+            $.post('/indicators/periodic_target_deleteall/' + indicatorId() + '/true/', {rationale}, clearPeriodicTargetsForm);
         };
 
         if(indicatorHasResults()) {
