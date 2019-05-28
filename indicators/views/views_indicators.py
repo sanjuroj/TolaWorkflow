@@ -1,3 +1,4 @@
+import copy
 import json
 import logging
 import re
@@ -123,6 +124,9 @@ def periodic_targets_form(request, program):
     })
 
 
+class PeriodicTargetJsonValidationError(Exception): pass
+
+
 class IndicatorFormMixin(object):
     model = Indicator
     form_class = IndicatorForm
@@ -138,6 +142,87 @@ class IndicatorFormMixin(object):
 
     def form_invalid(self, form):
         return JsonResponse(form.errors, status=400)
+
+    def noramlize_periodic_target_client_json_dates(self, pt_json):
+        """
+        The JSON containing periodic targets sent by the client contains dates as: 'Dec 31, 2018'
+        The rest of the code expects them to be: '2018-12-31'
+        Also changes all pkids of 0 to None
+        """
+        pt_json = copy.deepcopy(pt_json)
+
+        for pt in pt_json:
+            pk = int(pt.get('id'))
+            if pk == 0:
+                pk = None
+
+            try:
+                start_date = dateparser.parse(pt.get('start_date', None))
+                start_date = datetime.strftime(start_date, '%Y-%m-%d')
+            except (ValueError, TypeError):
+                # raise ValueError("Incorrect data value")
+                start_date = None
+
+            try:
+                end_date = dateparser.parse(pt.get('end_date', None))
+                end_date = datetime.strftime(end_date, '%Y-%m-%d')
+            except (ValueError, TypeError):
+                # raise ValueError("Incorrect data value")
+                end_date = None
+
+            pt['id'] = pk
+            pt['start_date'] = start_date
+            pt['end_date'] = end_date
+
+        return pt_json
+
+    def validate_periodic_target_json_from_client(self, normalized_pt_json, program, target_frequency):
+        """
+        The client sends the full definition of all periodic targets in JSON
+        In the past, the server has just accepted it as gospel
+        Instead, do some basic validation to confirm what the client is telling the server is sane
+
+        Takes the client JSON, already deserialized and having the dates and pkid normalized as input.
+        """
+        # Clients send nothing on LOP only
+        if target_frequency == Indicator.LOP:
+            return
+
+        # Are all target values >= 0?
+        for pt in normalized_pt_json:
+            if pt['target'] < 0:
+                raise PeriodicTargetJsonValidationError('Target value must be >= 0, found %d' % pt.target)
+
+        # check that event names exist in the future?
+        if target_frequency == Indicator.EVENT:
+            return
+
+        if target_frequency == Indicator.MID_END:
+            if len(normalized_pt_json) != 2:
+                raise PeriodicTargetJsonValidationError(
+                    'Midline/Endline periodic target count is not 2 and is instead %d' % len(normalized_pt_json))
+            return
+
+        target_frequency_num_periods = IPTT_ReportView._get_num_periods(program.reporting_period_start,
+                                                                        program.reporting_period_end,
+                                                                        target_frequency)
+
+        generated_targets = generate_periodic_targets(target_frequency,
+                                                      program.reporting_period_start,
+                                                      target_frequency_num_periods)
+
+        if len(generated_targets) != len(normalized_pt_json):
+            raise PeriodicTargetJsonValidationError(
+                'Number of periodic targets sent by client does not match excepected number of targets on the server (%d vs %d)' % (
+                len(generated_targets), len(normalized_pt_json)))
+
+        server_period_dates = [(pt['start_date'], pt['end_date']) for pt in generated_targets]
+        client_period_dates = [(pt['start_date'], pt['end_date']) for pt in normalized_pt_json]
+
+        if server_period_dates != client_period_dates:
+            raise PeriodicTargetJsonValidationError(
+                'Periodic Target start/end dates expected by server do not match what was sent by the client: %s vs %s' % (
+                server_period_dates, client_period_dates))
 
 
 class IndicatorCreate(IndicatorFormMixin, CreateView):
@@ -188,32 +273,17 @@ class IndicatorCreate(IndicatorFormMixin, CreateView):
             # now create/update periodic targets
             pt_json = json.loads(periodic_targets)
 
-            for i, pt in enumerate(pt_json):
-                try:
-                    start_date = dateparser.parse(pt.get('start_date', None))
-                    start_date = datetime.strftime(start_date, '%Y-%m-%d')
-                except (ValueError, TypeError):
-                    # raise ValueError("Incorrect data value")
-                    start_date = None
+            normalized_pt_json = self.noramlize_periodic_target_client_json_dates(pt_json)
 
-                try:
-                    end_date = dateparser.parse(pt.get('end_date', None))
-                    end_date = datetime.strftime(end_date, '%Y-%m-%d')
-                except (ValueError, TypeError):
-                    # raise ValueError("Incorrect data value")
-                    end_date = None
+            self.validate_periodic_target_json_from_client(normalized_pt_json, indicator.program, indicator.target_frequency)
 
+            for i, pt in enumerate(normalized_pt_json):
                 values = dict(
                     period=pt.get('period', ''),
                     target=pt.get('target', 0),
-                    start_date=start_date,
-                    end_date=end_date,
+                    start_date=pt['start_date'],
+                    end_date=pt['end_date'],
                 )
-
-                # Validate PeriodicTarget target field is > 0... throws with ValidationError
-                # Needed to be done here since the form itself does not check
-                # Front-end validation exists which is why we are not bothering with UI feedback
-                PeriodicTarget(indicator=indicator, **values).clean_fields()
 
                 PeriodicTarget.objects.create(
                     indicator=indicator,
@@ -361,40 +431,24 @@ class IndicatorUpdate(IndicatorFormMixin, UpdateView):
         else:
             # now create/update periodic targets (will be empty u'[]' for LoP)
             pt_json = json.loads(periodic_targets)
+
+            normalized_pt_json = self.noramlize_periodic_target_client_json_dates(pt_json)
+
+            self.validate_periodic_target_json_from_client(normalized_pt_json, old_indicator.program, new_target_frequency)
+
             generated_pt_ids = []
-            for i, pt in enumerate(pt_json):
-                pk = int(pt.get('id'))
-                if pk == 0:
-                    pk = None
-
-                try:
-                    start_date = dateparser.parse(pt.get('start_date', None))
-                    start_date = datetime.strftime(start_date, '%Y-%m-%d')
-                except (ValueError, TypeError):
-                    # raise ValueError("Incorrect data value")
-                    start_date = None
-
-                try:
-                    end_date = dateparser.parse(pt.get('end_date', None))
-                    end_date = datetime.strftime(end_date, '%Y-%m-%d')
-                except (ValueError, TypeError):
-                    # raise ValueError("Incorrect data value")
-                    end_date = None
-
+            for i, pt in enumerate(normalized_pt_json):
                 defaults = {
                     'period': pt.get('period', ''),
-                    'target': pt.get('target', 0), 'customsort': i,
-                    'start_date': start_date, 'end_date': end_date,
+                    'target': pt.get('target', 0),
+                    'customsort': i,
+                    'start_date': pt['start_date'],
+                    'end_date': pt['end_date'],
                     'edit_date': timezone.now()
                 }
 
-                # Validate PeriodicTarget target field is > 0... throws with ValidationError
-                # Needed to be done here since the form itself does not check
-                # Front-end validation exists which is why we are not bothering with UI feedback
-                PeriodicTarget(indicator=old_indicator, **defaults).clean_fields()
-
                 periodic_target, created = PeriodicTarget.objects \
-                    .update_or_create(indicator=old_indicator, id=pk, defaults=defaults)
+                    .update_or_create(indicator=old_indicator, id=pt['id'], defaults=defaults)
 
                 if created:
                     periodic_target.create_date = timezone.now()

@@ -1,3 +1,4 @@
+import datetime
 import json
 
 from django.test import RequestFactory, TestCase
@@ -5,10 +6,19 @@ from django.urls import reverse_lazy
 
 from factories import ResultFactory
 from indicators.models import Indicator, PeriodicTarget
+from indicators.views.views_indicators import PeriodicTargetJsonValidationError
 from tola.test.base_classes import TestBase
 
 
 class TestIndcatorCreateUpdateBase(TestBase):
+    def setUp(self):
+        super(TestIndcatorCreateUpdateBase, self).setUp()
+
+        # reset program start/end date
+        self.program.reporting_period_start = datetime.date(2018, 1, 1)
+        self.program.reporting_period_end = datetime.date(2020, 12, 31)
+        self.program.save()
+
     def _base_indicator_post_data(self, target_frequency, periodic_targets):
         return {
             'name': 'Test Indicator',
@@ -114,6 +124,38 @@ class IndicatorCreateTests(TestIndcatorCreateUpdateBase, TestCase):
         self.assertEqual(pt.period_name, 'a')
         self.assertEqual(pt.target, 1)
 
+    def test_annual_creation_invalid_json(self):
+        """What if client sends in pad periodic_targets JSON?"""
+        periodic_targets = [
+            {"id": 0, "period": "Year 1", "target": "1", "start_date": "Jan 1, 2017", "end_date": "Dec 31, 2017"},  # wrong dates
+            {"id": 0, "period": "Year 2", "target": "2", "start_date": "Jan 1, 2019", "end_date": "Dec 31, 2019"},
+            {"id": 0, "period": "Year 3", "target": "3", "start_date": "Jan 1, 2020", "end_date": "Dec 31, 2020"}]
+
+        data = self._base_indicator_post_data(Indicator.ANNUAL, periodic_targets)
+
+        url = reverse_lazy('indicator_create', args=[self.program.id])
+
+        with self.assertRaises(PeriodicTargetJsonValidationError):
+            self.client.post(url, data)
+
+        periodic_targets = [
+            {"id": 0, "period": "Year 1", "target": "1", "start_date": "Jan 1, 2017", "end_date": "Dec 31, 2017"},  # too few pts
+        ]
+
+        data = self._base_indicator_post_data(Indicator.ANNUAL, periodic_targets)
+
+        with self.assertRaises(PeriodicTargetJsonValidationError):
+            self.client.post(url, data)
+
+        periodic_targets = [
+            {"id": 0, "period": "Year 1", "target": "-1", "start_date": "Jan 1, 2017", "end_date": "Dec 31, 2017"},
+            # negative value
+        ]
+
+        data = self._base_indicator_post_data(Indicator.ANNUAL, periodic_targets)
+
+        with self.assertRaises(PeriodicTargetJsonValidationError):
+            self.client.post(url, data)
 
 
 class IndicatorUpdateTests(TestIndcatorCreateUpdateBase, TestCase):
@@ -173,6 +215,38 @@ class IndicatorUpdateTests(TestIndcatorCreateUpdateBase, TestCase):
 
         self.result.refresh_from_db()
         self.assertEqual(self.result.periodic_target, PeriodicTarget.objects.order_by('start_date').first())
+
+    def test_annual_update_invalid_json(self):
+        """What if client sends in pad periodic_targets JSON?"""
+        periodic_targets = [
+            {"id": 0, "period": "Year 1", "target": "1", "start_date": "Jan 1, 2017", "end_date": "Dec 31, 2017"},  # wrong dates
+            {"id": 0, "period": "Year 2", "target": "2", "start_date": "Jan 1, 2019", "end_date": "Dec 31, 2019"},
+            {"id": 0, "period": "Year 3", "target": "3", "start_date": "Jan 1, 2020", "end_date": "Dec 31, 2020"}]
+
+        data = self._base_indicator_post_data(Indicator.ANNUAL, periodic_targets)
+
+        url = reverse_lazy('indicator_update', args=[self.indicator.id])
+
+        with self.assertRaises(PeriodicTargetJsonValidationError):
+            self.client.post(url, data)
+
+        periodic_targets = [
+            {"id": 0, "period": "Year 1", "target": "1", "start_date": "Jan 1, 2017", "end_date": "Dec 31, 2017"},  # too few pts
+        ]
+
+        data = self._base_indicator_post_data(Indicator.ANNUAL, periodic_targets)
+
+        with self.assertRaises(PeriodicTargetJsonValidationError):
+            self.client.post(url, data)
+
+        periodic_targets = [
+            {"id": 0, "period": "Year 1", "target": "-1", "start_date": "Jan 1, 2017", "end_date": "Dec 31, 2017"},  # negative value
+        ]
+
+        data = self._base_indicator_post_data(Indicator.ANNUAL, periodic_targets)
+
+        with self.assertRaises(PeriodicTargetJsonValidationError):
+            self.client.post(url, data)
 
 
 class PeriodicTargetsFormTests(TestBase, TestCase):
