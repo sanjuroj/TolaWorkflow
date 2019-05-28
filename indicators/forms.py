@@ -203,8 +203,8 @@ class ResultForm(forms.ModelForm):
         data = {'data-start': {'': ''}, 'data-end': {'': ''}}
         choices = [('', '---------')]
         for pt in periodic_targets:
-            data['data-start'].update({str(pt.id): pt.start_date})
-            data['data-end'].update({str(pt.id): pt.end_date})
+            data['data-start'].update({pt.id: pt.start_date})
+            data['data-end'].update({pt.id: pt.end_date})
             choices.append((pt.id, str(pt)))
         self.fields['periodic_target'].widget = DataAttributesSelect(data=data, choices=choices)
 
