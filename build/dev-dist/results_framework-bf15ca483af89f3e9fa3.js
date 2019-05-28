@@ -65,45 +65,8 @@ function (_React$Component) {
   }
 
   _createClass(Picker, [{
-    key: "componentDidUpdate",
-    value: function componentDidUpdate() {
-      // Enable popovers after update (they break otherwise)
-      $('*[data-toggle="popover"]').popover({
-        html: true
-      });
-    }
-  }, {
     key: "render",
     value: function render() {
-      var helpIcon = null;
-
-      if (this.props.rootStore.uiStore.tierLockStatus == "locked") {
-        helpIcon = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
-          href: "#",
-          tabIndex: "0",
-          "data-toggle": "popover",
-          "data-trigger": "focus",
-          "data-html": "true",
-          "data-content": gettext('<span class="text-danger"><strong>The results framework template cannot be changed after levels are saved.</strong></span> To change templates, all saved levels first must be deleted.  A level can be deleted when it has no sub-levels and no linked indicators.')
-        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
-          className: "far fa-question-circle"
-        }));
-      } else if (this.props.rootStore.uiStore.tierLockStatus == "primed") {
-        helpIcon = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
-          href: "#",
-          tabIndex: "0",
-          "data-toggle": "popover",
-          "data-trigger": "focus",
-          "data-html": "true",
-          "data-content": gettext('<span class="text-danger"><strong>Choose your results framework template carefully!</strong></span> Once you begin building your framework, it will not be possible to change templates without first deleting all saved levels.'),
-          onClick: function onClick(e) {
-            return console.log('here');
-          }
-        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
-          className: "far fa-question-circle"
-        }));
-      }
-
       var options = Object.keys(this.props.rootStore.levelStore.tierPresets).map(function (val) {
         return {
           value: val,
@@ -114,14 +77,11 @@ function (_React$Component) {
         value: this.props.rootStore.levelStore.chosenTierSet,
         label: this.props.rootStore.levelStore.chosenTierSetName
       };
-      var classes = "leveltier-picker__selectbox ";
-      classes += this.props.rootStore.uiStore.tierLockStatus == "locked" ? "leveltier-picker__selectbox--disabled" : "";
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: classes
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", null, "TEMPLATE"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, helpIcon), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_3__["default"], {
+        className: "leveltier-picker__selectbox"
+      }, "Results framework template", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_3__["default"], {
         options: options,
         value: selectedOption,
-        isDisabled: this.props.rootStore.uiStore.tierLockStatus == "locked" ? true : false,
         onChange: this.handleChange
       }));
     }
@@ -193,12 +153,12 @@ function (_React$Component3) {
 
   return LevelTierList;
 }(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component)) || _class3) || _class3);
-var LevelTierPicker = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inject"])("rootStore")(Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function (props) {
+var LevelTierPicker = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function (props) {
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     id: "leveltier-picker",
     className: "leveltier-picker"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Picker, null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(LevelTierList, null));
-}));
+});
 
 /***/ }),
 
@@ -1150,10 +1110,9 @@ __webpack_require__.r(__webpack_exports__);
 var _jsContext = jsContext,
     program_id = _jsContext.program_id,
     levels = _jsContext.levels,
-    indicators = _jsContext.indicators,
     levelTiers = _jsContext.levelTiers,
     tierPresets = _jsContext.tierPresets;
-var rootStore = new _models__WEBPACK_IMPORTED_MODULE_8__["RootStore"](program_id, levels, indicators, levelTiers, tierPresets);
+var rootStore = new _models__WEBPACK_IMPORTED_MODULE_8__["RootStore"](program_id, levels, levelTiers, tierPresets);
 /*
  * React components on page
  */
@@ -1367,4 +1326,4 @@ function (_React$Component2) {
 /***/ })
 
 },[["QTZG","runtime","vendors"]]]);
-//# sourceMappingURL=results_framework-149ff6716fbea26c880e.js.map
+//# sourceMappingURL=results_framework-bf15ca483af89f3e9fa3.js.map
