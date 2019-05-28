@@ -3,23 +3,25 @@ import { trimOntology } from '../../level_utils'
 import { api } from "../../api.js"
 
 export class RootStore {
-    constructor (program_id, levels, levelTiers, tierPresets) {
-        this.levelStore =  new LevelStore(program_id, levels, levelTiers, tierPresets, this);
+    constructor (program_id, levels, indicators, levelTiers, tierPresets) {
+        this.levelStore =  new LevelStore(program_id, levels, indicators, levelTiers, tierPresets, this);
         this.uiStore = new UIStore(this);
     }
 }
 
 export class LevelStore {
     @observable levels = [];
+    @observable indicators = []
     @observable chosenTierSet = [];
     @observable chosenTierSetName = "";
     tierPresets = {};
     defaultPreset = "Mercy Corps standard";
     program_id = ""
 
-    constructor(program_id, levels, levelTiers, tierPresets, rootStore) {
+    constructor(program_id, levels, indicators, levelTiers, tierPresets, rootStore) {
         this.rootStore = rootStore;
         this.levels = levels;
+        this.indicators = indicators;
         this.tierPresets = tierPresets;
         this.program_id = program_id;
 
@@ -40,12 +42,19 @@ export class LevelStore {
 
     @computed get levelProperties () {
         let levelProperties = {};
+        this.indicators.forEach( i => console.log(toJS(i)))
         for (let level of this.levels) {
             let properties = {};
+            properties['indicators'] = this.getLevelIndicators(level.id)
             properties['ontologyLabel'] = this.buildOntology(level.id);
             properties['tierName'] = this.chosenTierSet[level.level_depth-1];
+            properties['childTierName'] = null;
+            if (this.chosenTierSet.length > level.level_depth) {
+                properties['childTierName'] = this.chosenTierSet[level.level_depth];
+            }
             const childCount =  this.levels.filter(l => l.parent == level.id).length;
-            properties['canDelete'] = childCount==0;
+            const indicatorCount = this.indicators.filter( i => i.level == level.id);
+            properties['canDelete'] = childCount==0 && indicatorCount==0;
             levelProperties[level.id] = properties
         }
         return levelProperties
@@ -59,33 +68,68 @@ export class LevelStore {
 
     @action
     cancelEdit = levelId => {
+        if (levelId == "new") {
+            const targetLevel = this.levels.find(l => l.id == levelId);
+
+            // First update any customsort values that were modified when this card was created
+            let siblingsToReorder = this.levels.filter(l => {
+                return l.customsort > targetLevel.customsort && l.parent == targetLevel.parent;
+            });
+            siblingsToReorder.forEach(sib => sib.customsort -= 1);
+
+            // Now remove the new card
+            this.levels.replace(this.levels.filter((element) => element.id != "new"));
+        }
         this.rootStore.uiStore.removeExpandedCard(levelId)
 
-        this.levels.replace(this.levels.filter((element) => element.id != "new"))
     };
 
     @action
     createNewLevelFromSibling = (siblingId) => {
         // Copy sibling data for the new level and then clear some of it out
         let sibling = toJS(this.levels.find( l => l.id == siblingId));
-        let newLevel = Object.assign({}, sibling)
-        newLevel.customsort +=1;
+        let newLevel = Object.assign({}, sibling);
+        newLevel.customsort += 1;
         newLevel.id = "new";
         newLevel.name = "";
         newLevel.assumptions = "";
 
         // bump the customsort field for siblings that come after the inserted Level
         let siblingsToReorder = this.levels.filter( l => {
-            return l.customsort > sibling.customsort && l.parent == sibling.parent;
-        })
-        siblingsToReorder.forEach( sib => sib.customsort+=1)
-
+            return sibling && l.customsort > sibling.customsort && l.parent == sibling.parent;
+        });
+        siblingsToReorder.forEach( sib => sib.customsort+=1);
         // add new Level to the various Store components
-        this.rootStore.uiStore.expandedCards.push("new")
-        this.rootStore.uiStore.activeCard = "new"
-        this.levels.push(newLevel)
+        this.rootStore.uiStore.expandedCards.push("new");
+        this.rootStore.uiStore.activeCard = "new";
+        this.levels.push(newLevel);
+    };
+
+    @action
+    createNewLevelFromParent = (parentId) => {
+        // Copy data for the new level and then clear some of it out
+        let parent = toJS(this.levels.find( l => l.id == parentId));
+        let newLevel = {
+            id:"new",
+            customsort: 1,
+            name: "",
+            assumptions: "",
+            parent: parentId,
+            level_depth: parent.level_depth + 1,
+            program: this.program_id
+        };
+
+        // bump the customsort field for siblings that come after the inserted Level
+        let siblingsToReorder = this.levels.filter( l => l.parent == parentId);
+
+        siblingsToReorder.forEach( sib => sib.customsort+=1);
+        // add new Level to the various Store components
+        this.rootStore.uiStore.expandedCards.push("new");
+        this.rootStore.uiStore.activeCard = "new";
+        this.levels.push(newLevel);
 
     };
+
 
     @action
     createFirstLevel = () => {
@@ -98,16 +142,28 @@ export class LevelStore {
             customsort: 1,
             level_depth: 1,
             parent: "root"
-        }
-        this.levels.push(newLevel)
+        };
+        this.levels.push(newLevel);
         this.rootStore.uiStore.expandedCards.push("new")
     }
 
     saveLevelTiersToDB = () => {
-        const tier_data = {program_id: this.program_id, tiers: this.chosenTierSet}
+        const tier_data = {program_id: this.program_id, tiers: this.chosenTierSet};
         api.post(`/save_leveltiers/`, tier_data)
             .then(response => {
                 console.log("Level Tiers Saved!")
+            })
+            .catch(error => console.log('error', error))
+    }
+
+    deleteLevelFromDB = (levelId) => {
+        const level_data = {level: levelId};
+        api.delete(`/level/${levelId}`)
+            .then(response => {
+                this.levels.replace(response.data)
+                if (this.levels.length == 0){
+                    this.createFirstLevel()
+                }
             })
             .catch(error => console.log('error', error))
     }
@@ -126,8 +182,15 @@ export class LevelStore {
             api.post(`/insert_new_level/`, levelToSave)
                 .then(response => {
                     runInAction(() => {
-                        this.levels.replace(response.data)
-                    })
+                        this.levels.replace(response.data['all_data'])
+                    });
+                    const newId = response.data["new_level"]["id"];
+                    if (submitType == "saveAndAddSibling"){
+                        this.createNewLevelFromSibling(newId);
+                    }
+                    else if (submitType == "saveAndAddChild"){
+                        this.createNewLevelFromParent(newId);
+                    }
                 })
                 .catch(error => console.log('error', error))
 
@@ -137,14 +200,17 @@ export class LevelStore {
                     runInAction( () => {
                         Object.assign(targetLevel, response.data);
                     });
-                    this.rootStore.uiStore.removeExpandedCard(levelId)
+                    this.rootStore.uiStore.removeExpandedCard(levelId);
                     if (submitType == "saveAndAddSibling"){
-                        this.createNewLevelFromSibling(levelId)
+                        this.createNewLevelFromSibling(levelId);
+                    }
+                    else if (submitType == "saveAndAddChild"){
+                        this.createNewLevelFromParent(levelId);
                     }
 
                 })
                 .catch( error => {
-                    console.log("There was an error:", error)
+                    console.log("There was an error:", error);
                 })
         }
 
@@ -165,22 +231,26 @@ export class LevelStore {
                 return presetName;
             }
         }
-        return "Custom"
+        return "Custom";
     }
 
 
     buildOntology = (levelId, ontologyArray = []) => {
-        let level = toJS(this.levels.find( l => l.id == levelId))
+        let level = toJS(this.levels.find( l => l.id == levelId));
         /*  If there is no parent (saved top tier level) or the parent is "root" (unsaved top tier level)
             then we should return with adding to the ontology because there is no ontology entry for the top tier
          */
         if (level.parent && level.parent != "root") {
-            ontologyArray.unshift(level.customsort)
-            return this.buildOntology(level.parent, ontologyArray)
+            ontologyArray.unshift(level.customsort);
+            return this.buildOntology(level.parent, ontologyArray);
         }
         else {
-            return ontologyArray.join(".")
+            return ontologyArray.join(".");
         }
+    }
+
+    getLevelIndicators = (levelId) => {
+        return this.indicators.filter( i => i.level == levelId);
     }
 
 }
@@ -188,10 +258,21 @@ export class LevelStore {
 
 export class UIStore {
     @observable expandedCards = [];
-    @observable activeLevel = "";
+    @observable hasVisibleChildren = [];
 
     constructor (rootStore) {
         this.rootStore = rootStore;
+    }
+
+    @computed get tierLockStatus () {
+        let notNewLevels = this.rootStore.levelStore.levels.filter( l => l.id != "new");
+        if  (notNewLevels.length > 0) {
+            return "locked"
+        }
+        else if (this.rootStore.levelStore.levels.length == 1){
+            return "primed"
+        }
+        return null;
     }
 
     @action
@@ -203,6 +284,16 @@ export class UIStore {
 
     @action
     removeExpandedCard = (levelId) => {
-        this.expandedCards = this.expandedCards.filter( level_id => level_id != levelId )
+        this.expandedCards = this.expandedCards.filter( level_id => level_id != levelId );
+    };
+
+    @action
+    updateVisibleChildren = (levelId) => {
+        if (this.hasVisibleChildren.indexOf(levelId) >= 0) {
+            this.hasVisibleChildren = this.hasVisibleChildren.filter( level_id => level_id != levelId );
+        }
+        else {
+            this.hasVisibleChildren.push(levelId);
+        }
     }
 }

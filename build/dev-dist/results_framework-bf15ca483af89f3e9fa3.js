@@ -184,7 +184,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @fortawesome/react-fontawesome */ "IP2g");
 /* harmony import */ var _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @fortawesome/free-solid-svg-icons */ "wHSu");
 /* harmony import */ var react_select__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! react-select */ "y2Vs");
-var _dec, _class, _temp, _dec2, _class3, _temp2;
+var _dec, _class, _temp, _dec2, _class3, _temp2, _dec3, _class5;
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
@@ -240,40 +240,60 @@ var LevelCardCollapsed = (_dec = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__[
 function (_React$Component2) {
   _inherits(LevelCardCollapsed, _React$Component2);
 
-  function LevelCardCollapsed(props) {
+  function LevelCardCollapsed() {
+    var _getPrototypeOf2;
+
     var _this;
 
     _classCallCheck(this, LevelCardCollapsed);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(LevelCardCollapsed).call(this, props));
+    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    _this = _possibleConstructorReturn(this, (_getPrototypeOf2 = _getPrototypeOf(LevelCardCollapsed)).call.apply(_getPrototypeOf2, [this].concat(args)));
+
+    _this.deleteLevel = function () {
+      _this.props.rootStore.levelStore.deleteLevelFromDB(_this.props.level.id);
+    };
 
     _this.editLevel = function () {
       _this.props.rootStore.uiStore.addExpandedCard(_this.props.level.id);
     };
 
-    _this.deleteLevel = _this.deleteLevel.bind(_assertThisInitialized(_assertThisInitialized(_this)));
-    _this.editLevel = _this.editLevel.bind(_assertThisInitialized(_assertThisInitialized(_this)));
     return _this;
   }
 
   _createClass(LevelCardCollapsed, [{
-    key: "deleteLevel",
-    value: function deleteLevel() {
-      console.log("You clicked delete level");
-    }
-  }, {
     key: "render",
     value: function render() {
+      var _this2 = this;
+
+      if (this.props.rootStore.uiStore.hasVisibleChildren.indexOf(this.props.level.parent) < 0 && this.props.level.parent != null) {
+        return null;
+      }
+
+      var iCount = this.props.levelProps.indicators.length;
+      /* # Translators: This is a count of indicators associated with another object */
+
+      var indicatorCountText = interpolate(ngettext("%s indicator", "%s indicators", iCount), [iCount]); // const indicatorCountText = 3;
+
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "level-card level-card--collapsed",
         id: this.props.level.id
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        onClick: function onClick(e) {
+          return _this2.props.rootStore.uiStore.updateVisibleChildren(_this2.props.level.id);
+        }
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_5__["FontAwesomeIcon"], {
+        icon: this.props.rootStore.uiStore.hasVisibleChildren.indexOf(this.props.level.id) >= 0 ? 'caret-down' : 'caret-right'
+      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "level-card--collapsed__name"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(LevelTitle, {
         tierName: this.props.levelProps.tierName,
         ontologyLabel: this.props.levelProps.ontologyLabel,
         classes: "level-title--collapsed"
-      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, "\xA0", this.props.level.name)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, "\xA0", this.props.level.name))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "level-card--collapsed__actions"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "actions__top",
@@ -299,7 +319,7 @@ function (_React$Component2) {
         }
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         className: "btn btn-sm btn-link no-bold"
-      }, "[n] ", gettext("indicators")))));
+      }, indicatorCountText))));
     }
   }]);
 
@@ -311,41 +331,41 @@ function (_React$Component3) {
   _inherits(LevelCardExpanded, _React$Component3);
 
   function LevelCardExpanded(props) {
-    var _this2;
+    var _this3;
 
     _classCallCheck(this, LevelCardExpanded);
 
-    _this2 = _possibleConstructorReturn(this, _getPrototypeOf(LevelCardExpanded).call(this, props));
+    _this3 = _possibleConstructorReturn(this, _getPrototypeOf(LevelCardExpanded).call(this, props));
 
-    _this2.updateSubmitType = function (newType) {
-      _this2.submitType = newType;
+    _this3.updateSubmitType = function (newType) {
+      _this3.submitType = newType;
     };
 
-    _this2.saveLevel = function (e) {
-      e.preventDefault();
-      var formData = new FormData(e.target);
+    _this3.saveLevel = function (event) {
+      event.preventDefault();
+      var formData = new FormData(event.target);
 
-      _this2.props.rootStore.levelStore.saveLevelToDB(_this2.submitType, _this2.props.level.id, {
-        name: _this2.name,
-        assumptions: _this2.assumptions
+      _this3.props.rootStore.levelStore.saveLevelToDB(_this3.submitType, _this3.props.level.id, {
+        name: _this3.name,
+        assumptions: _this3.assumptions
       });
     };
 
-    _this2.cancelEdit = function (e) {
-      _this2.props.rootStore.levelStore.cancelEdit(_this2.props.level.id);
+    _this3.cancelEdit = function () {
+      _this3.props.rootStore.levelStore.cancelEdit(_this3.props.level.id);
     };
 
-    _this2.onFormChange = function (event) {
+    _this3.onFormChange = function (event) {
       event.preventDefault();
-      _this2[event.target.name] = event.target.value;
+      _this3[event.target.name] = event.target.value;
     };
 
-    _this2.submitType = "saveOnly";
-    Object(mobx__WEBPACK_IMPORTED_MODULE_3__["extendObservable"])(_assertThisInitialized(_assertThisInitialized(_this2)), {
+    _this3.submitType = "saveOnly";
+    Object(mobx__WEBPACK_IMPORTED_MODULE_3__["extendObservable"])(_assertThisInitialized(_assertThisInitialized(_this3)), {
       name: props.level.name,
       assumptions: props.level.assumptions
     });
-    return _this2;
+    return _this3;
   }
   /*
   Using this allows us to use the same submit function for all three buttons.  Shame the function has to
@@ -372,6 +392,7 @@ function (_React$Component3) {
         id: "level-name",
         name: "name",
         value: this.name || "",
+        autoComplete: "off",
         onChange: this.onFormChange
       }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
         htmlFor: "assumptions"
@@ -380,10 +401,13 @@ function (_React$Component3) {
         type: "text",
         id: "level-assumptions",
         name: "assumptions",
+        autoComplete: "off",
         value: this.assumptions || "",
         onChange: this.onFormChange
       }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ButtonBar, {
         level: this.props.level,
+        levelProps: this.props.levelProps,
+        isActive: this.props.rootStore.uiStore.expandedCards[0] == this.props.level.id ? true : false,
         submitFunc: this.updateSubmitType,
         cancelFunc: this.cancelEdit,
         tierCount: this.props.rootStore.levelStore.chosenTierSet.length
@@ -393,8 +417,7 @@ function (_React$Component3) {
 
   return LevelCardExpanded;
 }(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component), _temp2)) || _class3) || _class3);
-
-var ButtonBar =
+var ButtonBar = (_dec3 = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["inject"])('rootStore'), _dec3(_class5 =
 /*#__PURE__*/
 function (_React$Component4) {
   _inherits(ButtonBar, _React$Component4);
@@ -408,23 +431,39 @@ function (_React$Component4) {
   _createClass(ButtonBar, [{
     key: "render",
     value: function render() {
+      var disabledText = this.props.isActive ? "" : "disabled"; // Build the button text with the right sibling level name, then build the button.
+
       var addAnotherButton = null;
 
       if (this.props.level.parent != null && this.props.level.parent != "root") {
+        {
+          /* # Translators: On a button, with a tiered set of objects, save current object and add another one in the same tier, e.g. "Save and add another Outcome" when the user is editing an Outcome */
+        }
+        var buttonText = interpolate(gettext("Save and add another %s"), [this.props.levelProps.tierName]);
         addAnotherButton = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(LevelButton, {
+          disabledText: disabledText,
           classes: "btn-primary",
-          text: gettext("Save and another"),
+          text: buttonText,
           submitType: "saveAndAddSibling",
           submitFunc: this.props.submitFunc
         });
-      }
+      } // Build the button text with the right child level name, then build the button.
+
 
       var addAndLinkButton = null;
+      var tierCount = this.props.rootStore.levelStore.chosenTierSet.length;
 
-      if (this.props.level.level_depth < this.props.tierCount) {
+      if (this.props.level.level_depth < tierCount) {
+        {
+          /* # Translators: On a button, with a tiered set of objects, save current object and add another one in the next lower tier, e.g. "Save and add another Activity" when the user is editing a Goal */
+        }
+
+        var _buttonText = interpolate(gettext("Save and link %s"), [this.props.levelProps.childTierName]);
+
         addAndLinkButton = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(LevelButton, {
+          disabledText: disabledText,
           classes: "btn-primary",
-          text: gettext("Save and link"),
+          text: _buttonText,
           submitType: "saveAndAddChild",
           submitFunc: this.props.submitFunc
         });
@@ -433,6 +472,7 @@ function (_React$Component4) {
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "button-bar"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(LevelButton, {
+        disabledText: disabledText,
         classes: "btn-primary",
         text: gettext("Save and close"),
         submitType: "saveOnly",
@@ -447,7 +487,7 @@ function (_React$Component4) {
   }]);
 
   return ButtonBar;
-}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component);
+}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component)) || _class5);
 
 var LevelButton =
 /*#__PURE__*/
@@ -463,14 +503,15 @@ function (_React$Component5) {
   _createClass(LevelButton, [{
     key: "render",
     value: function render() {
-      var _this3 = this;
+      var _this4 = this;
 
       var buttonType = this.props.submitType == "cancel" ? "button" : "submit";
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+        disabled: this.props.disabledText,
         type: buttonType,
         className: this.props.classes + ' level-button btn btn-sm',
         onClick: function onClick() {
-          return _this3.props.submitFunc(_this3.props.submitType);
+          return _this4.props.submitFunc(_this4.props.submitType);
         }
       }, this.props.text);
     }
@@ -496,7 +537,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var mobx__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! mobx */ "2vnA");
 /* harmony import */ var _level_utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../level_utils */ "IzLX");
 /* harmony import */ var _api_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../api.js */ "XoI5");
-var _class, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _temp, _class3, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _temp2;
+var _class, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _temp, _class3, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _temp2;
 
 function _initializerDefineProperty(target, property, descriptor, context) { if (!descriptor) return; Object.defineProperty(target, property, { enumerable: descriptor.enumerable, configurable: descriptor.configurable, writable: descriptor.writable, value: descriptor.initializer ? descriptor.initializer.call(context) : void 0 }); }
 
@@ -513,35 +554,39 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 
 
-var RootStore = function RootStore(program_id, levels, levelTiers, tierPresets) {
+var RootStore = function RootStore(program_id, levels, indicators, levelTiers, tierPresets) {
   _classCallCheck(this, RootStore);
 
-  this.levelStore = new LevelStore(program_id, levels, levelTiers, tierPresets, this);
+  this.levelStore = new LevelStore(program_id, levels, indicators, levelTiers, tierPresets, this);
   this.uiStore = new UIStore(this);
 };
 var LevelStore = (_class = (_temp =
 /*#__PURE__*/
 function () {
-  function LevelStore(program_id, levels, levelTiers, tierPresets, rootStore) {
+  function LevelStore(program_id, levels, indicators, levelTiers, tierPresets, rootStore) {
     var _this = this;
 
     _classCallCheck(this, LevelStore);
 
     _initializerDefineProperty(this, "levels", _descriptor, this);
 
-    _initializerDefineProperty(this, "chosenTierSet", _descriptor2, this);
+    _initializerDefineProperty(this, "indicators", _descriptor2, this);
 
-    _initializerDefineProperty(this, "chosenTierSetName", _descriptor3, this);
+    _initializerDefineProperty(this, "chosenTierSet", _descriptor3, this);
+
+    _initializerDefineProperty(this, "chosenTierSetName", _descriptor4, this);
 
     this.tierPresets = {};
     this.defaultPreset = "Mercy Corps standard";
     this.program_id = "";
 
-    _initializerDefineProperty(this, "cancelEdit", _descriptor4, this);
+    _initializerDefineProperty(this, "cancelEdit", _descriptor5, this);
 
-    _initializerDefineProperty(this, "createNewLevelFromSibling", _descriptor5, this);
+    _initializerDefineProperty(this, "createNewLevelFromSibling", _descriptor6, this);
 
-    _initializerDefineProperty(this, "createFirstLevel", _descriptor6, this);
+    _initializerDefineProperty(this, "createNewLevelFromParent", _descriptor7, this);
+
+    _initializerDefineProperty(this, "createFirstLevel", _descriptor8, this);
 
     this.saveLevelTiersToDB = function () {
       var tier_data = {
@@ -550,6 +595,21 @@ function () {
       };
       _api_js__WEBPACK_IMPORTED_MODULE_2__["api"].post("/save_leveltiers/", tier_data).then(function (response) {
         console.log("Level Tiers Saved!");
+      }).catch(function (error) {
+        return console.log('error', error);
+      });
+    };
+
+    this.deleteLevelFromDB = function (levelId) {
+      var level_data = {
+        level: levelId
+      };
+      _api_js__WEBPACK_IMPORTED_MODULE_2__["api"].delete("/level/".concat(levelId)).then(function (response) {
+        _this.levels.replace(response.data);
+
+        if (_this.levels.length == 0) {
+          _this.createFirstLevel();
+        }
       }).catch(function (error) {
         return console.log('error', error);
       });
@@ -570,8 +630,15 @@ function () {
         delete levelToSave.id;
         _api_js__WEBPACK_IMPORTED_MODULE_2__["api"].post("/insert_new_level/", levelToSave).then(function (response) {
           Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
-            _this.levels.replace(response.data);
+            _this.levels.replace(response.data['all_data']);
           });
+          var newId = response.data["new_level"]["id"];
+
+          if (submitType == "saveAndAddSibling") {
+            _this.createNewLevelFromSibling(newId);
+          } else if (submitType == "saveAndAddChild") {
+            _this.createNewLevelFromParent(newId);
+          }
         }).catch(function (error) {
           return console.log('error', error);
         });
@@ -585,6 +652,8 @@ function () {
 
           if (submitType == "saveAndAddSibling") {
             _this.createNewLevelFromSibling(levelId);
+          } else if (submitType == "saveAndAddChild") {
+            _this.createNewLevelFromParent(levelId);
           }
         }).catch(function (error) {
           console.log("There was an error:", error);
@@ -609,8 +678,15 @@ function () {
       }
     };
 
+    this.getLevelIndicators = function (levelId) {
+      return _this.indicators.filter(function (i) {
+        return i.level == levelId;
+      });
+    };
+
     this.rootStore = rootStore;
     this.levels = levels;
+    this.indicators = indicators;
     this.tierPresets = tierPresets;
     this.program_id = program_id; // Set the stored tierset and its name, if they exist.  Use the default if they don't.
 
@@ -672,6 +748,9 @@ function () {
       var _this2 = this;
 
       var levelProperties = {};
+      this.indicators.forEach(function (i) {
+        return console.log(Object(mobx__WEBPACK_IMPORTED_MODULE_0__["toJS"])(i));
+      });
       var _iteratorNormalCompletion = true;
       var _didIteratorError = false;
       var _iteratorError = undefined;
@@ -680,14 +759,24 @@ function () {
         var _loop = function _loop() {
           var level = _step.value;
           var properties = {};
+          properties['indicators'] = _this2.getLevelIndicators(level.id);
           properties['ontologyLabel'] = _this2.buildOntology(level.id);
           properties['tierName'] = _this2.chosenTierSet[level.level_depth - 1];
+          properties['childTierName'] = null;
+
+          if (_this2.chosenTierSet.length > level.level_depth) {
+            properties['childTierName'] = _this2.chosenTierSet[level.level_depth];
+          }
 
           var childCount = _this2.levels.filter(function (l) {
             return l.parent == level.id;
           }).length;
 
-          properties['canDelete'] = childCount == 0;
+          var indicatorCount = _this2.indicators.filter(function (i) {
+            return i.level == level.id;
+          });
+
+          properties['canDelete'] = childCount == 0 && indicatorCount == 0;
           levelProperties[level.id] = properties;
         };
 
@@ -721,21 +810,28 @@ function () {
   initializer: function initializer() {
     return [];
   }
-}), _descriptor2 = _applyDecoratedDescriptor(_class.prototype, "chosenTierSet", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor2 = _applyDecoratedDescriptor(_class.prototype, "indicators", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return [];
   }
-}), _descriptor3 = _applyDecoratedDescriptor(_class.prototype, "chosenTierSetName", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor3 = _applyDecoratedDescriptor(_class.prototype, "chosenTierSet", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    return [];
+  }
+}), _descriptor4 = _applyDecoratedDescriptor(_class.prototype, "chosenTierSetName", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return "";
   }
-}), _applyDecoratedDescriptor(_class.prototype, "sortedLevels", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "sortedLevels"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "levelProperties", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "levelProperties"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeTierSet", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeTierSet"), _class.prototype), _descriptor4 = _applyDecoratedDescriptor(_class.prototype, "cancelEdit", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
+}), _applyDecoratedDescriptor(_class.prototype, "sortedLevels", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "sortedLevels"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "levelProperties", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "levelProperties"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeTierSet", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeTierSet"), _class.prototype), _descriptor5 = _applyDecoratedDescriptor(_class.prototype, "cancelEdit", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
   configurable: true,
   enumerable: true,
   writable: true,
@@ -743,14 +839,29 @@ function () {
     var _this3 = this;
 
     return function (levelId) {
-      _this3.rootStore.uiStore.removeExpandedCard(levelId);
+      if (levelId == "new") {
+        var targetLevel = _this3.levels.find(function (l) {
+          return l.id == levelId;
+        }); // First update any customsort values that were modified when this card was created
 
-      _this3.levels.replace(_this3.levels.filter(function (element) {
-        return element.id != "new";
-      }));
+
+        var siblingsToReorder = _this3.levels.filter(function (l) {
+          return l.customsort > targetLevel.customsort && l.parent == targetLevel.parent;
+        });
+
+        siblingsToReorder.forEach(function (sib) {
+          return sib.customsort -= 1;
+        }); // Now remove the new card
+
+        _this3.levels.replace(_this3.levels.filter(function (element) {
+          return element.id != "new";
+        }));
+      }
+
+      _this3.rootStore.uiStore.removeExpandedCard(levelId);
     };
   }
-}), _descriptor5 = _applyDecoratedDescriptor(_class.prototype, "createNewLevelFromSibling", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
+}), _descriptor6 = _applyDecoratedDescriptor(_class.prototype, "createNewLevelFromSibling", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
   configurable: true,
   enumerable: true,
   writable: true,
@@ -769,7 +880,7 @@ function () {
       newLevel.assumptions = ""; // bump the customsort field for siblings that come after the inserted Level
 
       var siblingsToReorder = _this4.levels.filter(function (l) {
-        return l.customsort > sibling.customsort && l.parent == sibling.parent;
+        return sibling && l.customsort > sibling.customsort && l.parent == sibling.parent;
       });
 
       siblingsToReorder.forEach(function (sib) {
@@ -783,18 +894,55 @@ function () {
       _this4.levels.push(newLevel);
     };
   }
-}), _descriptor6 = _applyDecoratedDescriptor(_class.prototype, "createFirstLevel", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
+}), _descriptor7 = _applyDecoratedDescriptor(_class.prototype, "createNewLevelFromParent", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     var _this5 = this;
 
+    return function (parentId) {
+      // Copy data for the new level and then clear some of it out
+      var parent = Object(mobx__WEBPACK_IMPORTED_MODULE_0__["toJS"])(_this5.levels.find(function (l) {
+        return l.id == parentId;
+      }));
+      var newLevel = {
+        id: "new",
+        customsort: 1,
+        name: "",
+        assumptions: "",
+        parent: parentId,
+        level_depth: parent.level_depth + 1,
+        program: _this5.program_id
+      }; // bump the customsort field for siblings that come after the inserted Level
+
+      var siblingsToReorder = _this5.levels.filter(function (l) {
+        return l.parent == parentId;
+      });
+
+      siblingsToReorder.forEach(function (sib) {
+        return sib.customsort += 1;
+      }); // add new Level to the various Store components
+
+      _this5.rootStore.uiStore.expandedCards.push("new");
+
+      _this5.rootStore.uiStore.activeCard = "new";
+
+      _this5.levels.push(newLevel);
+    };
+  }
+}), _descriptor8 = _applyDecoratedDescriptor(_class.prototype, "createFirstLevel", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    var _this6 = this;
+
     return function () {
       // Using "root" for parent id so the Django view can distinguish between top tier level and 2nd tier level
       var newLevel = {
         id: "new",
-        program: _this5.program_id,
+        program: _this6.program_id,
         name: "",
         assumptions: "",
         customsort: 1,
@@ -802,52 +950,64 @@ function () {
         parent: "root"
       };
 
-      _this5.levels.push(newLevel);
+      _this6.levels.push(newLevel);
 
-      _this5.rootStore.uiStore.expandedCards.push("new");
+      _this6.rootStore.uiStore.expandedCards.push("new");
     };
   }
 })), _class);
-var UIStore = (_class3 = (_temp2 = function UIStore(rootStore) {
-  _classCallCheck(this, UIStore);
+var UIStore = (_class3 = (_temp2 =
+/*#__PURE__*/
+function () {
+  function UIStore(rootStore) {
+    _classCallCheck(this, UIStore);
 
-  _initializerDefineProperty(this, "expandedCards", _descriptor7, this);
+    _initializerDefineProperty(this, "expandedCards", _descriptor9, this);
 
-  _initializerDefineProperty(this, "activeLevel", _descriptor8, this);
+    _initializerDefineProperty(this, "hasVisibleChildren", _descriptor10, this);
 
-  _initializerDefineProperty(this, "addExpandedCard", _descriptor9, this);
+    _initializerDefineProperty(this, "addExpandedCard", _descriptor11, this);
 
-  _initializerDefineProperty(this, "removeExpandedCard", _descriptor10, this);
+    _initializerDefineProperty(this, "removeExpandedCard", _descriptor12, this);
 
-  this.rootStore = rootStore;
-}, _temp2), (_descriptor7 = _applyDecoratedDescriptor(_class3.prototype, "expandedCards", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+    _initializerDefineProperty(this, "updateVisibleChildren", _descriptor13, this);
+
+    this.rootStore = rootStore;
+  }
+
+  _createClass(UIStore, [{
+    key: "tierLockStatus",
+    get: function get() {
+      var notNewLevels = this.rootStore.levelStore.levels.filter(function (l) {
+        return l.id != "new";
+      });
+
+      if (notNewLevels.length > 0) {
+        return "locked";
+      } else if (this.rootStore.levelStore.levels.length == 1) {
+        return "primed";
+      }
+
+      return null;
+    }
+  }]);
+
+  return UIStore;
+}(), _temp2), (_descriptor9 = _applyDecoratedDescriptor(_class3.prototype, "expandedCards", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return [];
   }
-}), _descriptor8 = _applyDecoratedDescriptor(_class3.prototype, "activeLevel", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor10 = _applyDecoratedDescriptor(_class3.prototype, "hasVisibleChildren", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
-    return "";
+    return [];
   }
-}), _descriptor9 = _applyDecoratedDescriptor(_class3.prototype, "addExpandedCard", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
-  configurable: true,
-  enumerable: true,
-  writable: true,
-  initializer: function initializer() {
-    var _this6 = this;
-
-    return function (levelId) {
-      if (!_this6.expandedCards.includes(levelId)) {
-        _this6.expandedCards.push(levelId);
-      }
-    };
-  }
-}), _descriptor10 = _applyDecoratedDescriptor(_class3.prototype, "removeExpandedCard", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
+}), _applyDecoratedDescriptor(_class3.prototype, "tierLockStatus", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class3.prototype, "tierLockStatus"), _class3.prototype), _descriptor11 = _applyDecoratedDescriptor(_class3.prototype, "addExpandedCard", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
   configurable: true,
   enumerable: true,
   writable: true,
@@ -855,9 +1015,39 @@ var UIStore = (_class3 = (_temp2 = function UIStore(rootStore) {
     var _this7 = this;
 
     return function (levelId) {
-      _this7.expandedCards = _this7.expandedCards.filter(function (level_id) {
+      if (!_this7.expandedCards.includes(levelId)) {
+        _this7.expandedCards.push(levelId);
+      }
+    };
+  }
+}), _descriptor12 = _applyDecoratedDescriptor(_class3.prototype, "removeExpandedCard", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    var _this8 = this;
+
+    return function (levelId) {
+      _this8.expandedCards = _this8.expandedCards.filter(function (level_id) {
         return level_id != levelId;
       });
+    };
+  }
+}), _descriptor13 = _applyDecoratedDescriptor(_class3.prototype, "updateVisibleChildren", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    var _this9 = this;
+
+    return function (levelId) {
+      if (_this9.hasVisibleChildren.indexOf(levelId) >= 0) {
+        _this9.hasVisibleChildren = _this9.hasVisibleChildren.filter(function (level_id) {
+          return level_id != levelId;
+        });
+      } else {
+        _this9.hasVisibleChildren.push(levelId);
+      }
     };
   }
 })), _class3);
@@ -1136,4 +1326,4 @@ function (_React$Component2) {
 /***/ })
 
 },[["QTZG","runtime","vendors"]]]);
-//# sourceMappingURL=results_framework-d3e59131902b92b752af.js.map
+//# sourceMappingURL=results_framework-bf15ca483af89f3e9fa3.js.map
