@@ -1,8 +1,8 @@
 import React from 'react';
 import { inject, observer } from 'mobx-react';
 
-export const IPTTSubmit = inject('labels', 'rootStore')(
-    observer(({ url, labels, rootStore}) => {
+export const IPTTSubmit = inject('rootStore')(
+    observer(({ url, rootStore}) => {
         const handleClick = () => window.location.href = rootStore[url];
         const inlineCSS = {
             width: '100%'
@@ -12,7 +12,7 @@ export const IPTTSubmit = inject('labels', 'rootStore')(
                 className="btn btn-primary"
                 onClick={ handleClick }
                 disabled={ !rootStore[url] }
-                style={ inlineCSS }>{ labels.submitButton }</button>
+                style={ inlineCSS }>{ gettext('View report') }</button>
             </div>;    
     })
 )

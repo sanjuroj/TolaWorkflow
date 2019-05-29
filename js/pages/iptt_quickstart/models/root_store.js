@@ -14,6 +14,7 @@ const BLANK_OPTION = {
     label: BLANK_LABEL
 };
 
+const _gettext = (typeof gettext !== 'undefined') ?  gettext : (s) => s;
 
 export default class QSRootStore {
     @observable reportType = null;
@@ -26,7 +27,15 @@ export default class QSRootStore {
 
     constructor(contextData) {
         this.programStore = new QSProgramStore(this, contextData.programs);
-        this.periodLabels = contextData.labels.targetperiods;
+        this.periodLabels = {
+            1: _gettext("Life of Program (LoP) only"),
+            3: _gettext("Annual"),
+            2: _gettext("Midline and endline"),
+            5: _gettext("Tri-annual"),
+            4: _gettext("Semi-annual"),
+            7: _gettext("Monthly"),
+            6: _gettext("Quarterly")
+        };
         this.iptt_url = contextData.iptt_url;
         const resetFrequency = reaction(
             () => this.tvaProgramId,
@@ -134,18 +143,18 @@ export default class QSRootStore {
     }
     
     
-    @action setMostRecent() {
+    @action setMostRecent = ()  => {
         this.showAll = false;
         this.mostRecent = true;
     }
 
-    @action setMostRecentCount(count) {
+    @action setMostRecentCount = (count) => {
         this.setMostRecent();
         count = Math.min(count, this.programStore.getProgram(this.tvaProgramId).periodCount(this.frequencyId));
         this.mostRecentCount = count;
     }
     
-    @action setShowAll() {
+    @action setShowAll = () => {
         this.mostRecent = false;
         this.showAll = true;
     }

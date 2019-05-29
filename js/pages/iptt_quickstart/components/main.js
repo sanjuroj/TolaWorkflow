@@ -1,5 +1,4 @@
 import React from 'react';
-import { inject, observer } from 'mobx-react';
 import { QSTVAProgramSelect, QSTVAPeriodSelect, QSTimeperiodsProgramSelect } from './selects';
 import { QSTVATimeFrameRadio } from './radios';
 import { IPTTSubmit } from './buttons';
@@ -14,29 +13,37 @@ const QuickstartCard = ({ children }) => {
             </div>;
 }
 
-const TVAQuickstartForm = inject('labels')(
-    observer(({ labels }) => {
-        return <QuickstartCard>
-                    <h5 className="card-title">{ labels.tvaFilterTitle }</h5>
-                    <p className="card-subtitle text-muted mb-2">{ labels.tvaFilterSubtitle }</p>
-                    <QSTVAProgramSelect />
-                    <QSTVAPeriodSelect />
-                    <QSTVATimeFrameRadio />
-                    <IPTTSubmit url={'tvaURL' } />
-                </QuickstartCard>;
-    })
-);
+const TVAQuickstartForm = () => {
+    return <QuickstartCard>
+                <h5 className="card-title">{
+                    /* # Translators: description of a report type, comparison with targets */
+                    gettext('Periodic targets vs. actuals')
+                }</h5>
+                <p className="card-subtitle text-muted mb-2">{
+                    /* # Translators: label on a form that describes the report it will display */
+                    gettext('View results organized by target period for indicators that share the same target frequency')    
+                }</p>
+                <QSTVAProgramSelect />
+                <QSTVAPeriodSelect />
+                <QSTVATimeFrameRadio />
+                <IPTTSubmit url={'tvaURL' } />
+            </QuickstartCard>;
+}
 
-const TimeperiodsQuickstartForm = inject('labels')(
-    observer(({ labels  }) => {
-        return <QuickstartCard>
-                    <h5 className="card-title">{ labels.timeperiodsFilterTitle }</h5>
-                    <p className="card-subtitle text-muted mb-2">{ labels.timeperiodsFilterSubtitle }</p>
-                    <QSTimeperiodsProgramSelect />
-                    <IPTTSubmit url={'timeperiodsURL'} />
-                </QuickstartCard>;
-    })
-);
+const TimeperiodsQuickstartForm = () => {
+    return <QuickstartCard>
+                <h5 className="card-title">{
+                    /* # Translators: description of a report type, showing only recent updates */
+                    gettext('Recent progress for all indicators')
+                }</h5>
+                <p className="card-subtitle text-muted mb-2">{
+                    /* # Translators: label on a form describing the report it will display */
+                    gettext('View the most recent two months of results. (You can customize your time periods.) This report does not include periodic targets')
+                }</p>
+                <QSTimeperiodsProgramSelect />
+                <IPTTSubmit url={'timeperiodsURL'} />
+            </QuickstartCard>;
+}
 
 export const IPTTQuickstartForm = () => {
     return <div className="row">

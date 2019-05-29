@@ -1,7 +1,7 @@
 import React from 'react';
 import { inject, observer } from 'mobx-react';
 
-@inject('labels', 'rootStore')
+@inject('rootStore')
 @observer
 export class QSTVATimeFrameRadio extends React.Component {
     setMostRecentCount = (e) => {
@@ -19,7 +19,7 @@ export class QSTVATimeFrameRadio extends React.Component {
                                        />
                             </span>
                             <label className="form-check-label">
-                                { this.props.labels.showAll }
+                                { gettext('Show all') }
                             </label>
                         </div>
                     </div>
@@ -33,7 +33,7 @@ export class QSTVATimeFrameRadio extends React.Component {
                                        />
                             </span>
                             <label className="form-check-label">
-                                { this.props.labels.mostRecent}
+                                { gettext('Most recent') }
                             </label>
                         </div>
                     </div>
@@ -41,7 +41,7 @@ export class QSTVATimeFrameRadio extends React.Component {
                         <input type="number" className="form-control"
                                value={ this.props.rootStore.mostRecentCountDisplay }
                                disabled={ this.props.rootStore.periodCountDisabled }
-                               placeholder={ this.props.labels.mostRecentPlaceholder }
+                               placeholder={ gettext('enter a number') }
                                onChange={ this.setMostRecentCount }
                                />
                     </div>
