@@ -47,6 +47,9 @@ body > .container {
 
 // extensions to BS buttons
 //--------------------------------------------------
+.btn {
+    white-space: nowrap;
+}
 .btn-primary, .btn-secondary {
     text-transform: uppercase;
 }
