@@ -1003,7 +1003,7 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
       return store.applyFilters();
     }
   }, gettext("Apply")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
-    className: "btn btn-reset",
+    className: "btn btn-inverse",
     onClick: function onClick() {
       return store.clearFilters();
     }
@@ -2723,4 +2723,4 @@ var fetchOrganizationHistory = function fetchOrganizationHistory(id) {
 /***/ })
 
 },[["j6MH","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_organization-82144d6c55a6a1ee9986.js.map
+//# sourceMappingURL=tola_management_organization-d622771b79ed06b7a430.js.map
