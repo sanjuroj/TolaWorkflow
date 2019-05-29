@@ -413,7 +413,7 @@ function () {
     this.endDisplay = periodJSON[1];
 
     if (_constants__WEBPACK_IMPORTED_MODULE_1__["TIME_AWARE_FREQUENCIES"].includes(frequency)) {
-      this.current = frequency === 7 ? periodJSON.length > 4 && periodJSON[4] === "True" : periodJSON.length > 2 && periodJSON[2] === "True";
+      this.current = frequency === 7 ? periodJSON.length > 4 && (periodJSON[4] === true || periodJSON[4] === "True") : periodJSON.length > 2 && (periodJSON[2] === true || periodJSON[2] === "True");
 
       switch (frequency) {
         case 3:
@@ -2381,6 +2381,10 @@ function () {
     set: function set(startPeriod) {
       if (this.lastPeriod !== null) {
         this._startPeriod = Math.max(0, Math.min(this.lastPeriod.index, startPeriod));
+
+        if (this.endPeriod && this._startPeriod > this.endPeriod) {
+          this.endPeriod = startPeriod;
+        }
       }
     },
     get: function get() {
@@ -4285,4 +4289,4 @@ function () {
 /***/ })
 
 },[["mYfJ","runtime","vendors"]]]);
-//# sourceMappingURL=iptt_report-cc106f79c5e8bd486f02.js.map
+//# sourceMappingURL=iptt_report-9a11a85d28f827ed6af2.js.map
