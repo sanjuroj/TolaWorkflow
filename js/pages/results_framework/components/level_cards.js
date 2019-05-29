@@ -28,9 +28,13 @@ export class LevelTitle extends React.Component {
 @inject('rootStore')
 @observer
 export class LevelCardCollapsed extends React.Component {
-
     deleteLevel = () => {
-        this.props.rootStore.levelStore.deleteLevelFromDB(this.props.level.id)
+        const levelTitle = this.props.levelProps.tierName + " " + this.props.levelProps.ontologyLabel;
+        create_no_rationale_changeset_notice({
+            /* # Translators:  This is a confirmation prompt that is triggered by clicking on a delete button. The code is a reference to the specific item being deleted.  Only one item can be deleted at a time. */
+            message_text: `Are you sure you want to delete ${levelTitle}?`,
+            on_submit: () => this.props.rootStore.levelStore.deleteLevelFromDB(this.props.level.id)});
+
     };
 
     editLevel = () => {
@@ -186,14 +190,14 @@ class ButtonBar extends React.Component {
         if (this.props.level.level_depth < tierCount) {
             {/* # Translators: On a button, with a tiered set of objects, save current object and add another one in the next lower tier, e.g. "Save and add another Activity" when the user is editing a Goal */}
             const buttonText = interpolate(gettext("Save and link %s"), [this.props.levelProps.childTierName])
-            addAndLinkButton = <LevelButton disabledText={disabledText} classes="btn-primary" text={buttonText} submitType="saveAndAddChild" submitFunc={this.props.submitFunc} />
+            addAndLinkButton = <LevelButton disabledText={disabledText} classes="btn btn-primary" text={buttonText} submitType="saveAndAddChild" submitFunc={this.props.submitFunc} />
         }
         return (
             <div className="button-bar">
-                <LevelButton disabledText={disabledText} classes="btn-primary" text={gettext("Save and close")} submitType="saveOnly" submitFunc={this.props.submitFunc} />
+                <LevelButton disabledText={disabledText} classes="btn btn-primary" text={gettext("Save and close")} submitType="saveOnly" submitFunc={this.props.submitFunc} />
                 {addAnotherButton}
                 {addAndLinkButton}
-                <LevelButton classes="btn-reset" text={gettext("Cancel")} submitType="cancel" submitFunc={this.props.cancelFunc} />
+                <LevelButton classes="btn btn-reset" text={gettext("Cancel")} submitType="cancel" submitFunc={this.props.cancelFunc} />
             </div>
         )
 
