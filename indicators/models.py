@@ -533,6 +533,15 @@ class Indicator(SafeDeleteModel):
 
     ONSCOPE_MARGIN = .15
 
+    OLD_LEVELS = [
+        (1, 'Goal'),
+        (2, 'Output'),
+        (3, 'Outcome'),
+        (4, 'Activity'),
+        (5, 'Impact'),
+        (6, 'Intermediate Outcome')
+    ]
+
 
     indicator_key = models.UUIDField(
         default=uuid.uuid4, unique=True, help_text=" ", verbose_name=_("Indicator key")),
@@ -928,6 +937,14 @@ class Indicator(SafeDeleteModel):
         elif self.level and self.level_order and self.level_order >= 26:
             return string.lowercase[self.level_order/26 - 1] + string.lowercase[self.level_order % 26]
         return ''
+
+    @property
+    def number_display(self):
+        if self.level and self.level.leveltier:
+            return "{0} {1}{2}".format(
+                self.leveltier_name, self.level.display_ontology, self.level_order_display
+            )
+        return None
 
 
 class PeriodicTarget(models.Model):
