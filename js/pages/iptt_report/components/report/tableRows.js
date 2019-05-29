@@ -15,24 +15,38 @@ function ipttRound(value, percent) {
 }
 
 const IndicatorEditModalCell = ({ indicator }) => {
+    const loadModal = (e) => {
+        e.preventDefault();
+        let url = `/indicators/indicator_update/${indicator.pk}/?modal=true`;
+        $("#indicator_modal_content").empty();
+        $("#modalmessages").empty();
+  
+        $("#indicator_modal_content").load(url);
+        $("#indicator_modal_div").modal('show');
+    }
     return (
         <td className="td-no-side-borders">
-            <a href={ `/indicators/indicator_update/${indicator.pk}/` }
-               data-programid={ indicator.program.pk }
-               className="indicator-link float-right">
+            <button type="button" className="btn btn-link p-1 float-right"
+                    onClick={ loadModal }>
                 <i className="fas fa-cog"></i>
-            </a>
+            </button>
         </td>
     );
 }
 
 const IndicatorResultModalCell = ({ indicator }) => {
+    const loadModal = (e) => {
+        e.preventDefault();
+        let url = `/indicators/result_table/${indicator.pk}/0/?edit=false`;
+        $("#indicator_modal_content").empty();
+        $("#modalmessages").empty();
+        $("#indicator_modal_content").load(url);
+        $("#indicator_modal_div").modal('show');
+    }
     return (
         <td className="td-no-side-borders">
             <button type="button" className="btn btn-link p-1 indicator-ajax-popup indicator-data"
-                    data-indicatorid={ indicator.pk } data-container="body"
-                    data-trigger="focus" data-toggle="popover" data-placement="bottom"
-                    data-original-title="results">
+                    onClick={ loadModal }>
                 <i className="fas fa-table"></i>
             </button>
             { indicator.name }

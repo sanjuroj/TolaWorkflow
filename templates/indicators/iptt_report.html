@@ -9,61 +9,25 @@
 {% block mainclasses %}region--full-bleed{% endblock %}
 
 {% block content %}
-{% comment %}
-      <div id="indicator_modal_div" class="modal fade" role="dialog" aria-labelledby="myLargeModalLabel">
-        <div class="modal-dialog modal-lg" role="document">
-          <div class="modal-content" id="indicator_modal_content" iptt-modal="true">
-
-          </div> <!-- modal content -->
-        </div>
-    </div>
-
-    <script>
-
-        // Open the IndicatorUpdate Form in a modal
-        $("#id_div_top_iptt_report").on("click", ".indicator-link", function (e) {
-          e.preventDefault();
-          let url = $(this).attr("href");
-          url += "?modal=1";
-          const programId = $(this).data("programid");
-
-          $("#indicator_modal_content").empty();
-          $("#modalmessages").empty();
-
-          $("#indicator_modal_content").load(url);
-          $("#indicator_modal_div").modal('show');
 
 
-        });
-
-        // Open the Results Records in a modal
-        $("#id_div_top_iptt_report").on("click", ".indicator-ajax-popup", function (e) {
-          e.preventDefault();
-          const indicatorId = $(this).data('indicatorid');
-          const url = `/indicators/result_table/${indicatorId}/0/?edit=false`;
-          $("#indicator_modal_content").empty();
-          $("#modalmessages").empty();
-          $("#indicator_modal_content").load(url);
-          $("#indicator_modal_div").modal('show');
-
-        });
-
-      </script>
-
-    {% include 'indicators/indicator_form_common_js.html' %}
-  </main>
-
-  {% endcomment %}
 {% endblock content %}
 
 
 {% block extra_js_in_body %}
+
+    <div id="indicator_modal_div" class="modal fade" role="dialog" aria-labelledby="myLargeModalLabel">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content" id="indicator_modal_content" iptt-modal="true">
+    
+        </div> <!-- modal content -->
+      </div>
+    </div>
+
+    {% include 'indicators/indicator_form_common_js.html' %}
   <script>
     let jsContext = {{ js_context|js }};
   </script>
   {% render_bundle 'iptt_report' %}
 
-  <script>
-    
-  </script>
 {% endblock %}
