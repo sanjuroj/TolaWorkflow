@@ -31,7 +31,7 @@ auth_pref = raw_input('Enter 1 or 2: ')
 if auth_pref == '1':
     CONFIG_PATH = os.path.abspath(os.path.join(os.path.abspath(__file__), os.pardir, os.pardir, 'config', 'settings.secret.yml'))
     with open(CONFIG_PATH, 'r') as fh:
-        app_settings = yaml.load(fh)
+        app_settings = yaml.load(fh, Loader=yaml.FullLoader)
     try:
         token = app_settings['GITHUB_TOKEN']
         print 'Found your GitHub key in the settings file\n'
@@ -70,8 +70,7 @@ for project in projects:
         project_id = project['id']
         break
 else:
-    print "The project you entered couldn't be found in the list of your" \
-        "available projects. Exiting."
+    print "The project you entered couldn't be found in the list of your available projects. Exiting."
     sys.exit()
 
 # Get the columns ids associated with the project
@@ -79,7 +78,7 @@ columns_url = columns_template % project_id
 response = requests.get(columns_url, headers=headers, auth=auth)
 cols_to_fetch = ['Done', 'Ready for Deploy']
 if args.column:
-    cols_to_fetch = args.column
+    cols_to_fetch = [args.column]
 
 column_ids = [col['id'] for col in json.loads(response.text) if col['name'] in cols_to_fetch]
 issues = []

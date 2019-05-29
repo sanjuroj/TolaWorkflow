@@ -8,14 +8,14 @@ import Select from 'react-select';
 @observer
 class Picker extends React.Component {
     handleChange = selectedPreset => {
-        this.props.rootStore.changeTierSet(selectedPreset.value);
+        this.props.rootStore.levelStore.changeTierSet(selectedPreset.value);
     };
 
     render() {
-        const options = Object.keys(this.props.rootStore.tierPresets).map(val=>{
+        const options = Object.keys(this.props.rootStore.levelStore.tierPresets).map(val=>{
             return {value:val, label:val};
         });
-        const selectedOption = {value:this.props.rootStore.chosenTierSet, label: this.props.rootStore.chosenTierSetName};
+        const selectedOption = {value:this.props.rootStore.levelStore.chosenTierSet, label: this.props.rootStore.levelStore.chosenTierSetName};
 
         return (
             <div className="leveltier-picker__selectbox">
@@ -34,26 +34,47 @@ class LevelTier extends React.Component {
 
     render() {
         return (
-            <div className="leveltier"> {this.props.tierName} </div>
+            <div className={'leveltier leveltier--level-' + this.props.tierLevel}>{this.props.tierName} </div>
     )}
 }
 
 @inject('rootStore')
 @observer
 class LevelTierList extends React.Component{
+
     render() {
+        let apply_button = null
+        if (this.props.rootStore.levelStore.levels.length == 0) {
+            apply_button =
+                <button
+                    className="leveltier-button btn btn-primary btn-block"
+                    onClick={this.props.rootStore.levelStore.createFirstLevel}>
+                    {/* #Translators: this refers to an imperative verb on a button ("Apply filters")*/}
+                    {gettext("Apply")}
+                </button>
+        }
+
         return (
-            <div id="leveltier-list" className="leveltier-list">
+            <React.Fragment>
+                <div id="leveltier-list" className="leveltier-list">
+                    {
+                        this.props.rootStore.levelStore.chosenTierSet.length > 0 ?
+                            this.props.rootStore.levelStore.chosenTierSet.map((tier, index) => {
+                                return <LevelTier key={index} tierLevel={index} tierName={tier}/>
+                            })
+                            : null
+                    }
+
+
+                </div>
                 {
-                    this.props.rootStore.tierList.length > 0 ?
-                        this.props.rootStore.tierList.map((tier, index) => {
-                            return <LevelTier key={index} tierName={tier}/>
-                        })
-                        : null
+                    apply_button ?
+                        <div className="leveltier-list__actions">
+                            {apply_button}
+                        </div>
+                    : null
                 }
-
-
-            </div>
+            </React.Fragment>
         )
     }
 }

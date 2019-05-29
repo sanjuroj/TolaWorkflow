@@ -5,7 +5,7 @@ from base import *
 
 def read_yaml(path):
     with open(path) as f:
-        data = yaml.load(f)
+        data = yaml.load(f, Loader=yaml.FullLoader)
     return data
 
 SETTINGS_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -35,6 +35,8 @@ DATABASES = app_settings['DATABASES']
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#debug
 DEBUG = app_settings['DEBUG']
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#template-debug
+
+TEMPLATES[0]['OPTIONS']['debug'] = app_settings['TEMPLATE_DEBUG']
 
 # EMAIL CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#email-backend

@@ -17,36 +17,68 @@ class LevelList extends React.Component {
     render() {
         let renderList = [];
         if (this.props.renderList == 'initial') {
-            renderList = this.props.rootStore.levels.filter(level => level.parent == null).sort(elem => elem.customsort)
+            renderList = this.props.rootStore.levelStore.sortedLevels
+                .filter(level => ['root', null].indexOf(level.parent) != -1)
         }
+
         else{
-            renderList = this.props.renderList.sort(elem => elem.customsort);
+            renderList = this.props.renderList.sort((a, b) => a.customsort - b.customsort);
         }
 
-
-
-        let returnVals = renderList.map((elem) => {
-            let children = this.props.rootStore.levels.filter(level => level.parent == elem.id);
-            return (
-                <div key={elem.id} className="leveltier--new">
+        return renderList.map((elem) => {
+            let card = '';
+            if (this.props.rootStore.uiStore.expandedCards.indexOf(elem.id) !== -1) {
+                card =
                     <LevelCardExpanded
                         level={elem}
-                        levelProps={this.props.rootStore.levelProperties[elem.id]} />
-                    {children.length > 0 &&
-                        <LevelList
-                            rootStore={this.props.rootStore}
-                            renderList={children} />
-                    }
+                        levelProps={this.props.rootStore.levelStore.levelProperties[elem.id]}/>
+            }
+            else {
+                card =
+                    <LevelCardCollapsed
+                        level={elem}
+                        levelProps={this.props.rootStore.levelStore.levelProperties[elem.id]}/>
+            }
+
+            let children = this.props.rootStore.levelStore.sortedLevels.filter(level => level.parent == elem.id);
+            let childLevels = null;
+            if (children.length > 0){
+                childLevels =  <LevelList
+                    rootStore={this.props.rootStore}
+                    renderList={children}/>
+            }
+
+            return (
+                <div key={elem.id} className="leveltier--new">
+                    {card}
+                    {childLevels}
                 </div>
             )
-        });
+    })}
+}
 
-        return returnVals
+@inject('rootStore')
+@observer
+export class LevelListPanel  extends React.Component {
+
+    render() {
+        if (this.props.rootStore.levelStore.levels.length == 0) {
+            return (
+                <div className="level-list-panel">
+                    <div className="level-list-panel__dingbat">
+                        <i className="fas fa-sitemap"></i>
+                    </div>
+                    <div className="level-list-panel__text text-large">
+                        <strong className="text-danger">Choose your results framework template carefully!</strong> Once you begin building your framework, it will not be possible to change templates without first deleting all saved levels.
+                    </div>
+                </div>
+            )
+        }
+        else {
+            return (
+                <div id="level-list" style={{flexGrow: "2"}}><LevelList renderList='initial'/></div>
+            )
+        }
     }
 }
 
-export const LevelListing = observer(function (props) {
-    return (
-        <div id="level-list" style={{flexGrow:"2"}}><LevelList renderList='initial' /></div>
-    )
-});

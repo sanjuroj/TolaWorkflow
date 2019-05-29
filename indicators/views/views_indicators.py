@@ -1009,7 +1009,7 @@ class ProgramPage(ListView):
             'program': ProgramSerializer(program).data,
             'indicators': IndicatorSerializer(indicators, many=True).data,
             'indicator_on_scope_margin': Indicator.ONSCOPE_MARGIN,
-            'readonly': readonly,
+            'readonly': readonly,  # controls "Add indicator" link
         }
 
         #program.set_metrics(indicators)
@@ -1019,7 +1019,7 @@ class ProgramPage(ListView):
             'percent_complete': program.percent_complete,
             'pinned_reports': pinned_reports,
             'js_context': js_context,
-            "readonly": readonly
+            "readonly": readonly  # controls "Add sites" link, and Program period modal
         }
         return render(request, self.template_name, c_data)
 
