@@ -49,10 +49,16 @@ export class LevelCardCollapsed extends React.Component {
         const iCount = this.props.levelProps.indicators.length;
         /* # Translators: This is a count of indicators associated with another object */
         const indicatorCountText = interpolate(ngettext("%s indicator", "%s indicators", iCount), [iCount]);
+
+        // The expando caret is only applied to levels that aren't at the end of the leveltier hierarchy.
+        let expando = null;
+        if (this.props.levelProps.tierName != toJS(this.props.rootStore.levelStore.chosenTierSet.slice(-1)[0])){
+            expando = <FontAwesomeIcon icon={this.props.rootStore.uiStore.hasVisibleChildren.indexOf(this.props.level.id) >= 0 ? 'caret-down' : 'caret-right'} />
+        }
         return (
             <div className="level-card level-card--collapsed" id={this.props.level.id}>
                 <div onClick={(e) => this.props.rootStore.uiStore.updateVisibleChildren(this.props.level.id)}>
-                    <FontAwesomeIcon icon={this.props.rootStore.uiStore.hasVisibleChildren.indexOf(this.props.level.id) >= 0 ? 'caret-down' : 'caret-right'} />
+                    {expando}
                     <div className="level-card--collapsed__name">
                         <strong>
                             <LevelTitle
