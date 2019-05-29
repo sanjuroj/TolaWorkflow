@@ -1408,12 +1408,22 @@ function ipttRound(value, percent) {
 
 var IndicatorEditModalCell = function IndicatorEditModalCell(_ref) {
   var indicator = _ref.indicator;
+
+  var loadModal = function loadModal(e) {
+    e.preventDefault();
+    var url = "/indicators/indicator_update/".concat(indicator.pk, "/?modal=true");
+    $("#indicator_modal_content").empty();
+    $("#modalmessages").empty();
+    $("#indicator_modal_content").load(url);
+    $("#indicator_modal_div").modal('show');
+  };
+
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
     className: "td-no-side-borders"
-  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
-    href: "/indicators/indicator_update/".concat(indicator.pk, "/"),
-    "data-programid": indicator.program.pk,
-    className: "indicator-link float-right"
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+    type: "button",
+    className: "btn btn-link p-1 float-right",
+    onClick: loadModal
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
     className: "fas fa-cog"
   })));
@@ -1421,17 +1431,22 @@ var IndicatorEditModalCell = function IndicatorEditModalCell(_ref) {
 
 var IndicatorResultModalCell = function IndicatorResultModalCell(_ref2) {
   var indicator = _ref2.indicator;
+
+  var loadModal = function loadModal(e) {
+    e.preventDefault();
+    var url = "/indicators/result_table/".concat(indicator.pk, "/0/?edit=false");
+    $("#indicator_modal_content").empty();
+    $("#modalmessages").empty();
+    $("#indicator_modal_content").load(url);
+    $("#indicator_modal_div").modal('show');
+  };
+
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
     className: "td-no-side-borders"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
     type: "button",
     className: "btn btn-link p-1 indicator-ajax-popup indicator-data",
-    "data-indicatorid": indicator.pk,
-    "data-container": "body",
-    "data-trigger": "focus",
-    "data-toggle": "popover",
-    "data-placement": "bottom",
-    "data-original-title": "results"
+    onClick: loadModal
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
     className: "fas fa-table"
   })), indicator.name);
@@ -4289,4 +4304,4 @@ function () {
 /***/ })
 
 },[["mYfJ","runtime","vendors"]]]);
-//# sourceMappingURL=iptt_report-9a11a85d28f827ed6af2.js.map
+//# sourceMappingURL=iptt_report-2067699e3b1cbd5bf299.js.map
