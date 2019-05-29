@@ -74,6 +74,20 @@ class IndicatorCreateTests(TestIndcatorCreateUpdateBase, TestCase):
         self.assertEqual(pt.period_name, PeriodicTarget.LOP_PERIOD)
         self.assertEqual(pt.target, indicator.lop_target)
 
+        # Does updating a second time update the dummy PT?
+
+        data['lop_target'] = 1024
+
+        url = reverse_lazy('indicator_create', args=[self.program.id])
+        response = self.client.post(url, data)
+
+        indicator = Indicator.objects.get()
+        pt = PeriodicTarget.objects.get()
+
+        self.assertEqual(pt.indicator, indicator)
+        self.assertEqual(pt.period_name, PeriodicTarget.LOP_PERIOD)
+        self.assertEqual(pt.target, indicator.lop_target)
+
     def test_annual_creation(self):
         periodic_targets = [
             {"id": 0, "period": "Year 1", "target": "1", "start_date": "Jan 1, 2018", "end_date": "Dec 31, 2018"},
