@@ -264,7 +264,7 @@ function () {
   }, {
     key: "levelName",
     get: function get() {
-      return this.level.name;
+      return this.level ? this.level.name : null;
     }
   }]);
 
@@ -4304,4 +4304,4 @@ function () {
 /***/ })
 
 },[["mYfJ","runtime","vendors"]]]);
-//# sourceMappingURL=iptt_report-1216c7c46fbb65b8f9c0.js.map
+//# sourceMappingURL=iptt_report-9b8df62cfa99f1e59734.js.map
