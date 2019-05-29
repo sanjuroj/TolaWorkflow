@@ -38,6 +38,17 @@ class LevelTierSerializer(serializers.ModelSerializer):
         ]
 
 
+class IndicatorSerializerMinimal(serializers.ModelSerializer):
+
+    class Meta:
+        model = Indicator
+        fields = [
+            'id',
+            'name',
+            'level',
+        ]
+
+
 class IndicatorSerializer(serializers.ModelSerializer):
     """
     Serializer specific to the Program Page
