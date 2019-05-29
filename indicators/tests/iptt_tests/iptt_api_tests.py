@@ -38,4 +38,4 @@ class TestOldStyleLevelAPIData(test.TestCase):
         serialized = IPTTProgramSerializer(program)
         self.assertIn('levels', serialized.data)
         levels = serialized.data['levels']
-        self.assertEqual(len(levels), 6)
+        

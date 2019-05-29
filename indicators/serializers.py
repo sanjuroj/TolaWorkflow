@@ -97,4 +97,12 @@ class IPTTProgramSerializer(serializers.Serializer):
         return self.results_framework_levels()
 
     def old_style_levels(self, program):
-        levels = program.indicator_set.all()
+        levels = []
+        for result in program.indicator_set.order_by().values('old_level').distinct():
+            levels.append(
+                {
+                    'name': result['old_level'],
+                    'depth': 4
+                }
+            )
+        return levels
