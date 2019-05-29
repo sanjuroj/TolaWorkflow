@@ -2,7 +2,7 @@ import React from 'react';
 import { inject, observer } from 'mobx-react';
 import Popover from 'react-simple-popover';
 
-@inject('labels', 'rootStore')
+@inject('filterStore', 'routeStore')
 class PinPopover extends React.Component {
     constructor(props) {
         super(props);
@@ -16,16 +16,14 @@ class PinPopover extends React.Component {
         this.setState({reportName: e.target.value});
     }
     isDisabled = () => {
-        return !this.props.rootStore.pinData || !this.state.reportName;
+        return !this.props.routeStore.pinData || !this.state.reportName;
     }
     handleClick = () => {
-        //send this.props.rootStore.pinUrl as data to this.props.labels.pin.creatUrl
-        //with data "name" as this.state.reportName
         this.setState({sending: true});
         $.ajax({
             type: "POST",
-            url: this.props.labels.pin.createUrl,
-            data: {name: this.state.reportName, ...this.props.rootStore.pinData },
+            url: this.props.routeStore.pinUrl,
+            data: {name: this.state.reportName, ...this.props.routeStore.pinData },
             success: () => {this.setState({sending:false, sent: true}); },
             error: () => {console.log("AJAX ERROR");}
         });
@@ -36,18 +34,27 @@ class PinPopover extends React.Component {
                 { this.state.sent
                     ? <div className="form-group">
                         <p>
-                            <span>{ this.props.labels.pin.successMsg }</span>
+                            <span>
+                                {
+                                    gettext('Success!  This report is now pinned to the program page')
+                                }
+                            </span>
                         </p>
                         <p>
-                           <a href={ this.props.rootStore.programPageUrl }>
-                                { this.props.labels.pin.successLink }
+                           <a href={ this.props.filterStore.programPageUrl }>
+                                {
+                                    gettext('Visit the program page now.')
+                                }
                            </a>
                         </p>
                       </div>
                     : <React.Fragment>
                         <div className="form-group">
                             <label className="text-uppercase">
-                               { this.props.labels.pin.reportName }
+                                {
+                                    /* # Translators: a field where users can name their newly created report */
+                                    gettext('Report name')
+                                }
                             </label>
                             <input type="text" className="form-control"
                                  value={ this.state.reportName }
@@ -57,24 +64,24 @@ class PinPopover extends React.Component {
                         { this.state.sending
                             ? <div className="btn btn-outline-primary" disabled>
                                 <img src='/static/img/ajax-loader.gif' />&nbsp;
-                                    { this.props.labels.loading }
+                                    { gettext('Loading') }
                               </div>
                             : <button type="button"
                                   onClick={ this.handleClick }
                                   disabled={ this.isDisabled() }
                                   className="btn btn-primary">
-                                      { this.props.labels.pin.submitButton }
+                                    {
+                                        gettext('Pin to program page')
+                                    }
                               </button>
                         }
                         </React.Fragment>
-                        
                 }
             </React.Fragment>
         );
     }
 }
 
-@inject('labels')
 export class PinButton extends React.Component {
     constructor(props) {
         super(props);
@@ -98,7 +105,11 @@ export class PinButton extends React.Component {
                     className="btn btn-sm btn-secondary"
                     ref="target"
                     onClick={ this.handleClick.bind(this) }>
-                <i className="fas fa-thumbtack"></i> { this.props.labels.pin.buttonLabel }
+                <i className="fas fa-thumbtack"></i>
+                    {
+                        /* # Translators: a button that lets a user "pin" (verb) a report to their home page */
+                        gettext('Pin')
+                    }
                 </div>
                 <Popover
                     placement='bottom'
@@ -114,18 +125,18 @@ export class PinButton extends React.Component {
 }
 
 
-@inject('labels', 'rootStore')
+@inject('filterStore', 'routeStore')
 @observer
 class ExcelPopover extends React.Component {
     getCurrent = () => {
-        if (this.props.rootStore.currentExcelURL) {
-            window.location=this.props.rootStore.currentExcelURL;
+        if (this.props.routeStore.excelUrl) {
+            window.location=this.props.routeStore.excelUrl;
         }
     }
     
     getAll = () => {
-        if (this.props.rootStore.allExcelURL) {
-            window.location=this.props.rootStore.allExcelURL;
+        if (this.props.routeStore.fullExcelUrl) {
+            window.location=this.props.routeStore.fullExcelUrl
         }
     }
     render() {
@@ -134,13 +145,19 @@ class ExcelPopover extends React.Component {
                 <div className="row mt-1 mb-2">
                     <div className="btn btn-primary btn-block"
                          onClick={ this.getCurrent }>
-                        { this.props.labels.excel.buttonCurrent }
+                        {
+                            /* # Translators: a download button for a report containing just the data currently displayed */
+                            gettext('Current view')
+                        }
                     </div>
                 </div>
                 <div className="row mt-2 mb-1">
                     <div className="btn btn-primary btn-block"
                          onClick={ this.getAll }>
-                         { this.props.labels.excel.buttonAll }
+                        {
+                            /* # Translators: a download button for a report containing all available data */
+                            gettext('All program data')
+                        }
                     </div>
                 </div>
             </div>
@@ -148,7 +165,7 @@ class ExcelPopover extends React.Component {
     }
 }
 
-@inject('labels', 'rootStore')
+@inject('filterStore', 'routeStore')
 @observer
 export class ExcelButton extends React.Component {
     constructor(props) {
@@ -159,10 +176,10 @@ export class ExcelButton extends React.Component {
     }
     
     handleClick = () => {
-        if (this.props.rootStore.isTVA) {
+        if (this.props.filterStore.isTVA) {
             this.setState({open: !this.state.open});
-        } else if (this.props.rootStore.currentExcelURL) {
-            window.location=this.props.rootStore.currentExcelURL;
+        } else if (this.props.routeStore.excelUrl) {
+            window.location=this.props.routeStore.excelUrl;
         }
     }
     
@@ -175,7 +192,7 @@ export class ExcelButton extends React.Component {
                 <div className="btn btn-sm btn-secondary"
                      ref="target"
                      onClick={this.handleClick.bind(this) }>
-                     <i className="fas fa-download"></i> { this.props.labels.excel.buttonMain }
+                     <i className="fas fa-download"></i> Excel
                      </div>
                      <Popover
                         placement="bottom"
@@ -190,14 +207,3 @@ export class ExcelButton extends React.Component {
         );
     }
 }
-
-export const ClearButton = inject('labels', 'rootStore')(
-    ({labels, rootStore}) => {
-        return (
-            <div className="btn btn-primary btn-block"
-                onClick={ rootStore.clearFilters }>
-                    { labels.resetButton }
-            </div>
-        )
-    }
-);
