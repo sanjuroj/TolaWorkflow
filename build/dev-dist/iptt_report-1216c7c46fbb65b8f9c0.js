@@ -2681,7 +2681,7 @@ function () {
     get: function get() {
       if (!this.filtersDisabled && this.groupByDisabled) {
         var availableLevels = this.levels.concat(this.filterIndicators(this.program.indicators, 'levels').map(function (indicator) {
-          return indicator.level.pk;
+          return indicator.level ? indicator.level.pk : null;
         }));
         return this.program.levels.filter(function (level) {
           return availableLevels.includes(level.pk);
@@ -4304,4 +4304,4 @@ function () {
 /***/ })
 
 },[["mYfJ","runtime","vendors"]]]);
-//# sourceMappingURL=iptt_report-2067699e3b1cbd5bf299.js.map
+//# sourceMappingURL=iptt_report-1216c7c46fbb65b8f9c0.js.map
