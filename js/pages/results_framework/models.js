@@ -11,12 +11,12 @@ export class RootStore {
 
 export class LevelStore {
     @observable levels = [];
-    @observable indicators = []
+    @observable indicators = [];
     @observable chosenTierSet = [];
     @observable chosenTierSetName = "";
     tierPresets = {};
     defaultPreset = "Mercy Corps standard";
-    program_id = ""
+    program_id = "";
 
     constructor(program_id, levels, indicators, levelTiers, tierPresets, rootStore) {
         this.rootStore = rootStore;
@@ -32,7 +32,7 @@ export class LevelStore {
         }
         else {
             this.chosenTierSetName = this.defaultPreset;
-            this.chosenTierSet = this.tierPresets[this.defaultPreset]
+            this.chosenTierSet = this.tierPresets[this.defaultPreset];
         }
     }
 
@@ -42,10 +42,10 @@ export class LevelStore {
 
     @computed get levelProperties () {
         let levelProperties = {};
-        this.indicators.forEach( i => console.log(toJS(i)))
+        this.indicators.forEach( i => console.log(toJS(i)));
         for (let level of this.levels) {
             let properties = {};
-            properties['indicators'] = this.getLevelIndicators(level.id)
+            properties['indicators'] = this.getLevelIndicators(level.id);
             properties['ontologyLabel'] = this.buildOntology(level.id);
             properties['tierName'] = this.chosenTierSet[level.level_depth-1];
             properties['childTierName'] = null;
@@ -55,7 +55,7 @@ export class LevelStore {
             const childCount =  this.levels.filter(l => l.parent == level.id).length;
             const indicatorCount = this.indicators.filter( i => i.level == level.id);
             properties['canDelete'] = childCount==0 && indicatorCount==0;
-            levelProperties[level.id] = properties
+            levelProperties[level.id] = properties;
         }
         return levelProperties
     }
@@ -154,19 +154,19 @@ export class LevelStore {
                 console.log("Level Tiers Saved!")
             })
             .catch(error => console.log('error', error))
-    }
+    };
 
     deleteLevelFromDB = (levelId) => {
         const level_data = {level: levelId};
         api.delete(`/level/${levelId}`)
             .then(response => {
-                this.levels.replace(response.data)
+                this.levels.replace(response.data);
                 if (this.levels.length == 0){
                     this.createFirstLevel()
                 }
             })
             .catch(error => console.log('error', error))
-    }
+    };
 
 
     // TODO: better error handling for API
@@ -218,7 +218,7 @@ export class LevelStore {
 
     derive_preset_name(levelTiers, tierPresets) {
         if (!levelTiers){
-            return None;
+            return null;
         }
         const levelTiersArray = levelTiers.sort(t => t.tier_depth).map(t => t.name);
         const levelTierStr = JSON.stringify(levelTiersArray);
@@ -247,7 +247,7 @@ export class LevelStore {
         else {
             return ontologyArray.join(".");
         }
-    }
+    };
 
     getLevelIndicators = (levelId) => {
         return this.indicators.filter( i => i.level == levelId);

@@ -276,8 +276,7 @@ function (_React$Component2) {
       var iCount = this.props.levelProps.indicators.length;
       /* # Translators: This is a count of indicators associated with another object */
 
-      var indicatorCountText = interpolate(ngettext("%s indicator", "%s indicators", iCount), [iCount]); // const indicatorCountText = 3;
-
+      var indicatorCountText = interpolate(ngettext("%s indicator", "%s indicators", iCount), [iCount]);
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "level-card level-card--collapsed",
         id: this.props.level.id
@@ -711,7 +710,7 @@ function () {
     key: "derive_preset_name",
     value: function derive_preset_name(levelTiers, tierPresets) {
       if (!levelTiers) {
-        return None;
+        return null;
       }
 
       var levelTiersArray = levelTiers.sort(function (t) {
@@ -1110,9 +1109,10 @@ __webpack_require__.r(__webpack_exports__);
 var _jsContext = jsContext,
     program_id = _jsContext.program_id,
     levels = _jsContext.levels,
+    indicators = _jsContext.indicators,
     levelTiers = _jsContext.levelTiers,
     tierPresets = _jsContext.tierPresets;
-var rootStore = new _models__WEBPACK_IMPORTED_MODULE_8__["RootStore"](program_id, levels, levelTiers, tierPresets);
+var rootStore = new _models__WEBPACK_IMPORTED_MODULE_8__["RootStore"](program_id, levels, indicators, levelTiers, tierPresets);
 /*
  * React components on page
  */
@@ -1326,4 +1326,4 @@ function (_React$Component2) {
 /***/ })
 
 },[["QTZG","runtime","vendors"]]]);
-//# sourceMappingURL=results_framework-bf15ca483af89f3e9fa3.js.map
+//# sourceMappingURL=results_framework-33f782cd86669364862a.js.map
