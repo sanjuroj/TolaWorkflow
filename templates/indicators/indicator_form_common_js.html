@@ -241,6 +241,35 @@
     });
 
 
+    // delete periodic_target (delete ALL targets)
+    $("#indicator_modal_content").on("click", "#id_delete_targets_btn", function(e) {
+        e.preventDefault();
+
+        const actionCb = isCreateForm() ? clearPeriodicTargetsForm :
+            (rationale) => {
+                $.post('/indicators/periodic_target_deleteall/' + indicatorId() + '/true/', {rationale}, clearPeriodicTargetsForm);
+            };
+
+
+        if(indicatorHasResults()) {
+            window.create_destructive_changeset_notice({
+                message_text: DELETE_ALL_TARGETS_MESSAGE,
+                context: document.getElementById('indicator_update_form'),
+                on_submit: actionCb
+            });
+            scrollToIndicatorFormBottom();
+        } else {
+            window.create_no_rationale_changeset_notice({
+                preamble: DESTRUCTIVE_PREAMBLE,
+                message_text: DELETE_TARGETS_NO_RATIONALE,
+                context: document.getElementById('indicator_update_form'),
+                on_submit: actionCb
+            });
+        }
+        scrollToIndicatorFormBottom();
+    });
+
+
     // Button click handler for UPDATE form
     $("#indicator_modal_content").on("click", "#id_update_indicator_btn", function(e){
         if (validateForm() === false) {
@@ -373,38 +402,6 @@
                 </tr>
             `;
     }
-
-    // delete periodic_target (delete ALL targets)
-    $("#indicator_modal_content").on("click", "#id_delete_targets_btn", function(e) {
-        e.preventDefault();
-
-        if (isCreateForm()) {
-            $("#id_div_periodic_tables_placeholder").empty();
-            enable_target_frequecy_field();
-            return;
-        }
-
-        const save = (rationale) => {
-            $.post('/indicators/periodic_target_deleteall/' + indicatorId() + '/true/', {rationale}, clearPeriodicTargetsForm);
-        };
-
-        if(indicatorHasResults()) {
-            window.create_destructive_changeset_notice({
-                message_text: DELETE_ALL_TARGETS_MESSAGE,
-                context: document.getElementById('indicator_update_form'),
-                on_submit: save
-            });
-            scrollToIndicatorFormBottom();
-        } else {
-            window.create_no_rationale_changeset_notice({
-                preamble: DESTRUCTIVE_PREAMBLE,
-                message_text: DELETE_TARGETS_NO_RATIONALE,
-                context: document.getElementById('indicator_update_form'),
-                on_submit: save
-            });
-        }
-        scrollToIndicatorFormBottom();
-    });
 
     // add new event periodic target markup to PT form
     $("#indicator_modal_content").on("click", "#addNewPeriodicTarget", function(e) {
