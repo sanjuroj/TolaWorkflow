@@ -33,6 +33,9 @@ def l10n_date_long(date):
 def l10n_date_year_month(date):
     return _date_format(date, 'YEAR_MONTH_FORMAT')
 
+def l10n_monthname(date):
+    return _date_format(date, 'N')
+
 def l10n_number(value):
     if isinstance(value, (decimal.Decimal, float) + six.integer_types):
         return formats.number_format(value, use_l10n=True)
