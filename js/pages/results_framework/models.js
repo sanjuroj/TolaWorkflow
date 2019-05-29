@@ -42,7 +42,7 @@ export class LevelStore {
 
     @computed get levelProperties () {
         let levelProperties = {};
-        this.indicators.forEach( i => console.log(toJS(i)));
+
         for (let level of this.levels) {
             let properties = {};
             properties['indicators'] = this.getLevelIndicators(level.id);
@@ -127,6 +127,7 @@ export class LevelStore {
         this.rootStore.uiStore.expandedCards.push("new");
         this.rootStore.uiStore.activeCard = "new";
         this.levels.push(newLevel);
+        this.rootStore.uiStore.hasVisibleChildren.push(newLevel.parent)
 
     };
 
@@ -151,16 +152,15 @@ export class LevelStore {
         const tier_data = {program_id: this.program_id, tiers: this.chosenTierSet};
         api.post(`/save_leveltiers/`, tier_data)
             .then(response => {
-                console.log("Level Tiers Saved!")
             })
             .catch(error => console.log('error', error))
     };
 
     deleteLevelFromDB = (levelId) => {
-        const level_data = {level: levelId};
         api.delete(`/level/${levelId}`)
             .then(response => {
                 this.levels.replace(response.data);
+                this.rootStore.uiStore.removeExpandedCard(levelId);
                 if (this.levels.length == 0){
                     this.createFirstLevel()
                 }
@@ -185,6 +185,7 @@ export class LevelStore {
                         this.levels.replace(response.data['all_data'])
                     });
                     const newId = response.data["new_level"]["id"];
+                    this.rootStore.uiStore.removeExpandedCard(levelId);
                     if (submitType == "saveAndAddSibling"){
                         this.createNewLevelFromSibling(newId);
                     }
@@ -265,13 +266,17 @@ export class UIStore {
     }
 
     @computed get tierLockStatus () {
+        // The leveltier picker should be disabled if there is at least one saved level in the DB.
         let notNewLevels = this.rootStore.levelStore.levels.filter( l => l.id != "new");
         if  (notNewLevels.length > 0) {
             return "locked"
         }
+        // The apply button should not be visible if there is only one level visible (i.e. saved to the db or not)
         else if (this.rootStore.levelStore.levels.length == 1){
             return "primed"
         }
+
+
         return null;
     }
 
@@ -291,6 +296,8 @@ export class UIStore {
     updateVisibleChildren = (levelId) => {
         if (this.hasVisibleChildren.indexOf(levelId) >= 0) {
             this.hasVisibleChildren = this.hasVisibleChildren.filter( level_id => level_id != levelId );
+            const childLevels = this.rootStore.levelStore.levels.filter( l => l.parent == levelId);
+            childLevels.forEach( l => this.updateVisibleChildren(l.id))
         }
         else {
             this.hasVisibleChildren.push(levelId);
