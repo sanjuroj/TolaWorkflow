@@ -70,13 +70,6 @@ describe('QSProgramStore', () => {
 describe('QSRootStore', () => {
     let jsContext = {
         programs: programsJSON,
-        labels: {
-            targetperiods: {
-                1: 'label 1',
-                3: 'label 3',
-                4: 'label 4'
-            }
-        },
         iptt_url: '/indicators/iptt_report/'
     };
     let blankOption = {
@@ -135,17 +128,17 @@ describe('QSRootStore', () => {
             instance.setTVAProgram(1);
             expect(instance.frequencyOptions.length).toEqual(2);
             expect(instance.frequencyOptions.map(opt => opt.value)).toEqual([1, 3]);
-            expect(instance.frequencyOptions[0].label).toEqual('label 1');
+            expect(instance.frequencyOptions[0].label).toEqual('Life of Program (LoP) only');
             instance.setTVAProgram(2); 
             expect(instance.frequencyOptions.length).toEqual(2);
             expect(instance.frequencyOptions.map(opt => opt.value)).toEqual([1, 4]);
-            expect(instance.frequencyOptions[1].label).toEqual('label 4');
+            expect(instance.frequencyOptions[1].label).toEqual('Semi-annual');
         });
         it('allows frequency to be set', () => {
             instance.setTVAProgram(1);
             instance.setFrequency(3);
             expect(instance.selectedFrequency.value).toEqual(3);
-            expect(instance.selectedFrequency.label).toEqual('label 3');
+            expect(instance.selectedFrequency.label).toEqual('Annual');
         });
         it('keeps or resets frequency based on availability', () => {
             instance.setTVAProgram(1);

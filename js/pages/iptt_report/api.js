@@ -5,10 +5,10 @@
 
 export default class ReportAPI {
     constructor(ajaxURL) {
-        this.url = ajaxUrl;
+        this.url = ajaxURL;
     }
     
-    callForData(programId, frequency, reportType) {
+    callForReportData(reportType, programId, frequency) {
         let params = {
             programId: programId,
             frequency: frequency,

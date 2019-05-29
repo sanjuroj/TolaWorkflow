@@ -79,6 +79,7 @@ def get_program_filter_data(request):
         programs.append({
             'id': program.pk,
             'name': program.name,
+            'old_style_levels': not program.using_results_framework,
             'frequencies': [f['target_frequency'] for f in frequencies_qs if f['program_id'] == program.pk],
             'periodDateRanges': {
                 '1': [[
@@ -135,120 +136,126 @@ def get_program_filter_data(request):
         })
     return programs
 
-def get_labels(quickstart=True):
-    # this is not in a loop or comprehension so as to allow translator comments:
-    labels = {
-        'programSelect': ugettext('Program'),
-        'showAll': ugettext('Show all'),
-        'mostRecent': ugettext('Most recent'),
-        'mostRecentPlaceholder': ugettext('enter a number'),
-        'targetperiods': {
-            '1': ugettext('Life of Program (LoP) only'),
-            '2': ugettext('Midline and endline'),
-            '3': ugettext('Annual'),
-            '4': ugettext('Semi-annual'),
-            '5': ugettext('Tri-annual'),
-            # Translators: this is the measure of time (3 months)
-            '6': ugettext('Quarterly'),
-            '7': ugettext('Monthly')
-        },
-    }
-    if quickstart:
-        labels.update(
-            {
-                'tvaFilterTitle': ugettext('Periodic targets vs. actuals'),
-                'timeperiodsFilterTitle': ugettext('Recent progress for all indicators'),
-                'tvaFilterSubtitle': ugettext(
-                    'View results organized by target period for indicators that share the same target frequency'
-                ),
-                'timeperiodsFilterSubtitle': ugettext(
-                    ('View the most recent two months of results. '
-                     '(You can customize your time periods.) '
-                     'This report does not include periodic targets')
-                ),
-                'periodSelect': ugettext('Target periods'),
-                'submitButton': ugettext('View report')
-            }
-        )
+
+def get_iptt_program(program_id, frequency, tva=False):
+    frequency = int(frequency)
+    program_data = Program.objects.values(
+        'reporting_period_start',
+        'reporting_period_end',
+        'using_results_framework'
+        ).get(pk=program_id)
+    if tva:
+        indicator_qs = IPTTIndicator.tva.filter(program_id=program_id, target_frequency=frequency)
     else:
-        labels.update(
-            {
-                'filterTitle': ugettext('Report options'),
-                'reportTitle': ugettext('Indicator performance tracking table'),
-                'sidebarToggle': ugettext('Show/hide filters'),
-                'pin': {
-                    'buttonLabel': ugettext('Pin'),
-                    'reportName': ugettext('Report name'),
-                    'submitButton': ugettext('Pin to program page'),
-                    'createUrl': reverse('create_pinned_report'),
-                    'successMsg': ugettext('Success! This report is now pinned to the program page.'),
-                    'successLink': ugettext('Visit the program page now.')
-                },
-                'excel': {
-                    'buttonMain': ugettext('Excel'),
-                    'buttonCurrent': ugettext('Current view'),
-                    'buttonAll': ugettext('All program data')
-                },
-                'resetButton': ugettext('Clear'),
-                'periodSelect': {
-                    'tva': ugettext('Target periods'),
-                    'timeperiods': ugettext('Time periods')
-                },
-                'startPeriod': ugettext('Start'),
-                'endPeriod': ugettext('End'),
-                'levelGrouping': {
-                    'label': ugettext('Group indicators'),
-                    'group': ugettext('by Level')
-                },
-                'levelSelect': ugettext('Levels'),
-                'typeSelect': ugettext('Types'),
-                'sectorSelect': ugettext('Sectors'),
-                'siteSelect': ugettext('Sites'),
-                'indicatorSelect': ugettext('Indicators'),
-                'emptySelect': ugettext('None selected'),
-                'noOptionsSelect': ugettext('None available'),
-                # Translators: this is used after a number, i.e. "3 selected"
-                'selected': ugettext('selected'),
-                'loading': ugettext('Loading'),
-                'timeperiods': {
-                    '3' : ugettext('Years'),
-                    '4' : ugettext('Semi-annual periods'),
-                    '5' : ugettext('Tri-annual periods'),
-                    # Translators: this is the measure of time (3 months)
-                    '6' : ugettext('Quarters'),
-                    '7' : ugettext('Months')
-                },
-                'periodNames': {
-                    '3': ugettext('Year'),
-                    '4': ugettext('Semi-annual period'),
-                    '5': ugettext('Tri-annual period'),
-                    # Translators: this is the measure of time (3 months)
-                    '6': ugettext('Quarter')
-                },
-                'columnHeaders': {
-                    'lop': ugettext('Life of Program'),
-                    # Translators: this is the abbreviation for number
-                    'number': ugettext('No.'),
-                    'indicator': ugettext('Indicator'),
-                    'level': ugettext('Level'),
-                    'uom': ugettext('Unit of measure'),
-                    # Translators: the noun form (as in 'type of change')
-                    'change': ugettext('Change'),
-                    # Translators: C as in Cumulative and NC as in Non Cumulative
-                    'cumulative': ugettext('C / NC'),
-                    'numType': '# / %',
-                    'baseline': ugettext('Baseline'),
-                    'target': ugettext('Target'),
-                    'actual': ugettext('Actual'),
-                    'met': ugettext('% Met')
-                },
-                'noIndicatorsForFrequency': ugettext('No indicators for this target frequency in this program, '
-                                                     'please select a different target period frequency.'),
-                'noIndicatorsForFilters': ugettext('No indicators match the selected filter criteria'),
-                'noLevelIndicatorsRowLabel': ugettext('Indicators unassigned to a results framework level')
-            }
-        )
-    return labels
+        indicator_qs = IPTTIndicator.timeperiods.filter(program_id=program_id)
+    indicator_qs = indicator_qs.with_frequency_annotations(
+        frequency, program_data['reporting_period_start'], program_data['reporting_period_end'])
+    level_data = []
+    if program_data['using_results_framework']:
+        results_framework = True
+        levels = Level.objects.filter(program_id=int(program_id))
+        for level in levels:
+            level_item = {
+                'pk': level.pk,
+                'name': level.name,
+                'tier': level.leveltier.name,
+                'tierPk': level.leveltier.pk,
+                'ontology': level.display_ontology,
+                'parent': level.parent.pk if level.parent else None,
+                'depth': level.get_level_depth(),
+                'sort': level.customsort
+                }
+            if level_item['depth'] > 2:
+                target = level
+                while target.get_level_depth() > 2:
+                    target = target.parent
+                level_item['level2parent'] = target.pk
+            else:
+                level_item['level2parent'] = None
+            level_data.append(level_item)
+    else:
+        results_framework = False
+        levels = Indicator.objects.filter(
+            program_id=int(program_id)
+            ).order_by('old_level').values('old_level').distinct()
+        old_id_lookup = {name: old_pk for (old_pk, name) in Indicator.OLD_LEVELS}
+        new_id = 7
+        for level in levels:
+            pk = old_id_lookup.get(level['old_level'], None)
+            if pk is None:
+                pk = new_id
+                new_id += 1
+            level_data.append({
+                'pk': pk,
+                'name': level['old_level'],
+                'sort': pk
+            })
+    return indicator_qs, level_data, results_framework
+
+def indicators_to_iptt(indicator_qs, frequency, tva, results_framework, program_id):
+    indicators = []
+    for sort_index, indicator in enumerate(indicator_qs):
+        indicator_data = {
+            'pk': indicator.pk,
+            'sortIndex': sort_index,
+            'number': (
+                ('{}:'.format(indicator.number_display) if indicator.number_display else None)
+                if results_framework else indicator.number
+            ),
+            'name': indicator.name,
+            'sites': indicator.sites,
+            'indicatorTypes': indicator.indicator_types,
+            'sector': {'pk': indicator.sector.pk, 'name': indicator.sector.sector} if indicator.sector else {},
+            'frequency': indicator.target_frequency,
+            'directionOfChange': indicator.get_direction_of_change,
+            'unitOfMeasure': indicator.unit_of_measure,
+            'cumulative': ugettext('Cumulative') if indicator.is_cumulative else ugettext('Non-cumulative'),
+            'unitType': indicator.get_unit_of_measure_type,
+            'baseline': indicator.baseline,
+            'lopTarget': indicator.lop_target,
+            'lopActual': indicator.lop_actual,
+            'lopMet': indicator.lop_percent_met,
+            'reportData': {}
+        }
+        if results_framework:
+            indicator_data['level'] = indicator.leveltier_name
+            indicator_data['tierDepth'] = indicator.leveltier_depth
+            indicator_data['levelpk'] = indicator.level.pk if indicator.level else None
+            indicator_data['levelOrder'] = indicator.level_order_display
+        else:
+            indicator_data['level'] = indicator.old_level
+            indicator_data['levelpk'] = {name: pk for (pk, name) in Indicator.OLD_LEVELS}.get(indicator.old_level)
+        if frequency != Indicator.LOP:
+            values_count = getattr(indicator, 'frequency_{0}_count'.format(frequency))
+            if tva:
+                indicator_data['reportData']['tva'] = {
+                    frequency: [
+                        {'target': getattr(indicator, 'frequency_{0}_period_{1}_target'.format(frequency, c)),
+                         'value': getattr(indicator, 'frequency_{0}_period_{1}'.format(frequency, c))}
+                        for c in range(values_count)
+                    ]
+                }
+            else:
+                indicator_data['reportData']['timeperiods'] = {
+                    frequency: [getattr(indicator, 'frequency_{0}_period_{1}'.format(frequency, c))
+                                     for c in range(values_count)]
+                }
+        indicators.append(indicator_data)
+    reportData = {
+        'reportFrequency': frequency,
+        'reportType': 1 if tva else 2,
+        'indicators': indicators,
+        'programId': program_id
+    }
+    if results_framework:
+        second_leveltier = LevelTier.objects.filter(program_id=program_id, tier_depth=2)
+        if second_leveltier.exists():
+            second_tier_name = second_leveltier.first().name
+        else:
+            second_tier_name = ugettext('Outcome')
+        reportData['resultChainFilter'] = ugettext('by %(tier)s chain') % {'tier': second_tier_name}
+        reportData['resultChainHeader'] = ugettext('%(tier)s chains') % {'tier': second_tier_name}
+    return reportData
 
 def add_numeric_cell(cell, value):
     if value is None or value == '':
@@ -274,7 +281,6 @@ class IPTTQuickstart(LoginRequiredMixin, TemplateView):
 
     def get(self, request, *args, **kwargs):
         js_context = {
-            'labels': get_labels(quickstart=True),
             'programs': get_program_filter_data(request),
             'iptt_url': '/indicators/iptt_report/'
         }
@@ -285,114 +291,45 @@ class IPTTReport(LoginRequiredMixin, TemplateView):
     template_name = 'indicators/iptt_report.html'
 
     def get(self, request, *args, **kwargs):
+        tva = kwargs.get('reporttype') == 'targetperiods'
+        program_id = kwargs.get('program')
+        frequency = request.GET.get('frequency')
+        # if frequency and program_id:
+        #     indicator_qs, level_data, results_framework = get_iptt_program(program_id, frequency, tva)
+        #     reportData = indicators_to_iptt(
+        #         indicator_qs, frequency, tva, results_framework, program_id
+        #     )
+        #     reportData['levels'] = level_data
+        # else:
+        #     reportData = {}
         js_context = {
-            'labels': get_labels(quickstart=False),
             'programs': get_program_filter_data(request),
-            'api_url': reverse('iptt_ajax')
+            # 'reportData': reportData,
+            'api_url': reverse('iptt_ajax'),
+            'pin_url': reverse('create_pinned_report')
         }
         return self.render_to_response({'js_context': js_context})
 
 
 class IPTTReportData(LoginRequiredMixin, View):
     tva = False
+    results_framework = True
     frequency = Indicator.LOP
 
     def get_context_data(self, request):
         program_id = request.GET.get('programId')
-        dates = Program.objects.values('reporting_period_start', 'reporting_period_end').get(pk=program_id)
-        indicator_qs = IPTTIndicator.tva if self.tva else IPTTIndicator.timeperiods
-        indicator_qs = indicator_qs.filter(
-            program_id=program_id
-            )
-        if self.tva:
-            indicator_qs = indicator_qs.filter(
-                target_frequency=self.frequency
-            )
-        indicator_qs = indicator_qs.with_frequency_annotations(
-            self.frequency, dates['reporting_period_start'], dates['reporting_period_end'])
-        levels = Level.objects.filter(program_id=int(program_id))
-        level_data = []
-        for level in levels:
-            level_item = {
-                'id': level.pk,
-                'name': level.name,
-                'tier': level.leveltier.name,
-                'tierPk': level.leveltier.pk,
-                'ontology': level.ontology,
-                'parent': level.parent.pk if level.parent else None,
-                'depth': level.get_level_depth(),
-                'sort': level.customsort
-                }
-            if level_item['depth'] > 2:
-                target = level
-                while target.get_level_depth() > 2:
-                    target = target.parent
-                level_item['level2parent'] = target.pk
-            else:
-                level_item['level2parent'] = None
-            level_data.append(level_item)
-        return indicator_qs, level_data
+        indicator_qs, level_data, self.results_framework = get_iptt_program(program_id, self.frequency, self.tva)
+        reportData = indicators_to_iptt(
+            indicator_qs, self.frequency, self.tva, self.results_framework, program_id
+        )
+        reportData['levels'] = level_data
+        return reportData
+
 
     def get(self, request):
         self.tva = request.GET.get('reportType') == '1'
         self.frequency = int(request.GET.get('frequency'))
-        indicator_qs, level_data = self.get_context_data(request)
-        indicators = []
-        for sort_index, indicator in enumerate(indicator_qs):
-            this_indicator = {
-                'id': indicator.pk,
-                'sortIndex': sort_index,
-                'number': indicator.number,
-                'name': indicator.name,
-                'level': indicator.leveltier_name,
-                'tierDepth': indicator.leveltier_depth,
-                'levelpk': indicator.level_pk,
-                'levelOrder': indicator.level_order_display,
-                'sites': indicator.sites,
-                'indicatorTypes': indicator.indicator_types,
-                'sector': {'pk': indicator.sector.pk, 'name': indicator.sector.sector} if indicator.sector else {},
-                'frequency': indicator.target_frequency,
-                'directionOfChange': indicator.get_direction_of_change,
-                'unitOfMeasure': indicator.unit_of_measure,
-                'cumulative': ugettext('Cumulative') if indicator.is_cumulative else ugettext('Non-cumulative'),
-                'unitType': indicator.get_unit_of_measure_type,
-                'baseline': indicator.baseline,
-                'lopTarget': indicator.lop_target,
-                'lopActual': indicator.lop_actual,
-                'lopMet': indicator.lop_percent_met,
-                'reportData': {}
-            }
-            if self.frequency != Indicator.LOP:
-                values_count = getattr(indicator, 'frequency_{0}_count'.format(self.frequency))
-                if self.tva:
-                    this_indicator['reportData']['tva'] = {
-                        self.frequency: [
-                            {'target': getattr(indicator, 'frequency_{0}_period_{1}_target'.format(self.frequency, c)),
-                             'value': getattr(indicator, 'frequency_{0}_period_{1}'.format(self.frequency, c))}
-                            for c in range(values_count)
-                        ]
-                    }
-                else:
-                    this_indicator['reportData']['timeperiods'] = {
-                        self.frequency: [getattr(indicator, 'frequency_{0}_period_{1}'.format(self.frequency, c))
-                                         for c in range(values_count)]
-                    }
-            indicators.append(this_indicator)
-        second_leveltier = LevelTier.objects.filter(program_id=int(request.GET.get('programId')),
-                                                    tier_depth=2)
-        if second_leveltier.exists():
-            second_tier_name = second_leveltier.first().name
-        else:
-            second_tier_name = ugettext('Outcome')
-        reportData = {
-            'programId': request.GET.get('programId'),
-            'reportFrequency': self.frequency,
-            'reportType': 'tva' if self.tva else 'timeperiods',
-            'indicators': indicators,
-            'levels': level_data,
-            'resultChainFilter': ugettext('by %(tier)s chain') % {'tier': second_tier_name},
-            'resultChainHeader': ugettext('%(tier)s chains') % {'tier': second_tier_name}
-        }
+        reportData = self.get_context_data(request)
         return JsonResponse(reportData)
 
 

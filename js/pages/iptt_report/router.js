@@ -5,65 +5,13 @@ import { observable, computed, reaction } from 'mobx';
 import { TVA, TIMEPERIODS, GROUP_BY_CHAIN, GROUP_BY_LEVEL } from '../../constants';
 
 
-
-var mockProgramStore = {
-    validPID: true,
-    validFrequencies: [1, 4, 5],
-    groupByOld: false,
-    validateProgramId( id ) {
-        if (this.validPID) {
-            return Promise.resolve(parseInt(id));
-        } else {
-            return Promise.reject("bad ID");
-        }
-    },
-    validateFrequency( programId, frequency, reportType ) {
-        var frequencies = reportType === TIMEPERIODS ? [3, 4, 5, 6, 7] : this.validFrequencies;
-        if (frequencies.includes(parseInt(frequency))) {
-            return parseInt(frequency);
-        }
-        throw "bad freq";
-    },
-    currentPeriod( programId, frequency) {
-        return 7;
-    },
-    lastPeriod( programId, frequency ) {
-        return 8;
-    },
-    startPeriodFromDate( programId, frequency, date ) {
-        if (date instanceof Date && !isNaN(date)) {
-            return 3;
-        }
-        throw "bad date";
-    },
-    endPeriodFromDate( programId, frequency, date ) {
-        if (date instanceof Date && !isNaN(date)) {
-            if (date.toISOString() == new Date('2017-01-31').toISOString()) {
-                return 10;
-            }
-            return 6;
-        }
-        throw "bad date";
-    },
-    oldLevels( programId ) {
-        return this.groupByOld;
-    }
-}
-
 export default class ipttRouter {
-    @observable reportType = null;
-    @observable programId = null;
-    @observable frequency = null;
-    @observable startPeriod = null;
-    @observable endPeriod = null;
-    @observable groupBy = null;
-    @observable levels = null;
-    @observable tiers = null;
-    @observable sites = null;
-    @observable types = null;
-    @observable indicators = null;
+    filterStore = null;
 
-    constructor() {
+    constructor(filterStore, jsContext) {
+        if (jsContext && jsContext.pin_url) {
+            this.pinUrl = jsContext.pin_url;
+        }
         this.routes = [
         {
             name: 'iptt',
@@ -96,9 +44,9 @@ export default class ipttRouter {
     ];
     this.goodQueryParams = ['frequency', 'start', 'end', 'levels', 'types',
                             'sectors', 'indicators', 'tiers', 'groupby'];
-    this.oldQueryParams = ['timeframe', 'numrecentperiods', 'start_period', 'end_period'];
+    this.oldQueryParams = ['timeframe', 'numrecentperiods', 'numrecentcount', 'start_period', 'end_period'];
     this.queryParams = '?' + (this.goodQueryParams.concat(this.oldQueryParams)).join('&');
-    this.programStore = mockProgramStore;
+    this.filterStore = filterStore;
     }
     
     init = () => {
@@ -114,7 +62,7 @@ export default class ipttRouter {
                     this.router.buildPath(this.routeName, this.routeParams)) {
                     this.router.navigate(this.routeName, this.routeParams, {replace: true});
                 }
-                const navReact = reaction(
+                const navigateWhenRouteChanges = reaction(
                     () => [this.routeName, this.routeParams],
                     ([name, params]) => this.router.navigate(name, params)
                 );
@@ -139,6 +87,7 @@ export default class ipttRouter {
         timeperiods = null,
         targetperiods = null,
         timeframe = null,
+        numrecentcount = null,
         numrecentperiods = null,
         start_period = null,
         end_period = null,
@@ -149,86 +98,62 @@ export default class ipttRouter {
         types = null,
         indicators = null
         } = {}) => {
-        this.reportType = name == 'iptt.tva' ? TVA
-                        : name == 'iptt.timeperiods' ? TIMEPERIODS
-                        : null;
-        if (frequency === null && this.reportType === TVA && targetperiods !== null) {
-            frequency = targetperiods;
-        } else if (frequency === null && this.reportType === TIMEPERIODS && timeperiods !== null) {
-            frequency = timeperiods;
+        if (this.filterStore === null) {
+            throw "data not loaded";
         }
-        return this.programStore.validateProgramId(programId)
-            .then((programId) => {
-                this.programId = programId;
-                this.frequency = this.programStore.validateFrequency(programId, frequency, this.reportType);
-                if (start === null && this.frequency != 1 && this.frequency != 2) {
-                    start = this.getStartPeriod(timeframe, numrecentperiods, start_period);
-                }
-                this.startPeriod = start;
-                if (end === null && this.frequency != 1 && this.frequency != 2) {
-                    end = this.getEndPeriod(timeframe, end_period);
-                }
-                this.endPeriod = end;
-                if (!this.programStore.oldLevels( this.programId )) {
-                    this.groupBy = parseInt(groupby) || GROUP_BY_CHAIN;
-                }
-                levels = this.parseArrayParams(levels);
-                if (levels !== null) {
-                    tiers = null;
-                    this.levels = levels;
-                }
-                if (tiers !== null) {
-                    this.tiers = this.parseArrayParams(tiers);
-                }
-                this.sites = this.parseArrayParams(sites);
-                this.types = this.parseArrayParams(types);
-                this.indicators = this.parseArrayParams(indicators);
-                return Promise.resolve(true);
-            }, (errorMessage) => {throw errorMessage;}
-            ).catch((errorMessage) => {
-                return Promise.reject(errorMessage);
-            });
-        
+        this.filterStore.reportType = (name == 'iptt.tva') ? TVA
+                                    : (name == 'iptt.timeperiods') ? TIMEPERIODS
+                                    : null;
+        this.filterStore.programId = parseInt(programId);
+        if (frequency !== null) {
+            this.filterStore.frequencyId = parseInt(frequency);
+        } else if (this.reportType === TVA && targetperiods !== null) {
+            this.filterStore.frequencyId = parseInt(targetperiods);
+        } else if (this.reportType === TIMEPERIODS && timeperiods !== null) {
+            this.filterStore.frequencyId = parseInt(timeperiods);
+        }
+        if (start !== null) {
+            this.filterStore.startPeriod = parseInt(start);
+        } else if (start_period !== null && !isNaN(Date.parse(start_period))) {
+            this.filterStore.setStartPeriodFromDate(new Date(start_period));
+        }
+        if (end !== null) {
+            this.filterStore.endPeriod = parseInt(end);
+        } else if (end_period !== null && !isNaN(Date.parse(end_period))) {
+            this.filterStore.setEndPeriodFromDate(new Date(end_period));
+        }
+        if (timeframe !== null && parseInt(timeframe) == 1) {
+            this.filterStore.showAll = true;
+        } else if (timeframe !== null && parseInt(timeframe) == 2) {
+            this.filterStore.mostRecent = parseInt(numrecentperiods) || parseInt(numrecentcount) || 2;
+        }
+        if (groupby !== null && (parseInt(groupby) === GROUP_BY_CHAIN || parseInt(groupby) === GROUP_BY_LEVEL)) {
+            this.filterStore.groupBy = parseInt(groupby);
+        }
+        return this.filterStore.getLoadedProgram().then(() => {
+            if (levels !== null) {
+                tiers = null;
+                this.filterStore.levels = this.parseArrayParams(levels);
+            }
+            if (tiers !== null) {
+                this.filterStore.tiers = this.parseArrayParams(tiers);
+            }
+            if (types !== null) {
+                this.filterStore.types = this.parseArrayParams(types);
+            }
+            if (sites !== null) {
+                this.filterStore.sites = this.parseArrayParams(sites);
+            }
+            if (indicators !== null) {
+                this.filterStore.indicators = this.parseArrayParams(indicators);
+            }
+            return true;
+        },
+        () => false);
     }
     
-    getStartPeriod = (timeframe, numrecentperiods, start_period) => {
-        if (timeframe == '1') {
-            return 0;
-        } else if (timeframe == '2') {
-            return this.programStore.currentPeriod( this.programId, this.frequency ) -
-                        (parseInt(numrecentperiods) || 2) + 1;
-        } else if (start_period !== null) {
-            return this.programStore.startPeriodFromDate(
-                this.programId, this.frequency, new Date(start_period)
-            );
-        }
-        return Math.max(
-                this.programStore.currentPeriod( this.programId, this.frequency ) - 2,
-                0
-            );
-    }
-    
-    getEndPeriod = (timeframe, end_period) => {
-        var end;
-        if (timeframe == '1') {
-            return this.programStore.lastPeriod( this.programId, this.frequency );
-        } else if (timeframe == '2') {
-            return this.programStore.currentPeriod( this.programId, this.frequency );
-        } else if (end_period !== null) {
-            return Math.min(
-                    this.programStore.endPeriodFromDate(
-                        this.programId, this.frequency, new Date(end_period)
-                        ),
-                    this.programStore.lastPeriod( this.programId, this.frequency )
-                    );
-        }
-        return Math.max(
-                Math.min(
-                    this.programStore.currentPeriod( this.programId, this.frequency ),
-                    this.startPeriod + 2
-                ),
-                this.programStore.lastPeriod( this.programId, this.frequency )
-            );
+    @computed get reportType() {
+        return this.filterStore.reportType;
     }
     
     parseArrayParams = (param) => {
@@ -265,28 +190,41 @@ export default class ipttRouter {
         let params = {};
         let keys = [
             'programId',
-            'frequency',
             'levels',
             'tiers',
             'sites',
             'types',
             'indicators'];
         keys.forEach((k) => {
-            if (this[k] !== null)
+            if (this.filterStore[k] !== null)
                 {
-                    params[k] = this.parseToArrayParams(this[k]);
+                    params[k] = this.parseToArrayParams(this.filterStore[k]);
                 }
             });
-        if (this.startPeriod !== null) {
-            params.start = String(this.startPeriod);
+        if (this.filterStore.frequencyId !== null) {
+            params.frequency = String(this.filterStore.frequencyId);
         }
-        if (this.endPeriod !== null) {
-            params.end = String(this.endPeriod);
+        if (this.filterStore.startPeriod !== null) {
+            params.start = String(this.filterStore.startPeriod);
         }
-        if (this.groupBy !== null) {
-            params.groupby = String(this.groupBy);
+        if (this.filterStore.endPeriod !== null) {
+            params.end = String(this.filterStore.endPeriod);
+        }
+        if (this.filterStore.groupBy !== null) {
+            params.groupby = String(this.filterStore.groupBy);
         }
         return params;
+    }
+    
+    @computed get pinData() {
+        let {programId, ...params} = this.routeParams;
+        let reportType = this.reportType === TVA ? 'targetperiods'
+                : this.reportType === TIMEPERIODS ? 'timeperiods' : null;
+        return {
+            program: programId,
+            report_type: reportType,
+            query_string: Object.keys(params).map(k => `${k}=${params[k]}`).join('&')
+        };
     }
     
     @computed get dataUrl() {
@@ -294,18 +232,24 @@ export default class ipttRouter {
     }
     
     @computed get excelUrl() {
-        return this.router.buildUrl('ipttAPI.ipttExcel',
-                                     {...this.routeParams,
-                                     reportType: this.reportType,
-                                     fullTVA: false});
+        if (this.filterStore.frequencyId) {
+            return this.router.buildUrl('ipttAPI.ipttExcel',
+                                         {...this.routeParams,
+                                         reportType: this.reportType,
+                                         fullTVA: false});
+        }
+        return false;
     }
 
     
     @computed get fullExcelUrl() {
-        return this.router.buildUrl('ipttAPI.ipttExcel', {
-                                        programId: this.programId,
-                                        fullTVA: true
-                                    });
+        if (this.filterStore.isTVA && this.filterStore.programId) {
+            return this.router.buildUrl('ipttAPI.ipttExcel', {
+                                            programId: this.filterStore.programId,
+                                            fullTVA: true
+                                        });
+        }
+        return false;
     }
 
 }

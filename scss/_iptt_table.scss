@@ -47,8 +47,13 @@ body.page_iptt_table { // body element for extra specificity
     overflow-x: auto;
     padding-left: 10px;
 }
+
 #id_div_top_iptt_report {
     color: $gray-700; // why is this not #54585A ?
+}
+
+.title-row {
+    background-color: $gray-150;
 }
 
 .table__iptt .row__level {
@@ -68,20 +73,7 @@ body.page_iptt_table { // body element for extra specificity
     }
 }
 
-//reskin react-select modals to match bootstrap selects
-.iptt-react-select {
-    width: 100%;
-    color: $black;
+td.iptt-level-row {
+    background-color: $gray-300;
+    font-weight: bold;
 }
-
-.iptt-react-select-row > div {
-    width: 100%;
-    color: $black;
-    button {
-        width: 100%;
-    }
-    > div {
-        width: 100%;
-    }
-}
-
