@@ -82,7 +82,7 @@ class Indicator {
     }
     
     get levelName() {
-        return this.level.name;
+        return this.level ? this.level.name : null;
     }
 
 }
