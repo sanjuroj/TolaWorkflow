@@ -450,7 +450,7 @@ export default class FilterStore {
         if (!this.filtersDisabled && this.groupByDisabled) {
             let availableLevels = this.levels.concat(
                 this.filterIndicators(this.program.indicators, 'levels').map(
-                    indicator => indicator.level.pk
+                    indicator => indicator.level ? indicator.level.pk : null
             ));
             return this.program.levels.filter(
                     level => availableLevels.includes(level.pk)
