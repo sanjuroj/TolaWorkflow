@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load i18n mathfilters mytags static %}
+{% load render_bundle from webpack_loader %}
+{# Translators: title of the Results framework page #}
+{% block title %}{{ program.name }}: {% trans "Results framework" %} |{% endblock %}
+
+{% block page_title %}
+<a href='{% url "program_page" program.id %}'>{{ program.name }}:</a> <small>{% trans "Results framework" %} <i class="fas fa-sitemap"></i></small>
+{% endblock %}
+
+{% block header_extras %}
+{# Translators: "Logframe" is the Mercy Corps term for a "Logical Framework," a hierarchical system that makes explicit the results framework and ties it to indicators and results #}
+<a href="{# TODO #}" class="btn btn-link">{% trans "Logframe" %}<i class="fas fa-table"></i></a>
+{% endblock %}
+
+{% block content %}
+    <div id="level-builder-react-component" class="rf-page"></div>
+{% endblock content %}
+
+
+{% block extra_js_in_body %}
+    <script>
+        let jsContext = {{ js_context|js }};
+    </script>
+
+    {% render_bundle 'results_framework' %}
+{% endblock %}

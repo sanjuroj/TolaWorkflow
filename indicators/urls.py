@@ -32,6 +32,8 @@ from .views.views_reports import (
     IPTT_ExcelExport,
 )
 
+from .views.views_results_framework import ResultsFrameworkBuilder
+
 
 urlpatterns = [
     url(r'^indicator_create/(?P<program>\d+)/$', indicator_create, name='indicator_create'),
@@ -79,6 +81,9 @@ urlpatterns = [
 
     url(r'^pinned_report/$', create_pinned_report, name='create_pinned_report'),
     url(r'^pinned_report/delete/$', delete_pinned_report, name='delete_pinned_report'),
+
+    # Results framework builder
+    url(r'^results_framework_builder/(?P<program_id>\d+)', ResultsFrameworkBuilder.as_view(), name='results_framework_builder'),
 
     # API call for program page
     url(r'^api/indicator/(?P<indicator>\d+)', api_indicator_view, name='api_indicator_view'),

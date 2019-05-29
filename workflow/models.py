@@ -522,6 +522,10 @@ class Program(models.Model):
     end_date = models.DateField(_("Program End Date"), null=True, blank=True)
     reporting_period_start = models.DateField(_("Reporting Period Start Date"), null=True, blank=True)
     reporting_period_end = models.DateField(_("Reporting Period End Date"), null=True, blank=True)
+    using_results_framework = models.BooleanField(
+        _("Group indicators according to the results framework"),
+        default=True, blank=False
+    )
 
     objects = models.Manager()
     active_programs = ActiveProgramsManager()

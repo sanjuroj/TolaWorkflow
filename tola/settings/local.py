@@ -36,6 +36,8 @@ DATABASES = app_settings['DATABASES']
 DEBUG = app_settings['DEBUG']
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#template-debug
 
+TEMPLATES[0]['OPTIONS']['debug'] = app_settings['TEMPLATE_DEBUG']
+
 # EMAIL CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#email-backend
 EMAIL_USE_TLS = app_settings['EMAIL_USE_TLS']

@@ -1,14 +1,18 @@
 import sys
+import os
 import math
 import random
+import json
 from datetime import date, timedelta
 from dateutil.relativedelta import relativedelta
+from copy import deepcopy
 
 from django.core.management.base import BaseCommand
 from django.utils import timezone
+from django.conf import settings
 
-from indicators.models import Indicator, Result, PeriodicTarget, Level
-from workflow.models import Program, Country, Organization
+from indicators.models import Indicator, Result, PeriodicTarget, Level, LevelTier
+from workflow.models import Program, Country, Organization, TolaUser, CountryAccess
 from indicators.views.views_indicators import generate_periodic_targets
 from indicators.views.views_reports import IPTT_ReportView
 
@@ -28,11 +32,24 @@ class Command(BaseCommand):
         # ***********
         # Creates programs, indicators and results for qa testing
         # ***********
+        sample_levels = []
+        with open(os.path.join(settings.SITE_ROOT, 'fixtures/sample_levels.json'), 'r') as fh:
+            sample_levels = json.loads(fh.read())
+
+        filtered_levels = []
+        for level in sample_levels:
+            if 'tier_depth' not in level['fields']:
+                level['fields'].pop('program_id')
+                filtered_levels.append(level)
 
         org = Organization.objects.get(id=1)
         country, created = Country.objects.get_or_create(
             country='Tolaland', defaults={
                 'latitude': 21.4, 'longitude': -158, 'zoom': 6, 'organization': org, 'code': 'TO'})
+        for super in TolaUser.objects.filter(user__is_superuser=True):
+            CountryAccess.objects.get_or_create(country=country, tolauser=super, role='basic_admin')
+
+
         if options['clean_tolaland']:
             country = Country.objects.get(country='Tolaland')
             country.delete()
@@ -117,7 +134,7 @@ class Command(BaseCommand):
         if options['names']:
             tester_names = options['names'].split(',')
         else:
-            tester_names = ['Emily', 'Hanna', 'Marie', 'Jenny', 'Rickie', 'Sanjuro']
+            tester_names = ['Emily', 'Hanna', 'Marie', 'Jenny', 'Sanjuro', 'Ken', 'Cameron']
 
         for t_name in tester_names:
             program_name = 'QA Program - {}'.format(t_name)
@@ -125,6 +142,7 @@ class Command(BaseCommand):
             print 'Creating Indicators for {}'.format(Program.objects.get(id=program.id))
             self.create_indicators(program.id, all_params_base)
             self.create_indicators(program.id, null_supplements_params, apply_skips=False)
+            self.create_levels(program.id, filtered_levels)
 
         if options['named_only']:
             sys.exit()
@@ -341,8 +359,6 @@ class Command(BaseCommand):
             if params['null_level'] == 'targets':
                 frequency = None
 
-            levels = Level.objects.values_list('id', flat=True)
-
             # Finally, create the indicator
             indicator = Indicator(
                 name=indicator_name + ' | ' + indicator_suffix,
@@ -353,7 +369,6 @@ class Command(BaseCommand):
                 unit_of_measure_type=params['uom_type'],
                 direction_of_change=params['direction'],
                 program=program,
-                level=Level.objects.get(id=levels[n % len(levels)])
             )
             indicator.save()
             indicator_ids.append(indicator.id)
@@ -476,3 +491,22 @@ class Command(BaseCommand):
             indicator.save()
 
         return indicator_ids
+
+    def create_levels(self, program_id, level_data):
+        fixture_data = deepcopy(level_data)
+        tier_labels = LevelTier.PRESETS['Mercy Corps standard']
+        for i, tier in enumerate(tier_labels):
+            t = LevelTier(name=tier, tier_depth=i+1, program_id=program_id)
+            t.save()
+
+        level_map = {}
+        for level_fix in fixture_data:
+            parent = None
+            if 'parent_id' in level_fix['fields']:
+                parent = level_map[level_fix['fields'].pop('parent_id')]
+
+            level = Level(**level_fix['fields'])
+            level.parent = parent
+            level.program = Program.objects.get(id=program_id)
+            level.save()
+            level_map[level_fix['pk']] = level

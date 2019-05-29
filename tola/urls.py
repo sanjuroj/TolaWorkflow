@@ -27,6 +27,7 @@ from django.contrib.auth import views as authviews
 
 from tola import views as tolaviews
 from indicators.views.views_indicators import ProgramPage, old_program_page
+from indicators.views.views_results_framework import LevelViewSet, insert_new_level, save_leveltiers
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -51,7 +52,7 @@ router = routers.DefaultRouter()
 # router.register(r'indicatortype', IndicatorTypeViewSet)
 # router.register(r'objective', ObjectiveViewSet)
 # router.register(r'disaggregationtype', DisaggregationTypeViewSet)
-# router.register(r'level', LevelViewSet)
+router.register(r'level', LevelViewSet)
 # router.register(r'externalservice', ExternalServiceViewSet)
 # router.register(r'externalservicerecord', ExternalServiceRecordViewSet)
 # router.register(r'strategicobjective', StrategicObjectiveViewSet)
@@ -114,6 +115,10 @@ urlpatterns = [
                 # Program page
                 url(r'^program/(?P<program>\d+)/$',
                     ProgramPage.as_view(), name='program_page'),
+
+                # Results framework builder
+                url(r'^api/insert_new_level', insert_new_level, name='insert_new_level'),
+                url(r'^api/save_leveltiers', save_leveltiers, name='save_leveltiers'),
 
                 # url redirect for people with old bookmarks
                 url(r'^program/(?P<program_id>\d+)/(?P<indicator_id>\d+)/(?P<indicator_type_id>\d+)/$',
