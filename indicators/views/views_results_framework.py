@@ -8,8 +8,8 @@ from rest_framework import viewsets
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from indicators.serializers import LevelTierSerializer, LevelSerializer
-from indicators.models import Level, LevelTier
+from indicators.serializers import LevelTierSerializer, LevelSerializer, IndicatorSerializerMinimal
+from indicators.models import Level, LevelTier, Indicator
 from workflow.models import Program
 
 
@@ -30,10 +30,12 @@ class ResultsFrameworkBuilder(ListView):
 
         tiers = LevelTier.objects.filter(program=program)
         levels = Level.objects.filter(program=program)
+        indicators = Indicator.objects.filter(program=program)
 
         js_context = {
             'program_id': program.id,
             'levels': LevelSerializer(levels, many=True).data,
+            'indicators': IndicatorSerializerMinimal(indicators, many=True).data,
             'levelTiers': LevelTierSerializer(tiers, many=True).data,
             'tierPresets': LevelTier.PRESETS,
         }

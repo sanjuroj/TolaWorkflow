@@ -45,7 +45,6 @@ export class LevelCardCollapsed extends React.Component {
         const iCount = this.props.levelProps.indicators.length;
         /* # Translators: This is a count of indicators associated with another object */
         const indicatorCountText = interpolate(ngettext("%s indicator", "%s indicators", iCount), [iCount]);
-        // const indicatorCountText = 3;
         return (
             <div className="level-card level-card--collapsed" id={this.props.level.id}>
                 <div onClick={(e) => this.props.rootStore.uiStore.updateVisibleChildren(this.props.level.id)}>
