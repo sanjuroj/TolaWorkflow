@@ -173,8 +173,8 @@ class Period {
         this.endDisplay = periodJSON[1];
         if (TIME_AWARE_FREQUENCIES.includes(frequency)) {
             this.current = frequency === 7 ?
-                periodJSON.length > 4 && periodJSON[4] === "True" :
-                periodJSON.length > 2 && periodJSON[2] === "True";
+                periodJSON.length > 4 && (periodJSON[4] === true || periodJSON[4] === "True") :
+                periodJSON.length > 2 && (periodJSON[2] === true || periodJSON[2] === "True");
             switch (frequency) {
                 case 3:
                     this.name = `${_gettext('Year')} ${index + 1}`;

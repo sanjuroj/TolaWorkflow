@@ -182,6 +182,9 @@ export default class FilterStore {
     set startPeriod(startPeriod) {
         if (this.lastPeriod !== null) {
             this._startPeriod = Math.max(0, Math.min(this.lastPeriod.index, startPeriod));
+            if (this.endPeriod && this._startPeriod > this.endPeriod) {
+                this.endPeriod = startPeriod;
+            }
         }
     }
     
