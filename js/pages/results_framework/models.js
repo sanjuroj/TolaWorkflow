@@ -3,8 +3,8 @@ import { trimOntology } from '../../level_utils'
 import { api } from "../../api.js"
 
 export class RootStore {
-    constructor (program_id, levels, indicators, levelTiers, tierPresets) {
-        this.levelStore =  new LevelStore(program_id, levels, indicators, levelTiers, tierPresets, this);
+    constructor (program_id, levels, indicators, levelTiers, tierPresets, isAdmin) {
+        this.levelStore =  new LevelStore(program_id, levels, indicators, levelTiers, tierPresets, isAdmin, this);
         this.uiStore = new UIStore(this);
     }
 }
@@ -17,13 +17,15 @@ export class LevelStore {
     tierPresets = {};
     defaultPreset = "Mercy Corps standard";
     program_id = "";
+    isAdmin = false;
 
-    constructor(program_id, levels, indicators, levelTiers, tierPresets, rootStore) {
+    constructor(program_id, levels, indicators, levelTiers, tierPresets, isAdmin, rootStore) {
         this.rootStore = rootStore;
         this.levels = levels;
         this.indicators = indicators;
         this.tierPresets = tierPresets;
         this.program_id = program_id;
+        this.isAdmin = isAdmin;
 
         // Set the stored tierset and its name, if they exist.  Use the default if they don't.
         if (levelTiers.length > 0) {
@@ -54,7 +56,8 @@ export class LevelStore {
             }
             const childCount =  this.levels.filter(l => l.parent == level.id).length;
             const indicatorCount = this.indicators.filter( i => i.level == level.id);
-            properties['canDelete'] = childCount==0 && indicatorCount==0;
+            properties['canDelete'] = childCount==0 && indicatorCount==0 && this.isAdmin;
+            properties['canEdit'] = this.isAdmin;
             levelProperties[level.id] = properties;
         }
         return levelProperties
@@ -293,11 +296,11 @@ export class UIStore {
     };
 
     @action
-    updateVisibleChildren = (levelId) => {
-        if (this.hasVisibleChildren.indexOf(levelId) >= 0) {
+    updateVisibleChildren = (levelId, forceRemove=false) => {
+        if (this.hasVisibleChildren.indexOf(levelId) >= 0 || forceRemove) {
             this.hasVisibleChildren = this.hasVisibleChildren.filter( level_id => level_id != levelId );
             const childLevels = this.rootStore.levelStore.levels.filter( l => l.parent == levelId);
-            childLevels.forEach( l => this.updateVisibleChildren(l.id))
+            childLevels.forEach( l => this.updateVisibleChildren(l.id, true))
         }
         else {
             this.hasVisibleChildren.push(levelId);
