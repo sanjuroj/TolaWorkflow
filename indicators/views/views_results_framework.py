@@ -37,7 +37,7 @@ class ResultsFrameworkBuilder(ListView):
             'levels': LevelSerializer(levels, many=True).data,
             'indicators': IndicatorSerializerMinimal(indicators, many=True).data,
             'levelTiers': LevelTierSerializer(tiers, many=True).data,
-            'tierPresets': LevelTier.PRESETS,
+            'tierTemplates': LevelTier.TEMPLATES,
             'isAdmin': request.user.tola_user.has_admin_management_access,
         }
 

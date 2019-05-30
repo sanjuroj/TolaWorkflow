@@ -121,7 +121,6 @@ export class LevelCardExpanded extends React.Component {
 
     saveLevel = (event) => {
         event.preventDefault();
-        const formData = new FormData(event.target);
         this.props.rootStore.levelStore.saveLevelToDB(
             this.submitType,
             this.props.level.id,
@@ -153,7 +152,6 @@ export class LevelCardExpanded extends React.Component {
                 <form className="level-card--expanded__form" onSubmit={this.saveLevel}>
                     <textarea
                         className="form-control"
-                        type="text"
                         id="level-name"
                         name="name"
                         value={this.name || ""}
@@ -162,7 +160,6 @@ export class LevelCardExpanded extends React.Component {
                     <label htmlFor="assumptions">Assumptions</label>
                     <textarea
                         className="form-control"
-                        type="text"
                         id="level-assumptions"
                         name="assumptions"
                         autoComplete="off"
@@ -171,7 +168,7 @@ export class LevelCardExpanded extends React.Component {
                     <ButtonBar
                         level={this.props.level}
                         levelProps={this.props.levelProps}
-                        isActive={this.props.rootStore.uiStore.expandedCards[0] == this.props.level.id ? true : false}
+                        isActive={this.props.rootStore.uiStore.expandedCards[0] == this.props.level.id}
                         submitFunc={this.updateSubmitType}
                         cancelFunc={this.cancelEdit}
                         tierCount={this.props.rootStore.levelStore.chosenTierSet.length}/>
