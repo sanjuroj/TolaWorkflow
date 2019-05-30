@@ -28,9 +28,13 @@ export class LevelTitle extends React.Component {
 @inject('rootStore')
 @observer
 export class LevelCardCollapsed extends React.Component {
-
     deleteLevel = () => {
-        this.props.rootStore.levelStore.deleteLevelFromDB(this.props.level.id)
+        const levelTitle = this.props.levelProps.tierName + " " + this.props.levelProps.ontologyLabel;
+        create_no_rationale_changeset_notice({
+            /* # Translators:  This is a confirmation prompt that is triggered by clicking on a delete button. The code is a reference to the specific item being deleted.  Only one item can be deleted at a time. */
+            message_text: `Are you sure you want to delete ${levelTitle}?`,
+            on_submit: () => this.props.rootStore.levelStore.deleteLevelFromDB(this.props.level.id)});
+
     };
 
     editLevel = () => {
@@ -45,10 +49,20 @@ export class LevelCardCollapsed extends React.Component {
         const iCount = this.props.levelProps.indicators.length;
         /* # Translators: This is a count of indicators associated with another object */
         const indicatorCountText = interpolate(ngettext("%s indicator", "%s indicators", iCount), [iCount]);
+
+        // The expando caret is only applied to levels that:
+        // 1. Aren't at the end of the leveltier hierarchy
+        // 2. Actually have children
+        let expando = null;
+        if (this.props.levelProps.tierName != toJS(this.props.rootStore.levelStore.chosenTierSet.slice(-1)[0]) &&
+            this.props.rootStore.levelStore.levels.filter( l => l.parent == this.props.level.id).length > 0){
+            expando = <FontAwesomeIcon icon={this.props.rootStore.uiStore.hasVisibleChildren.indexOf(this.props.level.id) >= 0 ? 'caret-down' : 'caret-right'} />
+        }
+
         return (
             <div className="level-card level-card--collapsed" id={this.props.level.id}>
                 <div onClick={(e) => this.props.rootStore.uiStore.updateVisibleChildren(this.props.level.id)}>
-                    <FontAwesomeIcon icon={this.props.rootStore.uiStore.hasVisibleChildren.indexOf(this.props.level.id) >= 0 ? 'caret-down' : 'caret-right'} />
+                    {expando}
                     <div className="level-card--collapsed__name">
                         <strong>
                             <LevelTitle
@@ -65,13 +79,15 @@ export class LevelCardCollapsed extends React.Component {
                         { this.props.levelProps.canDelete &&
                             <button
                                 className="btn btn-sm btn-link btn-danger"
-                                onClick={this.deleteLevel}
-                            >
+                                onClick={this.deleteLevel}>
                                 <i className="fas fa-trash-alt"></i>&nbsp;{gettext("Delete")}
                             </button>
                         }
-                        <button className="btn btn-sm btn-link btn-text" onClick={this.editLevel}>
-                        <i className="fas fa-edit"/>&nbsp;{gettext("Edit")}</button>
+                        {this.props.levelProps.canEdit &&
+                            <button className="btn btn-sm btn-link btn-text" onClick={this.editLevel}>
+                                <i className="fas fa-edit"/>&nbsp;{gettext("Edit")}
+                            </button>
+                        }
                     </div>
                     <div className="actions__bottom" style={{display: "flex", justifyContent: "flex-end"}}>
                         <button className="btn btn-sm btn-link no-bold">{indicatorCountText}</button>
@@ -186,14 +202,14 @@ class ButtonBar extends React.Component {
         if (this.props.level.level_depth < tierCount) {
             {/* # Translators: On a button, with a tiered set of objects, save current object and add another one in the next lower tier, e.g. "Save and add another Activity" when the user is editing a Goal */}
             const buttonText = interpolate(gettext("Save and link %s"), [this.props.levelProps.childTierName])
-            addAndLinkButton = <LevelButton disabledText={disabledText} classes="btn-primary" text={buttonText} submitType="saveAndAddChild" submitFunc={this.props.submitFunc} />
+            addAndLinkButton = <LevelButton disabledText={disabledText} classes="btn btn-primary" text={buttonText} submitType="saveAndAddChild" submitFunc={this.props.submitFunc} />
         }
         return (
             <div className="button-bar">
-                <LevelButton disabledText={disabledText} classes="btn-primary" text={gettext("Save and close")} submitType="saveOnly" submitFunc={this.props.submitFunc} />
+                <LevelButton disabledText={disabledText} classes="btn btn-primary" text={gettext("Save and close")} submitType="saveOnly" submitFunc={this.props.submitFunc} />
                 {addAnotherButton}
                 {addAndLinkButton}
-                <LevelButton classes="btn-reset" text={gettext("Cancel")} submitType="cancel" submitFunc={this.props.cancelFunc} />
+                <LevelButton classes="btn btn-reset" text={gettext("Cancel")} submitType="cancel" submitFunc={this.props.cancelFunc} />
             </div>
         )
 
