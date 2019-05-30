@@ -861,6 +861,26 @@ class Indicator(SafeDeleteModel):
         return self.baseline
 
     @property
+    def calculated_lop_target(self):
+        """
+        We have always manually set the LoP target of an indicator manually via form input
+        but now we are starting to compute it based on the PeriodicTarget values.
+
+        This property returns the calculated value, which may be different than the stored value in the DB
+        """
+        periodic_targets = self.periodictargets.all()
+
+        if not periodic_targets.exists():
+            return None
+
+        if self.is_cumulative:
+            # return the last value in the sequence
+            return periodic_targets.last().target
+        else:
+            # sum the values
+            return sum(pt.target for pt in periodic_targets)
+
+    @property
     def lop_target_stripped(self):
         """adding logic to strip trailing zeros in case of a decimal with superfluous zeros to the right of the ."""
         if self.lop_target:

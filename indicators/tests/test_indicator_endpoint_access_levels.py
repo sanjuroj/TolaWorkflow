@@ -4,7 +4,7 @@ indicators/
     indicator_update/<pk> indicator_update
     indicator_delete/<pk> indicator_delete
     periodic_target_delete/<pk> pt_delete
-    periodic_target_deleteall/<indicator>/<deleteall> pt_deleteall (deleteall = true)
+    periodic_target_deleteall/<indicator>/<deleteall> pt_deleteall
     result_add/<indicator> result_add
     result_update/<pk> result_update
     result_delete/<pk> result_delete
@@ -78,8 +78,7 @@ class TestPeriodTargetDeleteEndpoint(EndpointTestBase, test.TestCase):
 
 class TestPeriodicTargetDeleteAllEndpoint(EndpointTestBase, test.TestCase):
     url = 'pt_deleteall'
-    url_kwargs = {'indicator': None,
-                  'deleteall': 'True'}
+    url_kwargs = {'indicator': None}
     access_level = 'high'
     delete = 'periodic_target'
 

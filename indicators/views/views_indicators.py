@@ -569,22 +569,23 @@ class PeriodicTargetDeleteAllView(View):
             else:
                 rationale = 'No reason for change required.'
 
-        deleteall = self.kwargs.get('deleteall', None)
-        if deleteall == 'true':
-            periodic_targets = PeriodicTarget.objects.filter(
-                indicator=indicator)
+        periodic_targets = PeriodicTarget.objects.filter(
+            indicator=indicator)
 
-            old = indicator.logged_fields
+        old = indicator.logged_fields
 
-            for pt in periodic_targets:
-                pt.result_set.all().update(periodic_target=None)
-                pt.delete()
-            indicator.target_frequency = None
-            indicator.target_frequency_num_periods = 1
-            indicator.target_frequency_start = None
-            indicator.target_frequency_custom = None
-            indicator.save()
-            ProgramAuditLog.log_indicator_updated(self.request.user, indicator, old, indicator.logged_fields, rationale)
+        for pt in periodic_targets:
+            pt.result_set.all().update(periodic_target=None)
+            pt.delete()
+
+        indicator.target_frequency = None
+        indicator.target_frequency_num_periods = 1
+        indicator.target_frequency_start = None
+        indicator.target_frequency_custom = None
+        indicator.lop_target = None  # since lop target is auto-calculated, unset it when PTs are destroyed
+        indicator.save()
+
+        ProgramAuditLog.log_indicator_updated(self.request.user, indicator, old, indicator.logged_fields, rationale)
 
         return JsonResponse({"status": "success"})
 
@@ -624,14 +625,17 @@ class PeriodicTargetDeleteView(DeleteView):
                 self.get_object().result_set.all().update(
                     periodic_target=None)
         if not rationale and result_count == 0:
-            rationale = 'No reason for change required.'
+            rationale = _('No reason for change required.')
         self.get_object().delete()
         if indicator.periodictargets.count() == 0:
             indicator.target_frequency = None
             indicator.target_frequency_num_periods = 1
             indicator.target_frequency_start = None
             indicator.target_frequency_custom = None
-            indicator.save()
+
+        indicator.lop_target = indicator.calculated_lop_target
+        indicator.save()
+
         ProgramAuditLog.log_indicator_updated(
                 request.user,
                 indicator,

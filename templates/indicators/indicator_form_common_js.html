@@ -202,6 +202,7 @@
             (url, row) => () => {
                 row.remove();
                 updateIfLastEvent();
+                updateLopTargetDisplay();
             } :
             (url, row) => (rationale) => {
                 $.post(url, {rationale: rationale})
@@ -210,6 +211,7 @@
                             row.remove();
                             if (updateSnapshot) updateTargetSnapshot();
                             updateIfLastEvent();
+                            updateLopTargetDisplay();
                         }
                     });
             };
@@ -247,7 +249,7 @@
 
         const actionCb = isCreateForm() ? clearPeriodicTargetsForm :
             (rationale) => {
-                $.post('/indicators/periodic_target_deleteall/' + indicatorId() + '/true/', {rationale}, clearPeriodicTargetsForm);
+                $.post('/indicators/periodic_target_deleteall/' + indicatorId() + '/', {rationale}, clearPeriodicTargetsForm);
             };
 
 
@@ -267,6 +269,8 @@
             });
         }
         scrollToIndicatorFormBottom();
+
+        updateLopTargetDisplay();
     });
 
 
@@ -596,20 +600,23 @@
     Calculates the sum and count of all targets
     */
     function computeLopTarget() {
-        let sum = 0;
         let values = [];
 
         $("#periodic_targets_table input[data-periodictarget]").each(function () {
             let targetValue = parseFloat($(this).val());
-            if (isNaN(targetValue)) {
-                targetValue = 0;
-            }
-            sum += targetValue;
             values.push(targetValue);
         });
 
+        let validValues = values.filter(n => !isNaN(n));
+
+        if (validValues.length === 0) {
+            return null;
+        }
+
+        let sum = validValues.reduce((total, n) => total + n)
+
         // the last value is the target when cumulative
-        return getIsCumulative() ? values[values.length - 1] : sum;
+        return getIsCumulative() ? validValues[validValues.length - 1] : sum;
     }
 
     /*
