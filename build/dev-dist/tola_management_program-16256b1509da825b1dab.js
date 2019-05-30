@@ -1853,7 +1853,7 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
       return store.applyFilters();
     }
   }, gettext("Apply")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
-    className: "btn btn-reset",
+    className: "btn btn-inverse",
     onClick: function onClick() {
       return store.clearFilters();
     }
@@ -3021,4 +3021,4 @@ function () {
 /***/ })
 
 },[["1faY","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_program-f2f8f6e824aff20193ac.js.map
+//# sourceMappingURL=tola_management_program-16256b1509da825b1dab.js.map
