@@ -98,3 +98,25 @@ class ProgramSerializer(serializers.ModelSerializer):
             'reporting_period_start',
             'reporting_period_end',
         ]
+
+class IPTTProgramSerializer(serializers.Serializer):
+    """
+    Serializer specific to the IPTT Report Data API endpoint
+    """
+    levels = serializers.SerializerMethodField()
+
+    def get_levels(self, program):
+        if not program.using_results_framework:
+            return self.old_style_levels(program)
+        return self.results_framework_levels()
+
+    def old_style_levels(self, program):
+        levels = []
+        for result in program.indicator_set.order_by().values('old_level').distinct():
+            levels.append(
+                {
+                    'name': result['old_level'],
+                    'depth': 4
+                }
+            )
+        return levels

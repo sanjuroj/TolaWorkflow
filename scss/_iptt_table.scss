@@ -36,6 +36,10 @@ body.page_iptt_table { // body element for extra specificity
     .page-title {
         display: none;
     }
+    .subheader__actions {
+        position: fixed;
+        right: 0px;
+    }
 }
 .iptt_table_wrapper {
     // See breakpoint mixin below
@@ -43,8 +47,19 @@ body.page_iptt_table { // body element for extra specificity
     overflow-x: auto;
     padding-left: 10px;
 }
+
 #id_div_top_iptt_report {
     color: $gray-700; // why is this not #54585A ?
+}
+
+.title-row {
+    background-color: $gray-150;
+}
+
+.table__iptt .row__level {
+    font-weight: bold;
+    color: $gray-800;
+    background-color: $gray-200;
 }
 
 
@@ -58,3 +73,7 @@ body.page_iptt_table { // body element for extra specificity
     }
 }
 
+td.iptt-level-row {
+    background-color: $gray-300;
+    font-weight: bold;
+}
