@@ -9634,6 +9634,15 @@ input[type=radio]:disabled {
   flex-direction: row;
   justify-content: space-between; }
 
+.level-card__toggle:hover {
+  cursor: pointer;
+  text-decoration: underline; }
+
+.level-card--collapsed__name {
+  display: inline;
+  color: #54585a;
+  margin-left: 7.5px; }
+
 .level-card--expanded {
   background-color: #ccefee;
   border: 1px solid #b5e0df;
@@ -9645,7 +9654,7 @@ input[type=radio]:disabled {
   flex-direction: column; }
 
 .level-title--collapsed {
-  display: inline-block;
+  display: inline;
   font-size: inherit;
   line-height: inherit;
   margin-bottom: 0;

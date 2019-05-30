@@ -330,6 +330,7 @@ function (_React$Component2) {
         return l.parent == _this2.props.level.id;
       }).length > 0) {
         expando = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_5__["FontAwesomeIcon"], {
+          className: "text-action",
           icon: this.props.rootStore.uiStore.hasVisibleChildren.indexOf(this.props.level.id) >= 0 ? 'caret-down' : 'caret-right'
         });
       }
@@ -338,16 +339,17 @@ function (_React$Component2) {
         className: "level-card level-card--collapsed",
         id: this.props.level.id
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: expando ? "level-card__toggle" : "",
         onClick: function onClick(e) {
           return _this2.props.rootStore.uiStore.updateVisibleChildren(_this2.props.level.id);
         }
-      }, expando, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      }, expando, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
         className: "level-card--collapsed__name"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(LevelTitle, {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(LevelTitle, {
         tierName: this.props.levelProps.tierName,
         ontologyLabel: this.props.levelProps.ontologyLabel,
         classes: "level-title--collapsed"
-      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, "\xA0", this.props.level.name))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      }), "\xA0", this.props.level.name)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "level-card--collapsed__actions"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "actions__top",
@@ -1395,4 +1397,4 @@ function (_React$Component2) {
 /***/ })
 
 },[["QTZG","runtime","vendors"]]]);
-//# sourceMappingURL=results_framework-2325f70adfbd94d20afc.js.map
+//# sourceMappingURL=results_framework-c710bff0dfa4b6a03f72.js.map

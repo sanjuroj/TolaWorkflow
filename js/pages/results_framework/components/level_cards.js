@@ -56,23 +56,23 @@ export class LevelCardCollapsed extends React.Component {
         let expando = null;
         if (this.props.levelProps.tierName != toJS(this.props.rootStore.levelStore.chosenTierSet.slice(-1)[0]) &&
             this.props.rootStore.levelStore.levels.filter( l => l.parent == this.props.level.id).length > 0){
-            expando = <FontAwesomeIcon icon={this.props.rootStore.uiStore.hasVisibleChildren.indexOf(this.props.level.id) >= 0 ? 'caret-down' : 'caret-right'} />
+            expando = <FontAwesomeIcon className="text-action" icon={this.props.rootStore.uiStore.hasVisibleChildren.indexOf(this.props.level.id) >= 0 ? 'caret-down' : 'caret-right'} />
         }
 
         return (
             <div className="level-card level-card--collapsed" id={this.props.level.id}>
-                <div onClick={(e) => this.props.rootStore.uiStore.updateVisibleChildren(this.props.level.id)}>
+                <div
+                    className={expando ? "level-card__toggle": ""}
+                    onClick={(e) => this.props.rootStore.uiStore.updateVisibleChildren(this.props.level.id)}>
                     {expando}
-                    <div className="level-card--collapsed__name">
-                        <strong>
-                            <LevelTitle
-                                tierName={this.props.levelProps.tierName}
-                                ontologyLabel={this.props.levelProps.ontologyLabel}
-                                classes="level-title--collapsed"
-                            />
-                        </strong>
-                        <span>&nbsp;{this.props.level.name}</span>
-                    </div>
+                    <span className="level-card--collapsed__name">
+                        <LevelTitle
+                            tierName={this.props.levelProps.tierName}
+                            ontologyLabel={this.props.levelProps.ontologyLabel}
+                            classes="level-title--collapsed"
+                        />
+                        &nbsp;{this.props.level.name}
+                    </span>
                 </div>
                 <div className="level-card--collapsed__actions">
                     <div className="actions__top" style={{display: "flex", justifyContent: "flex-end"}}>

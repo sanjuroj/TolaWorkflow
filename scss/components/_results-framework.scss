@@ -90,7 +90,16 @@
     flex-direction: row;
     justify-content: space-between;
 }
+.level-card__toggle {
+    &:hover {
+        cursor: pointer;
+        text-decoration: underline;
+    }
+}
 .level-card--collapsed__name {
+    display: inline;
+    color: $gray-700;
+    margin-left: $grid-gutter-width/4;
 }
 .level-card--collapsed__title {} // unused?
 .level-card--collapsed__actions {
@@ -115,7 +124,7 @@
 .level-title {
 }
 .level-title--collapsed {
-    display: inline-block;
+    display: inline;
     font-size: inherit;
     line-height: inherit;
     margin-bottom: 0;
