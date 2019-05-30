@@ -257,7 +257,8 @@ a:hover {
 
 // reset button
 // use with .btn as per usual
-.btn-reset {
+// .btn-inverse is DEPRECATED in favor of .btn-reset
+.btn-reset, .btn-inverse {
     background-color: $white;
     color: $text-muted;
     text-transform: uppercase;
