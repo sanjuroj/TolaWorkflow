@@ -8,13 +8,12 @@ from dateutil.relativedelta import relativedelta
 from copy import deepcopy
 
 from django.core.management.base import BaseCommand
-from django.utils import timezone
+from django.utils import timezone, translation
 from django.conf import settings
 
 from indicators.models import Indicator, Result, PeriodicTarget, Level, LevelTier
 from workflow.models import Program, Country, Organization, TolaUser, CountryAccess
 from indicators.views.views_indicators import generate_periodic_targets
-from indicators.views.views_reports import IPTT_ReportView
 
 
 class Command(BaseCommand):
@@ -32,6 +31,8 @@ class Command(BaseCommand):
         # ***********
         # Creates programs, indicators and results for qa testing
         # ***********
+
+        translation.activate(settings.LANGUAGE_CODE)
         sample_levels = []
         with open(os.path.join(settings.SITE_ROOT, 'fixtures/sample_levels.json'), 'r') as fh:
             sample_levels = json.loads(fh.read())
@@ -282,8 +283,9 @@ class Command(BaseCommand):
                 })
             return
 
-        num_periods = IPTT_ReportView._get_num_periods(
-            program.reporting_period_start, program.reporting_period_end, indicator.target_frequency)
+        target_generator = PeriodicTarget.generate_for_frequency(indicator.target_frequency)
+        num_periods = len([p for p in target_generator(program.reporting_period_start, program.reporting_period_end)])
+
         if indicator.target_frequency == Indicator.LOP:
             print 'lop num_periods'
         targets_json = generate_periodic_targets(
