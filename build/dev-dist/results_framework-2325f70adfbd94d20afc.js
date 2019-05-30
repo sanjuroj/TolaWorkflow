@@ -360,7 +360,7 @@ function (_React$Component2) {
         onClick: this.deleteLevel
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
         className: "fas fa-trash-alt"
-      }), "\xA0", gettext("Delete")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+      }), "\xA0", gettext("Delete")), this.props.levelProps.canEdit && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         className: "btn btn-sm btn-link btn-text",
         onClick: this.editLevel
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
@@ -608,16 +608,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 
 
-var RootStore = function RootStore(program_id, levels, indicators, levelTiers, tierPresets) {
+var RootStore = function RootStore(program_id, levels, indicators, levelTiers, tierPresets, isAdmin) {
   _classCallCheck(this, RootStore);
 
-  this.levelStore = new LevelStore(program_id, levels, indicators, levelTiers, tierPresets, this);
+  this.levelStore = new LevelStore(program_id, levels, indicators, levelTiers, tierPresets, isAdmin, this);
   this.uiStore = new UIStore(this);
 };
 var LevelStore = (_class = (_temp =
 /*#__PURE__*/
 function () {
-  function LevelStore(program_id, levels, indicators, levelTiers, tierPresets, rootStore) {
+  function LevelStore(program_id, levels, indicators, levelTiers, tierPresets, isAdmin, rootStore) {
     var _this = this;
 
     _classCallCheck(this, LevelStore);
@@ -633,6 +633,7 @@ function () {
     this.tierPresets = {};
     this.defaultPreset = "Mercy Corps standard";
     this.program_id = "";
+    this.isAdmin = false;
 
     _initializerDefineProperty(this, "cancelEdit", _descriptor5, this);
 
@@ -741,7 +742,8 @@ function () {
     this.levels = levels;
     this.indicators = indicators;
     this.tierPresets = tierPresets;
-    this.program_id = program_id; // Set the stored tierset and its name, if they exist.  Use the default if they don't.
+    this.program_id = program_id;
+    this.isAdmin = isAdmin; // Set the stored tierset and its name, if they exist.  Use the default if they don't.
 
     if (levelTiers.length > 0) {
       this.chosenTierSet = levelTiers.map(function (t) {
@@ -826,7 +828,8 @@ function () {
             return i.level == level.id;
           });
 
-          properties['canDelete'] = childCount == 0 && indicatorCount == 0;
+          properties['canDelete'] = childCount == 0 && indicatorCount == 0 && _this2.isAdmin;
+          properties['canEdit'] = _this2.isAdmin;
           levelProperties[level.id] = properties;
         };
 
@@ -1095,7 +1098,9 @@ function () {
     var _this9 = this;
 
     return function (levelId) {
-      if (_this9.hasVisibleChildren.indexOf(levelId) >= 0) {
+      var forceRemove = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+
+      if (_this9.hasVisibleChildren.indexOf(levelId) >= 0 || forceRemove) {
         _this9.hasVisibleChildren = _this9.hasVisibleChildren.filter(function (level_id) {
           return level_id != levelId;
         });
@@ -1105,7 +1110,7 @@ function () {
         });
 
         childLevels.forEach(function (l) {
-          return _this9.updateVisibleChildren(l.id);
+          return _this9.updateVisibleChildren(l.id, true);
         });
       } else {
         _this9.hasVisibleChildren.push(levelId);
@@ -1174,8 +1179,9 @@ var _jsContext = jsContext,
     levels = _jsContext.levels,
     indicators = _jsContext.indicators,
     levelTiers = _jsContext.levelTiers,
-    tierPresets = _jsContext.tierPresets;
-var rootStore = new _models__WEBPACK_IMPORTED_MODULE_8__["RootStore"](program_id, levels, indicators, levelTiers, tierPresets);
+    tierPresets = _jsContext.tierPresets,
+    isAdmin = _jsContext.isAdmin;
+var rootStore = new _models__WEBPACK_IMPORTED_MODULE_8__["RootStore"](program_id, levels, indicators, levelTiers, tierPresets, isAdmin);
 /*
  * React components on page
  */
@@ -1389,4 +1395,4 @@ function (_React$Component2) {
 /***/ })
 
 },[["QTZG","runtime","vendors"]]]);
-//# sourceMappingURL=results_framework-5f9f7bbcf86449067002.js.map
+//# sourceMappingURL=results_framework-2325f70adfbd94d20afc.js.map
