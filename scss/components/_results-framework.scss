@@ -139,7 +139,23 @@
 
 // component ButtonBar
 .button-bar {
-    margin-top: $grid-gutter-width/2;
+    align-items: center;
+    background: $teal-200;
+    display: flex;
+    justify-content: space-between;
+    margin: $grid-gutter-width/2 $grid-gutter-width/-2 $grid-gutter-width/-2 $grid-gutter-width/-2 ;
+    padding: $grid-gutter-width/2;
+}
+.button-bar__label {
+    margin-bottom: 0;
+    white-space: nowrap;
+}
+.button-bar__save {
+    margin: 0 $grid-gutter-width/4;
+}
+.button-bar__close {
+    flex-grow: 1;
+    text-align: right;
 }
 
 // component LevelButton
