@@ -196,12 +196,75 @@ class LevelAdmin(admin.ModelAdmin):
 
 class LevelTier(models.Model):
 
-    PRESETS = {
-        'Mercy Corps standard': (ugettext('Goal'), ugettext('Outcome'), ugettext('Output'), ugettext('Activity')),
-        'European Commission (EC)': (ugettext('Overall Objective'), ugettext('Specific Objective'), ugettext('Purpose'), ugettext('Result'), ugettext('Activity')),
-        'USAID 1': (ugettext('Goal'), ugettext('Purpose'), ugettext('Sub-Purpose'), ugettext('Output'), ugettext('Input')),
-        'USAID 2': (ugettext('Strategic Objective'), ugettext('Intermediate Result'), ugettext('Sub-Intermediate Result'), ugettext('Output'), ugettext('Input')),
-        'USAID FFP': (ugettext('Goal'), ugettext('Purpose'), ugettext('Sub-Purpose'), ugettext('Intermediate Outcome'), ugettext('Output')),
+    TEMPLATES = {
+        'mc_standard': {
+            # Translators: Name of the most commonly used organizational hierarchy of KPIs at Mercy Corps.
+            'name': ugettext('Mercy Corps standard'),
+            'tiers': [
+                # Highest level objective of a project.  High level KPIs can be attached here.
+                ugettext('Goal'),
+                # Below Goals, the 2nd highest organizing level to attach KPIs to.
+                ugettext('Outcome'),
+                # Below Outcome, the 3rd highest organizing level to attach KPIs to. Noun.
+                ugettext('Output'),
+                # Below Output, the lowest organizing level to attach KPIs to.
+                ugettext('Activity')]},
+        'ec': {
+            # Translators: The KPI organizational hierarchy used when we work on EC projects.
+            'name': ugettext('European Commission (EC)'),
+            'tiers': [
+                # Highest level goal of a project.  High level KPIs can be attached here.
+                ugettext('Overall Objective'),
+                # Below Overall Objective, the 2nd highest organizing level to attach KPIs to.
+                ugettext('Specific Objective'),
+                # Below Specific Objective, the 3rd highest organizing level to attach KPIs to.
+                ugettext('Purpose'),
+                # Below Purpose, the 4th highest organizing level to attach KPIs to.
+                ugettext('Result'),
+                # Below Result, the lowest organizing level to attach KPIs to.
+                ugettext('Activity')]},
+        'usaid1': {
+            # Translators: The KPI organizational hierarchy used when we work on certain USAID projects.
+            'name': ugettext('USAID 1'),
+            'tiers': [
+                # Highest level objective of a project.  High level KPIs can be attached here.
+                ugettext('Goal'),
+                # Below Goal, the 2nd highest organizing level to attach KPIs to.
+                ugettext('Purpose'),
+                # Below Purpose, the 3rd highest organizing level to attach KPIs to.
+                ugettext('Sub-Purpose'),
+                # Below Sub-Purpose, the 4th highest organizing level to attach KPIs to. Noun.
+                ugettext('Output'),
+                # Below Output, the lowest organizing level to attach KPIs to. Noun.
+                ugettext('Input')]},
+        'usaid2': {
+            # Translators: The KPI organizational hierarchy used when we work on certain USAID projects.
+            'name': ugettext('USAID 2'),
+            'tiers': [
+                # Highest level goal of a project.  High level KPIs can be attached here.
+                ugettext('Strategic Objective'),
+                # Below Strategic Objective, the 2nd highest organizing level to attach KPIs to.
+                ugettext('Intermediate Result'),
+                # Below Intermediate Result, the 3rd highest organizing level to attach KPIs to.
+                ugettext('Sub-Intermediate Result'),
+                # Below Sub-Intermediate Result, the 4th highest organizing level to attach KPIs to. Noun.
+                ugettext('Output'),
+                # Below Output, the lowest organizing level to attach KPIs to. Noun.
+                ugettext('Input')]},
+        'usaid_ffp': {
+            # Translators: The KPI organizational hierarchy used when we work on USAID Food for Peace projects.
+            'name': ugettext('USAID FFP'),
+            'tiers': [
+                # Highest level bojective of a project.  High level KPIs can be attached here.
+                ugettext('Goal'),
+                # Below Goal, the 2nd highest organizing level to attach KPIs to.
+                ugettext('Purpose'),
+                # Below Purpose, the 3rd highest organizing level to attach KPIs to.
+                ugettext('Sub-Purpose'),
+                # Below Sub-Purpose, the 4th highest organizing level to attach KPIs to.
+                ugettext('Intermediate Outcome'),
+                # Below Intermediate Outcome, the lowest organizing level to attach KPIs to. Noun.
+                ugettext('Output')]},
     }
 
     name = models.CharField(ugettext("Name"), max_length=135, blank=True)

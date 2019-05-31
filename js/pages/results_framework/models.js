@@ -3,8 +3,8 @@ import { trimOntology } from '../../level_utils'
 import { api } from "../../api.js"
 
 export class RootStore {
-    constructor (program_id, levels, indicators, levelTiers, tierPresets, isAdmin) {
-        this.levelStore =  new LevelStore(program_id, levels, indicators, levelTiers, tierPresets, isAdmin, this);
+    constructor (program_id, levels, indicators, levelTiers, tierTemplates, isAdmin) {
+        this.levelStore =  new LevelStore(program_id, levels, indicators, levelTiers, tierTemplates, isAdmin, this);
         this.uiStore = new UIStore(this);
     }
 }
@@ -12,29 +12,34 @@ export class RootStore {
 export class LevelStore {
     @observable levels = [];
     @observable indicators = [];
+    @observable chosenTierSetKey = "";
     @observable chosenTierSet = [];
-    @observable chosenTierSetName = "";
-    tierPresets = {};
-    defaultPreset = "Mercy Corps standard";
+    tierTemplates;
+    defaultTemplateKey = "";
+    customTierSetKey = "";
     program_id = "";
     isAdmin = false;
 
-    constructor(program_id, levels, indicators, levelTiers, tierPresets, isAdmin, rootStore) {
+    constructor(program_id, levels, indicators, levelTiers, tierTemplates, isAdmin, rootStore) {
         this.rootStore = rootStore;
         this.levels = levels;
         this.indicators = indicators;
-        this.tierPresets = tierPresets;
+
+        this.tierTemplates = tierTemplates;
+        this.defaultTemplateKey = "mc_standard";
+        this.customTierSetKey = "custom";
         this.program_id = program_id;
         this.isAdmin = isAdmin;
 
-        // Set the stored tierset and its name, if they exist.  Use the default if they don't.
+        // Set the stored tier set key and the values, if they exist.  Use the default if they don't.
         if (levelTiers.length > 0) {
+            // deriveTemplateKey relies on chosenTierSet to be populated, so need to set it first.
             this.chosenTierSet = levelTiers.map( t => t.name);
-            this.chosenTierSetName = this.derive_preset_name(levelTiers, tierPresets);
+            this.chosenTierSetKey = this.deriveTemplateKey(levelTiers);
         }
         else {
-            this.chosenTierSetName = this.defaultPreset;
-            this.chosenTierSet = this.tierPresets[this.defaultPreset];
+            this.chosenTierSetKey = this.defaultTemplateKey;
+            this.chosenTierSet = this.tierTemplates[this.chosenTierSetKey]['tiers'];
         }
     }
 
@@ -63,10 +68,19 @@ export class LevelStore {
         return levelProperties
     }
 
+    @computed get chosenTierSetName () {
+        if (this.chosenTierSetKey == this.customTierSetKey){
+            return "Custom"
+        }
+        else {
+            return this.tierTemplates[this.chosenTierSetKey]['name']
+        }
+    };
+
     @action
-    changeTierSet(newTierSetName) {
-        this.chosenTierSetName = newTierSetName;
-        this.chosenTierSet = this.tierPresets[newTierSetName]
+    changeTierSet(newTierSetKey) {
+        this.chosenTierSetKey = newTierSetKey;
+        this.chosenTierSet = this.tierTemplates[newTierSetKey]['tiers']
     }
 
     @action
@@ -220,22 +234,24 @@ export class LevelStore {
 
     };
 
-    derive_preset_name(levelTiers, tierPresets) {
-        if (!levelTiers){
-            return null;
-        }
-        const levelTiersArray = levelTiers.sort(t => t.tier_depth).map(t => t.name);
-        const levelTierStr = JSON.stringify(levelTiersArray);
-        for (let presetName in tierPresets){
-            if (levelTiers.length != tierPresets[presetName].length){
-                continue
+    deriveTemplateKey = () => {
+        // Check each tier set in the templates to see if the tier order and content are exactly the same
+        // If they are, return the template key
+        const levelTierStr = JSON.stringify(toJS(this.chosenTierSet));
+        for (let templateKey in this.tierTemplates){
+            // not an eligable template if the key is inherited or if the lengths of the tier sets don't match.
+            if (!this.tierTemplates.hasOwnProperty(templateKey) ||
+                this.chosenTierSet.length != this.tierTemplates[templateKey]['tiers'].length) {
+                continue;
             }
-            const presetValues = JSON.stringify(tierPresets[presetName]);
-            if (levelTierStr == presetValues) {
-                return presetName;
+            const templateValuesStr = JSON.stringify(this.tierTemplates[templateKey]['tiers']);
+            if (levelTierStr == templateValuesStr) {
+                return templateKey;
             }
         }
-        return "Custom";
+
+        // If this has been reached, the db has stored tiers but they're not a match to a template
+        return "custom";
     }
 
 
@@ -253,9 +269,7 @@ export class LevelStore {
         }
     };
 
-    getLevelIndicators = (levelId) => {
-        return this.indicators.filter( i => i.level == levelId);
-    }
+    getLevelIndicators = levelId => this.indicators.filter( i => i.level == levelId)
 
 }
 
