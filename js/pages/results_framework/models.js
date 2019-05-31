@@ -3,8 +3,8 @@ import { trimOntology } from '../../level_utils'
 import { api } from "../../api.js"
 
 export class RootStore {
-    constructor (program_id, levels, indicators, levelTiers, tierTemplates, isAdmin) {
-        this.levelStore =  new LevelStore(program_id, levels, indicators, levelTiers, tierTemplates, isAdmin, this);
+    constructor (program_id, levels, indicators, levelTiers, tierTemplates, accessLevel) {
+        this.levelStore =  new LevelStore(program_id, levels, indicators, levelTiers, tierTemplates, accessLevel, this);
         this.uiStore = new UIStore(this);
     }
 }
@@ -18,9 +18,9 @@ export class LevelStore {
     defaultTemplateKey = "";
     customTierSetKey = "";
     program_id = "";
-    isAdmin = false;
+    accessLevel = false;
 
-    constructor(program_id, levels, indicators, levelTiers, tierTemplates, isAdmin, rootStore) {
+    constructor(program_id, levels, indicators, levelTiers, tierTemplates, accessLevel, rootStore) {
         this.rootStore = rootStore;
         this.levels = levels;
         this.indicators = indicators;
@@ -29,7 +29,7 @@ export class LevelStore {
         this.defaultTemplateKey = "mc_standard";
         this.customTierSetKey = "custom";
         this.program_id = program_id;
-        this.isAdmin = isAdmin;
+        this.accessLevel = accessLevel;
 
         // Set the stored tier set key and the values, if they exist.  Use the default if they don't.
         if (levelTiers.length > 0) {
@@ -61,8 +61,8 @@ export class LevelStore {
             }
             const childCount =  this.levels.filter(l => l.parent == level.id).length;
             const indicatorCount = this.indicators.filter( i => i.level == level.id);
-            properties['canDelete'] = childCount==0 && indicatorCount==0 && this.isAdmin;
-            properties['canEdit'] = this.isAdmin;
+            properties['canDelete'] = childCount==0 && indicatorCount==0 && this.accessLevel=='high';
+            properties['canEdit'] = this.accessLevel == 'high';
             levelProperties[level.id] = properties;
         }
         return levelProperties
