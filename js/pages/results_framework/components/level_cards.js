@@ -193,7 +193,7 @@ class ButtonBar extends React.Component {
         if (this.props.level.parent != null && this.props.level.parent != "root") {
             {/* # Translators: On a button, with a tiered set of objects, save current object and add another one in the same tier, e.g. "Save and add another Outcome" when the user is editing an Outcome */}
             const buttonText = interpolate(gettext("Save and add another %s"), [this.props.levelProps.tierName])
-            addAnotherButton = <LevelButton disabledText={disabledText} classes="btn-primary" text={buttonText} submitType="saveAndAddSibling"  submitFunc={this.props.submitFunc} />
+            addAnotherButton = <LevelButton disabledText={disabledText} classes="btn-secondary" text={buttonText} submitType="saveAndAddSibling"  submitFunc={this.props.submitFunc} />
         }
 
         // Build the button text with the right child level name, then build the button.
@@ -202,11 +202,11 @@ class ButtonBar extends React.Component {
         if (this.props.level.level_depth < tierCount) {
             {/* # Translators: On a button, with a tiered set of objects, save current object and add another one in the next lower tier, e.g. "Save and add another Activity" when the user is editing a Goal */}
             const buttonText = interpolate(gettext("Save and link %s"), [this.props.levelProps.childTierName])
-            addAndLinkButton = <LevelButton disabledText={disabledText} classes="btn btn-primary" text={buttonText} submitType="saveAndAddChild" submitFunc={this.props.submitFunc} />
+            addAndLinkButton = <LevelButton disabledText={disabledText} classes="btn btn-secondary" text={buttonText} submitType="saveAndAddChild" submitFunc={this.props.submitFunc} />
         }
         return (
-            <div className="button-bar">
-                <LevelButton disabledText={disabledText} classes="btn btn-primary" text={gettext("Save and close")} submitType="saveOnly" submitFunc={this.props.submitFunc} />
+            <div className="btn-row button-bar">
+                <LevelButton disabledText={disabledText} classes="btn-primary" text={gettext("Save and close")} submitType="saveOnly" submitFunc={this.props.submitFunc} />
                 {addAnotherButton}
                 {addAndLinkButton}
                 <LevelButton classes="btn btn-reset" text={gettext("Cancel")} submitType="cancel" submitFunc={this.props.cancelFunc} />

@@ -47,26 +47,10 @@ body > .container {
 
 // extensions to BS buttons
 //--------------------------------------------------
-.btn {
-    white-space: nowrap; // deprecated in 4.3
-    &.form-control {
-        background: $white; // BS 4.3 added `background: transparent` to default .btn
-        // TODO: all .btn.form-control elements should become .btn.btn-light.form-control
-    }
-}
-.btn-primary, .btn-secondary {
-    text-transform: uppercase;
-}
-.btn-secondary { // TODO
-    &, &:link, &:visited {
-        background-color: $white;
-        border-color: $teal-500;
-        color: $teal-500;
-    }
-    &.focus, &:focus, &:hover {
-        background-color: $gray-300;
-        border-color: $teal-600;
-        color: $teal-600;
+.btn-group {
+    > .btn {
+        flex: 0 0 auto;
+        margin-right: 2px;
     }
 }
 .btn-link {
