@@ -522,7 +522,7 @@ class IndicatorDelete(DeleteView):
                     )
                 # otherwise the rationale is this default:
                 else:
-                    rationale = "Reason for change is not required when deleting an indicator with no linked results."
+                    rationale = _("Reason for change is not required when deleting an indicator with no linked results.")
             else:
                 rationale = request.POST.get('rationale')
             indicator_values = indicator.logged_fields
@@ -567,7 +567,7 @@ class PeriodicTargetDeleteAllView(View):
                     status=400
                 )
             else:
-                rationale = 'No reason for change required.'
+                rationale = _('No reason for change required.')
 
         periodic_targets = PeriodicTarget.objects.filter(
             indicator=indicator)
