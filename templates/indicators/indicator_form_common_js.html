@@ -1020,6 +1020,9 @@
         // Compute LoP if not explicit in form
         if (formObj['lop_target'] === undefined) {
             formObj['lop_target'] = computeLopTarget();
+        } else {
+            // str -> float conversion needed when pulling from form for later comparisions
+            formObj['lop_target'] = parseFloat(formObj['lop_target']);
         }
 
         let periodic_targets = getFormPeriodicTargets();
@@ -1045,8 +1048,16 @@
     }
 
     // remember the initial state of tracked fields on the form
-    function recordTrackedFieldsSnapshot() {
+    function recordTrackedFieldsSnapshot(useDBLopTarget = false) {
         initialTrackedFieldsFormState = getTrackedFieldsObject();
+
+        // The LoP target in the DB may be out of sync with the client
+        // side calculated LoP target. The snapshot reflects the client value
+        // by default, but may need to reflect the DB value to prompt for rationale
+        if (useDBLopTarget) {
+            // snapshot returns lop target as string, since it's pulled from the form
+            initialTrackedFieldsFormState['lop_target'] = initialLopTarget();
+        }
     }
         
     // update just the targets portion of the form object:
