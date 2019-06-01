@@ -11,7 +11,7 @@ class Picker extends React.Component {
         this.props.rootStore.levelStore.changeTierSet(selectedTemplate.value);
     };
 
-     componentDidUpdate() {
+    componentDidUpdate() {
         // Enable popovers after update (they break otherwise)
         $('*[data-toggle="popover"]').popover({
             html: true

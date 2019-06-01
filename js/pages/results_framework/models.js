@@ -52,19 +52,23 @@ export class LevelStore {
 
         for (let level of this.levels) {
             let properties = {};
+            const childrenIds = this.getChildLevels(level.id).map( l => l.id);
+            const indicatorCount = this.indicators.filter( i => i.level == level.id);
+
             properties['indicators'] = this.getLevelIndicators(level.id);
+            properties['descendantIndicatorIds'] = this.getDescendantIndicatorIds(childrenIds);
             properties['ontologyLabel'] = this.buildOntology(level.id);
             properties['tierName'] = this.chosenTierSet[level.level_depth-1];
             properties['childTierName'] = null;
             if (this.chosenTierSet.length > level.level_depth) {
                 properties['childTierName'] = this.chosenTierSet[level.level_depth];
             }
-            const childCount =  this.levels.filter(l => l.parent == level.id).length;
-            const indicatorCount = this.indicators.filter( i => i.level == level.id);
-            properties['canDelete'] = childCount==0 && indicatorCount==0 && this.accessLevel=='high';
+
+            properties['canDelete'] = childrenIds.length==0 && indicatorCount==0 && this.accessLevel=='high';
             properties['canEdit'] = this.accessLevel == 'high';
             levelProperties[level.id] = properties;
         }
+
         return levelProperties
     }
 
@@ -269,7 +273,23 @@ export class LevelStore {
         }
     };
 
+    getChildLevels = levelId => this.levels.filter( l => l.parent == levelId);
+
     getLevelIndicators = levelId => this.indicators.filter( i => i.level == levelId)
+
+    getDescendantIndicatorIds = (childLevelIds) => {
+        // console.log('childidsss', childIds)
+        const childLevels = this.levels.filter( l => childLevelIds.includes(l.id));
+        // console.log('before loop', toJS(childLevels))
+        let newIndicatorIds = []
+        childLevels.forEach( childLevel => {
+            newIndicatorIds = newIndicatorIds.concat(this.indicators.filter( i => i.level == childLevel.id).map( i => i.id))
+            let grandChildIds = this.levels.filter( l => l.parent == childLevel.id).map( l => l.id);
+            newIndicatorIds = newIndicatorIds.concat(this.getDescendantIndicatorIds(grandChildIds, newIndicatorIds));
+        });
+        // console.log('after loop', priorIds)
+        return newIndicatorIds
+    }
 
 }
 
