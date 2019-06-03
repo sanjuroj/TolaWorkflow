@@ -28,6 +28,14 @@ export class LevelTitle extends React.Component {
 @inject('rootStore')
 @observer
 export class LevelCardCollapsed extends React.Component {
+
+    componentDidUpdate() {
+        // Enable popovers after update (they break otherwise)
+        $('*[data-toggle="popover"]').popover({
+            html: true
+        });
+    }
+
     deleteLevel = () => {
         const levelTitle = this.props.levelProps.tierName + " " + this.props.levelProps.ontologyLabel;
         create_no_rationale_changeset_notice({
@@ -41,11 +49,48 @@ export class LevelCardCollapsed extends React.Component {
         this.props.rootStore.uiStore.addExpandedCard(this.props.level.id)
     };
 
-    render(){
+    buildIPTTUrl = (indicator_ids) => {
+        let url = `/indicators/iptt_report/${this.props.rootStore.levelStore.program_id}/timeperiods/?frequency=3&start=0&end=999`;
+        indicator_ids.forEach( i => url += "&indicators="+i);
+        return url
+    };
 
+    render(){
+        // the level card shouldn't be displayed if it's parent level is not expandoed (except
+        // if the level is the top level one).
         if (this.props.rootStore.uiStore.hasVisibleChildren.indexOf(this.props.level.parent) < 0 && this.props.level.parent != null){
             return null;
         }
+
+        // Prepare the indicator links for the indicator popover
+
+        let allIndicatorLinks = [];
+
+        // Get indicator ids linked to this level and create a hyperlink for a filtered IPTT.
+        let sameLevelIndicatorIds = this.props.levelProps.indicators.map( i => i.id);
+        if (sameLevelIndicatorIds.length > 0) {
+            const linkText = `All indicators linked to ${this.props.levelProps.tierName} ${this.props.levelProps.ontologyLabel}`
+            allIndicatorLinks.push(`<a href=${this.buildIPTTUrl(sameLevelIndicatorIds)}>${linkText}</a>`);
+        }
+
+        // Get indicator ids linked to the children of this level, add the indicator ids identified
+        // above, and create a hyperlink for a filtered IPTT.
+        let descendantIndicatorIds = this.props.levelProps.descendantIndicatorIds;
+        descendantIndicatorIds = descendantIndicatorIds.concat(sameLevelIndicatorIds);
+        if (descendantIndicatorIds.length > 0) {
+            const linkText = `All indicators linked to ${this.props.levelProps.tierName} ${this.props.levelProps.ontologyLabel} and sub-levels`
+            allIndicatorLinks.push(`<a href=${this.buildIPTTUrl(descendantIndicatorIds)}>${linkText}</a>`);
+        }
+
+        // Create IPTT hyperlinks for each individual indicator linked to this level.
+        let individualLinks = this.props.levelProps.indicators.map( indicator => {
+            return `<li class="nav-item"><a href=${this.buildIPTTUrl([indicator.id])}>${indicator.name}</a></li>`;
+        });
+        allIndicatorLinks = allIndicatorLinks.concat(individualLinks);
+
+
+        allIndicatorLinks = `<ul class="nav flex-column">${allIndicatorLinks.join("<br>")}</ul>`;
+        // TODO: popover breaks if you click edit and cancel
         const iCount = this.props.levelProps.indicators.length;
         /* # Translators: This is a count of indicators associated with another object */
         const indicatorCountText = interpolate(ngettext("%s indicator", "%s indicators", iCount), [iCount]);
@@ -90,7 +135,16 @@ export class LevelCardCollapsed extends React.Component {
                         }
                     </div>
                     <div className="actions__bottom" style={{display: "flex", justifyContent: "flex-end"}}>
-                        <button className="btn btn-sm btn-link no-bold">{indicatorCountText}</button>
+                        <button
+                            className="btn btn-sm btn-link no-bold"
+                            data-toggle="popover"
+                            data-trigger="focus"
+                            data-placement="bottom"
+                            data-html="true"
+                            title="Track indicator performance"
+                            data-content={allIndicatorLinks}>
+                            {indicatorCountText}
+                        </button>
                     </div>
                 </div>
             </div>
@@ -121,7 +175,6 @@ export class LevelCardExpanded extends React.Component {
 
     saveLevel = (event) => {
         event.preventDefault();
-        const formData = new FormData(event.target);
         this.props.rootStore.levelStore.saveLevelToDB(
             this.submitType,
             this.props.level.id,
@@ -153,7 +206,6 @@ export class LevelCardExpanded extends React.Component {
                 <form className="level-card--expanded__form" onSubmit={this.saveLevel}>
                     <textarea
                         className="form-control"
-                        type="text"
                         id="level-name"
                         name="name"
                         value={this.name || ""}
@@ -162,8 +214,8 @@ export class LevelCardExpanded extends React.Component {
                     <label htmlFor="assumptions">Assumptions</label>
                     <textarea
                         className="form-control"
-                        type="text"
                         id="level-assumptions"
+                        disabled={this.name? "" : "disabled"}
                         name="assumptions"
                         autoComplete="off"
                         value={this.assumptions || ""}
@@ -171,9 +223,10 @@ export class LevelCardExpanded extends React.Component {
                     <ButtonBar
                         level={this.props.level}
                         levelProps={this.props.levelProps}
-                        isActive={this.props.rootStore.uiStore.expandedCards[0] == this.props.level.id ? true : false}
+                        isActive={this.props.rootStore.uiStore.expandedCards[0] == this.props.level.id}
                         submitFunc={this.updateSubmitType}
                         cancelFunc={this.cancelEdit}
+                        nameVal={this.name}
                         tierCount={this.props.rootStore.levelStore.chosenTierSet.length}/>
                 </form>
             </div>
@@ -186,7 +239,7 @@ export class LevelCardExpanded extends React.Component {
 @inject('rootStore')
 class ButtonBar extends React.Component {
     render() {
-        let disabledText = this.props.isActive ? "" : "disabled";
+        let disabledText = this.props.isActive && this.props.nameVal ? "" : "disabled";
 
         // Build the button text with the right sibling level name, then build the button.
         let addAnotherButton = null;

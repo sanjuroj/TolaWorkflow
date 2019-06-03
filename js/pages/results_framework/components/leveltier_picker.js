@@ -7,11 +7,11 @@ import Select from 'react-select';
 @inject('rootStore')
 @observer
 class Picker extends React.Component {
-    handleChange = selectedPreset => {
-        this.props.rootStore.levelStore.changeTierSet(selectedPreset.value);
+    handleChange = selectedTemplate => {
+        this.props.rootStore.levelStore.changeTierSet(selectedTemplate.value);
     };
 
-     componentDidUpdate() {
+    componentDidUpdate() {
         // Enable popovers after update (they break otherwise)
         $('*[data-toggle="popover"]').popover({
             html: true
@@ -40,12 +40,18 @@ class Picker extends React.Component {
                 <i className="far fa-question-circle"></i></a>
         }
 
-        const options = Object.keys(this.props.rootStore.levelStore.tierPresets).map(val=>{
-            return {value:val, label:val};
+
+        const tierTemplates = this.props.rootStore.levelStore.tierTemplates;
+
+        const options = Object.keys(tierTemplates).map(key => {
+            return {value:key, label:tierTemplates[key]['name']};
         });
-        const selectedOption = {value:this.props.rootStore.levelStore.chosenTierSet, label: this.props.rootStore.levelStore.chosenTierSetName};
+
+        const selectedOption = {value:this.props.rootStore.levelStore.chosenTierSetKey, label: this.props.rootStore.levelStore.chosenTierSetName};
+
         let classes = "leveltier-picker__selectbox ";
         classes += this.props.rootStore.uiStore.tierLockStatus == "locked" ? "leveltier-picker__selectbox--disabled" : "";
+
         return (
               <div className={classes}>
                 <label>TEMPLATE</label><span>{helpIcon}</span>

@@ -227,6 +227,18 @@ class TolaUser(models.Model):
             user_country_codes.add(self.country.code)
         return bool(user_country_codes & settings.PROJECTS_ACCESS_WHITELIST_SET)
 
+
+    def program_role(self, program_id):
+        if self.user.is_superuser:
+            return 'high'
+
+        program = Program.objects.get(id=program_id)
+        try:
+            access = ProgramAccess.objects.filter(tolauser=self, program=program)
+            return access[0].role
+        except:
+            return None
+
     @property
     def has_admin_management_access(self):
         #circular import avoidance
