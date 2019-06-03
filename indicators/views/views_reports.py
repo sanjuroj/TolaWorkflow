@@ -158,8 +158,8 @@ def get_iptt_program(program_id, frequency, tva=False):
             level_item = {
                 'pk': level.pk,
                 'name': level.name,
-                'tier': level.leveltier.name,
-                'tierPk': level.leveltier.pk,
+                'tier': level.leveltier.name if level.leveltier else None,
+                'tierPk': level.leveltier.pk if level.leveltier else None,
                 'ontology': level.display_ontology,
                 'parent': level.parent.pk if level.parent else None,
                 'depth': level.get_level_depth(),
