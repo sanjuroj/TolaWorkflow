@@ -142,9 +142,7 @@
     //align-items: center;
     //background: $teal-200;
     display: flex;
-    justify-content: space-between;
-    margin: $grid-gutter-width/2 $grid-gutter-width/-2 $grid-gutter-width/-2 $grid-gutter-width/-2 ;
-    padding: $grid-gutter-width/2;
+    margin-top: $grid-gutter-width/2;
 }
 .button-bar__label {
     margin-bottom: 0;
