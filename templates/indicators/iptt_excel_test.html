@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block content %}
+<div>
+    <div>Filename: {{ serializer.filename }}</div>
+    <div>Report name: {{ serializer.report_title }}</div>
+    <div>Report dates: {{ serializer.report_date_range }}</div>
+    <div>Program name: {{ serializer.program_name }}</div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>Indicator</th>
+                {% if serializer.level_column %}<th>Level (?)</th>{% endif %}
+                <th>UOM</th>
+                <th>Change</th>
+                <th>C NC</th>
+                <th># %</th>
+                <th>Baseline</th>
+                <th>Lop target</th>
+                <th>Lop actual</th>
+                <th>Lop % met</th>
+                {% for period in serializer.periods %}
+                    <th>Actual Head:{{ period.header }} Subhead:{{ period.subheader }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% if serializer.level_rows %}
+                {% for level_row in serializer.level_rows %}
+                    <tr>
+                        <td colspan="{{ serializer.column_count }}">{{ level_row.level.display_name }}</td>
+                    </tr>
+                    {% for indicator in level_row.indicators %}
+                        <tr>
+                            <td>{{ indicator.number_display }}:</td>
+                            <td>{{ indicator.name }} pk: {{indicator.pk}}</td>
+                            <td>{{ indicator.unit_of_measure|default_if_none:"–" }}</td>
+                            <td>{{ indicator.get_direction_of_change }}</td>
+                            <td>{{ indicator.is_cumulative|yesno:"C,NC,–" }}</td>
+                            <td>{{ indicator.get_unit_of_measure_type }}</td>
+                            <td>{{ indicator.baseline|default_if_none:"–" }}</td>
+                        </tr>
+                    {% endfor %}
+                {% endfor %}
+                {% if serializer.blank_level_row %}
+                    <tr>
+                        <td colspan="{{ serializer.column_count }}">Unassigned</td>
+                    </tr>
+                    {% for indicator in serializer.blank_level_row %}
+                        <tr>
+                            <td>{{ indicator.number|default_if_none:"" }}</td>
+                            <td>{{ indicator.name }} pk: {{ indicator.pk }}</td>
+                        </tr>
+                    {% endfor %}
+                {% endif %}
+            {% else %}
+                {% for indicator in serializer.indicators %}
+                    <tr>
+                        <td>{{ indicator.number|default_if_none:"" }}</td>
+                        <td>{{ indicator.name }} pk: {{ indicator.pk }}</td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

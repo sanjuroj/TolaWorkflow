@@ -188,6 +188,22 @@ class Level(models.Model):
             tier = None
         return tier
 
+    @property
+    def display_name(self):
+        """ this returns the level's "name" as displayed on IPTT i.e. Goal: name or Output 1.1: Name"""
+        return u'{tier}{ontology}: {name}'.format(
+            tier=self.leveltier.name,
+            ontology=' {}'.format(self.display_ontology) if self.display_ontology else '',
+            name=self.name
+        )
+
+    def get_children(self):
+        child_levels = []
+        for child_level in self.child_levels.all():
+            child_levels.append(child_level)
+            child_levels += child_level.get_children()
+        return child_levels
+
 
 class LevelAdmin(admin.ModelAdmin):
     list_display = ('name')
@@ -399,13 +415,17 @@ class IndicatorSortingQSMixin(object):
     def with_logframe_sorting(self):
         numeric_re = r'^[[:space:]]*[0-9]+[[:space:]]*$'
         logframe_re = r'^[[:space:]]*[0-9]+([[.period.]][0-9]+)?'\
-                      '([[.period.]][0-9]+)?([[.period.]][0-9]+)?[[:space:]]*$'
+                      '([[.period.]][0-9]+)?([[.period.]][0-9]+)?([[.period.]])?([a-z]+)?[[:space:]]*$'
         logframe_re2 = r'^[[:space:]]*[0-9]+[[.period.]][0-9]+([[.period.]][0-9]+)?([[.period.]][0-9]+)?[[:space:]]*$'
         logframe_re3 = r'^[[:space:]]*[0-9]+[[.period.]][0-9]+[[.period.]][0-9]+([[.period.]][0-9]+)?[[:space:]]*$'
         logframe_re4 = r'^[[:space:]]*[0-9]+[[.period.]][0-9]+[[.period.]][0-9]+[[.period.]][0-9]+[[:space:]]*$'
 
         qs = self.annotate(
             logsort_type=models.Case(
+                models.When(
+                    level_id__isnull=False,
+                    then=0
+                ),
                 models.When(
                     number__regex=logframe_re,
                     then=1
@@ -419,6 +439,10 @@ class IndicatorSortingQSMixin(object):
             )
         ).annotate(
             logsort_a=models.Case(
+                models.When(
+                    logsort_type=0,
+                    then=models.F('level_order')
+                ),
                 models.When(
                     logsort_type=1,
                     then=DecimalSplit('number', 1)
