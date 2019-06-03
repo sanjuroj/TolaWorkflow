@@ -23,6 +23,7 @@ from views_reports import (
     IPTTQuickstart,
     IPTTReport,
     IPTTReportData,
+    IPTTExcelReport,
     IPTTExcelExport,
 )
 
