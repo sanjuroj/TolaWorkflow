@@ -6,6 +6,12 @@ from factories import (
 )
 from indicators.views.views_reports import IPTTSerializer
 
+class RequestDict(dict):
+    def getlist(self, key):
+        if self.get(key, None):
+            return list(self.get(key))
+        return self.get(key)
+
 class IPTTTestScenario:
     def __init__(self):
         pass
@@ -15,7 +21,7 @@ class TestTimeperiodsExcelSerializer(test.TestCase):
 
     def get_serializer(self, programId, frequency=7, **kwargs):
         kwargs.update({'programId': programId, 'frequency': frequency})
-        return IPTTSerializer(self.report_type, kwargs)
+        return IPTTSerializer(self.report_type, RequestDict(kwargs))
 
     def test_program_name(self):
         program = w_factories.ProgramFactory(name="test name")
