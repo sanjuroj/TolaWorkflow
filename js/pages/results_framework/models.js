@@ -3,8 +3,8 @@ import { trimOntology } from '../../level_utils'
 import { api } from "../../api.js"
 
 export class RootStore {
-    constructor (program_id, levels, indicators, levelTiers, tierTemplates, isAdmin) {
-        this.levelStore =  new LevelStore(program_id, levels, indicators, levelTiers, tierTemplates, isAdmin, this);
+    constructor (program_id, levels, indicators, levelTiers, tierTemplates, accessLevel) {
+        this.levelStore =  new LevelStore(program_id, levels, indicators, levelTiers, tierTemplates, accessLevel, this);
         this.uiStore = new UIStore(this);
     }
 }
@@ -18,9 +18,9 @@ export class LevelStore {
     defaultTemplateKey = "";
     customTierSetKey = "";
     program_id = "";
-    isAdmin = false;
+    accessLevel = false;
 
-    constructor(program_id, levels, indicators, levelTiers, tierTemplates, isAdmin, rootStore) {
+    constructor(program_id, levels, indicators, levelTiers, tierTemplates, accessLevel, rootStore) {
         this.rootStore = rootStore;
         this.levels = levels;
         this.indicators = indicators;
@@ -29,7 +29,7 @@ export class LevelStore {
         this.defaultTemplateKey = "mc_standard";
         this.customTierSetKey = "custom";
         this.program_id = program_id;
-        this.isAdmin = isAdmin;
+        this.accessLevel = accessLevel;
 
         // Set the stored tier set key and the values, if they exist.  Use the default if they don't.
         if (levelTiers.length > 0) {
@@ -52,19 +52,23 @@ export class LevelStore {
 
         for (let level of this.levels) {
             let properties = {};
+            const childrenIds = this.getChildLevels(level.id).map( l => l.id);
+            const indicatorCount = this.indicators.filter( i => i.level == level.id);
+
             properties['indicators'] = this.getLevelIndicators(level.id);
+            properties['descendantIndicatorIds'] = this.getDescendantIndicatorIds(childrenIds);
             properties['ontologyLabel'] = this.buildOntology(level.id);
             properties['tierName'] = this.chosenTierSet[level.level_depth-1];
             properties['childTierName'] = null;
             if (this.chosenTierSet.length > level.level_depth) {
                 properties['childTierName'] = this.chosenTierSet[level.level_depth];
             }
-            const childCount =  this.levels.filter(l => l.parent == level.id).length;
-            const indicatorCount = this.indicators.filter( i => i.level == level.id);
-            properties['canDelete'] = childCount==0 && indicatorCount==0 && this.isAdmin;
-            properties['canEdit'] = this.isAdmin;
+
+            properties['canDelete'] = childrenIds.length==0 && indicatorCount==0 && this.accessLevel=='high';
+            properties['canEdit'] = this.accessLevel == 'high';
             levelProperties[level.id] = properties;
         }
+
         return levelProperties
     }
 
@@ -269,7 +273,23 @@ export class LevelStore {
         }
     };
 
+    getChildLevels = levelId => this.levels.filter( l => l.parent == levelId);
+
     getLevelIndicators = levelId => this.indicators.filter( i => i.level == levelId)
+
+    getDescendantIndicatorIds = (childLevelIds) => {
+        // console.log('childidsss', childIds)
+        const childLevels = this.levels.filter( l => childLevelIds.includes(l.id));
+        // console.log('before loop', toJS(childLevels))
+        let newIndicatorIds = []
+        childLevels.forEach( childLevel => {
+            newIndicatorIds = newIndicatorIds.concat(this.indicators.filter( i => i.level == childLevel.id).map( i => i.id))
+            let grandChildIds = this.levels.filter( l => l.parent == childLevel.id).map( l => l.id);
+            newIndicatorIds = newIndicatorIds.concat(this.getDescendantIndicatorIds(grandChildIds, newIndicatorIds));
+        });
+        // console.log('after loop', priorIds)
+        return newIndicatorIds
+    }
 
 }
 
