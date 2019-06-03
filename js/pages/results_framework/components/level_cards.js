@@ -204,22 +204,27 @@ export class LevelCardExpanded extends React.Component {
 
                 </div>
                 <form className="level-card--expanded__form" onSubmit={this.saveLevel}>
-                    <textarea
-                        className="form-control"
-                        id="level-name"
-                        name="name"
-                        value={this.name || ""}
-                        autoComplete="off"
-                        onChange={this.onFormChange}    />
-                    <label htmlFor="assumptions">Assumptions</label>
-                    <textarea
-                        className="form-control"
-                        id="level-assumptions"
-                        disabled={this.name? "" : "disabled"}
-                        name="assumptions"
-                        autoComplete="off"
-                        value={this.assumptions || ""}
-                        onChange={this.onFormChange}/>
+                    <div class="form-group">
+                        <textarea
+                            className="form-control"
+                            id="level-name"
+                            name="name"
+                            value={this.name || ""}
+                            autoComplete="off"
+                            onChange={this.onFormChange}
+                        />
+                    </div>
+                    <div class="form-group">
+                            <label htmlFor="assumptions">Assumptions</label>
+                        <textarea
+                            className="form-control"
+                            id="level-assumptions"
+                            disabled={this.name? "" : "disabled"}
+                            name="assumptions"
+                            autoComplete="off"
+                            value={this.assumptions || ""}
+                            onChange={this.onFormChange}/>
+                    </div>
                     <ButtonBar
                         level={this.props.level}
                         levelProps={this.props.levelProps}
@@ -227,7 +232,8 @@ export class LevelCardExpanded extends React.Component {
                         submitFunc={this.updateSubmitType}
                         cancelFunc={this.cancelEdit}
                         nameVal={this.name}
-                        tierCount={this.props.rootStore.levelStore.chosenTierSet.length}/>
+                        tierCount={this.props.rootStore.levelStore.chosenTierSet.length}
+                    />
                 </form>
             </div>
 
