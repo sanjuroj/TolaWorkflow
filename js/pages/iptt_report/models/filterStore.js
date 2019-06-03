@@ -375,10 +375,13 @@ export default class FilterStore {
     }
     
     @computed get selectedProgramOption() {
-        return {
-            value: this.programId,
-            label: this.program.name
-        };
+        if (this.program) {
+            return {
+                value: this.programId,
+                label: this.program.name
+            };
+        }
+        return null;
     }
     
     @computed get frequencyOptions() {
