@@ -215,6 +215,7 @@ export class LevelCardExpanded extends React.Component {
                     <textarea
                         className="form-control"
                         id="level-assumptions"
+                        disabled={this.name? "" : "disabled"}
                         name="assumptions"
                         autoComplete="off"
                         value={this.assumptions || ""}
@@ -225,6 +226,7 @@ export class LevelCardExpanded extends React.Component {
                         isActive={this.props.rootStore.uiStore.expandedCards[0] == this.props.level.id}
                         submitFunc={this.updateSubmitType}
                         cancelFunc={this.cancelEdit}
+                        nameVal={this.name}
                         tierCount={this.props.rootStore.levelStore.chosenTierSet.length}/>
                 </form>
             </div>
@@ -237,7 +239,7 @@ export class LevelCardExpanded extends React.Component {
 @inject('rootStore')
 class ButtonBar extends React.Component {
     render() {
-        let disabledText = this.props.isActive ? "" : "disabled";
+        let disabledText = this.props.isActive && this.props.nameVal ? "" : "disabled";
 
         // Build the button text with the right sibling level name, then build the button.
         let addAnotherButton = null;
