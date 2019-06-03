@@ -496,6 +496,8 @@ function (_React$Component3) {
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("form", {
         className: "level-card--expanded__form",
         onSubmit: this.saveLevel
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        class: "form-group"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("textarea", {
         className: "form-control",
         id: "level-name",
@@ -503,7 +505,9 @@ function (_React$Component3) {
         value: this.name || "",
         autoComplete: "off",
         onChange: this.onFormChange
-      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        class: "form-group"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
         htmlFor: "assumptions"
       }, "Assumptions"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("textarea", {
         className: "form-control",
@@ -513,7 +517,7 @@ function (_React$Component3) {
         autoComplete: "off",
         value: this.assumptions || "",
         onChange: this.onFormChange
-      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ButtonBar, {
+      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ButtonBar, {
         level: this.props.level,
         levelProps: this.props.levelProps,
         isActive: this.props.rootStore.uiStore.expandedCards[0] == this.props.level.id,
@@ -553,6 +557,7 @@ function (_React$Component4) {
         addAnotherButton = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(LevelButton, {
           disabledText: disabledText,
           classes: "btn-primary",
+          icon: "plus-circle",
           text: buttonText,
           submitType: "saveAndAddSibling",
           submitFunc: this.props.submitFunc
@@ -573,6 +578,7 @@ function (_React$Component4) {
         addAndLinkButton = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(LevelButton, {
           disabledText: disabledText,
           classes: "btn btn-primary",
+          icon: "stream",
           text: _buttonText,
           submitType: "saveAndAddChild",
           submitFunc: this.props.submitFunc
@@ -580,11 +586,12 @@ function (_React$Component4) {
       }
 
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "button-bar"
+        className: "button-bar btn-row"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(LevelButton, {
         disabledText: disabledText,
-        classes: "btn btn-primary",
+        classes: "btn-primary",
         text: gettext("Save and close"),
+        icon: "save",
         submitType: "saveOnly",
         submitFunc: this.props.submitFunc
       }), addAnotherButton, addAndLinkButton, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(LevelButton, {
@@ -1493,4 +1500,4 @@ function (_React$Component2) {
 /***/ })
 
 },[["QTZG","runtime","vendors"]]]);
-//# sourceMappingURL=results_framework-016002b5d5c2b43bf268.js.map
+//# sourceMappingURL=results_framework-6b7eb24cf26ebd719a4f.js.map

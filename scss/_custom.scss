@@ -261,7 +261,7 @@ a:hover {
 .btn-reset, .btn-inverse {
     background-color: $white;
     color: $text-muted;
-    text-transform: uppercase;
+    //text-transform: uppercase;
     &:hover {
         color: darken($text-muted, 20%);
         background-color: $gray-300;
