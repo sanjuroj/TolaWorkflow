@@ -57,8 +57,8 @@ function (_React$Component) {
 
     _this = _possibleConstructorReturn(this, (_getPrototypeOf2 = _getPrototypeOf(Picker)).call.apply(_getPrototypeOf2, [this].concat(args)));
 
-    _this.handleChange = function (selectedTemplate) {
-      _this.props.rootStore.levelStore.changeTierSet(selectedTemplate.value);
+    _this.handleChange = function (selectedPreset) {
+      _this.props.rootStore.levelStore.changeTierSet(selectedPreset.value);
     };
 
     return _this;
@@ -101,15 +101,14 @@ function (_React$Component) {
         }));
       }
 
-      var tierTemplates = this.props.rootStore.levelStore.tierTemplates;
-      var options = Object.keys(tierTemplates).map(function (key) {
+      var options = Object.keys(this.props.rootStore.levelStore.tierPresets).map(function (val) {
         return {
-          value: key,
-          label: tierTemplates[key]['name']
+          value: val,
+          label: val
         };
       });
       var selectedOption = {
-        value: this.props.rootStore.levelStore.chosenTierSetKey,
+        value: this.props.rootStore.levelStore.chosenTierSet,
         label: this.props.rootStore.levelStore.chosenTierSetName
       };
       var classes = "leveltier-picker__selectbox ";
@@ -306,65 +305,17 @@ function (_React$Component2) {
       _this.props.rootStore.uiStore.addExpandedCard(_this.props.level.id);
     };
 
-    _this.buildIPTTUrl = function (indicator_ids) {
-      var url = "/indicators/iptt_report/".concat(_this.props.rootStore.levelStore.program_id, "/timeperiods/?frequency=3&start=0&end=999");
-      indicator_ids.forEach(function (i) {
-        return url += "&indicators=" + i;
-      });
-      return url;
-    };
-
     return _this;
   }
 
   _createClass(LevelCardCollapsed, [{
-    key: "componentDidUpdate",
-    value: function componentDidUpdate() {
-      // Enable popovers after update (they break otherwise)
-      $('*[data-toggle="popover"]').popover({
-        html: true
-      });
-    }
-  }, {
     key: "render",
     value: function render() {
       var _this2 = this;
 
-      // the level card shouldn't be displayed if it's parent level is not expandoed (except
-      // if the level is the top level one).
       if (this.props.rootStore.uiStore.hasVisibleChildren.indexOf(this.props.level.parent) < 0 && this.props.level.parent != null) {
         return null;
-      } // Prepare the indicator links for the indicator popover
-
-
-      var allIndicatorLinks = []; // Get indicator ids linked to this level and create a hyperlink for a filtered IPTT.
-
-      var sameLevelIndicatorIds = this.props.levelProps.indicators.map(function (i) {
-        return i.id;
-      });
-
-      if (sameLevelIndicatorIds.length > 0) {
-        var linkText = "All indicators linked to ".concat(this.props.levelProps.tierName, " ").concat(this.props.levelProps.ontologyLabel);
-        allIndicatorLinks.push("<a href=".concat(this.buildIPTTUrl(sameLevelIndicatorIds), ">").concat(linkText, "</a>"));
-      } // Get indicator ids linked to the children of this level, add the indicator ids identified
-      // above, and create a hyperlink for a filtered IPTT.
-
-
-      var descendantIndicatorIds = this.props.levelProps.descendantIndicatorIds;
-      descendantIndicatorIds = descendantIndicatorIds.concat(sameLevelIndicatorIds);
-
-      if (descendantIndicatorIds.length > 0) {
-        var _linkText = "All indicators linked to ".concat(this.props.levelProps.tierName, " ").concat(this.props.levelProps.ontologyLabel, " and sub-levels");
-
-        allIndicatorLinks.push("<a href=".concat(this.buildIPTTUrl(descendantIndicatorIds), ">").concat(_linkText, "</a>"));
-      } // Create IPTT hyperlinks for each individual indicator linked to this level.
-
-
-      var individualLinks = this.props.levelProps.indicators.map(function (indicator) {
-        return "<li class=\"nav-item\"><a href=".concat(_this2.buildIPTTUrl([indicator.id]), ">").concat(indicator.name, "</a></li>");
-      });
-      allIndicatorLinks = allIndicatorLinks.concat(individualLinks);
-      allIndicatorLinks = "<ul class=\"nav flex-column\">".concat(allIndicatorLinks.join("<br>"), "</ul>"); // TODO: popover breaks if you click edit and cancel
+      }
 
       var iCount = this.props.levelProps.indicators.length;
       /* # Translators: This is a count of indicators associated with another object */
@@ -423,13 +374,7 @@ function (_React$Component2) {
           justifyContent: "flex-end"
         }
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
-        className: "btn btn-sm btn-link no-bold",
-        "data-toggle": "popover",
-        "data-trigger": "focus",
-        "data-placement": "bottom",
-        "data-html": "true",
-        title: "Track indicator performance",
-        "data-content": allIndicatorLinks
+        className: "btn btn-sm btn-link no-bold"
       }, indicatorCountText))));
     }
   }]);
@@ -454,6 +399,7 @@ function (_React$Component3) {
 
     _this3.saveLevel = function (event) {
       event.preventDefault();
+      var formData = new FormData(event.target);
 
       _this3.props.rootStore.levelStore.saveLevelToDB(_this3.submitType, _this3.props.level.id, {
         name: _this3.name,
@@ -498,6 +444,7 @@ function (_React$Component3) {
         onSubmit: this.saveLevel
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("textarea", {
         className: "form-control",
+        type: "text",
         id: "level-name",
         name: "name",
         value: this.name || "",
@@ -507,8 +454,8 @@ function (_React$Component3) {
         htmlFor: "assumptions"
       }, "Assumptions"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("textarea", {
         className: "form-control",
+        type: "text",
         id: "level-assumptions",
-        disabled: this.name ? "" : "disabled",
         name: "assumptions",
         autoComplete: "off",
         value: this.assumptions || "",
@@ -516,10 +463,9 @@ function (_React$Component3) {
       }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ButtonBar, {
         level: this.props.level,
         levelProps: this.props.levelProps,
-        isActive: this.props.rootStore.uiStore.expandedCards[0] == this.props.level.id,
+        isActive: this.props.rootStore.uiStore.expandedCards[0] == this.props.level.id ? true : false,
         submitFunc: this.updateSubmitType,
         cancelFunc: this.cancelEdit,
-        nameVal: this.name,
         tierCount: this.props.rootStore.levelStore.chosenTierSet.length
       })));
     }
@@ -541,7 +487,7 @@ function (_React$Component4) {
   _createClass(ButtonBar, [{
     key: "render",
     value: function render() {
-      var disabledText = this.props.isActive && this.props.nameVal ? "" : "disabled"; // Build the button text with the right sibling level name, then build the button.
+      var disabledText = this.props.isActive ? "" : "disabled"; // Build the button text with the right sibling level name, then build the button.
 
       var addAnotherButton = null;
 
@@ -553,7 +499,6 @@ function (_React$Component4) {
         addAnotherButton = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(LevelButton, {
           disabledText: disabledText,
           classes: "btn-primary",
-          icon: "plus-circle",
           text: buttonText,
           submitType: "saveAndAddSibling",
           submitFunc: this.props.submitFunc
@@ -574,7 +519,6 @@ function (_React$Component4) {
         addAndLinkButton = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(LevelButton, {
           disabledText: disabledText,
           classes: "btn btn-primary",
-          icon: "stream",
           text: _buttonText,
           submitType: "saveAndAddChild",
           submitFunc: this.props.submitFunc
@@ -582,12 +526,11 @@ function (_React$Component4) {
       }
 
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "button-bar btn-row"
+        className: "button-bar"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(LevelButton, {
         disabledText: disabledText,
-        classes: "btn-primary",
+        classes: "btn btn-primary",
         text: gettext("Save and close"),
-        icon: "save",
         submitType: "saveOnly",
         submitFunc: this.props.submitFunc
       }), addAnotherButton, addAndLinkButton, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(LevelButton, {
@@ -667,16 +610,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 
 
-var RootStore = function RootStore(program_id, levels, indicators, levelTiers, tierTemplates, accessLevel) {
+var RootStore = function RootStore(program_id, levels, indicators, levelTiers, tierPresets, isAdmin) {
   _classCallCheck(this, RootStore);
 
-  this.levelStore = new LevelStore(program_id, levels, indicators, levelTiers, tierTemplates, accessLevel, this);
+  this.levelStore = new LevelStore(program_id, levels, indicators, levelTiers, tierPresets, isAdmin, this);
   this.uiStore = new UIStore(this);
 };
 var LevelStore = (_class = (_temp =
 /*#__PURE__*/
 function () {
-  function LevelStore(program_id, levels, indicators, levelTiers, tierTemplates, accessLevel, rootStore) {
+  function LevelStore(program_id, levels, indicators, levelTiers, tierPresets, isAdmin, rootStore) {
     var _this = this;
 
     _classCallCheck(this, LevelStore);
@@ -685,15 +628,14 @@ function () {
 
     _initializerDefineProperty(this, "indicators", _descriptor2, this);
 
-    _initializerDefineProperty(this, "chosenTierSetKey", _descriptor3, this);
+    _initializerDefineProperty(this, "chosenTierSet", _descriptor3, this);
 
-    _initializerDefineProperty(this, "chosenTierSet", _descriptor4, this);
+    _initializerDefineProperty(this, "chosenTierSetName", _descriptor4, this);
 
-    this.tierTemplates = void 0;
-    this.defaultTemplateKey = "";
-    this.customTierSetKey = "";
+    this.tierPresets = {};
+    this.defaultPreset = "Mercy Corps standard";
     this.program_id = "";
-    this.accessLevel = false;
+    this.isAdmin = false;
 
     _initializerDefineProperty(this, "cancelEdit", _descriptor5, this);
 
@@ -775,28 +717,6 @@ function () {
       }
     };
 
-    this.deriveTemplateKey = function () {
-      // Check each tier set in the templates to see if the tier order and content are exactly the same
-      // If they are, return the template key
-      var levelTierStr = JSON.stringify(Object(mobx__WEBPACK_IMPORTED_MODULE_0__["toJS"])(_this.chosenTierSet));
-
-      for (var templateKey in _this.tierTemplates) {
-        // not an eligable template if the key is inherited or if the lengths of the tier sets don't match.
-        if (!_this.tierTemplates.hasOwnProperty(templateKey) || _this.chosenTierSet.length != _this.tierTemplates[templateKey]['tiers'].length) {
-          continue;
-        }
-
-        var templateValuesStr = JSON.stringify(_this.tierTemplates[templateKey]['tiers']);
-
-        if (levelTierStr == templateValuesStr) {
-          return templateKey;
-        }
-      } // If this has been reached, the db has stored tiers but they're not a match to a template
-
-
-      return "custom";
-    };
-
     this.buildOntology = function (levelId) {
       var ontologyArray = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
       var level = Object(mobx__WEBPACK_IMPORTED_MODULE_0__["toJS"])(_this.levels.find(function (l) {
@@ -814,71 +734,63 @@ function () {
       }
     };
 
-    this.getChildLevels = function (levelId) {
-      return _this.levels.filter(function (l) {
-        return l.parent == levelId;
-      });
-    };
-
     this.getLevelIndicators = function (levelId) {
       return _this.indicators.filter(function (i) {
         return i.level == levelId;
       });
     };
 
-    this.getDescendantIndicatorIds = function (childLevelIds) {
-      // console.log('childidsss', childIds)
-      var childLevels = _this.levels.filter(function (l) {
-        return childLevelIds.includes(l.id);
-      }); // console.log('before loop', toJS(childLevels))
-
-
-      var newIndicatorIds = [];
-      childLevels.forEach(function (childLevel) {
-        newIndicatorIds = newIndicatorIds.concat(_this.indicators.filter(function (i) {
-          return i.level == childLevel.id;
-        }).map(function (i) {
-          return i.id;
-        }));
-
-        var grandChildIds = _this.levels.filter(function (l) {
-          return l.parent == childLevel.id;
-        }).map(function (l) {
-          return l.id;
-        });
-
-        newIndicatorIds = newIndicatorIds.concat(_this.getDescendantIndicatorIds(grandChildIds, newIndicatorIds));
-      }); // console.log('after loop', priorIds)
-
-      return newIndicatorIds;
-    };
-
     this.rootStore = rootStore;
     this.levels = levels;
     this.indicators = indicators;
-    this.tierTemplates = tierTemplates;
-    this.defaultTemplateKey = "mc_standard";
-    this.customTierSetKey = "custom";
+    this.tierPresets = tierPresets;
     this.program_id = program_id;
-    this.accessLevel = accessLevel; // Set the stored tier set key and the values, if they exist.  Use the default if they don't.
+    this.isAdmin = isAdmin; // Set the stored tierset and its name, if they exist.  Use the default if they don't.
 
     if (levelTiers.length > 0) {
-      // deriveTemplateKey relies on chosenTierSet to be populated, so need to set it first.
       this.chosenTierSet = levelTiers.map(function (t) {
         return t.name;
       });
-      this.chosenTierSetKey = this.deriveTemplateKey(levelTiers);
+      this.chosenTierSetName = this.derive_preset_name(levelTiers, tierPresets);
     } else {
-      this.chosenTierSetKey = this.defaultTemplateKey;
-      this.chosenTierSet = this.tierTemplates[this.chosenTierSetKey]['tiers'];
+      this.chosenTierSetName = this.defaultPreset;
+      this.chosenTierSet = this.tierPresets[this.defaultPreset];
     }
   }
 
   _createClass(LevelStore, [{
     key: "changeTierSet",
-    value: function changeTierSet(newTierSetKey) {
-      this.chosenTierSetKey = newTierSetKey;
-      this.chosenTierSet = this.tierTemplates[newTierSetKey]['tiers'];
+    value: function changeTierSet(newTierSetName) {
+      this.chosenTierSetName = newTierSetName;
+      this.chosenTierSet = this.tierPresets[newTierSetName];
+    }
+  }, {
+    key: "derive_preset_name",
+    value: function derive_preset_name(levelTiers, tierPresets) {
+      if (!levelTiers) {
+        return null;
+      }
+
+      var levelTiersArray = levelTiers.sort(function (t) {
+        return t.tier_depth;
+      }).map(function (t) {
+        return t.name;
+      });
+      var levelTierStr = JSON.stringify(levelTiersArray);
+
+      for (var presetName in tierPresets) {
+        if (levelTiers.length != tierPresets[presetName].length) {
+          continue;
+        }
+
+        var presetValues = JSON.stringify(tierPresets[presetName]);
+
+        if (levelTierStr == presetValues) {
+          return presetName;
+        }
+      }
+
+      return "Custom";
     }
   }, {
     key: "sortedLevels",
@@ -901,17 +813,7 @@ function () {
         var _loop = function _loop() {
           var level = _step.value;
           var properties = {};
-
-          var childrenIds = _this2.getChildLevels(level.id).map(function (l) {
-            return l.id;
-          });
-
-          var indicatorCount = _this2.indicators.filter(function (i) {
-            return i.level == level.id;
-          });
-
           properties['indicators'] = _this2.getLevelIndicators(level.id);
-          properties['descendantIndicatorIds'] = _this2.getDescendantIndicatorIds(childrenIds);
           properties['ontologyLabel'] = _this2.buildOntology(level.id);
           properties['tierName'] = _this2.chosenTierSet[level.level_depth - 1];
           properties['childTierName'] = null;
@@ -920,8 +822,16 @@ function () {
             properties['childTierName'] = _this2.chosenTierSet[level.level_depth];
           }
 
-          properties['canDelete'] = childrenIds.length == 0 && indicatorCount == 0 && _this2.accessLevel == 'high';
-          properties['canEdit'] = _this2.accessLevel == 'high';
+          var childCount = _this2.levels.filter(function (l) {
+            return l.parent == level.id;
+          }).length;
+
+          var indicatorCount = _this2.indicators.filter(function (i) {
+            return i.level == level.id;
+          });
+
+          properties['canDelete'] = childCount == 0 && indicatorCount == 0 && _this2.isAdmin;
+          properties['canEdit'] = _this2.isAdmin;
           levelProperties[level.id] = properties;
         };
 
@@ -945,15 +855,6 @@ function () {
 
       return levelProperties;
     }
-  }, {
-    key: "chosenTierSetName",
-    get: function get() {
-      if (this.chosenTierSetKey == this.customTierSetKey) {
-        return "Custom";
-      } else {
-        return this.tierTemplates[this.chosenTierSetKey]['name'];
-      }
-    }
   }]);
 
   return LevelStore;
@@ -971,21 +872,21 @@ function () {
   initializer: function initializer() {
     return [];
   }
-}), _descriptor3 = _applyDecoratedDescriptor(_class.prototype, "chosenTierSetKey", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
-  configurable: true,
-  enumerable: true,
-  writable: true,
-  initializer: function initializer() {
-    return "";
-  }
-}), _descriptor4 = _applyDecoratedDescriptor(_class.prototype, "chosenTierSet", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor3 = _applyDecoratedDescriptor(_class.prototype, "chosenTierSet", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return [];
   }
-}), _applyDecoratedDescriptor(_class.prototype, "sortedLevels", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "sortedLevels"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "levelProperties", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "levelProperties"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "chosenTierSetName", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "chosenTierSetName"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeTierSet", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeTierSet"), _class.prototype), _descriptor5 = _applyDecoratedDescriptor(_class.prototype, "cancelEdit", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
+}), _descriptor4 = _applyDecoratedDescriptor(_class.prototype, "chosenTierSetName", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    return "";
+  }
+}), _applyDecoratedDescriptor(_class.prototype, "sortedLevels", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "sortedLevels"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "levelProperties", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "levelProperties"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "changeTierSet", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "changeTierSet"), _class.prototype), _descriptor5 = _applyDecoratedDescriptor(_class.prototype, "cancelEdit", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
   configurable: true,
   enumerable: true,
   writable: true,
@@ -1280,9 +1181,9 @@ var _jsContext = jsContext,
     levels = _jsContext.levels,
     indicators = _jsContext.indicators,
     levelTiers = _jsContext.levelTiers,
-    tierTemplates = _jsContext.tierTemplates,
-    accessLevel = _jsContext.accessLevel;
-var rootStore = new _models__WEBPACK_IMPORTED_MODULE_8__["RootStore"](program_id, levels, indicators, levelTiers, tierTemplates, accessLevel);
+    tierPresets = _jsContext.tierPresets,
+    isAdmin = _jsContext.isAdmin;
+var rootStore = new _models__WEBPACK_IMPORTED_MODULE_8__["RootStore"](program_id, levels, indicators, levelTiers, tierPresets, isAdmin);
 /*
  * React components on page
  */
@@ -1496,4 +1397,4 @@ function (_React$Component2) {
 /***/ })
 
 },[["QTZG","runtime","vendors"]]]);
-//# sourceMappingURL=results_framework-23ab2d8155333437c7c4.js.map
+//# sourceMappingURL=results_framework-c710bff0dfa4b6a03f72.js.map
