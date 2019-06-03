@@ -496,6 +496,8 @@ function (_React$Component3) {
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("form", {
         className: "level-card--expanded__form",
         onSubmit: this.saveLevel
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        class: "form-group"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("textarea", {
         className: "form-control",
         id: "level-name",
@@ -503,7 +505,9 @@ function (_React$Component3) {
         value: this.name || "",
         autoComplete: "off",
         onChange: this.onFormChange
-      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        class: "form-group"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
         htmlFor: "assumptions"
       }, "Assumptions"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("textarea", {
         className: "form-control",
@@ -513,7 +517,7 @@ function (_React$Component3) {
         autoComplete: "off",
         value: this.assumptions || "",
         onChange: this.onFormChange
-      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ButtonBar, {
+      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ButtonBar, {
         level: this.props.level,
         levelProps: this.props.levelProps,
         isActive: this.props.rootStore.uiStore.expandedCards[0] == this.props.level.id,
@@ -1496,4 +1500,4 @@ function (_React$Component2) {
 /***/ })
 
 },[["QTZG","runtime","vendors"]]]);
-//# sourceMappingURL=results_framework-23ab2d8155333437c7c4.js.map
+//# sourceMappingURL=results_framework-6b7eb24cf26ebd719a4f.js.map
