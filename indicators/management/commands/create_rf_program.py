@@ -27,7 +27,7 @@ def create_program(country, name, count=0):
 
 def create_mercycorps_leveltiers(program):
     tiers = []
-    for depth, tier_name in enumerate(LevelTier.PRESETS['Mercy Corps standard']):
+    for depth, tier_name in enumerate(LevelTier.TEMPLATES['mc_standard']['tiers']):
         tiers.append(
             LevelTier.objects.create(
                 name=tier_name,
@@ -118,11 +118,15 @@ class Command(BaseCommand):
             tolaland = tolaland.first()
         users = [
             'Cameron McFee',
+            'Jenny Marx',
+            'Sanjuro Jogdeo',
+            'Paul Souders',
+            'Ken Johnson'
         ]
         for user_name in users:
             tola_users = TolaUser.objects.filter(name=user_name)
             if tola_users.count() > 0:
-                CountryAccess.objects.create(
+                CountryAccess.objects.get_or_create(
                     tolauser=tola_users.first(),
                     country_id=tolaland.id,
                     role='basic_admin'

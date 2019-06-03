@@ -375,10 +375,13 @@ export default class FilterStore {
     }
     
     @computed get selectedProgramOption() {
-        return {
-            value: this.programId,
-            label: this.program.name
-        };
+        if (this.program) {
+            return {
+                value: this.programId,
+                label: this.program.name
+            };
+        }
+        return null;
     }
     
     @computed get frequencyOptions() {
@@ -585,7 +588,11 @@ export default class FilterStore {
                             indicator => ({value: indicator.pk, label: `${indicator.number} ${indicator.name}`})
                         )
                     })
-                ).filter(({label, options}) => options && options.length > 0);
+                ).concat([
+                    {label: gettext('Indicators unassigned to a results framework level'),
+                    options: this.filterIndicators(this.program.unassignedIndicators, 'indicators').map(
+                            indicator => ({value: indicator.pk, label: indicator.name}))
+                    }]).filter(({label, options}) => options && options.length > 0);
             }
         }
         return null;
@@ -593,7 +600,9 @@ export default class FilterStore {
     
      @computed get indicatorsSelected() {
         if (this.indicators && this.indicators.length > 0) {
-            return this.indicatorOptions.filter(indicator => this.indicators.includes(indicator.value));
+            return flattenArray(
+                this.indicatorOptions.map(optgroup => optgroup.options)
+                ).filter(indicator => this.indicators.includes(indicator.value));
         }
         return [];
     }
@@ -637,7 +646,8 @@ export default class FilterStore {
     }
     
     filterIndicators(indicatorSet, skip = false) {
-        let indicators = indicatorSet.sort((a, b) => a.sortIndex - b.sortIndex);
+        let indicators = indicatorSet.sort((a, b) => a.sortIndex - b.sortIndex);    
+        
         if (this.reportType === TVA) {
             indicators = indicators.filter(
                 indicator => indicator.frequency == this.frequencyId

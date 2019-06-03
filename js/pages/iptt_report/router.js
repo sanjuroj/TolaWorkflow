@@ -42,7 +42,7 @@ export default class ipttRouter {
             ]
         }
     ];
-    this.goodQueryParams = ['frequency', 'start', 'end', 'levels', 'types',
+    this.goodQueryParams = ['frequency', 'start', 'end', 'levels', 'types', 'sites',    
                             'sectors', 'indicators', 'tiers', 'groupby'];
     this.oldQueryParams = ['timeframe', 'numrecentperiods', 'numrecentcount', 'start_period', 'end_period'];
     this.queryParams = '?' + (this.goodQueryParams.concat(this.oldQueryParams)).join('&');
@@ -95,6 +95,7 @@ export default class ipttRouter {
         levels = null,
         tiers = null,
         sites = null,
+        sectors = null,
         types = null,
         indicators = null
         } = {}) => {
@@ -144,6 +145,9 @@ export default class ipttRouter {
             if (sites !== null) {
                 this.filterStore.sites = this.parseArrayParams(sites);
             }
+            if (sectors !== null) {
+                this.filterStore.sectors = this.parseArrayParams(sectors);
+            }
             if (indicators !== null) {
                 this.filterStore.indicators = this.parseArrayParams(indicators);
             }
@@ -192,6 +196,7 @@ export default class ipttRouter {
             'programId',
             'levels',
             'tiers',
+            'sectors',
             'sites',
             'types',
             'indicators'];
