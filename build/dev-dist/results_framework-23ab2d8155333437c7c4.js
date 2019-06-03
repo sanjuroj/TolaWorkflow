@@ -553,6 +553,7 @@ function (_React$Component4) {
         addAnotherButton = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(LevelButton, {
           disabledText: disabledText,
           classes: "btn-primary",
+          icon: "plus-circle",
           text: buttonText,
           submitType: "saveAndAddSibling",
           submitFunc: this.props.submitFunc
@@ -573,6 +574,7 @@ function (_React$Component4) {
         addAndLinkButton = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(LevelButton, {
           disabledText: disabledText,
           classes: "btn btn-primary",
+          icon: "stream",
           text: _buttonText,
           submitType: "saveAndAddChild",
           submitFunc: this.props.submitFunc
@@ -580,11 +582,12 @@ function (_React$Component4) {
       }
 
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "button-bar"
+        className: "button-bar btn-row"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(LevelButton, {
         disabledText: disabledText,
-        classes: "btn btn-primary",
+        classes: "btn-primary",
         text: gettext("Save and close"),
+        icon: "save",
         submitType: "saveOnly",
         submitFunc: this.props.submitFunc
       }), addAnotherButton, addAndLinkButton, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(LevelButton, {
@@ -1493,4 +1496,4 @@ function (_React$Component2) {
 /***/ })
 
 },[["QTZG","runtime","vendors"]]]);
-//# sourceMappingURL=results_framework-016002b5d5c2b43bf268.js.map
+//# sourceMappingURL=results_framework-23ab2d8155333437c7c4.js.map
