@@ -84,6 +84,8 @@ def get_program_filter_data(request):
                 'name': program.name,
                 'old_style_levels': not program.using_results_framework,
                 'frequencies': frequencies,
+                'reporting_period_start': start_formatted,
+                'reporting_period_end': end_formatted,
                 'periodDateRanges': {
                     '1': [[
                         start_formatted,

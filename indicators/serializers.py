@@ -416,7 +416,7 @@ class OneSheetExcelRenderer(ExcelRendererBase):
 
     @property
     def all_periods(self):
-        return self.serializer.all_periods_for_frequency()
+        return self.serializer.all_periods_for_frequency
 
     @property
     def column_count(self):
@@ -675,6 +675,9 @@ class IPTTExcelMixin(object):
 
     @property
     def report_date_range(self):
+        if self.frequency == 1:
+            return u'{} – {}'.format(self.program_data['reporting_period_start'],
+                                     self.program_data['reporting_period_end'])
         periods = self.get_periods(self.frequency)
         return u'{} – {}'.format(periods[0].start_display, periods[-1].end_display)
 
@@ -691,6 +694,8 @@ class IPTTExcelMixin(object):
             )
 
     def get_periods(self, frequency):
+        if frequency == 1:
+            return []
         periods = [
             self.get_period(frequency, period_dict)
             for period_dict in PeriodicTarget.generate_for_frequency(frequency)(
@@ -733,7 +738,6 @@ class IPTTExcelFullReportMixin(IPTTExcelMixin):
 class IPTTSingleExcelMixin(IPTTExcelMixin):
     full_report = False
     renderer_class = OneSheetExcelRenderer
-
 
     def load_indicators(self):
         indicators = self.indicator_qs.filter(program_id=self.program_data['pk'])
@@ -780,8 +784,8 @@ class IPTTSerializer(object):
     REPORT_TYPES = {
         TIMEPERIODS_JSON: None,
         TVA_JSON: None,
-        TIMEPERIODS_EXCEL: [IPTTTimeperiodsMixin, IPTTExcelMixin],
-        TVA_EXCEL: [IPTTTVAMixin, IPTTExcelMixin],
+        TIMEPERIODS_EXCEL: [IPTTTimeperiodsMixin, IPTTSingleExcelMixin],
+        TVA_EXCEL: [IPTTTVAMixin, IPTTSingleExcelMixin],
         TVA_FULL_EXCEL: [IPTTFullReportMixin, IPTTExcelFullReportMixin]
     }
 

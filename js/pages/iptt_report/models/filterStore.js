@@ -437,6 +437,9 @@ export default class FilterStore {
         if (this.startPeriod !== null) {
             return this.periods.getPeriod({index: this.startPeriod}).startDisplay;
         }
+        if (this.frequencyId === 1) {
+            return this.program.reportingStart;
+        }
         return null;
     }
     
@@ -448,6 +451,9 @@ export default class FilterStore {
     @computed get endPeriodLabel() {
         if (this.endPeriod !== null) {
             return this.periods.getPeriod({index: this.endPeriod}).endDisplay;
+        }
+        if (this.frequencyId === 1) {
+            return this.program.reportingEnd;
         }
         return null;
     }
