@@ -9647,8 +9647,12 @@ input[type=radio]:disabled {
     top: 8px; }
 
 .rf-page {
+  align-items: flex-start;
   display: flex;
-  align-items: flex-start; }
+  flex-direction: column; }
+  @media (min-width: 768px) {
+    .rf-page {
+      flex-direction: row; } }
 
 .leveltier-list {
   background-color: #fff;
@@ -9710,9 +9714,16 @@ input[type=radio]:disabled {
   line-height: 0;
   margin-bottom: 30px;
   margin-right: 30px; }
+  @media (min-width: 768px) {
+    .level-list-panel__dingbat {
+      margin-top: 30px; } }
   @media (max-width: 767.98px) {
     .level-list-panel__dingbat {
       display: none; } }
+
+@media (min-width: 768px) {
+  .level-list-panel__text {
+    margin-top: 30px; } }
 
 .level-card {
   margin-bottom: 15px;
@@ -10493,4 +10504,4 @@ a:hover {
 /* Unsorted custom selectors */
 
 
-/*# sourceMappingURL=base-026ee175fff289863db2.css.map*/
+/*# sourceMappingURL=base-6892fb811734c94b6b5d.css.map*/
