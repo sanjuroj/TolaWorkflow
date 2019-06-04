@@ -360,8 +360,6 @@ class IPTTExcelReport(LoginRequiredMixin, View):
 
     def get(self, request):
         serialized = self.get_serialized_data(request)
-        # reportData = self.get_context_data(request)
-        # return JsonResponse(reportData)
         return serialized.render(request)
             
 

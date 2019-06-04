@@ -946,12 +946,23 @@ class Indicator(SafeDeleteModel):
         return ""
 
     @property
+    def is_cumulative_display(self):
+        if self.is_cumulative:
+            # Translators: referring to an indicator whose results accumulate over time
+            return _("Cumulative")
+        elif self.is_cumulative is None:
+            return None
+        else:
+            # Translators: referring to an indicator whose results do not accumulate over time
+            return _("Not cumulative")
+
+    @property
     def get_direction_of_change(self):
         if self.direction_of_change == self.DIRECTION_OF_CHANGE_NEGATIVE:
             return _("-")
         elif self.direction_of_change == self.DIRECTION_OF_CHANGE_POSITIVE:
             return _("+")
-        return "N/A"
+        return None
 
     @property
     def get_result_average(self):
@@ -1029,11 +1040,14 @@ class Indicator(SafeDeleteModel):
 
     @property
     def number_display(self):
-        if self.level and self.level.leveltier:
+        if self.program.using_results_framework and self.level and self.level.leveltier:
             return "{0} {1}{2}".format(
                 self.leveltier_name, self.level.display_ontology, self.level_order_display
             )
-        return None
+        elif self.program.using_results_framework:
+            return None
+        else:
+            return self.number
 
 
 class PeriodicTarget(models.Model):
