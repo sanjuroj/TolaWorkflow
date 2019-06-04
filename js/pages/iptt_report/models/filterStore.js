@@ -111,7 +111,7 @@ export default class FilterStore {
     }
     
     _validFrequency = (frequencyId) => {
-        if (this.program) {
+        if (frequencyId && this.program) {
             if (this.isTVA) {
                 return this.program.validFrequency(frequencyId);
             } else {
@@ -136,7 +136,7 @@ export default class FilterStore {
     }
     
     @computed get frequencyId() {
-        if (this._validFrequency(this._frequencyId)) {
+        if (this._frequencyId) {
             return this._frequencyId;
         }
         return null;
@@ -146,6 +146,9 @@ export default class FilterStore {
         this.programStore.loadProgram(reportType, programId, frequencyId)
             .then(() => {
                 this.frequencyId = this.frequencyId || null;
+                if (!this._validFrequency(frequencyId)) {
+                    this.frequencyId = this.program.frequencies[0];
+                }
                 this.startPeriod = this.startPeriod || 0;
                 this.endPeriod = this.endPeriod || this.lastPeriod.index;
                 if (this.reportType === TVA && this.indicators && this.indicators.length > 0) {
