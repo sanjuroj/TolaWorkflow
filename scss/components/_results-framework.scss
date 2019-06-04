@@ -3,6 +3,7 @@
     align-items: flex-start;
     display: flex;
     flex-direction: column;
+    margin-top: $grid-gutter-width/2;
     @include media-breakpoint-up(md) {
         flex-direction: row;
     }

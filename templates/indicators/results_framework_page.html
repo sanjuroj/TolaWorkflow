@@ -4,8 +4,9 @@
 {# Translators: title of the Results framework page #}
 {% block title %}{{ program.name }}: {% trans "Results framework" %} |{% endblock %}
 
+{% block extra_page_title_classes %}h2{% endblock %}
 {% block page_title %}
-<a href='{% url "program_page" program.id %}'>{{ program.name }}:</a> <small>{% trans "Results framework" %} <i class="fas fa-sitemap"></i></small>
+<a href='{% url "program_page" program.id %}'>{{ program.name }}:</a> <span class="font-weight-normal text-muted text-nowrap">{% trans "Results framework" %}&nbsp;<small><i class="fas fa-sitemap"></i></small></span>
 {% endblock %}
 
 {% block header_extras %}
