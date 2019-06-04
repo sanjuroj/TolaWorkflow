@@ -198,11 +198,21 @@ class Level(models.Model):
         )
 
     def get_children(self):
+        """ Used in group-by-outcome-chain reports, recursively gets children in tree order"""
         child_levels = []
         for child_level in self.child_levels.all():
             child_levels.append(child_level)
             child_levels += child_level.get_children()
         return child_levels
+
+    @property
+    def next_sort_order(self):
+        current_max = None
+        if self.indicator_set.exists():
+            current_max = self.indicator_set.aggregate(
+                models.Max('level_order')
+            ).get('level_order__max', None)
+        return 0 if current_max is None else current_max + 1
 
 
 class LevelAdmin(admin.ModelAdmin):

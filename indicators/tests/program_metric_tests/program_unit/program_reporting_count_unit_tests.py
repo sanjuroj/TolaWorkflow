@@ -294,7 +294,13 @@ class TestSingleReportingIndicator(ReportingIndicatorBase):
         self.indicator.target_frequency = Indicator.LOP
         self.indicator.lop_target = 1400
         self.indicator.save()
-        self.load_data()
+        target = i_factories.PeriodicTargetFactory(
+            indicator=self.indicator,
+            target=self.indicator.lop_target,
+            start_date=self.indicator.program.reporting_period_start,
+            end_date=self.indicator.program.reporting_period_end
+        )
+        self.load_data(target=target)
         program = self.get_annotated_program()
         self.assertEqual(program.scope_counts['nonreporting_count'], 0)
         self.assertEqual(program.scope_counts['indicator_count'], 1)
@@ -369,8 +375,15 @@ class TestMixedReportingAndNonIndicators(ReportingIndicatorBase):
             lop_target=1000,
             program=self.program
         )
+        i_lop_target = i_factories.PeriodicTargetFactory(
+            indicator=indicator_lop,
+            target=indicator_lop.lop_target,
+            start_date=self.program.reporting_period_start,
+            end_date=self.program.reporting_period_end
+        )
         lop_data = i_factories.ResultFactory(
             indicator=indicator_lop,
+            periodic_target=i_lop_target,
             achieved=400,
             date_collected=self.program.reporting_period_end - datetime.timedelta(days=10)
         )
