@@ -4153,8 +4153,7 @@ function (_React$Component) {
     _this = _possibleConstructorReturn(this, _getPrototypeOf(TimeframeRadio).call(this, props));
 
     _this.checkMostRecent = function () {
-      //default value of 2 in case of clicking "most recent" radio box - default behavior
-      _this.props.filterStore.mostRecent = 2;
+      _this.mostRecentInputRef.current.focus();
     };
 
     _this.handleChange = function (e) {
@@ -4163,34 +4162,41 @@ function (_React$Component) {
       });
     };
 
-    _this.updateMostRecentCount = function (e) {
-      _this.setState({
-        focus: false
-      });
+    _this.handleBlur = function (e) {
+      if (!_this.state.revert && _this.state.mostRecentValue !== '') {
+        _this.props.filterStore.mostRecent = _this.state.mostRecentValue;
+      }
 
-      _this.props.filterStore.mostRecent = e.target.value;
+      _this.setState({
+        focus: false,
+        revert: false
+      });
     };
 
     _this.handleKeyDown = function (e) {
       if (e.keyCode === 13) {
         e.target.blur();
+      } else if (e.keyCode === 27) {
+        _this.setState({
+          revert: true
+        }, function () {
+          _this.mostRecentInputRef.current.blur();
+        });
       }
     };
 
     _this.handleFocus = function (e) {
-      if (!_this.props.filterStore.mostRecent) {
-        _this.props.filterStore.mostRecent = 2;
-      }
-
       _this.setState({
         focus: true,
         mostRecentValue: _this.props.filterStore.mostRecent || ''
       });
     };
 
+    _this.mostRecentInputRef = react__WEBPACK_IMPORTED_MODULE_0___default.a.createRef();
     _this.state = {
       focus: false,
-      mostRecentValue: ''
+      mostRecentValue: '',
+      revert: false
     };
     return _this;
   }
@@ -4217,7 +4223,7 @@ function (_React$Component) {
         className: "form-check-input"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         type: "radio",
-        checked: this.props.filterStore.showAll,
+        checked: !this.state.focus && this.props.filterStore.showAll,
         disabled: this.props.filterStore.periodsDisabled,
         onChange: function onChange() {
           _this2.props.filterStore.showAll = true;
@@ -4237,7 +4243,7 @@ function (_React$Component) {
         className: "form-check-input"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         type: "radio",
-        checked: this.props.filterStore.mostRecent,
+        checked: this.state.focus || this.props.filterStore.mostRecent,
         disabled: this.props.filterStore.periodsDisabled,
         onChange: this.checkMostRecent
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
@@ -4251,10 +4257,11 @@ function (_React$Component) {
         type: "number",
         className: "form-control",
         value: this.mostRecentValue,
+        ref: this.mostRecentInputRef,
         disabled: this.props.filterStore.periodsDisabled,
         onChange: this.handleChange,
         onFocus: this.handleFocus,
-        onBlur: this.updateMostRecentCount,
+        onBlur: this.handleBlur,
         onKeyDown: this.handleKeyDown
       })));
     }
@@ -4390,4 +4397,4 @@ function () {
 /***/ })
 
 },[["mYfJ","runtime","vendors"]]]);
-//# sourceMappingURL=iptt_report-5b10a7c9548e9d804cfa.js.map
+//# sourceMappingURL=iptt_report-e2eb129ab0a4805fb8d0.js.map
