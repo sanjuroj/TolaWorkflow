@@ -3309,14 +3309,13 @@ var IPTTFilterForm = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inject"])('
   /* # Translators: Labels a set of filters to select which data to show */
   gettext('Report Options')), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(FilterTop, null)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     id: "filter-middle",
-    className: "p-3"
+    className: "px-3 pt-3 pb-2"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(FilterMiddle, null)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    id: "filter-bottom",
-    className: "d-flex justify-content-between no-gutters p-3"
+    id: "filter-bottom"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_buttons__WEBPACK_IMPORTED_MODULE_4__["IPTTButton"], {
     label:
     /* # Translators: clears all filters set on a report */
-    gettext('Clear'),
+    gettext('Clear filters'),
     action: filterStore.clearFilters,
     isDisabled: filterStore.noFilters
   })));
@@ -3708,8 +3707,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 
 var IPTTButton = function IPTTButton(props) {
-  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "btn btn-primary btn-block" + (props.isDisabled ? " disabled" : ""),
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+    type: "reset",
+    className: "btn btn-block btn-reset" + (props.isDisabled ? " disabled" : ""),
     onClick: props.action
   }, props.label);
 };
@@ -4342,4 +4342,4 @@ function () {
 /***/ })
 
 },[["mYfJ","runtime","vendors"]]]);
-//# sourceMappingURL=iptt_report-75cfde04129b3645c58a.js.map
+//# sourceMappingURL=iptt_report-95f49c32e6ebc7fc0cb7.js.map

@@ -46,15 +46,14 @@ const IPTTFilterForm = inject('filterStore')(
                     </h3>
                     <FilterTop />
                 </div>
-                <div id="filter-middle" className="p-3">
+                <div id="filter-middle" className="px-3 pt-3 pb-2">
                     <FilterMiddle /> 
                 </div>
-                <div id="filter-bottom"
-                     className="d-flex justify-content-between no-gutters p-3">
+                <div id="filter-bottom">
                     <IPTTButton
                         label={
                             /* # Translators: clears all filters set on a report */
-                            gettext('Clear')
+                            gettext('Clear filters')
                         }
                         action={ filterStore.clearFilters }
                         isDisabled={ filterStore.noFilters }
