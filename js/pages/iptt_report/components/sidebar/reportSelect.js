@@ -57,12 +57,43 @@ const FrequencySelect = inject('filterStore')(
 @inject('filterStore')
 @observer
 class TimeframeRadio extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            focus: false,
+            mostRecentValue: ''
+        };
+    }
+    componentDidMount() {
+        this.setState({mostRecentValue: (this.props.filterStore.mostRecent || '')});
+    }
     checkMostRecent = () => {
         //default value of 2 in case of clicking "most recent" radio box - default behavior
         this.props.filterStore.mostRecent = 2;
     }
+    handleChange = (e) => {
+        this.setState({mostRecentValue: e.target.value});
+    }
     updateMostRecentCount = (e) => {
+        this.setState({focus: false});
         this.props.filterStore.mostRecent = e.target.value;
+    }
+    handleKeyDown = (e) => {
+        if (e.keyCode === 13) {
+            e.target.blur();
+        }
+    }
+    handleFocus = (e) => {
+        if (!this.props.filterStore.mostRecent) {
+            this.props.filterStore.mostRecent = 2;
+        }
+        this.setState({focus: true, mostRecentValue: (this.props.filterStore.mostRecent || '')});
+    }
+    get mostRecentValue() {
+        if (this.state.focus) {
+            return this.state.mostRecentValue;
+        }
+        return this.props.filterStore.mostRecent;
     }
     render() {
         return <div className="form-row mb-3">
@@ -75,7 +106,8 @@ class TimeframeRadio extends React.Component {
                                        onChange={ () => {this.props.filterStore.showAll = true;} }
                                        />
                             </span>
-                            <label className="form-check-label">
+                            <label onClick={ () => {this.props.filterStore.showAll = true;} }
+                                   className="form-check-label">
                                 {
                                     /* # Translators: option to show all periods for the report */
                                     gettext('Show all')
@@ -92,7 +124,8 @@ class TimeframeRadio extends React.Component {
                                        onChange={ this.checkMostRecent }
                                        />
                             </span>
-                            <label className="form-check-label">
+                            <label onClick={ this.checkMostRecent }
+                                   className="form-check-label">
                                 {
                                     /* # Translators: option to show a number of recent periods for the report */
                                     gettext('Most recent')
@@ -102,9 +135,12 @@ class TimeframeRadio extends React.Component {
                     </div>
                     <div className="col-sm-4">
                         <input type="number" className="form-control"
-                               value={ this.props.filterStore.mostRecent || ''}
+                               value={ this.mostRecentValue }
                                disabled={ this.props.filterStore.periodsDisabled }
-                               onChange={ this.updateMostRecentCount }
+                               onChange={ this.handleChange }
+                               onFocus={ this.handleFocus }
+                               onBlur={ this.updateMostRecentCount }
+                               onKeyDown={ this.handleKeyDown }
                                />
                     </div>
                </div>;
