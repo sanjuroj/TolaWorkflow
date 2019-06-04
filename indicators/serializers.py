@@ -457,8 +457,6 @@ class OneSheetExcelRenderer(ExcelRendererBase):
             row_offset += 1
 
 
-
-
 class Period:
 
     @classmethod
@@ -466,7 +464,7 @@ class Period:
         return cls(1, {
             'name': ugettext('Life of Program') 
         }, True)
-        
+
     def __init__(self, frequency, period, tva=False):
         self.period = period
         self.frequency = int(frequency)
@@ -607,8 +605,6 @@ class IPTTTVAMixin:
                 yield level_row
 
 
-
-
 class IPTTTimeperiodsMixin:
     indicator_qs = IPTTIndicator.timeperiods
     period_column_count = 1
@@ -709,7 +705,6 @@ class IPTTExcelMixin(object):
         return periods[start:end]
 
     def render(self, request):
-        #return render(request, 'indicators/iptt_excel_test.html', {'serializer': self})
         return self.renderer_class(self).render()
 
 
@@ -722,11 +717,15 @@ class IPTTExcelFullReportMixin(IPTTExcelMixin):
 
     @property
     def blank_level_row(self):
-        return [indicator for indicator in self.indicators[self.frequency].filter(level__isnull=True).with_logframe_sorting()]
+        return [
+            indicator for indicator in self.indicators[self.frequency].filter(
+                level__isnull=True).with_logframe_sorting()
+            ]
 
     @property
     def level_rows(self):
-        if not self.program_data['using_results_framework'] or len(self.blank_level_row) == len(self.indicators[self.frequency]):
+        if not self.program_data['using_results_framework'] or \
+        len(self.blank_level_row) == len(self.indicators[self.frequency]):
             return False
         return self._level_rows
 
@@ -811,8 +810,6 @@ class IPTTSerializer(object):
             self.frequency = int(self.request.get('frequency'))
             self.periods = self.get_periods(self.frequency)
 
-    
-
     @property
     def program_name(self):
         return self.program_data['name']
@@ -820,7 +817,3 @@ class IPTTSerializer(object):
     @property
     def level_column(self):
         return not self.program_data['using_results_framework']
-
-    
-
-    
