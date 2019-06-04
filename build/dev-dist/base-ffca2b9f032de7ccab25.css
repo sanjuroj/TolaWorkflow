@@ -9649,7 +9649,8 @@ input[type=radio]:disabled {
 .rf-page {
   align-items: flex-start;
   display: flex;
-  flex-direction: column; }
+  flex-direction: column;
+  margin-top: 15px; }
   @media (min-width: 768px) {
     .rf-page {
       flex-direction: row; } }
@@ -10509,3 +10510,5 @@ a:hover {
 
 /* Unsorted custom selectors */
 
+
+/*# sourceMappingURL=base-ffca2b9f032de7ccab25.css.map*/
