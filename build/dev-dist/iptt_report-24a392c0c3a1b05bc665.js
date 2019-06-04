@@ -4154,32 +4154,70 @@ var TimeframeRadio = (_dec = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inj
 function (_React$Component) {
   _inherits(TimeframeRadio, _React$Component);
 
-  function TimeframeRadio() {
-    var _getPrototypeOf2;
-
+  function TimeframeRadio(props) {
     var _this;
 
     _classCallCheck(this, TimeframeRadio);
 
-    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-      args[_key] = arguments[_key];
-    }
-
-    _this = _possibleConstructorReturn(this, (_getPrototypeOf2 = _getPrototypeOf(TimeframeRadio)).call.apply(_getPrototypeOf2, [this].concat(args)));
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(TimeframeRadio).call(this, props));
 
     _this.checkMostRecent = function () {
-      //default value of 2 in case of clicking "most recent" radio box - default behavior
-      _this.props.filterStore.mostRecent = 2;
+      _this.mostRecentInputRef.current.focus();
     };
 
-    _this.updateMostRecentCount = function (e) {
-      _this.props.filterStore.mostRecent = e.target.value;
+    _this.handleChange = function (e) {
+      _this.setState({
+        mostRecentValue: e.target.value
+      });
     };
 
+    _this.handleBlur = function (e) {
+      if (!_this.state.revert && _this.state.mostRecentValue !== '') {
+        _this.props.filterStore.mostRecent = _this.state.mostRecentValue;
+      }
+
+      _this.setState({
+        focus: false,
+        revert: false
+      });
+    };
+
+    _this.handleKeyDown = function (e) {
+      if (e.keyCode === 13) {
+        e.target.blur();
+      } else if (e.keyCode === 27) {
+        _this.setState({
+          revert: true
+        }, function () {
+          _this.mostRecentInputRef.current.blur();
+        });
+      }
+    };
+
+    _this.handleFocus = function (e) {
+      _this.setState({
+        focus: true,
+        mostRecentValue: _this.props.filterStore.mostRecent || ''
+      });
+    };
+
+    _this.mostRecentInputRef = react__WEBPACK_IMPORTED_MODULE_0___default.a.createRef();
+    _this.state = {
+      focus: false,
+      mostRecentValue: '',
+      revert: false
+    };
     return _this;
   }
 
   _createClass(TimeframeRadio, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      this.setState({
+        mostRecentValue: this.props.filterStore.mostRecent || ''
+      });
+    }
+  }, {
     key: "render",
     value: function render() {
       var _this2 = this;
@@ -4194,12 +4232,15 @@ function (_React$Component) {
         className: "form-check-input"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         type: "radio",
-        checked: this.props.filterStore.showAll,
+        checked: !this.state.focus && this.props.filterStore.showAll,
         disabled: this.props.filterStore.periodsDisabled,
         onChange: function onChange() {
           _this2.props.filterStore.showAll = true;
         }
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+        onClick: function onClick() {
+          _this2.props.filterStore.showAll = true;
+        },
         className: "form-check-label"
       },
       /* # Translators: option to show all periods for the report */
@@ -4211,10 +4252,11 @@ function (_React$Component) {
         className: "form-check-input"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         type: "radio",
-        checked: this.props.filterStore.mostRecent,
+        checked: this.state.focus || this.props.filterStore.mostRecent,
         disabled: this.props.filterStore.periodsDisabled,
         onChange: this.checkMostRecent
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+        onClick: this.checkMostRecent,
         className: "form-check-label"
       },
       /* # Translators: option to show a number of recent periods for the report */
@@ -4223,10 +4265,23 @@ function (_React$Component) {
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         type: "number",
         className: "form-control",
-        value: this.props.filterStore.mostRecent || '',
+        value: this.mostRecentValue,
+        ref: this.mostRecentInputRef,
         disabled: this.props.filterStore.periodsDisabled,
-        onChange: this.updateMostRecentCount
+        onChange: this.handleChange,
+        onFocus: this.handleFocus,
+        onBlur: this.handleBlur,
+        onKeyDown: this.handleKeyDown
       })));
+    }
+  }, {
+    key: "mostRecentValue",
+    get: function get() {
+      if (this.state.focus) {
+        return this.state.mostRecentValue;
+      }
+
+      return this.props.filterStore.mostRecent;
     }
   }]);
 
@@ -4351,4 +4406,4 @@ function () {
 /***/ })
 
 },[["mYfJ","runtime","vendors"]]]);
-//# sourceMappingURL=iptt_report-182bb9ea42c492592a7c.js.map
+//# sourceMappingURL=iptt_report-24a392c0c3a1b05bc665.js.map
