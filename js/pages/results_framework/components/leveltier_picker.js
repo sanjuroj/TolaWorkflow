@@ -54,7 +54,7 @@ class Picker extends React.Component {
 
         return (
               <div className={classes}>
-                <label>TEMPLATE</label><span>{helpIcon}</span>
+                <label>Template</label>&nbsp;<small>{helpIcon}</small>
                 <Select
                     options={options}
                     value={selectedOption}

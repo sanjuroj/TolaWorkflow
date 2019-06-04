@@ -7,6 +7,7 @@ from workflow.models import Program
 from indicators.models import Indicator, PeriodicTarget, PinnedReport, Level, LevelTier
 from indicators.forms import PinnedReportForm
 from indicators.queries import IPTTIndicator
+from indicators.serializers import IPTTSerializer
 from tola.l10n_utils import l10n_date_medium, l10n_date_long, l10n_monthname
 from tola_management.permissions import verify_program_access_level
 
@@ -14,7 +15,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.views.decorators.http import require_POST
 from django.views.generic import TemplateView, View
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from django.utils import timezone
 from django.utils.translation import (
     ugettext,
@@ -158,9 +159,10 @@ def get_iptt_program(program_id, frequency, tva=False):
             level_item = {
                 'pk': level.pk,
                 'name': level.name,
-                'tier': level.leveltier.name,
-                'tierPk': level.leveltier.pk,
+                'tier': level.leveltier.name if level.leveltier else None,
+                'tierPk': level.leveltier.pk if level.leveltier else None,
                 'ontology': level.display_ontology,
+                'sort_ontology': level.ontology,
                 'parent': level.parent.pk if level.parent else None,
                 'depth': level.get_level_depth(),
                 'sort': level.customsort
@@ -202,6 +204,7 @@ def indicators_to_iptt(indicator_qs, frequency, tva, results_framework, program_
                 ('{}:'.format(indicator.number_display) if indicator.number_display else None)
                 if results_framework else indicator.number
             ),
+            'old_number': indicator.number,
             'name': indicator.name,
             'sites': indicator.sites,
             'indicatorTypes': indicator.indicator_types,
@@ -237,8 +240,9 @@ def indicators_to_iptt(indicator_qs, frequency, tva, results_framework, program_
                 }
             else:
                 indicator_data['reportData']['timeperiods'] = {
-                    frequency: [getattr(indicator, 'frequency_{0}_period_{1}'.format(frequency, c))
-                                     for c in range(values_count)]
+                    frequency: [
+                        getattr(indicator, 'frequency_{0}_period_{1}'.format(frequency, c))
+                        for c in range(values_count)]
                 }
         indicators.append(indicator_data)
     reportData = {
@@ -256,6 +260,12 @@ def indicators_to_iptt(indicator_qs, frequency, tva, results_framework, program_
         reportData['resultChainFilter'] = ugettext('by %(tier)s chain') % {'tier': second_tier_name}
         reportData['resultChainHeader'] = ugettext('%(tier)s chains') % {'tier': second_tier_name}
     return reportData
+
+def full_iptt_report(program_id):
+    return {
+        'fullreport': True,
+        'program id': program_id
+    }
 
 def add_numeric_cell(cell, value):
     if value is None or value == '':
@@ -332,6 +342,28 @@ class IPTTReportData(LoginRequiredMixin, View):
         reportData = self.get_context_data(request)
         return JsonResponse(reportData)
 
+
+
+
+class IPTTExcelReport(LoginRequiredMixin, View):
+
+    def get_serialized_data(self, request):
+        if request.GET.get('fullTVA') == 'true':
+            report_type = IPTTSerializer.TVA_FULL_EXCEL
+        elif request.GET.get('reportType') == '1':
+            report_type = IPTTSerializer.TVA_EXCEL
+        elif request.GET.get('reportType') == '2':
+            report_type = IPTTSerializer.TIMEPERIODS_EXCEL
+        else:
+            raise NotImplementedError('No report type specified')
+        return IPTTSerializer(report_type, request.GET)
+
+    def get(self, request):
+        serialized = self.get_serialized_data(request)
+        # reportData = self.get_context_data(request)
+        # return JsonResponse(reportData)
+        return serialized.render(request)
+            
 
 class IPTTExcelExport(LoginRequiredMixin, View):
     tva = False

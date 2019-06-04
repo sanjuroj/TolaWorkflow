@@ -1,7 +1,11 @@
 // # from results_framework_page.html
 .rf-page {
-    display: flex;
     align-items: flex-start;
+    display: flex;
+    flex-direction: column;
+    @include media-breakpoint-up(md) {
+        flex-direction: row;
+    }
 }
 
 
@@ -69,11 +73,18 @@
     line-height: 0;
     margin-bottom: $grid-gutter-width;
     margin-right: $grid-gutter-width;
+    @include media-breakpoint-up(md) {
+        margin-top: $grid-gutter-width;
+    }
     @include media-breakpoint-down(sm) {
         display: none;
     }
 }
-.level-list-panel__text {}
+.level-list-panel__text {
+    @include media-breakpoint-up(md) {
+        margin-top: $grid-gutter-width;
+    }
+}
 
 
 // # from level_cards.js
@@ -139,7 +150,21 @@
 
 // component ButtonBar
 .button-bar {
+    //align-items: center;
+    //background: $teal-200;
+    display: flex;
     margin-top: $grid-gutter-width/2;
+}
+.button-bar__label {
+    margin-bottom: 0;
+    white-space: nowrap;
+}
+.button-bar__save {
+    margin: 0 $grid-gutter-width/4;
+}
+.button-bar__close {
+    flex-grow: 1;
+    text-align: right;
 }
 
 // component LevelButton

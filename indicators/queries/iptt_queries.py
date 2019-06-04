@@ -26,10 +26,10 @@ class IPTTIndicatorQueryset(models.QuerySet, IndicatorSortingQSMixin):
         qs = qs.annotate(lop_percent_met=utils.indicator_lop_percent_met_annotation())
         return qs
 
-    def apply_filters(self, levels=None, sites=None, indicator_types=None,
-                      sectors=None, indicator_ids=None):
+    def apply_filters(self, levels=None, sites=None, types=None,
+                      sectors=None, indicators=None, old_levels=False):
         qs = self.all()
-        if not any([levels, sites, indicator_types, sectors, indicator_ids]):
+        if not any([levels, sites, types, sectors, indicators]):
             return qs
         # if levels (add after Satsuma integration)
         if sites:
@@ -40,12 +40,20 @@ class IPTTIndicatorQueryset(models.QuerySet, IndicatorSortingQSMixin):
             qs = qs.annotate(
                 sites_in_filter=models.Exists(sites_subquery)
                 ).filter(sites_in_filter=True)
-        if indicator_types:
-            qs = qs.filter(indicator_type__in=[int(t) for t in indicator_types])
+        if types:
+            qs = qs.filter(indicator_type__in=[int(t) for t in types])
         if sectors:
             qs = qs.filter(sector__in=[int(s) for s in sectors])
-        if indicator_ids:
-            qs = qs.filter(pk__in=[int(i) for i in indicator_ids])
+        if indicators:
+            qs = qs.filter(pk__in=[int(i) for i in indicators])
+        if old_levels:
+            if levels:
+                old_level_names = [name for (pk, name) in Indicator.OLD_LEVELS if pk in levels]
+                qs = qs.filter(old_level__in=old_level_names)
+        else:
+            if levels:
+                qs = qs.filter(level__in=levels)
+        qs = qs.distinct()
         return qs
 
     def get_periods(self, frequency, start, end):

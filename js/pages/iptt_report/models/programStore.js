@@ -29,7 +29,7 @@ class Indicator {
 
     constructor(indicatorJSON, program) {
         this.pk = parseInt(indicatorJSON.pk);
-        this.number = indicatorJSON.number;
+        this.number = indicatorJSON.number || indicatorJSON.old_number;
         this.name = indicatorJSON.name;
         this.unitOfMeasure = indicatorJSON.unitOfMeasure;
         this.directionOfChange = indicatorJSON.directionOfChange;
@@ -91,27 +91,31 @@ class Level {
     program = null;
     pk = null;
     name = null;
-    sort = null;
+    _sort = null;
 
     constructor(levelJSON, program) {
         this.program = program;
         this.pk = parseInt(levelJSON.pk);
         this.name = levelJSON.name;
-        this.sort = parseInt(levelJSON.sort);
+        this._sort = parseInt(levelJSON.sort);
     }
     
     @computed get indicators() {
         return this.program.indicators.filter(indicator => indicator.levelpk == this.pk);
-    }    
+    }
+
 }
 
 class OldLevel extends Level {
-    
+    @computed get sort() {
+        return this._sort;
+    }
 }
 
 class NewLevel extends Level {
     tierPk = null;
     ontology = null;
+    sortOntology = null;
     depth = null;
     _level2parent = null;
     _parent = null;
@@ -120,6 +124,7 @@ class NewLevel extends Level {
         super(levelJSON, program);
         this.tierPk = parseInt(levelJSON.tierPk);
         this.ontology = levelJSON.ontology;
+        this.sortOntology = levelJSON.sort_ontology;
         this.depth = parseInt(levelJSON.depth);
         this._level2parent = parseInt(levelJSON.level2parent);
         this._parent = parseInt(levelJSON.parent);
@@ -135,6 +140,10 @@ class NewLevel extends Level {
     
     get childLevels() {
         return this.program.levels.filter(level => level._parent == this.pk);
+    }
+    
+    @computed get sort() {
+        return this.sortOntology || this._sort;
     }
 }
 
@@ -474,6 +483,10 @@ class Program {
     
     @computed get indicators() {
         return this._indicators && Object.values(this._indicators);
+    }
+    
+    @computed get unassignedIndicators() {
+        return this.indicators.filter(indicator => indicator.level === null)
     }
     
     validLevel = (level) => this._levels[level] !== undefined
