@@ -136,7 +136,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return ProgramStore; });
 /* harmony import */ var mobx__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! mobx */ "2vnA");
 /* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../constants */ "v38i");
-var _class, _temp, _class3, _class4, _temp2, _class6, _temp3, _class8, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _temp4, _class10, _descriptor16, _temp5;
+var _class, _temp, _class3, _class4, _temp2, _class6, _temp3, _class8, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _descriptor16, _descriptor17, _temp4, _class10, _descriptor18, _temp5;
 
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
 
@@ -599,31 +599,35 @@ function () {
 
     _initializerDefineProperty(this, "name", _descriptor2, this);
 
-    _initializerDefineProperty(this, "frequencies", _descriptor3, this);
+    _initializerDefineProperty(this, "reportingStart", _descriptor3, this);
 
-    _initializerDefineProperty(this, "validTVA", _descriptor4, this);
+    _initializerDefineProperty(this, "reportingEnd", _descriptor4, this);
 
-    _initializerDefineProperty(this, "validTIMEPERIODS", _descriptor5, this);
+    _initializerDefineProperty(this, "frequencies", _descriptor5, this);
 
-    _initializerDefineProperty(this, "periods", _descriptor6, this);
+    _initializerDefineProperty(this, "validTVA", _descriptor6, this);
 
-    _initializerDefineProperty(this, "oldLevels", _descriptor7, this);
+    _initializerDefineProperty(this, "validTIMEPERIODS", _descriptor7, this);
 
-    _initializerDefineProperty(this, "initialized", _descriptor8, this);
+    _initializerDefineProperty(this, "periods", _descriptor8, this);
 
-    _initializerDefineProperty(this, "calls", _descriptor9, this);
+    _initializerDefineProperty(this, "oldLevels", _descriptor9, this);
 
-    _initializerDefineProperty(this, "_levels", _descriptor10, this);
+    _initializerDefineProperty(this, "initialized", _descriptor10, this);
 
-    _initializerDefineProperty(this, "_tiers", _descriptor11, this);
+    _initializerDefineProperty(this, "calls", _descriptor11, this);
 
-    _initializerDefineProperty(this, "_sites", _descriptor12, this);
+    _initializerDefineProperty(this, "_levels", _descriptor12, this);
 
-    _initializerDefineProperty(this, "_sectors", _descriptor13, this);
+    _initializerDefineProperty(this, "_tiers", _descriptor13, this);
 
-    _initializerDefineProperty(this, "_types", _descriptor14, this);
+    _initializerDefineProperty(this, "_sites", _descriptor14, this);
 
-    _initializerDefineProperty(this, "_indicators", _descriptor15, this);
+    _initializerDefineProperty(this, "_sectors", _descriptor15, this);
+
+    _initializerDefineProperty(this, "_types", _descriptor16, this);
+
+    _initializerDefineProperty(this, "_indicators", _descriptor17, this);
 
     this.getIndicator = function (indicatorPk) {
       if (_this7._indicators[indicatorPk] && _this7._indicators[indicatorPk] !== undefined) {
@@ -792,6 +796,8 @@ function () {
     this.pk = parseInt(JSON.id);
     this.name = JSON.name;
     this.frequencies = JSON.frequencies.map(Number);
+    this.reportingStart = JSON.reporting_period_start;
+    this.reportingEnd = JSON.reporting_period_end;
     this.validTVA = this.frequencies.length > 0;
     this.validTIMEPERIODS = true;
     this.oldLevels = JSON.old_style_levels === true || JSON.old_style_levels === "True";
@@ -870,42 +876,56 @@ function () {
   initializer: function initializer() {
     return null;
   }
-}), _descriptor3 = _applyDecoratedDescriptor(_class8.prototype, "frequencies", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor3 = _applyDecoratedDescriptor(_class8.prototype, "reportingStart", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    return null;
+  }
+}), _descriptor4 = _applyDecoratedDescriptor(_class8.prototype, "reportingEnd", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    return null;
+  }
+}), _descriptor5 = _applyDecoratedDescriptor(_class8.prototype, "frequencies", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return [];
   }
-}), _descriptor4 = _applyDecoratedDescriptor(_class8.prototype, "validTVA", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor6 = _applyDecoratedDescriptor(_class8.prototype, "validTVA", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return false;
   }
-}), _descriptor5 = _applyDecoratedDescriptor(_class8.prototype, "validTIMEPERIODS", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor7 = _applyDecoratedDescriptor(_class8.prototype, "validTIMEPERIODS", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return true;
   }
-}), _descriptor6 = _applyDecoratedDescriptor(_class8.prototype, "periods", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor8 = _applyDecoratedDescriptor(_class8.prototype, "periods", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return {};
   }
-}), _descriptor7 = _applyDecoratedDescriptor(_class8.prototype, "oldLevels", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor9 = _applyDecoratedDescriptor(_class8.prototype, "oldLevels", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return false;
   }
-}), _descriptor8 = _applyDecoratedDescriptor(_class8.prototype, "initialized", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor10 = _applyDecoratedDescriptor(_class8.prototype, "initialized", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
@@ -914,7 +934,7 @@ function () {
 
     return _ref4 = {}, _defineProperty(_ref4, _constants__WEBPACK_IMPORTED_MODULE_1__["TVA"], []), _defineProperty(_ref4, _constants__WEBPACK_IMPORTED_MODULE_1__["TIMEPERIODS"], []), _ref4;
   }
-}), _descriptor9 = _applyDecoratedDescriptor(_class8.prototype, "calls", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor11 = _applyDecoratedDescriptor(_class8.prototype, "calls", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
@@ -923,42 +943,42 @@ function () {
 
     return _ref5 = {}, _defineProperty(_ref5, _constants__WEBPACK_IMPORTED_MODULE_1__["TVA"], {}), _defineProperty(_ref5, _constants__WEBPACK_IMPORTED_MODULE_1__["TIMEPERIODS"], {}), _ref5;
   }
-}), _descriptor10 = _applyDecoratedDescriptor(_class8.prototype, "_levels", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor12 = _applyDecoratedDescriptor(_class8.prototype, "_levels", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return {};
   }
-}), _descriptor11 = _applyDecoratedDescriptor(_class8.prototype, "_tiers", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor13 = _applyDecoratedDescriptor(_class8.prototype, "_tiers", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return {};
   }
-}), _descriptor12 = _applyDecoratedDescriptor(_class8.prototype, "_sites", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor14 = _applyDecoratedDescriptor(_class8.prototype, "_sites", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return {};
   }
-}), _descriptor13 = _applyDecoratedDescriptor(_class8.prototype, "_sectors", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor15 = _applyDecoratedDescriptor(_class8.prototype, "_sectors", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return {};
   }
-}), _descriptor14 = _applyDecoratedDescriptor(_class8.prototype, "_types", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor16 = _applyDecoratedDescriptor(_class8.prototype, "_types", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return {};
   }
-}), _descriptor15 = _applyDecoratedDescriptor(_class8.prototype, "_indicators", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor17 = _applyDecoratedDescriptor(_class8.prototype, "_indicators", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
@@ -977,7 +997,7 @@ function () {
 
     _classCallCheck(this, ProgramStore);
 
-    _initializerDefineProperty(this, "_programs", _descriptor16, this);
+    _initializerDefineProperty(this, "_programs", _descriptor18, this);
 
     this.api = null;
 
@@ -1065,7 +1085,7 @@ function () {
   }]);
 
   return ProgramStore;
-}(), _temp5), (_descriptor16 = _applyDecoratedDescriptor(_class10.prototype, "_programs", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}(), _temp5), (_descriptor18 = _applyDecoratedDescriptor(_class10.prototype, "_programs", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
@@ -2688,6 +2708,10 @@ function () {
         }).startDisplay;
       }
 
+      if (this.frequencyId === 1) {
+        return this.program.reportingStart;
+      }
+
       return null;
     }
   }, {
@@ -2708,6 +2732,10 @@ function () {
         return this.periods.getPeriod({
           index: this.endPeriod
         }).endDisplay;
+      }
+
+      if (this.frequencyId === 1) {
+        return this.program.reportingEnd;
       }
 
       return null;
@@ -4411,4 +4439,4 @@ function () {
 /***/ })
 
 },[["mYfJ","runtime","vendors"]]]);
-//# sourceMappingURL=iptt_report-3ae08ca25c2460c857c2.js.map
+//# sourceMappingURL=iptt_report-a55468cb97614527ce68.js.map
