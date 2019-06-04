@@ -122,5 +122,7 @@ export const LevelTierPicker = inject("rootStore")(observer(function (props) {
             <Picker />
             <LevelTierList />
         </div>
+        /*<div id="alerts2" style={{minHeight:"50px", minWidth:"50px", backgroundColor:"red"}}></div>*/
+
     )
 }));
