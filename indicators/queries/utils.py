@@ -363,12 +363,12 @@ def indicator_lop_percent_met_annotation():
         - lop_actual"""
     return models.Case(
         models.When(
-            models.Q(lop_target__isnull=True) |
+            models.Q(lop_target_calculated__isnull=True) |
             models.Q(lop_actual__isnull=True),
             then=models.Value(None)
             ),
         default=models.ExpressionWrapper(
-            models.F('lop_actual') / models.F('lop_target'),
+            models.F('lop_actual') / models.F('lop_target_calculated'),
             output_field=models.FloatField()
         )
     )

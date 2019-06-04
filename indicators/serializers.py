@@ -416,7 +416,7 @@ class OneSheetExcelRenderer(ExcelRendererBase):
 
     @property
     def all_periods(self):
-        return self.serializer.all_periods_for_frequency()
+        return self.serializer.all_periods_for_frequency
 
     @property
     def column_count(self):
@@ -457,8 +457,6 @@ class OneSheetExcelRenderer(ExcelRendererBase):
             row_offset += 1
 
 
-
-
 class Period:
 
     @classmethod
@@ -466,7 +464,7 @@ class Period:
         return cls(1, {
             'name': ugettext('Life of Program') 
         }, True)
-        
+
     def __init__(self, frequency, period, tva=False):
         self.period = period
         self.frequency = int(frequency)
@@ -607,8 +605,6 @@ class IPTTTVAMixin:
                 yield level_row
 
 
-
-
 class IPTTTimeperiodsMixin:
     indicator_qs = IPTTIndicator.timeperiods
     period_column_count = 1
@@ -679,6 +675,9 @@ class IPTTExcelMixin(object):
 
     @property
     def report_date_range(self):
+        if self.frequency == 1:
+            return u'{} – {}'.format(self.program_data['reporting_period_start'],
+                                     self.program_data['reporting_period_end'])
         periods = self.get_periods(self.frequency)
         return u'{} – {}'.format(periods[0].start_display, periods[-1].end_display)
 
@@ -695,6 +694,8 @@ class IPTTExcelMixin(object):
             )
 
     def get_periods(self, frequency):
+        if frequency == 1:
+            return []
         periods = [
             self.get_period(frequency, period_dict)
             for period_dict in PeriodicTarget.generate_for_frequency(frequency)(
@@ -709,7 +710,6 @@ class IPTTExcelMixin(object):
         return periods[start:end]
 
     def render(self, request):
-        #return render(request, 'indicators/iptt_excel_test.html', {'serializer': self})
         return self.renderer_class(self).render()
 
 
@@ -722,11 +722,15 @@ class IPTTExcelFullReportMixin(IPTTExcelMixin):
 
     @property
     def blank_level_row(self):
-        return [indicator for indicator in self.indicators[self.frequency].filter(level__isnull=True).with_logframe_sorting()]
+        return [
+            indicator for indicator in self.indicators[self.frequency].filter(
+                level__isnull=True).with_logframe_sorting()
+            ]
 
     @property
     def level_rows(self):
-        if not self.program_data['using_results_framework'] or len(self.blank_level_row) == len(self.indicators[self.frequency]):
+        if not self.program_data['using_results_framework'] or \
+        len(self.blank_level_row) == len(self.indicators[self.frequency]):
             return False
         return self._level_rows
 
@@ -734,7 +738,6 @@ class IPTTExcelFullReportMixin(IPTTExcelMixin):
 class IPTTSingleExcelMixin(IPTTExcelMixin):
     full_report = False
     renderer_class = OneSheetExcelRenderer
-
 
     def load_indicators(self):
         indicators = self.indicator_qs.filter(program_id=self.program_data['pk'])
@@ -781,8 +784,8 @@ class IPTTSerializer(object):
     REPORT_TYPES = {
         TIMEPERIODS_JSON: None,
         TVA_JSON: None,
-        TIMEPERIODS_EXCEL: [IPTTTimeperiodsMixin, IPTTExcelMixin],
-        TVA_EXCEL: [IPTTTVAMixin, IPTTExcelMixin],
+        TIMEPERIODS_EXCEL: [IPTTTimeperiodsMixin, IPTTSingleExcelMixin],
+        TVA_EXCEL: [IPTTTVAMixin, IPTTSingleExcelMixin],
         TVA_FULL_EXCEL: [IPTTFullReportMixin, IPTTExcelFullReportMixin]
     }
 
@@ -811,8 +814,6 @@ class IPTTSerializer(object):
             self.frequency = int(self.request.get('frequency'))
             self.periods = self.get_periods(self.frequency)
 
-    
-
     @property
     def program_name(self):
         return self.program_data['name']
@@ -820,7 +821,3 @@ class IPTTSerializer(object):
     @property
     def level_column(self):
         return not self.program_data['using_results_framework']
-
-    
-
-    
