@@ -57,12 +57,46 @@ const FrequencySelect = inject('filterStore')(
 @inject('filterStore')
 @observer
 class TimeframeRadio extends React.Component {
-    checkMostRecent = () => {
-        //default value of 2 in case of clicking "most recent" radio box - default behavior
-        this.props.filterStore.mostRecent = 2;
+    constructor(props) {
+        super(props);
+        this.mostRecentInputRef = React.createRef();
+        this.state = {
+            focus: false,
+            mostRecentValue: '',
+            revert: false
+        };
     }
-    updateMostRecentCount = (e) => {
-        this.props.filterStore.mostRecent = e.target.value;
+    componentDidMount() {
+        this.setState({mostRecentValue: (this.props.filterStore.mostRecent || '')});
+    }
+    checkMostRecent = () => {
+        this.mostRecentInputRef.current.focus();
+    }
+    handleChange = (e) => {
+        this.setState({mostRecentValue: e.target.value});
+    }
+    handleBlur = (e) => {
+        if (!this.state.revert && this.state.mostRecentValue !== '') {
+            this.props.filterStore.mostRecent = this.state.mostRecentValue;
+        }
+        this.setState({focus: false, revert: false});
+    }
+    handleKeyDown = (e) => {
+        if (e.keyCode === 13) {
+            e.target.blur();
+        } else if (e.keyCode === 27) {
+            this.setState({revert: true}, 
+            () => {this.mostRecentInputRef.current.blur();});
+        }
+    }
+    handleFocus = (e) => {
+        this.setState({focus: true, mostRecentValue: (this.props.filterStore.mostRecent || '')});
+    }
+    get mostRecentValue() {
+        if (this.state.focus) {
+            return this.state.mostRecentValue;
+        }
+        return this.props.filterStore.mostRecent;
     }
     render() {
         return <div className="form-row mb-3">
@@ -70,12 +104,13 @@ class TimeframeRadio extends React.Component {
                         <div className="form-check form-check-inline pt-1">
                             <span className="form-check-input">
                                 <input type="radio"
-                                       checked={ this.props.filterStore.showAll }
+                                       checked={ !this.state.focus && this.props.filterStore.showAll }
                                        disabled={ this.props.filterStore.periodsDisabled }
                                        onChange={ () => {this.props.filterStore.showAll = true;} }
                                        />
                             </span>
-                            <label className="form-check-label">
+                            <label onClick={ () => {this.props.filterStore.showAll = true;} }
+                                   className="form-check-label">
                                 {
                                     /* # Translators: option to show all periods for the report */
                                     gettext('Show all')
@@ -87,12 +122,13 @@ class TimeframeRadio extends React.Component {
                         <div className="form-check form-check-inline pt-1">
                             <span className="form-check-input">
                                 <input type="radio"
-                                       checked={ this.props.filterStore.mostRecent }
+                                       checked={ this.state.focus || this.props.filterStore.mostRecent }
                                        disabled={ this.props.filterStore.periodsDisabled }
                                        onChange={ this.checkMostRecent }
                                        />
                             </span>
-                            <label className="form-check-label">
+                            <label onClick={ this.checkMostRecent }
+                                   className="form-check-label">
                                 {
                                     /* # Translators: option to show a number of recent periods for the report */
                                     gettext('Most recent')
@@ -102,9 +138,13 @@ class TimeframeRadio extends React.Component {
                     </div>
                     <div className="col-sm-4">
                         <input type="number" className="form-control"
-                               value={ this.props.filterStore.mostRecent || ''}
+                               value={ this.mostRecentValue }
+                               ref={ this.mostRecentInputRef }
                                disabled={ this.props.filterStore.periodsDisabled }
-                               onChange={ this.updateMostRecentCount }
+                               onChange={ this.handleChange }
+                               onFocus={ this.handleFocus }
+                               onBlur={ this.handleBlur }
+                               onKeyDown={ this.handleKeyDown }
                                />
                     </div>
                </div>;
