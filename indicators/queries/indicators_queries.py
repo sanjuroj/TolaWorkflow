@@ -133,7 +133,8 @@ class ResultsIndicator(Indicator):
     def lop_target_active(self):
         """currently points at lop_target field, but this alias will let us move to lop_target_calculated
            when we deprecate the lop_target field"""
-        return self.lop_target
+        return self.lop_target_calculated
+        
 
     @property
     def annotated_targets(self):

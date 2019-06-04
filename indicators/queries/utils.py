@@ -363,12 +363,119 @@ def indicator_lop_percent_met_annotation():
         - lop_actual"""
     return models.Case(
         models.When(
-            models.Q(lop_target__isnull=True) |
+            models.Q(lop_target_calculated__isnull=True) |
             models.Q(lop_actual__isnull=True),
             then=models.Value(None)
             ),
         default=models.ExpressionWrapper(
-            models.F('lop_actual') / models.F('lop_target'),
+            models.F('lop_actual') / models.F('lop_target_calculated'),
             output_field=models.FloatField()
         )
+    )
+
+
+def timeaware_value_annotation(period):
+    values_subquery = Result.objects.filter(
+        indicator=models.OuterRef('pk'),
+        date_collected__lte=period['end']
+    ).order_by('-date_collected')
+    return models.Case(
+        models.When(
+            unit_of_measure_type=Indicator.PERCENTAGE,
+            then=models.Subquery(values_subquery.filter(date_collected__gte=period['start']).values('achieved')[:1])
+        ),
+        models.When(
+            is_cumulative=True,
+            then=models.Subquery(
+                values_subquery.order_by().values('indicator').annotate(
+                    this_period_count=models.Sum(
+                        models.Case(
+                            models.When(
+                                date_collected__gte=period['start'], then=1
+                            ),
+                            output_field=models.IntegerField()
+                            )
+                        )
+                    ).annotate(
+                        achieved_sum=models.Case(
+                            models.When(
+                                this_period_count__gt=0,
+                                then=models.Sum('achieved')
+                            ),
+                            default=models.Value(None)
+                        )
+                    ).values('achieved_sum')[:1]
+            )
+        ),
+        default=models.Subquery(
+            values_subquery.order_by().filter(
+                date_collected__gte=period['start']
+            ).values('indicator').annotate(achieved_sum=models.Sum('achieved')).values('achieved_sum')[:1]
+        ),
+        output_field=models.DecimalField(decimal_places=2)
+    )
+
+def targets_count_annotation():
+    return models.Count('periodictargets')
+
+def timeaware_target_annotation(count):
+    targets_subquery = PeriodicTarget.objects.filter(
+        indicator=models.OuterRef('pk')
+    ).order_by('customsort')
+    return models.Case(
+        models.When(
+            targets_count__gt=count,
+            then=models.Subquery(targets_subquery.values('target')[count:count+1])
+        ),
+        default=models.Value(None),
+        output_field=models.DecimalField(decimal_places=2)
+    )
+
+def mid_end_target_annotation(count):
+    return models.Subquery(
+        PeriodicTarget.objects.filter(
+            indicator=models.OuterRef('pk'),
+            customsort=count
+        ).values('target')[:1]
+    )
+
+def mid_end_value_annotation(count):
+    values_subquery = Result.objects.filter(
+        indicator=models.OuterRef('pk'),
+        periodic_target__customsort__lte=count
+    ).order_by('-date_collected')
+    return models.Case(
+        models.When(
+            unit_of_measure_type=Indicator.PERCENTAGE,
+            then=models.Subquery(values_subquery.filter(periodic_target__customsort=count).values('achieved')[:1])
+        ),
+        models.When(
+            is_cumulative=True,
+            then=models.Subquery(
+                values_subquery.order_by().values('indicator').annotate(
+                    this_period_count=models.Sum(
+                        models.Case(
+                            models.When(
+                                periodic_target__customsort=count, then=1
+                            ),
+                            output_field=models.IntegerField()
+                            )
+                        )
+                    ).annotate(
+                        achieved_sum=models.Case(
+                            models.When(
+                                this_period_count__gt=0,
+                                then=models.Sum('achieved')
+                            ),
+                            default=models.Value(None)
+                        )
+                    ).values('achieved_sum')[:1]
+            )
+        ),
+        default=models.Subquery(
+            values_subquery.order_by().filter(
+                periodic_target__customsort=count
+            ).values('indicator').annotate(achieved_sum=models.Sum('achieved')).values('achieved_sum')[:1]
+        ),
+        output_field=models.DecimalField(decimal_places=2)
     )

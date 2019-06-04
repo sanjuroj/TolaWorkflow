@@ -83,7 +83,8 @@
     ],
     "program": {
         "id": 512,
-        "does_it_need_additional_target_periods": false
+        "does_it_need_additional_target_periods": false,
+        "reporting_period_start": "2018-01-01"
     },
     "indicator_on_scope_margin": 0.15,
     "delete_pinned_report_url": "/indicators/pinned_report/delete/"

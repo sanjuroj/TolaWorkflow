@@ -227,6 +227,18 @@ class TolaUser(models.Model):
             user_country_codes.add(self.country.code)
         return bool(user_country_codes & settings.PROJECTS_ACCESS_WHITELIST_SET)
 
+
+    def program_role(self, program_id):
+        if self.user.is_superuser:
+            return 'high'
+
+        program = Program.objects.get(id=program_id)
+        try:
+            access = ProgramAccess.objects.filter(tolauser=self, program=program)
+            return access[0].role
+        except:
+            return None
+
     @property
     def has_admin_management_access(self):
         #circular import avoidance
@@ -638,7 +650,7 @@ class Program(models.Model):
         """returns true if this program has any indicators which have a time-aware target frequency - used in program
         reporting period date validation"""
         return self.indicator_set.filter(
-            target_frequency__in=Indicator.TIME_AWARE_TARGET_FREQUENCIES
+            target_frequency__in=Indicator.REGULAR_TARGET_FREQUENCIES
             ).exists()
 
     @property
@@ -647,7 +659,7 @@ class Program(models.Model):
         indicators with a time-aware frequency - used in program reporting period date validation"""
         most_recent = PeriodicTarget.objects.filter(
             indicator__program=self,
-            indicator__target_frequency__in=Indicator.TIME_AWARE_TARGET_FREQUENCIES
+            indicator__target_frequency__in=Indicator.REGULAR_TARGET_FREQUENCIES
         ).order_by('-start_date').first()
         return most_recent if most_recent is None else most_recent.start_date
 
@@ -657,6 +669,9 @@ class Program(models.Model):
         return period_generator(self.reporting_period_start, self.reporting_period_end)
 
     @property
+    def target_frequencies(self):
+        return self.indicator_set.all().order_by().values('target_frequency').distinct().values_list('target_frequency', flat=True)
+
     def admin_logged_fields(self):
         return {
             'gaitid': self.gaitid,

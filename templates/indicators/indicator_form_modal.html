@@ -435,7 +435,7 @@
             <div class="form-actions">
                 <div>
                     <button type="button" id="id_update_indicator_btn" class="btn btn-primary">{% trans 'Save changes' %}</button>
-                    <input type="reset" class="btn btn-inverse" value="{% trans 'Reset' %}">
+                    <input type="reset" class="btn btn-reset" value="{% trans 'Reset' %}">
                 </div>
                 <div class="text-muted">{% include "form_guidance.html" %}</div>
             </div>
@@ -451,7 +451,7 @@
                         {% trans 'Save and add another' %}
                     </button>
                     {# Translators: close a modal throwing away any changes to the form #}
-                    <button type="button" id="id_cancel_btn" class="btn btn-inverse">{% trans 'Cancel' %}</button>
+                    <button type="button" id="id_cancel_btn" class="btn btn-reset">{% trans 'Cancel' %}</button>
                 </div>
                 <div class="text-muted">{% include "form_guidance.html" %}</div>
             </div>
@@ -504,7 +504,7 @@
             enableCaseInsensitiveFiltering: true,
             numberDisplayed: 1,
             maxHeight: 320,
-            buttonClass: 'btn form-control',
+            buttonClass: 'btn btn-light form-control',
             templates: {
                 filter: '<li class="multiselect-item filter"><div class="input-group"><input class="form-control multiselect-search" type="text"></div></li>',
                 filterClearBtn: '<span class="input-group-btn"><button class="btn btn-default multiselect-clear-filter" type="button"><i class="fas fa-times-circle"></i></button></span>',

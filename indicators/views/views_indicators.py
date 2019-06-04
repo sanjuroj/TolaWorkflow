@@ -14,7 +14,7 @@ from django.core.urlresolvers import reverse_lazy
 from django.core.exceptions import PermissionDenied
 from django.db import connection, transaction
 from django.db.models import (
-    Count, Q, Sum, Avg, Max
+    Count, Q, Sum, Avg, Max, Min
 )
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
@@ -29,7 +29,7 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
 
 from feed.serializers import FlatJsonSerializer
-from tola.util import getCountry, group_excluded
+from tola.util import group_excluded, getCountry
 
 from indicators.serializers import IndicatorSerializer, ProgramSerializer
 from indicators.views.view_utils import (
@@ -48,7 +48,8 @@ from ..models import (
     ExternalService, TolaTable, PinnedReport
 )
 from indicators.queries import ProgramWithMetrics, ResultsIndicator
-from .views_reports import IPTT_ReportView
+
+logger = logging.getLogger(__name__)
 
 from tola_management.models import (
     ProgramAuditLog
@@ -58,7 +59,6 @@ from tola_management.permissions import (
     indicator_pk_adapter,
     indicator_adapter,
     periodic_target_pk_adapter,
-    has_indicator_read_access,
     has_indicator_write_access,
     result_pk_adapter,
     has_result_read_access,
@@ -102,8 +102,11 @@ def periodic_targets_form(request, program):
 
     if target_frequency_type in Indicator.REGULAR_TARGET_FREQUENCIES:
         start_date = program.reporting_period_start
-        target_frequency_num_periods = IPTT_ReportView._get_num_periods(
-            start_date, program.reporting_period_end, target_frequency_type)
+        # target_frequency_num_periods = IPTT_ReportView._get_num_periods(
+        #     start_date, program.reporting_period_end, target_frequency_type)
+        target_frequency_num_periods = len(
+            [p for p in PeriodicTarget.generate_for_frequency(
+                target_frequency_type)(start_date, program.reporting_period_end)])
 
     generated_targets = generate_periodic_targets(
         target_frequency_type, start_date, target_frequency_num_periods, event_name)
@@ -203,9 +206,13 @@ class IndicatorFormMixin(object):
                     'Midline/Endline periodic target count is not 2 and is instead %d' % len(normalized_pt_json))
             return
 
-        target_frequency_num_periods = IPTT_ReportView._get_num_periods(program.reporting_period_start,
-                                                                        program.reporting_period_end,
-                                                                        target_frequency)
+        # target_frequency_num_periods = IPTT_ReportView._get_num_periods(program.reporting_period_start,
+        #                                                                 program.reporting_period_end,
+        #                                                                 target_frequency)
+
+        target_frequency_num_periods = len(
+            [p for p in PeriodicTarget.generate_for_frequency(
+                target_frequency)(program.reporting_period_start, program.reporting_period_end)])
 
         generated_targets = generate_periodic_targets(target_frequency,
                                                       program.reporting_period_start,
@@ -353,8 +360,11 @@ class IndicatorUpdate(IndicatorFormMixin, UpdateView):
             else:
                 latest_pt_end_date += timedelta(days=1)
 
-            target_frequency_num_periods = IPTT_ReportView._get_num_periods(
-                latest_pt_end_date, program.reporting_period_end, indicator.target_frequency)
+            target_frequency_num_periods = len(
+                [p for p in PeriodicTarget.generate_for_frequency(
+                    indicator.target_frequency)(latest_pt_end_date, program.reporting_period_end)])
+            # target_frequency_num_periods = IPTT_ReportView._get_num_periods(
+            #     latest_pt_end_date, program.reporting_period_end, indicator.target_frequency)
 
             num_existing_targets = pts.count()
             event_name = ''

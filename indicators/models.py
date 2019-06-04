@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import string
 import uuid
 from datetime import timedelta, date
 from decimal import Decimal
@@ -169,6 +170,15 @@ class Level(models.Model):
         return '.'.join(ontology)
 
     @property
+    def display_ontology(self):
+        target = self
+        display_ontology = []
+        while target.parent is not None:
+            display_ontology = [str(target.customsort),] + display_ontology
+            target = target.parent
+        return '.'.join(display_ontology)
+
+    @property
     def leveltier(self):
         # TODO: What if their level hierarchy is deeper than the leveltier set that they pick
         tiers = self.program.level_tiers.order_by('tier_depth')
@@ -178,6 +188,22 @@ class Level(models.Model):
             tier = None
         return tier
 
+    @property
+    def display_name(self):
+        """ this returns the level's "name" as displayed on IPTT i.e. Goal: name or Output 1.1: Name"""
+        return u'{tier}{ontology}: {name}'.format(
+            tier=self.leveltier.name,
+            ontology=' {}'.format(self.display_ontology) if self.display_ontology else '',
+            name=self.name
+        )
+
+    def get_children(self):
+        child_levels = []
+        for child_level in self.child_levels.all():
+            child_levels.append(child_level)
+            child_levels += child_level.get_children()
+        return child_levels
+
 
 class LevelAdmin(admin.ModelAdmin):
     list_display = ('name')
@@ -186,12 +212,75 @@ class LevelAdmin(admin.ModelAdmin):
 
 class LevelTier(models.Model):
 
-    PRESETS = {
-        'Mercy Corps standard': (ugettext('Goal'), ugettext('Outcome'), ugettext('Output'), ugettext('Activity')),
-        'European Commission (EC)': (ugettext('Overall Objective'), ugettext('Specific Objective'), ugettext('Purpose'), ugettext('Result'), ugettext('Activity')),
-        'USAID 1': (ugettext('Goal'), ugettext('Purpose'), ugettext('Sub-Purpose'), ugettext('Output'), ugettext('Input')),
-        'USAID 2': (ugettext('Strategic Objective'), ugettext('Intermediate Result'), ugettext('Sub-Intermediate Result'), ugettext('Output'), ugettext('Input')),
-        'USAID FFP': (ugettext('Goal'), ugettext('Purpose'), ugettext('Sub-Purpose'), ugettext('Intermediate Outcome'), ugettext('Output')),
+    TEMPLATES = {
+        'mc_standard': {
+            # Translators: Name of the most commonly used organizational hierarchy of KPIs at Mercy Corps.
+            'name': ugettext('Mercy Corps standard'),
+            'tiers': [
+                # Highest level objective of a project.  High level KPIs can be attached here.
+                ugettext('Goal'),
+                # Below Goals, the 2nd highest organizing level to attach KPIs to.
+                ugettext('Outcome'),
+                # Below Outcome, the 3rd highest organizing level to attach KPIs to. Noun.
+                ugettext('Output'),
+                # Below Output, the lowest organizing level to attach KPIs to.
+                ugettext('Activity')]},
+        'ec': {
+            # Translators: The KPI organizational hierarchy used when we work on EC projects.
+            'name': ugettext('European Commission (EC)'),
+            'tiers': [
+                # Highest level goal of a project.  High level KPIs can be attached here.
+                ugettext('Overall Objective'),
+                # Below Overall Objective, the 2nd highest organizing level to attach KPIs to.
+                ugettext('Specific Objective'),
+                # Below Specific Objective, the 3rd highest organizing level to attach KPIs to.
+                ugettext('Purpose'),
+                # Below Purpose, the 4th highest organizing level to attach KPIs to.
+                ugettext('Result'),
+                # Below Result, the lowest organizing level to attach KPIs to.
+                ugettext('Activity')]},
+        'usaid1': {
+            # Translators: The KPI organizational hierarchy used when we work on certain USAID projects.
+            'name': ugettext('USAID 1'),
+            'tiers': [
+                # Highest level objective of a project.  High level KPIs can be attached here.
+                ugettext('Goal'),
+                # Below Goal, the 2nd highest organizing level to attach KPIs to.
+                ugettext('Purpose'),
+                # Below Purpose, the 3rd highest organizing level to attach KPIs to.
+                ugettext('Sub-Purpose'),
+                # Below Sub-Purpose, the 4th highest organizing level to attach KPIs to. Noun.
+                ugettext('Output'),
+                # Below Output, the lowest organizing level to attach KPIs to. Noun.
+                ugettext('Input')]},
+        'usaid2': {
+            # Translators: The KPI organizational hierarchy used when we work on certain USAID projects.
+            'name': ugettext('USAID 2'),
+            'tiers': [
+                # Highest level goal of a project.  High level KPIs can be attached here.
+                ugettext('Strategic Objective'),
+                # Below Strategic Objective, the 2nd highest organizing level to attach KPIs to.
+                ugettext('Intermediate Result'),
+                # Below Intermediate Result, the 3rd highest organizing level to attach KPIs to.
+                ugettext('Sub-Intermediate Result'),
+                # Below Sub-Intermediate Result, the 4th highest organizing level to attach KPIs to. Noun.
+                ugettext('Output'),
+                # Below Output, the lowest organizing level to attach KPIs to. Noun.
+                ugettext('Input')]},
+        'usaid_ffp': {
+            # Translators: The KPI organizational hierarchy used when we work on USAID Food for Peace projects.
+            'name': ugettext('USAID FFP'),
+            'tiers': [
+                # Highest level bojective of a project.  High level KPIs can be attached here.
+                ugettext('Goal'),
+                # Below Goal, the 2nd highest organizing level to attach KPIs to.
+                ugettext('Purpose'),
+                # Below Purpose, the 3rd highest organizing level to attach KPIs to.
+                ugettext('Sub-Purpose'),
+                # Below Sub-Purpose, the 4th highest organizing level to attach KPIs to.
+                ugettext('Intermediate Outcome'),
+                # Below Intermediate Outcome, the lowest organizing level to attach KPIs to. Noun.
+                ugettext('Output')]},
     }
 
     name = models.CharField(ugettext("Name"), max_length=135, blank=True)
@@ -389,13 +478,17 @@ class IndicatorSortingQSMixin(object):
     def with_logframe_sorting(self):
         numeric_re = r'^[[:space:]]*[0-9]+[[:space:]]*$'
         logframe_re = r'^[[:space:]]*[0-9]+([[.period.]][0-9]+)?'\
-                      '([[.period.]][0-9]+)?([[.period.]][0-9]+)?[[:space:]]*$'
+                      '([[.period.]][0-9]+)?([[.period.]][0-9]+)?([[.period.]])?([a-z]+)?[[:space:]]*$'
         logframe_re2 = r'^[[:space:]]*[0-9]+[[.period.]][0-9]+([[.period.]][0-9]+)?([[.period.]][0-9]+)?[[:space:]]*$'
         logframe_re3 = r'^[[:space:]]*[0-9]+[[.period.]][0-9]+[[.period.]][0-9]+([[.period.]][0-9]+)?[[:space:]]*$'
         logframe_re4 = r'^[[:space:]]*[0-9]+[[.period.]][0-9]+[[.period.]][0-9]+[[.period.]][0-9]+[[:space:]]*$'
 
         qs = self.annotate(
             logsort_type=models.Case(
+                models.When(
+                    level_id__isnull=False,
+                    then=0
+                ),
                 models.When(
                     number__regex=logframe_re,
                     then=1
@@ -409,6 +502,10 @@ class IndicatorSortingQSMixin(object):
             )
         ).annotate(
             logsort_a=models.Case(
+                models.When(
+                    logsort_type=0,
+                    then=models.F('level_order')
+                ),
                 models.When(
                     logsort_type=1,
                     then=DecimalSplit('number', 1)
@@ -491,9 +588,6 @@ class Indicator(SafeDeleteModel):
         (MONTHLY, _('Monthly')),
         (EVENT, _('Event'))
     )
-    TIME_AWARE_TARGET_FREQUENCIES = (
-        ANNUAL, SEMI_ANNUAL, TRI_ANNUAL, QUARTERLY, MONTHLY
-    )
 
     REGULAR_TARGET_FREQUENCIES = (
         ANNUAL,
@@ -528,6 +622,15 @@ class Indicator(SafeDeleteModel):
 
     ONSCOPE_MARGIN = .15
 
+    OLD_LEVELS = [
+        (1, 'Goal'),
+        (2, 'Output'),
+        (3, 'Outcome'),
+        (4, 'Activity'),
+        (5, 'Impact'),
+        (6, 'Intermediate Outcome')
+    ]
+
 
     indicator_key = models.UUIDField(
         default=uuid.uuid4, unique=True, help_text=" ", verbose_name=_("Indicator key")),
@@ -544,6 +647,9 @@ class Indicator(SafeDeleteModel):
         Level, blank=True, null=True, verbose_name=_("Level"),
         on_delete=models.SET_NULL
     )
+
+    # ordering with respect to level (determines whether indicator is 1.1a 1.1b or 1.1c)
+    level_order = models.IntegerField(default=0)
 
     # this includes a relationship to a program
     objectives = models.ManyToManyField(
@@ -842,12 +948,23 @@ class Indicator(SafeDeleteModel):
         return ""
 
     @property
+    def is_cumulative_display(self):
+        if self.is_cumulative:
+            # Translators: referring to an indicator whose results accumulate over time
+            return _("Cumulative")
+        elif self.is_cumulative is None:
+            return None
+        else:
+            # Translators: referring to an indicator whose results do not accumulate over time
+            return _("Not cumulative")
+
+    @property
     def get_direction_of_change(self):
         if self.direction_of_change == self.DIRECTION_OF_CHANGE_NEGATIVE:
             return _("-")
         elif self.direction_of_change == self.DIRECTION_OF_CHANGE_POSITIVE:
             return _("+")
-        return "N/A"
+        return None
 
     @property
     def get_result_average(self):
@@ -921,6 +1038,46 @@ class Indicator(SafeDeleteModel):
     @cached_property
     def cached_data_count(self):
         return self.result_set.count()
+
+    @property
+    def leveltier_name(self):
+        if self.level and self.level.leveltier:
+            return self.level.leveltier.name
+        elif self.level is None and self.old_level:
+            return self.old_level
+        return None
+
+    @property
+    def leveltier_depth(self):
+        if self.level and self.level.leveltier:
+            return self.level.get_level_depth()
+        return None
+
+    @property
+    def level_pk(self):
+        if self.level:
+            return self.level.pk
+        return None
+
+    @property
+    def level_order_display(self):
+        """returns a-z for 0-25, then aa - zz for 26-676"""
+        if self.level and self.level_order is not None and self.level_order < 26:
+            return string.lowercase[self.level_order]
+        elif self.level and self.level_order and self.level_order >= 26:
+            return string.lowercase[self.level_order/26 - 1] + string.lowercase[self.level_order % 26]
+        return ''
+
+    @property
+    def number_display(self):
+        if self.program.using_results_framework and self.level and self.level.leveltier:
+            return "{0} {1}{2}".format(
+                self.leveltier_name, self.level.display_ontology, self.level_order_display
+            )
+        elif self.program.using_results_framework:
+            return None
+        else:
+            return self.number
 
 
 class PeriodicTarget(models.Model):
@@ -1111,7 +1268,7 @@ class PeriodicTarget(models.Model):
             Indicator.MONTHLY: 1
         }
         if frequency == Indicator.ANNUAL:
-            next_date_func = lambda x: date(x.year + 1, x.month, x.day)
+            next_date_func = lambda x: date(x.year + 1, x.month, 1)
             name_func = lambda start, count: '{period_name} {count}'.format(
                 period_name=_(cls.ANNUAL_PERIOD), count=count)
         elif frequency in months_per_period:
@@ -1119,7 +1276,7 @@ class PeriodicTarget(models.Model):
                 x.year if x.month <= 12-months_per_period[frequency] else x.year + 1,
                 x.month + months_per_period[frequency] if x.month <= 12 - months_per_period[frequency] \
                 else x.month + months_per_period[frequency] - 12,
-                x.day)
+                1)
             if frequency == Indicator.MONTHLY:
                 # TODO: strftime() does not work with Django i18n and will not give you localized month names
                 # Could be: name_func = lambda start, count: cls.generate_monthly_period_name(start)

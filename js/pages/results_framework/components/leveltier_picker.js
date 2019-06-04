@@ -7,24 +7,62 @@ import Select from 'react-select';
 @inject('rootStore')
 @observer
 class Picker extends React.Component {
-    handleChange = selectedPreset => {
-        this.props.rootStore.levelStore.changeTierSet(selectedPreset.value);
+    handleChange = selectedTemplate => {
+        this.props.rootStore.levelStore.changeTierSet(selectedTemplate.value);
     };
 
-    render() {
-        const options = Object.keys(this.props.rootStore.levelStore.tierPresets).map(val=>{
-            return {value:val, label:val};
+    componentDidUpdate() {
+        // Enable popovers after update (they break otherwise)
+        $('*[data-toggle="popover"]').popover({
+            html: true
         });
-        const selectedOption = {value:this.props.rootStore.levelStore.chosenTierSet, label: this.props.rootStore.levelStore.chosenTierSetName};
+    }
+
+    render() {
+        let helpIcon = null;
+        if (this.props.rootStore.uiStore.tierLockStatus == "locked"){
+
+            helpIcon = <a href="#"
+                tabIndex="0"
+                data-toggle="popover"
+                data-trigger="focus"
+                data-html="true"
+                data-content={gettext('<span class="text-danger"><strong>The results framework template cannot be changed after levels are saved.</strong></span> To change templates, all saved levels first must be deleted.  A level can be deleted when it has no sub-levels and no linked indicators.')}>
+                <i className="far fa-question-circle"></i></a>
+        }
+        else if (this.props.rootStore.uiStore.tierLockStatus == "primed"){
+            helpIcon = <a href="#"
+                tabIndex="0"
+                data-toggle="popover"
+                data-trigger="focus"
+                data-html="true"
+                data-content={gettext('<span class="text-danger"><strong>Choose your results framework template carefully!</strong></span> Once you begin building your framework, it will not be possible to change templates without first deleting all saved levels.')}>
+                <i className="far fa-question-circle"></i></a>
+        }
+
+
+        const tierTemplates = this.props.rootStore.levelStore.tierTemplates;
+
+        const options = Object.keys(tierTemplates).map(key => {
+            return {value:key, label:tierTemplates[key]['name']};
+        });
+
+        const selectedOption = {value:this.props.rootStore.levelStore.chosenTierSetKey, label: this.props.rootStore.levelStore.chosenTierSetName};
+
+        let classes = "leveltier-picker__selectbox ";
+        classes += this.props.rootStore.uiStore.tierLockStatus == "locked" ? "leveltier-picker__selectbox--disabled" : "";
 
         return (
-            <div className="leveltier-picker__selectbox">
-                Results framework template
-                <Select
-                    options={options}
-                    value={selectedOption}
-                    onChange={this.handleChange}
-                />
+              <div className={classes}>
+                  <div class="form-group">
+                    <label>{gettext('Results framework template')}</label>&nbsp;<small>{helpIcon}</small>
+                    <Select
+                        options={options}
+                        value={selectedOption}
+                        isDisabled={this.props.rootStore.uiStore.tierLockStatus == "locked" ? true : false}
+                        onChange={this.handleChange}
+                    />
+                </div>
             </div>
         )
     }
@@ -79,12 +117,14 @@ class LevelTierList extends React.Component{
     }
 }
 
-export const LevelTierPicker = observer(function (props) {
+export const LevelTierPicker = inject("rootStore")(observer(function (props) {
 
     return (
         <div id="leveltier-picker" className="leveltier-picker">
             <Picker />
             <LevelTierList />
         </div>
+        /*<div id="alerts2" style={{minHeight:"50px", minWidth:"50px", backgroundColor:"red"}}></div>*/
+
     )
-});
+}));

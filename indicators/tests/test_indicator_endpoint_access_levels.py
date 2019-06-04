@@ -223,6 +223,7 @@ class TestIPTTQuickstartEndpoint(test.TestCase):
         response = self.client.get(reverse('iptt_quickstart'))
         self.assertEqual(response.status_code, 200, 'logged in user should not be redirected')
 
+@unittest.skip('endpoint being reworked')
 class TestIPTTReportEndpoint(EndpointTestBase, test.TestCase):
     url = 'iptt_report'
     url_kwargs = {'program': None,
@@ -240,6 +241,7 @@ class TestIPTTReportEndpoint(EndpointTestBase, test.TestCase):
         self.run_get_tests()
         self.run_post_tests()
 
+@unittest.skip('endpoint being reworked')
 class TestIPTTExcelEndpoint(EndpointTestBase, test.TestCase):
     url = 'iptt_excel'
     url_kwargs = {'program': None,

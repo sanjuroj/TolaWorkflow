@@ -583,6 +583,81 @@ window.create_no_rationale_changeset_notice = ({
 }
 
 
+const createPnotifyAlert = (paramObj) => {
+    let config = {
+        message_text: "Update successful.",
+        preamble: "",
+        context: null,
+        firstpos1: 0,
+        firstpos2: 0,
+        type: "notice",
+    };
+    Object.assign(config, paramObj);
+
+    let faClass = "fa-exclamation-triangle";
+    if (config.type == "success"){
+        faClass = "fa-check-circle";
+    }
+
+    const inner = `
+        <div class="row">
+            <div class="col">
+                <h2><i class="fas ${faClass}"></i> ${gettext("Success!")}</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <span class='text-success'>
+                    ${config.preamble}
+                </span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <span>
+                    ${config.message_text}
+                </span>
+            </div>
+        </div>
+    `;
+
+    PNotify.alert({
+        text: $(`<div><form action="" method="post" class="form container">${inner}</form></div>`).html(),
+        textTrusted: true,
+        icon: false,
+        width: '350px',
+        hide: false,
+        type: config.type,
+        addClass: 'program-page__rationale-form',
+        stack: {
+            'overlayClose': true,
+            'dir1': 'right',
+            'dir2': 'up',
+            'firstpos1': config.firstpos1,
+            'firstpos2': config.firstpos2,
+            'context': config.context
+        },
+    });
+
+}
+
+window.success_notice = ({
+    message_text = "Update successful.",
+    context = null,
+    preamble = "",
+    animation = "fade",
+    type = "success"
+} = {}) => {
+    return createPnotifyAlert({
+        message_text: message_text,
+        type: type,
+        context: context,
+        showCloser: true,
+        animation: animation,
+        });
+}
+
+
 /*
  * Take a jquery element and scroll the to the bottom of said element
  * The element should represent the top level element controlled by a scroll bar
