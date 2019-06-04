@@ -124,6 +124,7 @@ export class LevelStore {
         this.rootStore.uiStore.expandedCards.push("new");
         this.rootStore.uiStore.activeCard = "new";
         this.levels.push(newLevel);
+        // TODO: change focus to new level, since it could be very far from the one that triggered the create
     };
 
     @action
@@ -149,7 +150,6 @@ export class LevelStore {
         this.rootStore.uiStore.activeCard = "new";
         this.levels.push(newLevel);
         this.rootStore.uiStore.hasVisibleChildren.push(newLevel.parent)
-
     };
 
 
@@ -178,6 +178,7 @@ export class LevelStore {
     };
 
     deleteLevelFromDB = (levelId) => {
+        const level_label = `${this.levelProperties[levelId]['tierName']} ${this.levelProperties[levelId]['ontologyLabel']}`
         api.delete(`/level/${levelId}`)
             .then(response => {
                 this.levels.replace(response.data);
@@ -185,6 +186,10 @@ export class LevelStore {
                 if (this.levels.length == 0){
                     this.createFirstLevel()
                 }
+                const context = document.getElementById('alerts2')
+                console.log('contextis', context);
+                // Translators: Notification to user that the deletion command that they issued was successful
+                success_notice({message_text: gettext(`${level_label} was successfully deleted.`)})
             })
             .catch(error => console.log('error', error))
     };
@@ -300,6 +305,7 @@ export class UIStore {
 
     constructor (rootStore) {
         this.rootStore = rootStore;
+        this.hasVisibleChildren = this.rootStore.levelStore.levels.map(l => l.id)
     }
 
     @computed get tierLockStatus () {
@@ -312,7 +318,6 @@ export class UIStore {
         else if (this.rootStore.levelStore.levels.length == 1){
             return "primed"
         }
-
 
         return null;
     }
@@ -330,8 +335,9 @@ export class UIStore {
     };
 
     @action
-    updateVisibleChildren = (levelId, forceRemove=false) => {
-        if (this.hasVisibleChildren.indexOf(levelId) >= 0 || forceRemove) {
+    updateVisibleChildren = (levelId, forceHide=false, forceShow=false) => {
+        // forceHide is to ensure that descendant levels are also made hidden, even if they are not actually visible.
+        if (this.hasVisibleChildren.indexOf(levelId) >= 0 || forceHide) {
             this.hasVisibleChildren = this.hasVisibleChildren.filter( level_id => level_id != levelId );
             const childLevels = this.rootStore.levelStore.levels.filter( l => l.parent == levelId);
             childLevels.forEach( l => this.updateVisibleChildren(l.id, true))
