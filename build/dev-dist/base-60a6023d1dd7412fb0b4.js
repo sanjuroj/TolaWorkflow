@@ -589,6 +589,64 @@ window.create_no_rationale_changeset_notice = function () {
     showCloser: true
   });
 };
+
+var createPnotifyAlert = function createPnotifyAlert(paramObj) {
+  var config = {
+    message_text: "Update successful.",
+    preamble: "",
+    context: null,
+    firstpos1: 0,
+    firstpos2: 0,
+    type: "notice"
+  };
+  Object.assign(config, paramObj);
+  var faClass = "fa-exclamation-triangle";
+
+  if (config.type == "success") {
+    faClass = "fa-check-circle";
+  }
+
+  var inner = "\n        <div class=\"row\">\n            <div class=\"col\">\n                <h2><i class=\"fas ".concat(faClass, "\"></i> ").concat(gettext("Success!"), "</h2>\n            </div>\n        </div>\n        <div class=\"row\">\n            <div class=\"col\">\n                <span class='text-success'>\n                    ").concat(config.preamble, "\n                </span>\n            </div>\n        </div>\n        <div class=\"row\">\n            <div class=\"col\">\n                <span>\n                    ").concat(config.message_text, "\n                </span>\n            </div>\n        </div>\n    ");
+  PNotify.alert({
+    text: $("<div><form action=\"\" method=\"post\" class=\"form container\">".concat(inner, "</form></div>")).html(),
+    textTrusted: true,
+    icon: false,
+    width: '350px',
+    hide: false,
+    type: config.type,
+    addClass: 'program-page__rationale-form',
+    stack: {
+      'overlayClose': true,
+      'dir1': 'right',
+      'dir2': 'up',
+      'firstpos1': config.firstpos1,
+      'firstpos2': config.firstpos2,
+      'context': config.context
+    }
+  });
+};
+
+window.success_notice = function () {
+  var _ref5 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+      _ref5$message_text = _ref5.message_text,
+      message_text = _ref5$message_text === void 0 ? "Update successful." : _ref5$message_text,
+      _ref5$context = _ref5.context,
+      context = _ref5$context === void 0 ? null : _ref5$context,
+      _ref5$preamble = _ref5.preamble,
+      preamble = _ref5$preamble === void 0 ? "" : _ref5$preamble,
+      _ref5$animation = _ref5.animation,
+      animation = _ref5$animation === void 0 ? "fade" : _ref5$animation,
+      _ref5$type = _ref5.type,
+      type = _ref5$type === void 0 ? "success" : _ref5$type;
+
+  return createPnotifyAlert({
+    message_text: message_text,
+    type: type,
+    context: context,
+    showCloser: true,
+    animation: animation
+  });
+};
 /*
  * Take a jquery element and scroll the to the bottom of said element
  * The element should represent the top level element controlled by a scroll bar
@@ -609,4 +667,4 @@ window.scrollToBottom = scrollToBottom;
 /***/ })
 
 },[["YqHn","runtime","vendors"]]]);
-//# sourceMappingURL=base-f261a20afe1ce0875eee.js.map
+//# sourceMappingURL=base-60a6023d1dd7412fb0b4.js.map
