@@ -11,7 +11,7 @@ function ipttRound(value, percent) {
         }
         return percent === true ? `${value}%` : value;
     }
-    return '-';
+    return null;
 }
 
 const IndicatorEditModalCell = ({ indicator }) => {
@@ -55,11 +55,12 @@ const IndicatorResultModalCell = ({ indicator }) => {
 }
 
 const IndicatorCell = ({ value, resultCell, ...props }) => {
+    const displayValue = value || '–';
     if (resultCell && resultCell === true) {
-        return <td { ...props }>{ value }</td>;
+        return <td { ...props }>{ displayValue }</td>;
     }
     return (
-        <td className="td-no-side-borders" { ...props }>{ value }</td>
+        <td className="td-no-side-borders" { ...props }>{ displayValue }</td>
     );
 }
 
