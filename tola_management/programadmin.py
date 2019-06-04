@@ -131,7 +131,7 @@ def get_audit_log_workbook(ws, program):
 
     for cd in ws.column_dimensions:
         cd.auto_size = True
-    widths = [15, 12, 50, 20, 20, 20, 50, 50, 50]
+    widths = [20, 12, 50, 20, 15, 20, 40, 40, 40]
     for col_no, width in enumerate(widths):
         ws.column_dimensions[utils.get_column_letter(col_no + 1)].width = width
     return ws
