@@ -204,7 +204,7 @@ export class LevelCardExpanded extends React.Component {
 
                 </div>
                 <form className="level-card--expanded__form" onSubmit={this.saveLevel}>
-                    <div class="form-group">
+                    <div className="form-group">
                         <textarea
                             className="form-control"
                             id="level-name"
@@ -214,7 +214,7 @@ export class LevelCardExpanded extends React.Component {
                             onChange={this.onFormChange}
                         />
                     </div>
-                    <div class="form-group">
+                    <div className="form-group">
                             <label htmlFor="assumptions">Assumptions</label>
                         <textarea
                             className="form-control"

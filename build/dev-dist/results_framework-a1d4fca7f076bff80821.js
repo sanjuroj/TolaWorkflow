@@ -116,12 +116,14 @@ function (_React$Component) {
       classes += this.props.rootStore.uiStore.tierLockStatus == "locked" ? "leveltier-picker__selectbox--disabled" : "";
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: classes
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", null, "Template"), "\xA0", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("small", null, helpIcon), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_3__["default"], {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        class: "form-group"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", null, gettext('Results framework template')), "\xA0", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("small", null, helpIcon), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_3__["default"], {
         options: options,
         value: selectedOption,
         isDisabled: this.props.rootStore.uiStore.tierLockStatus == "locked" ? true : false,
         onChange: this.handleChange
-      }));
+      })));
     }
   }]);
 
@@ -195,7 +197,9 @@ var LevelTierPicker = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inject"])(
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     id: "leveltier-picker",
     className: "leveltier-picker"
-  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Picker, null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(LevelTierList, null));
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Picker, null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(LevelTierList, null))
+  /*<div id="alerts2" style={{minHeight:"50px", minWidth:"50px", backgroundColor:"red"}}></div>*/
+  ;
 }));
 
 /***/ }),
@@ -497,7 +501,7 @@ function (_React$Component3) {
         className: "level-card--expanded__form",
         onSubmit: this.saveLevel
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        class: "form-group"
+        className: "form-group"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("textarea", {
         className: "form-control",
         id: "level-name",
@@ -506,7 +510,7 @@ function (_React$Component3) {
         autoComplete: "off",
         onChange: this.onFormChange
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        class: "form-group"
+        className: "form-group"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
         htmlFor: "assumptions"
       }, "Assumptions"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("textarea", {
@@ -718,6 +722,7 @@ function () {
     };
 
     this.deleteLevelFromDB = function (levelId) {
+      var level_label = "".concat(_this.levelProperties[levelId]['tierName'], " ").concat(_this.levelProperties[levelId]['ontologyLabel']);
       _api_js__WEBPACK_IMPORTED_MODULE_2__["api"].delete("/level/".concat(levelId)).then(function (response) {
         _this.levels.replace(response.data);
 
@@ -726,6 +731,13 @@ function () {
         if (_this.levels.length == 0) {
           _this.createFirstLevel();
         }
+
+        var context = document.getElementById('alerts2');
+        console.log('contextis', context); // Translators: Notification to user that the deletion command that they issued was successful
+
+        success_notice({
+          message_text: gettext("".concat(level_label, " was successfully deleted."))
+        });
       }).catch(function (error) {
         return console.log('error', error);
       });
@@ -1049,7 +1061,8 @@ function () {
 
       _this4.rootStore.uiStore.activeCard = "new";
 
-      _this4.levels.push(newLevel);
+      _this4.levels.push(newLevel); // TODO: change focus to new level, since it could be very far from the one that triggered the create
+
     };
   }
 }), _descriptor7 = _applyDecoratedDescriptor(_class.prototype, "createNewLevelFromParent", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
@@ -1133,6 +1146,9 @@ function () {
     _initializerDefineProperty(this, "updateVisibleChildren", _descriptor13, this);
 
     this.rootStore = rootStore;
+    this.hasVisibleChildren = this.rootStore.levelStore.levels.map(function (l) {
+      return l.id;
+    });
   }
 
   _createClass(UIStore, [{
@@ -1203,9 +1219,11 @@ function () {
     var _this9 = this;
 
     return function (levelId) {
-      var forceRemove = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+      var forceHide = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+      var forceShow = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
 
-      if (_this9.hasVisibleChildren.indexOf(levelId) >= 0 || forceRemove) {
+      // forceHide is to ensure that descendant levels are also made hidden, even if they are not actually visible.
+      if (_this9.hasVisibleChildren.indexOf(levelId) >= 0 || forceHide) {
         _this9.hasVisibleChildren = _this9.hasVisibleChildren.filter(function (level_id) {
           return level_id != levelId;
         });
@@ -1500,4 +1518,4 @@ function (_React$Component2) {
 /***/ })
 
 },[["QTZG","runtime","vendors"]]]);
-//# sourceMappingURL=results_framework-31579827f38e38bc7453.js.map
+//# sourceMappingURL=results_framework-a1d4fca7f076bff80821.js.map
