@@ -4145,32 +4145,64 @@ var TimeframeRadio = (_dec = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inj
 function (_React$Component) {
   _inherits(TimeframeRadio, _React$Component);
 
-  function TimeframeRadio() {
-    var _getPrototypeOf2;
-
+  function TimeframeRadio(props) {
     var _this;
 
     _classCallCheck(this, TimeframeRadio);
 
-    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-      args[_key] = arguments[_key];
-    }
-
-    _this = _possibleConstructorReturn(this, (_getPrototypeOf2 = _getPrototypeOf(TimeframeRadio)).call.apply(_getPrototypeOf2, [this].concat(args)));
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(TimeframeRadio).call(this, props));
 
     _this.checkMostRecent = function () {
       //default value of 2 in case of clicking "most recent" radio box - default behavior
       _this.props.filterStore.mostRecent = 2;
     };
 
+    _this.handleChange = function (e) {
+      _this.setState({
+        mostRecentValue: e.target.value
+      });
+    };
+
     _this.updateMostRecentCount = function (e) {
+      _this.setState({
+        focus: false
+      });
+
       _this.props.filterStore.mostRecent = e.target.value;
     };
 
+    _this.handleKeyDown = function (e) {
+      if (e.keyCode === 13) {
+        e.target.blur();
+      }
+    };
+
+    _this.handleFocus = function (e) {
+      if (!_this.props.filterStore.mostRecent) {
+        _this.props.filterStore.mostRecent = 2;
+      }
+
+      _this.setState({
+        focus: true,
+        mostRecentValue: _this.props.filterStore.mostRecent || ''
+      });
+    };
+
+    _this.state = {
+      focus: false,
+      mostRecentValue: ''
+    };
     return _this;
   }
 
   _createClass(TimeframeRadio, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      this.setState({
+        mostRecentValue: this.props.filterStore.mostRecent || ''
+      });
+    }
+  }, {
     key: "render",
     value: function render() {
       var _this2 = this;
@@ -4191,6 +4223,9 @@ function (_React$Component) {
           _this2.props.filterStore.showAll = true;
         }
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+        onClick: function onClick() {
+          _this2.props.filterStore.showAll = true;
+        },
         className: "form-check-label"
       },
       /* # Translators: option to show all periods for the report */
@@ -4206,6 +4241,7 @@ function (_React$Component) {
         disabled: this.props.filterStore.periodsDisabled,
         onChange: this.checkMostRecent
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+        onClick: this.checkMostRecent,
         className: "form-check-label"
       },
       /* # Translators: option to show a number of recent periods for the report */
@@ -4214,10 +4250,22 @@ function (_React$Component) {
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         type: "number",
         className: "form-control",
-        value: this.props.filterStore.mostRecent || '',
+        value: this.mostRecentValue,
         disabled: this.props.filterStore.periodsDisabled,
-        onChange: this.updateMostRecentCount
+        onChange: this.handleChange,
+        onFocus: this.handleFocus,
+        onBlur: this.updateMostRecentCount,
+        onKeyDown: this.handleKeyDown
       })));
+    }
+  }, {
+    key: "mostRecentValue",
+    get: function get() {
+      if (this.state.focus) {
+        return this.state.mostRecentValue;
+      }
+
+      return this.props.filterStore.mostRecent;
     }
   }]);
 
@@ -4342,4 +4390,4 @@ function () {
 /***/ })
 
 },[["mYfJ","runtime","vendors"]]]);
-//# sourceMappingURL=iptt_report-95f49c32e6ebc7fc0cb7.js.map
+//# sourceMappingURL=iptt_report-5b10a7c9548e9d804cfa.js.map
