@@ -1242,8 +1242,9 @@ function (_React$Component2) {
   }, {
     key: "render",
     value: function render() {
-      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "btn btn-sm btn-secondary",
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+        href: "#",
+        className: "btn btn-sm btn-outline-primary",
         ref: "target",
         onClick: this.handleClick.bind(this)
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
@@ -1284,13 +1285,15 @@ function (_React$Component3) {
 
     _this3.getCurrent = function () {
       if (_this3.props.routeStore.excelUrl) {
-        window.location = _this3.props.routeStore.excelUrl;
+        //window.location=this.props.routeStore.excelUrl;
+        window.open(_this3.props.routeStore.excelUrl, '_blank');
       }
     };
 
     _this3.getAll = function () {
       if (_this3.props.routeStore.fullExcelUrl) {
-        window.location = _this3.props.routeStore.fullExcelUrl;
+        //window.location=this.props.routeStore.fullExcelUrl
+        window.open(_this3.props.routeStore.fullExcelUrl, '_blank');
       }
     };
 
@@ -1304,15 +1307,17 @@ function (_React$Component3) {
         className: "container-fluid"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "row mt-1 mb-2"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "btn btn-primary btn-block",
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+        type: "button",
+        className: "btn btn-outline-primary btn-block",
         onClick: this.getCurrent
       },
       /* # Translators: a download button for a report containing just the data currently displayed */
       gettext('Current view'))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "row mt-2 mb-1"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "btn btn-primary btn-block",
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+        type: "button",
+        className: "btn btn-outline-primary btn-block",
         onClick: this.getAll
       },
       /* # Translators: a download button for a report containing all available data */
@@ -1340,7 +1345,8 @@ function (_React$Component4) {
           open: !_this4.state.open
         });
       } else if (_this4.props.routeStore.excelUrl) {
-        window.location = _this4.props.routeStore.excelUrl;
+        //window.location=this.props.routeStore.excelUrl;
+        window.open(_this4.props.routeStore.excelUrl, '_blank');
       }
     };
 
@@ -1360,8 +1366,9 @@ function (_React$Component4) {
   }, {
     key: "render",
     value: function render() {
-      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "btn btn-sm btn-secondary",
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+        type: "button",
+        className: "btn btn-sm btn-outline-primary",
         ref: "target",
         onClick: this.handleClick.bind(this)
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
@@ -1421,7 +1428,7 @@ function ipttRound(value, percent) {
     return percent === true ? "".concat(value, "%") : value;
   }
 
-  return '-';
+  return null;
 }
 
 var IndicatorEditModalCell = function IndicatorEditModalCell(_ref) {
@@ -1475,13 +1482,15 @@ var IndicatorCell = function IndicatorCell(_ref3) {
       resultCell = _ref3.resultCell,
       props = _objectWithoutProperties(_ref3, ["value", "resultCell"]);
 
+  var displayValue = value || '–';
+
   if (resultCell && resultCell === true) {
-    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", props, value);
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", props, displayValue);
   }
 
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", _extends({
     className: "td-no-side-borders"
-  }, props), value);
+  }, props), displayValue);
 };
 
 var PercentCell = function PercentCell(_ref4) {
@@ -4342,4 +4351,4 @@ function () {
 /***/ })
 
 },[["mYfJ","runtime","vendors"]]]);
-//# sourceMappingURL=iptt_report-95f49c32e6ebc7fc0cb7.js.map
+//# sourceMappingURL=iptt_report-182bb9ea42c492592a7c.js.map
