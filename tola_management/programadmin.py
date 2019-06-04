@@ -28,7 +28,7 @@ from rest_framework.serializers import (
 )
 from django.utils.translation import ugettext as _
 
-from openpyxl import Workbook
+from openpyxl import Workbook, utils
 from openpyxl.cell import Cell
 from openpyxl.styles import Alignment, Font
 
@@ -131,6 +131,9 @@ def get_audit_log_workbook(ws, program):
 
     for cd in ws.column_dimensions:
         cd.auto_size = True
+    widths = [15, 12, 50, 20, 20, 20, 50, 50, 50]
+    for col_no, width in enumerate(widths):
+        ws.column_dimensions[utils.get_column_letter(col_no + 1)].width = width
     return ws
 
 class Paginator(SmallResultsSetPagination):

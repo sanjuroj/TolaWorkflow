@@ -401,19 +401,6 @@ class FullReportExcelRenderer(ExcelRendererBase):
             self.add_indicator_row(row_offset, sheet, indicator)
             row_offset += 1
 
-    # # def add_changelog_headers(self, sheet):
-    # #     for col_offset, header in enumerate([
-    # #         ugettext('Date and Time'),
-    # #         ugettext('No.'),
-    # #         ugettext('Indicator'),
-    # #         ugettext('User'),
-    # #         ugettext('Organization'),
-    # #         ugettext('Change type'),
-    # #         ugettext('Previous entry'),
-    # #         ugettext('New entry'),
-    # #         ugettext('Reason for change')]):
-    # #         
-
 
 class OneSheetExcelRenderer(ExcelRendererBase):
 
@@ -436,11 +423,6 @@ class OneSheetExcelRenderer(ExcelRendererBase):
         return len(self.header_columns) + sum(
             [3 if period.tva else 1 for period in self.all_periods]
             )
-
-    
-
-
-    
 
     def add_data(self, sheet):
         if self.serializer.level_rows:
@@ -683,6 +665,9 @@ class IPTTJSONMixin:
                     self.program_data['reporting_period_end']
                 )
             ]
+
+    def load_indicators(self):
+        return self.indicator_qs.filter(program_id=self.program_data['pk'])
 
 
 class IPTTExcelMixin(object):
