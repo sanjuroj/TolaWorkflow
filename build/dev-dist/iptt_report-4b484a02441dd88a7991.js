@@ -2132,7 +2132,7 @@ function () {
     _initializerDefineProperty(this, "_indicators", _descriptor12, this);
 
     this._validFrequency = function (frequencyId) {
-      if (_this.program) {
+      if (frequencyId && _this.program) {
         if (_this.isTVA) {
           return _this.program.validFrequency(frequencyId);
         } else {
@@ -2174,6 +2174,11 @@ function () {
 
       this.programStore.loadProgram(reportType, programId, frequencyId).then(function () {
         _this2.frequencyId = _this2.frequencyId || null;
+
+        if (!_this2._validFrequency(frequencyId)) {
+          _this2.frequencyId = _this2.program.frequencies[0];
+        }
+
         _this2.startPeriod = _this2.startPeriod || 0;
         _this2.endPeriod = _this2.endPeriod || _this2.lastPeriod.index;
 
@@ -2381,7 +2386,7 @@ function () {
       }
     },
     get: function get() {
-      if (this._validFrequency(this._frequencyId)) {
+      if (this._frequencyId) {
         return this._frequencyId;
       }
 
@@ -4351,4 +4356,4 @@ function () {
 /***/ })
 
 },[["mYfJ","runtime","vendors"]]]);
-//# sourceMappingURL=iptt_report-182bb9ea42c492592a7c.js.map
+//# sourceMappingURL=iptt_report-4b484a02441dd88a7991.js.map
