@@ -75,66 +75,68 @@ def get_program_filter_data(request):
         'program_id', 'target_frequency'
     ).distinct()
     for program in programs_qs:
-        start_formatted = l10n_date_medium(program.reporting_period_start)
-        end_formatted = l10n_date_medium(program.reporting_period_end)
-        programs.append({
-            'id': program.pk,
-            'name': program.name,
-            'old_style_levels': not program.using_results_framework,
-            'frequencies': [f['target_frequency'] for f in frequencies_qs if f['program_id'] == program.pk],
-            'periodDateRanges': {
-                '1': [[
-                    start_formatted,
-                    end_formatted
-                    ]],
-                '2': [[
-                    start_formatted,
-                    end_formatted,
-                    ugettext('Midline')
-                    ], [
+        frequencies = [f['target_frequency'] for f in frequencies_qs if f['program_id'] == program.pk]
+        if frequencies:
+            start_formatted = l10n_date_medium(program.reporting_period_start)
+            end_formatted = l10n_date_medium(program.reporting_period_end)
+            programs.append({
+                'id': program.pk,
+                'name': program.name,
+                'old_style_levels': not program.using_results_framework,
+                'frequencies': frequencies,
+                'periodDateRanges': {
+                    '1': [[
+                        start_formatted,
+                        end_formatted
+                        ]],
+                    '2': [[
                         start_formatted,
                         end_formatted,
-                        ugettext('Endline')
-                    ]],
-                '3': [
-                    [l10n_date_medium(period['start']),
-                     l10n_date_medium(period['end']),
-                     period['start'] > timezone.now().date()]
-                    for period in PeriodicTarget.generate_for_frequency(3)(
-                        program.reporting_period_start,
-                        program.reporting_period_end)],
-                '4': [
-                    [l10n_date_medium(period['start']),
-                     l10n_date_medium(period['end']),
-                     period['start'] > timezone.now().date()]
-                    for period in PeriodicTarget.generate_for_frequency(4)(
-                        program.reporting_period_start,
-                        program.reporting_period_end)],
-                '5': [
-                    [l10n_date_medium(period['start']),
-                     l10n_date_medium(period['end']),
-                     period['start'] > timezone.now().date()]
-                    for period in PeriodicTarget.generate_for_frequency(5)(
-                        program.reporting_period_start,
-                        program.reporting_period_end)],
-                '6': [
-                    [l10n_date_medium(period['start']),
-                     l10n_date_medium(period['end']),
-                     period['start'] > timezone.now().date()]
-                    for period in PeriodicTarget.generate_for_frequency(6)(
-                        program.reporting_period_start,
-                        program.reporting_period_end)],
-                '7': [
-                    [l10n_date_medium(period['start']),
-                     l10n_date_medium(period['end']),
-                     l10n_monthname(period['start']),
-                     period['start'].year,
-                     period['start'] > timezone.now().date()]
-                    for period in PeriodicTarget.generate_for_frequency(7)(
-                        program.reporting_period_start,
-                        program.reporting_period_end)],
-            }
-        })
+                        ugettext('Midline')
+                        ], [
+                            start_formatted,
+                            end_formatted,
+                            ugettext('Endline')
+                        ]],
+                    '3': [
+                        [l10n_date_medium(period['start']),
+                         l10n_date_medium(period['end']),
+                         period['start'] > timezone.now().date()]
+                        for period in PeriodicTarget.generate_for_frequency(3)(
+                            program.reporting_period_start,
+                            program.reporting_period_end)],
+                    '4': [
+                        [l10n_date_medium(period['start']),
+                         l10n_date_medium(period['end']),
+                         period['start'] > timezone.now().date()]
+                        for period in PeriodicTarget.generate_for_frequency(4)(
+                            program.reporting_period_start,
+                            program.reporting_period_end)],
+                    '5': [
+                        [l10n_date_medium(period['start']),
+                         l10n_date_medium(period['end']),
+                         period['start'] > timezone.now().date()]
+                        for period in PeriodicTarget.generate_for_frequency(5)(
+                            program.reporting_period_start,
+                            program.reporting_period_end)],
+                    '6': [
+                        [l10n_date_medium(period['start']),
+                         l10n_date_medium(period['end']),
+                         period['start'] > timezone.now().date()]
+                        for period in PeriodicTarget.generate_for_frequency(6)(
+                            program.reporting_period_start,
+                            program.reporting_period_end)],
+                    '7': [
+                        [l10n_date_medium(period['start']),
+                         l10n_date_medium(period['end']),
+                         l10n_monthname(period['start']),
+                         period['start'].year,
+                         period['start'] > timezone.now().date()]
+                        for period in PeriodicTarget.generate_for_frequency(7)(
+                            program.reporting_period_start,
+                            program.reporting_period_end)],
+                }
+            })
     return programs
 
 
