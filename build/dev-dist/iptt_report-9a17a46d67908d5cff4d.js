@@ -2325,6 +2325,49 @@ function () {
       return indicators || [];
     }
   }, {
+    key: "filterLevels",
+    value: function filterLevels() {
+      var skip = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+      var levels = false;
+
+      if (this.groupBy === _constants__WEBPACK_IMPORTED_MODULE_1__["GROUP_BY_LEVEL"]) {
+        levels = this.program.levels.sort(function (levela, levelb) {
+          return levela.sort - levelb.sort;
+        }).sort(function (levela, levelb) {
+          return levela.depth - levelb.depth;
+        });
+      } else if (this.groupBy === _constants__WEBPACK_IMPORTED_MODULE_1__["GROUP_BY_CHAIN"]) {
+        var parents = this.program.levels.filter(function (level) {
+          return !level._parent;
+        });
+        levels = this._findChildren(parents, []);
+      }
+
+      if (levels) {
+        if (this.noFilters) {
+          return levels;
+        }
+
+        var levelPks;
+
+        if (skip) {
+          levelPks = new Set(this.filterIndicators(this.program.indicators, skip).map(function (indicator) {
+            return indicator.levelpk;
+          }));
+        } else {
+          levelPks = new Set(this.filteredIndicators.map(function (indicator) {
+            return indicator.levelpk;
+          }));
+        }
+
+        return levels.filter(function (level) {
+          return levelPks.has(level.pk);
+        });
+      }
+
+      return [];
+    }
+  }, {
     key: "_findChildren",
     value: function _findChildren(parents) {
       var levels = [];
@@ -2958,7 +3001,7 @@ function () {
             };
           });
         } else {
-          return this.filteredLevels.map(function (level) {
+          return this.filterLevels('indicators').map(function (level) {
             return {
               label: "".concat(level.tier.name, " ").concat(level.sort),
               options: _this11.filterIndicators(level.indicators, 'indicators').map(function (indicator) {
@@ -3032,35 +3075,7 @@ function () {
   }, {
     key: "filteredLevels",
     get: function get() {
-      var levels = false;
-
-      if (this.groupBy === _constants__WEBPACK_IMPORTED_MODULE_1__["GROUP_BY_LEVEL"]) {
-        levels = this.program.levels.sort(function (levela, levelb) {
-          return levela.sort - levelb.sort;
-        }).sort(function (levela, levelb) {
-          return levela.depth - levelb.depth;
-        });
-      } else if (this.groupBy === _constants__WEBPACK_IMPORTED_MODULE_1__["GROUP_BY_CHAIN"]) {
-        var parents = this.program.levels.filter(function (level) {
-          return !level._parent;
-        });
-        levels = this._findChildren(parents, []);
-      }
-
-      if (levels) {
-        if (this.noFilters) {
-          return levels;
-        }
-
-        var levelPks = new Set(this.filteredIndicators.map(function (indicator) {
-          return indicator.levelpk;
-        }));
-        return levels.filter(function (level) {
-          return levelPks.has(level.pk);
-        });
-      }
-
-      return [];
+      return this.filterLevels(false);
     }
   }]);
 
@@ -4439,4 +4454,4 @@ function () {
 /***/ })
 
 },[["mYfJ","runtime","vendors"]]]);
-//# sourceMappingURL=iptt_report-a55468cb97614527ce68.js.map
+//# sourceMappingURL=iptt_report-9a17a46d67908d5cff4d.js.map
