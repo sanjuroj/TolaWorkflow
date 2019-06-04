@@ -116,12 +116,14 @@ function (_React$Component) {
       classes += this.props.rootStore.uiStore.tierLockStatus == "locked" ? "leveltier-picker__selectbox--disabled" : "";
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: classes
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", null, "Template"), "\xA0", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("small", null, helpIcon), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_3__["default"], {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        class: "form-group"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", null, gettext('Results framework template')), "\xA0", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("small", null, helpIcon), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_3__["default"], {
         options: options,
         value: selectedOption,
         isDisabled: this.props.rootStore.uiStore.tierLockStatus == "locked" ? true : false,
         onChange: this.handleChange
-      }));
+      })));
     }
   }]);
 
@@ -1516,4 +1518,4 @@ function (_React$Component2) {
 /***/ })
 
 },[["QTZG","runtime","vendors"]]]);
-//# sourceMappingURL=results_framework-84c0896c9475e381a6fa.js.map
+//# sourceMappingURL=results_framework-a1d4fca7f076bff80821.js.map

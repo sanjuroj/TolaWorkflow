@@ -10173,10 +10173,16 @@ td.iptt-level-row {
   padding-bottom: 4px; }
 
 #filter-bottom {
-  background-color: #71757b !important;
+  background-color: #dbdcde;
   color: #fff;
   font-size: smaller;
-  padding-top: 10px; }
+  padding-top: 0rem;
+  padding-left: 0.6rem;
+  padding-right: 0.6rem;
+  padding-bottom: 1rem; }
+  #filter-bottom .btn-reset {
+    text-transform: uppercase;
+    padding: 0.5rem; }
 
 #id_iptt_report_filter {
   font-size: .875rem;
