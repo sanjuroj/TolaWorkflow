@@ -3027,7 +3027,7 @@ function () {
         }
       }
 
-      return null;
+      return [];
     }
   }, {
     key: "indicatorsSelected",
@@ -3035,9 +3035,10 @@ function () {
       var _this12 = this;
 
       if (this.indicators && this.indicators.length > 0) {
-        return flattenArray(this.indicatorOptions.map(function (optgroup) {
+        var indicatorOptions = this.groupByDisabled ? this.indicatorOptions : flattenArray(this.indicatorOptions.map(function (optgroup) {
           return optgroup.options;
-        })).filter(function (indicator) {
+        }));
+        return indicatorOptions.filter(function (indicator) {
           return _this12.indicators.includes(indicator.value);
         });
       }
@@ -4454,4 +4455,4 @@ function () {
 /***/ })
 
 },[["mYfJ","runtime","vendors"]]]);
-//# sourceMappingURL=iptt_report-9a17a46d67908d5cff4d.js.map
+//# sourceMappingURL=iptt_report-85dee0de083900a5370c.js.map
