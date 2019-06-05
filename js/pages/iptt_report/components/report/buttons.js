@@ -89,21 +89,21 @@ export class PinButton extends React.Component {
             open: false
         };
     }
-    
+
     handleClick(e) {
         this.setState({open: !this.state.open});
     }
-    
+
     handleClose(e) {
         this.setState({open: false});
     }
-    
+
     render() {
         return (
             <React.Fragment>
                 <button
                     href="#"
-                    className="btn btn-sm btn-outline-primary"
+                    className="btn btn-sm btn-secondary"
                     ref="target"
                     onClick={ this.handleClick.bind(this) }>
                 <i className="fas fa-thumbtack"></i>
@@ -136,7 +136,7 @@ class ExcelPopover extends React.Component {
             window.open(this.props.routeStore.excelUrl, '_blank');
         }
     }
-    
+
     getAll = () => {
         if (this.props.routeStore.fullExcelUrl) {
             //window.location=this.props.routeStore.fullExcelUrl
@@ -145,25 +145,21 @@ class ExcelPopover extends React.Component {
     }
     render() {
         return (
-            <div className="container-fluid">
-                <div className="row mt-1 mb-2">
-                    <button type="button" className="btn btn-outline-primary btn-block"
-                         onClick={ this.getCurrent }>
-                        {
-                            /* # Translators: a download button for a report containing just the data currently displayed */
-                            gettext('Current view')
-                        }
-                    </button>
-                </div>
-                <div className="row mt-2 mb-1">
-                    <button type="button" className="btn btn-outline-primary btn-block"
-                         onClick={ this.getAll }>
-                        {
-                            /* # Translators: a download button for a report containing all available data */
-                            gettext('All program data')
-                        }
-                    </button>
-                </div>
+            <div className="">
+                <button type="button" className="btn btn-primary btn-block"
+                     onClick={ this.getCurrent }>
+                    {
+                        /* # Translators: a download button for a report containing just the data currently displayed */
+                        gettext('Current view')
+                    }
+                </button>
+                <button type="button" className="btn btn-primary btn-block"
+                     onClick={ this.getAll }>
+                    {
+                        /* # Translators: a download button for a report containing all available data */
+                        gettext('All program data')
+                    }
+                </button>
             </div>
         );
     }
@@ -178,7 +174,7 @@ export class ExcelButton extends React.Component {
             open: false
         };
     }
-    
+
     handleClick = () => {
         if (this.props.filterStore.isTVA) {
             this.setState({open: !this.state.open});
@@ -187,7 +183,7 @@ export class ExcelButton extends React.Component {
             window.open(this.props.routeStore.excelUrl, '_blank');
         }
     }
-    
+
     handleClose(e) {
         this.setState({open: false});
     }
@@ -195,7 +191,7 @@ export class ExcelButton extends React.Component {
         return (
             <React.Fragment>
                 <button type="button"
-                     className="btn btn-sm btn-outline-primary"
+                     className="btn btn-sm btn-secondary"
                      ref="target"
                      onClick={this.handleClick.bind(this) }>
                      <i className="fas fa-download"></i> Excel
