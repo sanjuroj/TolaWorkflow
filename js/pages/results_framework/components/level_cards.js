@@ -1,11 +1,14 @@
 import React from 'react';
 import classNames from 'classnames';
 import { observer, inject } from "mobx-react"
-import { toJS, extendObservable } from 'mobx';
+import { toJS, extendObservable, action } from 'mobx';
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCaretDown, faCaretRight } from '@fortawesome/free-solid-svg-icons'
 import Select from 'react-select';
+import { SingleReactSelect } from "../../../components/selectWidgets";
+import HelpPopover from "../../../components/helpPopover";
+
 
 
 library.add(faCaretDown, faCaretRight);
@@ -21,20 +24,12 @@ export class LevelTitle extends React.Component {
                 {this.props.ontologyLabel ? " " + this.props.ontologyLabel : null}
             </h3>
         )
-
     }
 }
 
 @inject('rootStore')
 @observer
 export class LevelCardCollapsed extends React.Component {
-
-    componentDidUpdate() {
-        // Enable popovers after update (they break otherwise)
-        $('*[data-toggle="popover"]').popover({
-            html: true
-        });
-    }
 
     deleteLevel = () => {
         const levelTitle = this.props.levelProps.tierName + " " + this.props.levelProps.ontologyLabel;
@@ -48,6 +43,13 @@ export class LevelCardCollapsed extends React.Component {
     editLevel = () => {
         this.props.rootStore.uiStore.addExpandedCard(this.props.level.id)
     };
+
+    componentDidMount() {
+        // Enable popovers after update (they break otherwise)
+        $('*[data-toggle="popover"]').popover({
+            html: true
+        });
+    }
 
     buildIPTTUrl = (indicator_ids) => {
         let url = `/indicators/iptt_report/${this.props.rootStore.levelStore.program_id}/timeperiods/?frequency=3&start=0&end=999`;
@@ -73,12 +75,12 @@ export class LevelCardCollapsed extends React.Component {
             allIndicatorLinks.push(`<a href=${this.buildIPTTUrl(sameLevelIndicatorIds)}>${linkText}</a>`);
         }
 
-        // Get indicator ids linked to the children of this level, add the indicator ids identified
+        // Get indicator ids linked to the descendants of this level, add the indicator ids identified
         // above, and create a hyperlink for a filtered IPTT.
         let descendantIndicatorIds = this.props.levelProps.descendantIndicatorIds;
         descendantIndicatorIds = descendantIndicatorIds.concat(sameLevelIndicatorIds);
         if (descendantIndicatorIds.length > 0) {
-            const linkText = `All indicators linked to ${this.props.levelProps.tierName} ${this.props.levelProps.ontologyLabel} and sub-levels`
+            const linkText = `All indicators linked to ${this.props.levelProps.tierName} ${this.props.levelProps.ontologyLabel} and sub-levels`;
             allIndicatorLinks.push(`<a href=${this.buildIPTTUrl(descendantIndicatorIds)}>${linkText}</a>`);
         }
 
@@ -90,7 +92,6 @@ export class LevelCardCollapsed extends React.Component {
 
 
         allIndicatorLinks = `<ul class="nav flex-column">${allIndicatorLinks.join("<br>")}</ul>`;
-        // TODO: popover breaks if you click edit and cancel
         const iCount = this.props.levelProps.indicators.length;
         /* # Translators: This is a count of indicators associated with another object */
         const indicatorCountText = interpolate(ngettext("%s indicator", "%s indicators", iCount), [iCount]);
@@ -162,7 +163,18 @@ export class LevelCardExpanded extends React.Component {
         extendObservable(this, {
             name: props.level.name,
             assumptions: props.level.assumptions,
-        })
+            indicators: props.levelProps.indicators.sort( (a, b) => a.level_order < b.level_order),
+            updateIndicatorOrder (changeObj, indicatorId) {
+                console.log('updated val', changeObj, indicatorId)
+                console.log('targt in change', changeObj.target.value)
+                this.indicators.find( (i) => i.id == indicatorId).level_order = changeObj.value;
+                this.indicators.forEach( i => console.log(toJS(i)))
+
+            }
+        },{
+            updateIndicatorOrder: action
+
+        });
     }
 
     /*
@@ -172,6 +184,13 @@ export class LevelCardExpanded extends React.Component {
     updateSubmitType = (newType) => {
         this.submitType = newType;
     };
+
+    componentDidMount() {
+        // Enable popovers after update (they break otherwise)
+        $('*[data-toggle="popover"]').popover({
+            html: true
+        });
+    }
 
     saveLevel = (event) => {
         event.preventDefault();
@@ -193,6 +212,9 @@ export class LevelCardExpanded extends React.Component {
     };
 
     render(){
+        // Need to reference indicators so it reacts to changes.  Simply passing the observable this.indicators through
+        // to IndicatorList will result in a non-reactive Indicator list form fields.
+        const indicators = toJS(this.indicators)
         return (
             <div className="level-card level-card--expanded" id={this.props.level.id}>
                 <div>
@@ -225,6 +247,12 @@ export class LevelCardExpanded extends React.Component {
                             value={this.assumptions || ""}
                             onChange={this.onFormChange}/>
                     </div>
+                    <IndicatorList
+                        level={this.props.level}
+                        tierName={this.props.levelProps.tierName}
+                        indicators={this.indicators}
+                        changeFunc={this.updateIndicatorOrder} />
+
                     <ButtonBar
                         level={this.props.level}
                         levelProps={this.props.levelProps}
@@ -292,3 +320,90 @@ class LevelButton extends React.Component {
 
     }
 }
+
+class IndicatorList extends React.Component {
+    componentDidMount() {
+        // Enable popovers after update (they break otherwise)
+        $('*[data-toggle="popover"]').popover({
+            html: true
+        });
+    }
+    render() {
+
+        // Create the list of indicators and the dropdowns for setting the indicator order
+        let options = this.props.indicators.map( (entry, index) => {return {value: index+1, label: index+1}});
+
+        let indicatorMarkup = [];
+        this.props.indicators.forEach( (indicator) => {
+            console.log('levelorder in loop', indicator.id, indicator.level_order);
+            // let options = this.props.indicators.map( (entry, index) => <option value={index+1}>{index+1}</option>);
+            indicatorMarkup.push(
+                <tr key={indicator.id}>
+                    {/*<td>*/}
+                    {/*    {indicator.name}*/}
+                    {/*</td>*/}
+                    {/*<td>*/}
+                    {/*    <select*/}
+                    {/*        value={indicator.level_order}*/}
+                    {/*        name={"orderFor" + indicator.id}*/}
+                    {/*        onChange = {(event) => this.props.changeFunc(event, indicator.id)}>*/}
+                    {/*        {options}*/}
+                    {/*    </select>*/}
+
+                    {/*</td>*/}
+                    {/*<td>*/}
+                    {/*</td>*/}
+                    <td>
+                        <SingleReactSelect
+                            update={(value) => this.props.changeFunc(value, indicator.id)}
+                            selectId={"ind"+indicator.id}
+                            labelClasses="col-form-label"
+                            value={{value: indicator.level_order, label: indicator.level_order}}
+                            label={indicator.name}
+                            options={options}/>
+                        <a href="#" className="indicator-link"><i className="fas fa-cog"></i> Settings</a>
+                    </td>
+                </tr>
+            )
+        });
+
+        // Conditionally set the other elements that are only visible when there are indicators
+        let order = null;
+        let helpLink = null;
+        if (this.props.indicators.length > 0) {
+            order = "Order";
+            helpLink =
+                <HelpPopover
+                    content='To remove an indicator: Click “Settings”, where you can reassign the indicator to a different level or delete it.'
+                    placement="bottom"/>
+        }
+
+        return(
+            <table id="level-card--indicator-links" style={{backgroundColor: "white", padding: "1em"}}>
+                <tbody>
+                    <tr>
+                        <td>Indicators Linked to this {this.props.tierName}</td>
+                        <td>{order}</td>
+                        <td>
+                            {helpLink}
+                        </td>
+                    </tr>
+                    {indicatorMarkup}
+                    <tr>
+                        <td>
+                            <a href="#" role="button" className="btn btn-link btn-add">
+                                <img className="fas fa-plus-circle"></img>
+                                <span>Add Indicator</span>
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        )
+    }
+}
+
+
+
+
+
