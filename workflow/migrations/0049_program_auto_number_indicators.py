@@ -12,17 +12,9 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        # first add the field with a default of false, so existing programs are set as "unmigrated"
         migrations.AddField(
             model_name='program',
             name='auto_number_indicators',
-            field=models.BooleanField(default=False, verbose_name='Auto-number indicators according to the results framework'),
-        ),
-        # now make the default true so all new programs going forward have this set
-        # (new programs don't need migration time)
-        migrations.AlterField(
-            model_name='program',
-            name='auto_number_indicators',
             field=models.BooleanField(default=True, verbose_name='Auto-number indicators according to the results framework'),
-        )
+        ),
     ]
