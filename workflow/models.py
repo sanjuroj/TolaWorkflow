@@ -534,6 +534,10 @@ class Program(models.Model):
     end_date = models.DateField(_("Program End Date"), null=True, blank=True)
     reporting_period_start = models.DateField(_("Reporting Period Start Date"), null=True, blank=True)
     reporting_period_end = models.DateField(_("Reporting Period End Date"), null=True, blank=True)
+    auto_number_indicators = models.BooleanField(
+        _("Auto-number indicators according to the results framework"),
+        default=True, blank=False
+    )
     using_results_framework = models.BooleanField(
         _("Group indicators according to the results framework"),
         default=True, blank=False
@@ -672,6 +676,7 @@ class Program(models.Model):
     def target_frequencies(self):
         return self.indicator_set.all().order_by().values('target_frequency').distinct().values_list('target_frequency', flat=True)
 
+    @property
     def admin_logged_fields(self):
         return {
             'gaitid': self.gaitid,

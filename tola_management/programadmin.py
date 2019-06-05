@@ -173,6 +173,8 @@ class ProgramAdminSerializer(ModelSerializer):
     description = CharField(allow_blank=True)
     sector = NestedSectorSerializer(required=True, many=True)
     country = NestedCountrySerializer(required=True, many=True)
+    auto_number_indicators = BooleanField(required=False)
+    using_results_framework = BooleanField(required=False)
 
     def validate_country(self, values):
         if not values:
@@ -189,6 +191,8 @@ class ProgramAdminSerializer(ModelSerializer):
             'description',
             'sector',
             'country',
+            'auto_number_indicators',
+            'using_results_framework'
         )
 
     def to_representation(self, program, with_aggregates=True):
