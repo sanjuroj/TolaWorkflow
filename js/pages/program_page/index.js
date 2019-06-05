@@ -26,7 +26,7 @@ const uiStore = new ProgramPageUIStore();
 eventBus.on('open-indicator-update-modal', (indicatorId) => {
     // Note: depends on indicator_list_modals.html
 
-    let url = `/indicators/indicator_update/${indicatorId}/?modal=1`;
+    let url = `/indicators/indicator_update/${indicatorId}/`;
 
     $("#indicator_modal_content").empty();
     $("#modalmessages").empty();

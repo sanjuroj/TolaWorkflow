@@ -743,11 +743,13 @@ class Indicator(SafeDeleteModel):
         verbose_name=_("Target frequency"), help_text=" "
     )
 
+    # Deprecated - redundant to the event name of the first PeriodicTarget saved by the form
     target_frequency_custom = models.CharField(
         null=True, blank=True, max_length=100,
         verbose_name=_("First event name"), help_text=" "
     )
 
+    # Deprecated - can probably be safely deleted
     target_frequency_start = models.DateField(
         blank=True, null=True, auto_now=False, auto_now_add=False,
         verbose_name=_("First target period begins*"), help_text=" "
@@ -986,11 +988,39 @@ class Indicator(SafeDeleteModel):
         return self.baseline
 
     @property
-    def lop_target_display(self):
+    def calculated_lop_target(self):
+        """
+        We have always manually set the LoP target of an indicator manually via form input
+        but now we are starting to compute it based on the PeriodicTarget values.
+
+        This property returns the calculated value, which may be different than the stored value in the DB
+        """
+        periodic_targets = self.periodictargets.all()
+
+        if not periodic_targets.exists():
+            return None
+
+        if self.is_cumulative:
+            # return the last value in the sequence
+            return periodic_targets.last().target
+        else:
+            # sum the values
+            return sum(pt.target for pt in periodic_targets)
+
+    @property
+    def lop_target_stripped(self):
         """adding logic to strip trailing zeros in case of a decimal with superfluous zeros to the right of the ."""
         if self.lop_target:
             lop_stripped = str(self.lop_target)
             lop_stripped = lop_stripped.rstrip('0').rstrip('.') if '.' in lop_stripped else lop_stripped
+            return lop_stripped
+        return self.lop_target
+
+    @property
+    def lop_target_display(self):
+        """Same as lop_target_stripped but with a trailing % if applicable"""
+        if self.lop_target:
+            lop_stripped = self.lop_target_stripped
             if self.unit_of_measure_type == self.PERCENTAGE:
                 return u"{0}%".format(lop_stripped)
             return lop_stripped
