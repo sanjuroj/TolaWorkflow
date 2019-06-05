@@ -604,14 +604,14 @@ export default class FilterStore {
                     }]).filter(({label, options}) => options && options.length > 0);
             }
         }
-        return null;
+        return [];
     }
     
      @computed get indicatorsSelected() {
         if (this.indicators && this.indicators.length > 0) {
-            return flattenArray(
-                this.indicatorOptions.map(optgroup => optgroup.options)
-                ).filter(indicator => this.indicators.includes(indicator.value));
+            let indicatorOptions = this.groupByDisabled ? this.indicatorOptions :
+                flattenArray(this.indicatorOptions.map(optgroup => optgroup.options));
+            return indicatorOptions.filter(indicator => this.indicators.includes(indicator.value));
         }
         return [];
     }
