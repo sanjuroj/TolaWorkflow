@@ -1264,7 +1264,7 @@ function (_React$Component2) {
     value: function render() {
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         href: "#",
-        className: "btn btn-sm btn-outline-primary",
+        className: "btn btn-sm btn-secondary",
         ref: "target",
         onClick: this.handleClick.bind(this)
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
@@ -1324,24 +1324,20 @@ function (_React$Component3) {
     key: "render",
     value: function render() {
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "container-fluid"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "row mt-1 mb-2"
+        className: ""
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         type: "button",
-        className: "btn btn-outline-primary btn-block",
+        className: "btn btn-primary btn-block",
         onClick: this.getCurrent
       },
       /* # Translators: a download button for a report containing just the data currently displayed */
-      gettext('Current view'))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "row mt-2 mb-1"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+      gettext('Current view')), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         type: "button",
-        className: "btn btn-outline-primary btn-block",
+        className: "btn btn-primary btn-block",
         onClick: this.getAll
       },
       /* # Translators: a download button for a report containing all available data */
-      gettext('All program data'))));
+      gettext('All program data')));
     }
   }]);
 
@@ -1388,7 +1384,7 @@ function (_React$Component4) {
     value: function render() {
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         type: "button",
-        className: "btn btn-sm btn-outline-primary",
+        className: "btn btn-sm btn-secondary",
         ref: "target",
         onClick: this.handleClick.bind(this)
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
@@ -3921,7 +3917,9 @@ var IPTTHeader = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inject"])('filt
     className: "pb-3"
   }, filterStore.startPeriodLabel && filterStore.endPeriodLabel ? filterStore.startPeriodLabel + " - " + filterStore.endPeriodLabel : "")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "subheader__actions"
-  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_buttons__WEBPACK_IMPORTED_MODULE_2__["PinButton"], null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_buttons__WEBPACK_IMPORTED_MODULE_2__["ExcelButton"], null)));
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    className: "btn-row"
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_buttons__WEBPACK_IMPORTED_MODULE_2__["PinButton"], null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_buttons__WEBPACK_IMPORTED_MODULE_2__["ExcelButton"], null))));
 }));
 /* harmony default export */ __webpack_exports__["default"] = (IPTTHeader);
 
@@ -4455,4 +4453,4 @@ function () {
 /***/ })
 
 },[["mYfJ","runtime","vendors"]]]);
-//# sourceMappingURL=iptt_report-85dee0de083900a5370c.js.map
+//# sourceMappingURL=iptt_report-7fdb59d1c2e2e262bb1c.js.map
