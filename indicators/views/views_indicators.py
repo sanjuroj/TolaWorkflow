@@ -310,8 +310,8 @@ class IndicatorUpdate(UpdateView):
                     Indicator.ANNUAL, Indicator.SEMI_ANNUAL, Indicator.TRI_ANNUAL,
                     Indicator.QUARTERLY, Indicator.MONTHLY]:
                 start_date = program.reporting_period_start
-                target_frequency_num_periods = IPTT_ReportView._get_num_periods(
-                    start_date, program.reporting_period_end, target_frequency_type)
+                target_frequency_num_periods = len([pt for pt in PeriodicTarget.generate_for_frequency(
+                    target_frequency_type)(start_date, program.reporting_period_end)])
             elif target_frequency_type == Indicator.EVENT:
                 # This is only case in which target fequency comes from the form
                 target_frequency_num_periods = form.cleaned_data.get('target_frequency_num_periods', 1)

@@ -58,7 +58,8 @@ class TestResultUnassignedUIDateFallsOutsideProgramPeriod(test.TestCase):
             response,
             'Jan 1, 2017',
         )
-        self.assertContains(response, '42', count=3)
+        # only 1 expected now as no longer displaying the value for unassigned indicators
+        self.assertContains(response, '42', count=1)
         # expected warning message
         self.assertContains(
             response,
@@ -113,7 +114,7 @@ class TestResultUnassignedUITargetsMidlineEndline(test.TestCase):
             response,
             'Jan 1, 2017',
         )
-        self.assertContains(response, '42', count=3)
+        self.assertContains(response, '42', count=1)
         # expected warning message
         self.assertContains(
             response,
@@ -160,7 +161,7 @@ class TestResultUnassignedUITargetsNotSetup(test.TestCase):
             response,
             'Jan 1, 2017',
         )
-        self.assertContains(response, '42', count=3)
+        self.assertContains(response, '42', count=1)
         # expected warning message
         self.assertContains(
             response,
