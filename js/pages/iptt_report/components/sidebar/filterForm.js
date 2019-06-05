@@ -47,7 +47,7 @@ const IPTTFilterForm = inject('filterStore')(
                     <FilterTop />
                 </div>
                 <div id="filter-middle" className="px-3 pt-3 pb-2">
-                    <FilterMiddle /> 
+                    <FilterMiddle />
                 </div>
                 <div id="filter-bottom">
                     <IPTTButton
@@ -58,6 +58,12 @@ const IPTTFilterForm = inject('filterStore')(
                         action={ filterStore.clearFilters }
                         isDisabled={ filterStore.noFilters }
                     />
+              </div>
+              <div id="filter-extra" className=" d-flex justify-content-between no-gutters p-3">
+                  <a href={"/tola_management/audit_log/" + filterStore.programId}
+                      className="btn-link">
+                      <i className="fas fa-history"></i> {gettext("Change log")}
+                  </a>
               </div>
             </nav>
         );
