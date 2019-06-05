@@ -10007,10 +10007,6 @@ body.page_iptt_table {
 .page_iptt_table .page-title {
   display: none; }
 
-.page_iptt_table .subheader__actions {
-  position: fixed;
-  right: 0px; }
-
 .iptt_table_wrapper {
   width: 100%;
   overflow-x: auto;
@@ -10510,5 +10506,3 @@ a:hover {
 
 /* Unsorted custom selectors */
 
-
-/*# sourceMappingURL=base-ffca2b9f032de7ccab25.css.map*/

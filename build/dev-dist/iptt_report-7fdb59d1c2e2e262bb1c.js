@@ -1264,7 +1264,7 @@ function (_React$Component2) {
     value: function render() {
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         href: "#",
-        className: "btn btn-sm btn-outline-primary",
+        className: "btn btn-sm btn-secondary",
         ref: "target",
         onClick: this.handleClick.bind(this)
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
@@ -1324,24 +1324,20 @@ function (_React$Component3) {
     key: "render",
     value: function render() {
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "container-fluid"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "row mt-1 mb-2"
+        className: ""
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         type: "button",
-        className: "btn btn-outline-primary btn-block",
+        className: "btn btn-primary btn-block",
         onClick: this.getCurrent
       },
       /* # Translators: a download button for a report containing just the data currently displayed */
-      gettext('Current view'))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "row mt-2 mb-1"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+      gettext('Current view')), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         type: "button",
-        className: "btn btn-outline-primary btn-block",
+        className: "btn btn-primary btn-block",
         onClick: this.getAll
       },
       /* # Translators: a download button for a report containing all available data */
-      gettext('All program data'))));
+      gettext('All program data')));
     }
   }]);
 
@@ -1388,7 +1384,7 @@ function (_React$Component4) {
     value: function render() {
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         type: "button",
-        className: "btn btn-sm btn-outline-primary",
+        className: "btn btn-sm btn-secondary",
         ref: "target",
         onClick: this.handleClick.bind(this)
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
@@ -2325,6 +2321,49 @@ function () {
       return indicators || [];
     }
   }, {
+    key: "filterLevels",
+    value: function filterLevels() {
+      var skip = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+      var levels = false;
+
+      if (this.groupBy === _constants__WEBPACK_IMPORTED_MODULE_1__["GROUP_BY_LEVEL"]) {
+        levels = this.program.levels.sort(function (levela, levelb) {
+          return levela.sort - levelb.sort;
+        }).sort(function (levela, levelb) {
+          return levela.depth - levelb.depth;
+        });
+      } else if (this.groupBy === _constants__WEBPACK_IMPORTED_MODULE_1__["GROUP_BY_CHAIN"]) {
+        var parents = this.program.levels.filter(function (level) {
+          return !level._parent;
+        });
+        levels = this._findChildren(parents, []);
+      }
+
+      if (levels) {
+        if (this.noFilters) {
+          return levels;
+        }
+
+        var levelPks;
+
+        if (skip) {
+          levelPks = new Set(this.filterIndicators(this.program.indicators, skip).map(function (indicator) {
+            return indicator.levelpk;
+          }));
+        } else {
+          levelPks = new Set(this.filteredIndicators.map(function (indicator) {
+            return indicator.levelpk;
+          }));
+        }
+
+        return levels.filter(function (level) {
+          return levelPks.has(level.pk);
+        });
+      }
+
+      return [];
+    }
+  }, {
     key: "_findChildren",
     value: function _findChildren(parents) {
       var levels = [];
@@ -2958,7 +2997,7 @@ function () {
             };
           });
         } else {
-          return this.filteredLevels.map(function (level) {
+          return this.filterLevels('indicators').map(function (level) {
             return {
               label: "".concat(level.tier.name, " ").concat(level.sort),
               options: _this11.filterIndicators(level.indicators, 'indicators').map(function (indicator) {
@@ -2984,7 +3023,7 @@ function () {
         }
       }
 
-      return null;
+      return [];
     }
   }, {
     key: "indicatorsSelected",
@@ -2992,9 +3031,10 @@ function () {
       var _this12 = this;
 
       if (this.indicators && this.indicators.length > 0) {
-        return flattenArray(this.indicatorOptions.map(function (optgroup) {
+        var indicatorOptions = this.groupByDisabled ? this.indicatorOptions : flattenArray(this.indicatorOptions.map(function (optgroup) {
           return optgroup.options;
-        })).filter(function (indicator) {
+        }));
+        return indicatorOptions.filter(function (indicator) {
           return _this12.indicators.includes(indicator.value);
         });
       }
@@ -3032,35 +3072,7 @@ function () {
   }, {
     key: "filteredLevels",
     get: function get() {
-      var levels = false;
-
-      if (this.groupBy === _constants__WEBPACK_IMPORTED_MODULE_1__["GROUP_BY_LEVEL"]) {
-        levels = this.program.levels.sort(function (levela, levelb) {
-          return levela.sort - levelb.sort;
-        }).sort(function (levela, levelb) {
-          return levela.depth - levelb.depth;
-        });
-      } else if (this.groupBy === _constants__WEBPACK_IMPORTED_MODULE_1__["GROUP_BY_CHAIN"]) {
-        var parents = this.program.levels.filter(function (level) {
-          return !level._parent;
-        });
-        levels = this._findChildren(parents, []);
-      }
-
-      if (levels) {
-        if (this.noFilters) {
-          return levels;
-        }
-
-        var levelPks = new Set(this.filteredIndicators.map(function (indicator) {
-          return indicator.levelpk;
-        }));
-        return levels.filter(function (level) {
-          return levelPks.has(level.pk);
-        });
-      }
-
-      return [];
+      return this.filterLevels(false);
     }
   }]);
 
@@ -3905,7 +3917,9 @@ var IPTTHeader = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inject"])('filt
     className: "pb-3"
   }, filterStore.startPeriodLabel && filterStore.endPeriodLabel ? filterStore.startPeriodLabel + " - " + filterStore.endPeriodLabel : "")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "subheader__actions"
-  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_buttons__WEBPACK_IMPORTED_MODULE_2__["PinButton"], null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_buttons__WEBPACK_IMPORTED_MODULE_2__["ExcelButton"], null)));
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    className: "btn-row"
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_buttons__WEBPACK_IMPORTED_MODULE_2__["PinButton"], null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_buttons__WEBPACK_IMPORTED_MODULE_2__["ExcelButton"], null))));
 }));
 /* harmony default export */ __webpack_exports__["default"] = (IPTTHeader);
 
@@ -4439,4 +4453,4 @@ function () {
 /***/ })
 
 },[["mYfJ","runtime","vendors"]]]);
-//# sourceMappingURL=iptt_report-a55468cb97614527ce68.js.map
+//# sourceMappingURL=iptt_report-7fdb59d1c2e2e262bb1c.js.map
