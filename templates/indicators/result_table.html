@@ -156,16 +156,8 @@
         <tr>
             <td></td>
             <td></td>
-            <td class="text-right">
-                {% with achieved=result.achieved|floatformat:"-2" %}
-                    {% if indicator.unit_of_measure_type == 1 %}
-                        {{ achieved|trailingzero }}
-                    {% else %}
-                        {{ achieved|trailingzero }}%
-                    {% endif %}
-                {% endwith %}
-            </td>
-            <td class="text-right"></td>
+            <td></td>
+            <td></td>
             <td class="results__result--date bg-danger-lighter">
                 {% if is_editable is False %}
                     {{ result.date_collected|date:"MEDIUM_DATE_FORMAT"|default_if_none:"" }}
@@ -219,17 +211,21 @@
             <td><strong>{% trans "Life of Program" %}</strong></td>
             <td class="text-right">
                 <strong>
-                    {% with lop=indicator.lop_target|floatformat:"-2" %}
+                    {% with lop=indicator.lop_target_active|floatformat:"-2" %}
                         {{ lop|trailingzero }}{% if indicator.unit_of_measure_type == 2 %}%{% endif %}
                     {% endwith %}
                 </strong>
             </td>
             <td class="text-right">
-                <strong>
-                    {% with actual=indicator.lop_actual|floatformat:"-2"  %}
+                {% with actual=indicator.lop_actual|floatformat:"-2"  %}
+                    {% if actual %}
+                        <strong>
                         {{ actual|trailingzero }}{% if indicator.unit_of_measure_type == 2 %}%{% endif %}
-                    {% endwith %}
-                </strong>
+                        </strong>
+                    {% else %}
+                        &mdash;
+                    {% endif %}
+                {% endwith %}
             </td>
             <td class="text-right">
                 {% target_percent_met indicator.lop_percent_met indicator.is_complete %}
