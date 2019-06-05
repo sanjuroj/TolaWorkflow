@@ -3372,7 +3372,15 @@ var IPTTFilterForm = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inject"])('
     gettext('Clear filters'),
     action: filterStore.clearFilters,
     isDisabled: filterStore.noFilters
-  })));
+  })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    id: "filter-extra",
+    className: " d-flex justify-content-between no-gutters p-3"
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+    href: "/tola_management/audit_log/" + filterStore.programId,
+    className: "btn-link"
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+    className: "fas fa-history"
+  }), " ", gettext("Change log"))));
 }));
 /* harmony default export */ __webpack_exports__["default"] = (IPTTFilterForm);
 
@@ -4453,4 +4461,4 @@ function () {
 /***/ })
 
 },[["mYfJ","runtime","vendors"]]]);
-//# sourceMappingURL=iptt_report-7fdb59d1c2e2e262bb1c.js.map
+//# sourceMappingURL=iptt_report-78ea044b92b494e6ae52.js.map
