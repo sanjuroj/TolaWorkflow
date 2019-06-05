@@ -1478,10 +1478,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var components_pagination__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! components/pagination */ "RCjz");
 /* harmony import */ var _components_program_editor__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./components/program_editor */ "tlOy");
 /* harmony import */ var _components_edit_program_profile__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./components/edit_program_profile */ "P05O");
-/* harmony import */ var _components_program_history__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./components/program_history */ "7Eka");
-/* harmony import */ var components_loading_spinner__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! components/loading-spinner */ "DDFe");
-/* harmony import */ var components_folding_sidebar__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! components/folding-sidebar */ "tnXs");
-/* harmony import */ var _fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @fortawesome/react-fontawesome */ "IP2g");
+/* harmony import */ var _components_program_settings__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./components/program_settings */ "vNzB");
+/* harmony import */ var _components_program_history__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./components/program_history */ "7Eka");
+/* harmony import */ var components_loading_spinner__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! components/loading-spinner */ "DDFe");
+/* harmony import */ var components_folding_sidebar__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! components/folding-sidebar */ "tnXs");
+/* harmony import */ var _fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! @fortawesome/react-fontawesome */ "IP2g");
 function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
@@ -1509,6 +1510,7 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
 
 
 
@@ -1826,7 +1828,7 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     id: "program-management-index-view",
     className: "row"
-  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_folding_sidebar__WEBPACK_IMPORTED_MODULE_10__["default"], null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_folding_sidebar__WEBPACK_IMPORTED_MODULE_11__["default"], null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "filter-section"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(CountryFilter, {
     store: store,
@@ -1877,7 +1879,7 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
     }
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
     className: "fas fa-plus-circle"
-  }), gettext("Add Program")))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_loading_spinner__WEBPACK_IMPORTED_MODULE_9__["default"], {
+  }), gettext("Add Program")))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_loading_spinner__WEBPACK_IMPORTED_MODULE_10__["default"], {
     isLoading: store.fetching_main_listing || store.applying_bulk_updates
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "admin-list__table"
@@ -1916,7 +1918,7 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
               return store.onProfilePaneChange(new_pane);
             },
             ProfileSection: Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function () {
-              return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_loading_spinner__WEBPACK_IMPORTED_MODULE_9__["default"], {
+              return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_loading_spinner__WEBPACK_IMPORTED_MODULE_10__["default"], {
                 isLoading: store.saving
               }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_edit_program_profile__WEBPACK_IMPORTED_MODULE_7__["default"], {
                 onIsDirtyChange: function onIsDirtyChange(is_dirty) {
@@ -1935,10 +1937,21 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
                 errors: store.editing_errors
               }));
             }),
-            HistorySection: Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function () {
-              return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_loading_spinner__WEBPACK_IMPORTED_MODULE_9__["default"], {
+            SettingsSection: Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function () {
+              return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_loading_spinner__WEBPACK_IMPORTED_MODULE_10__["default"], {
                 isLoading: store.saving
-              }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_program_history__WEBPACK_IMPORTED_MODULE_8__["default"], {
+              }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_program_settings__WEBPACK_IMPORTED_MODULE_8__["default"], {
+                program_data: data,
+                store: store,
+                onSave: function onSave(id, data) {
+                  return store.updateProgram(id, data);
+                }
+              }));
+            }),
+            HistorySection: Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function () {
+              return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(components_loading_spinner__WEBPACK_IMPORTED_MODULE_10__["default"], {
+                isLoading: store.saving
+              }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_program_history__WEBPACK_IMPORTED_MODULE_9__["default"], {
                 store: store,
                 onIsDirtyChange: function onIsDirtyChange(is_dirty) {
                   return store.setActiveFormIsDirty(is_dirty);
@@ -1970,7 +1983,7 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
         className: "expando-toggle icon__disabled"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "expando-toggle__icon"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_11__["FontAwesomeIcon"], {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_12__["FontAwesomeIcon"], {
         icon: store.editing_target == data.id ? 'caret-down' : 'caret-right'
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "expando-toggle__label"
@@ -1983,7 +1996,7 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
         }
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "expando-toggle__icon"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_11__["FontAwesomeIcon"], {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_12__["FontAwesomeIcon"], {
         icon: store.editing_target == data.id ? 'caret-down' : 'caret-right'
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "expando-toggle__label"
@@ -2075,9 +2088,11 @@ function (_React$Component) {
 
       var _this$props = this.props,
           ProfileSection = _this$props.ProfileSection,
+          SettingsSection = _this$props.SettingsSection,
           HistorySection = _this$props.HistorySection,
           active_pane = _this$props.active_pane;
       var profile_active_class = active_pane == 'profile' ? 'active' : '';
+      var settings_active_class = active_pane == 'settings' ? 'active' : '';
       var history_active_class = active_pane == 'status_and_history' ? 'active' : '';
       var new_class = this.props.new ? 'disabled' : '';
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -2098,6 +2113,16 @@ function (_React$Component) {
         className: "nav-item"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
         href: "#",
+        className: "nav-link ".concat(settings_active_class),
+        onClick: function onClick(e) {
+          e.preventDefault();
+
+          _this.updateActivePage('settings');
+        }
+      }, gettext("Settings"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
+        className: "nav-item"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+        href: "#",
         className: "nav-link ".concat(history_active_class, " ").concat(new_class),
         onClick: function onClick(e) {
           e.preventDefault();
@@ -2106,7 +2131,7 @@ function (_React$Component) {
         }
       }, gettext("Status and History")))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "tab-content"
-      }, active_pane == 'profile' && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ProfileSection, null), active_pane == 'status_and_history' && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(HistorySection, null)));
+      }, active_pane == 'profile' && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ProfileSection, null), active_pane == 'settings' && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(SettingsSection, null), active_pane == 'status_and_history' && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(HistorySection, null)));
     }
   }]);
 
@@ -2270,6 +2295,193 @@ function (_React$Component) {
 }(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component);
 
 /* harmony default export */ __webpack_exports__["default"] = (FoldingSidebar);
+
+/***/ }),
+
+/***/ "vNzB":
+/*!*******************************************************************************!*\
+  !*** ./js/pages/tola_management_pages/program/components/program_settings.js ***!
+  \*******************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return ProgramSettings; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "q1tI");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! mobx-react */ "okNM");
+var _class, _temp;
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+
+
+
+var ProgramSettings = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(_class = (_temp =
+/*#__PURE__*/
+function (_React$Component) {
+  _inherits(ProgramSettings, _React$Component);
+
+  function ProgramSettings(props) {
+    var _this;
+
+    _classCallCheck(this, ProgramSettings);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(ProgramSettings).call(this, props));
+
+    _this.autonumberChange = function (e) {
+      if (e.target.value == "2") {
+        _this.setState({
+          autonumber: false
+        });
+      } else {
+        _this.setState({
+          autonumber: true
+        });
+      }
+    };
+
+    _this.groupingChange = function (e) {
+      if (e.target.checked) {
+        _this.setState({
+          grouping: true
+        });
+      } else {
+        _this.setState({
+          grouping: false
+        });
+      }
+    };
+
+    _this.save = function (e) {
+      e.preventDefault();
+
+      var data = _objectSpread({}, _this.props.program_data, {
+        auto_number_indicators: _this.state.autonumber,
+        using_results_framework: _this.state.grouping
+      });
+
+      _this.props.onSave(_this.props.program_data.id, data);
+    };
+
+    _this.state = {
+      autonumber: props.program_data.auto_number_indicators,
+      grouping: props.program_data.using_results_framework
+    };
+    var originalState = {
+      autonumber: props.program_data.auto_number_indicators,
+      grouping: props.program_data.using_results_framework
+    };
+
+    _this.resetForm = function () {
+      _this.setState(originalState);
+    };
+
+    _this.formDirty = function () {
+      return _this.state.autonumber != originalState.autonumber || _this.state.grouping != originalState.grouping;
+    };
+
+    return _this;
+  }
+
+  _createClass(ProgramSettings, [{
+    key: "render",
+    value: function render() {
+      var _this2 = this;
+
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "tab-pane--react"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h2", {
+        className: "no-bold"
+      }, this.props.program_data.name ? this.props.program_data.name + ': ' : '', gettext("Settings")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "d-flex flex-column w-75 pr-5"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("form", {
+        className: "form"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", null, gettext("Indicator numbering")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "form-check mb-3"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+        className: "form-check-input",
+        type: "radio",
+        value: "1",
+        name: "autonumber",
+        id: "autonumber_on",
+        checked: this.state.autonumber,
+        onChange: this.autonumberChange
+      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+        className: "form-check-label",
+        htmlFor: "autonumber_on"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, // # Translators: Auto-number meaning the system will do this automatically
+      gettext('Auto-number indicators (recommended)'), ":"), "\xA0 ", gettext('Indicator numbers are automatically determined by their results framework assignments.'))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "form-check mb-5"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+        className: "form-check-input",
+        type: "radio",
+        value: "2",
+        name: "autonumber",
+        id: "autonumber_off",
+        checked: !this.state.autonumber,
+        onChange: this.autonumberChange
+      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+        className: "form-check-label",
+        htmlFor: "autonumber_off"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, gettext('Manually number indicators'), ":"), "\xA0 ", gettext('If your donor requires a special numbering convention, you can enter a custom number for each indicator.'), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", {
+        className: "text-danger"
+      }, "\xA0 ", gettext('Manually entered numbers do not affect the order in which indicators are listed; they are purely for display purposes.')))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", null, gettext("Indicator grouping")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "form-check mb-3"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+        className: "form-check-input",
+        type: "checkbox",
+        name: "grouping",
+        id: "grouping",
+        checked: this.state.grouping,
+        onChange: this.groupingChange
+      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+        className: "form-check-label",
+        htmlFor: "grouping"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, gettext('Group indicators according to the results framework'), ":"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, "\xA0 ", gettext('After you have set a results framework for this program and assigned indicators to it, ' + 'select this option to retire the original indicator levels and view indicators grouped by ' + 'results framework levels instead.  This setting affects the program page, indicator plan, ' + 'and IPTT reports.')))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "form-group btn-row"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+        disabled: !this.formDirty(),
+        className: "btn btn-primary",
+        type: "button",
+        onClick: function onClick(e) {
+          return _this2.save(e);
+        }
+      }, gettext("Save Changes")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+        className: "btn btn-reset",
+        type: "button",
+        onClick: function onClick() {
+          return _this2.resetForm();
+        }
+      }, gettext("Reset"))))));
+    }
+  }]);
+
+  return ProgramSettings;
+}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component), _temp)) || _class;
+
+
 
 /***/ }),
 
@@ -3021,4 +3233,4 @@ function () {
 /***/ })
 
 },[["1faY","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_program-f2f8f6e824aff20193ac.js.map
+//# sourceMappingURL=tola_management_program-8247f05b7a2d523dca38.js.map
