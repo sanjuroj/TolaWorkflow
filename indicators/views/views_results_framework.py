@@ -58,6 +58,11 @@ class LevelViewSet (viewsets.ModelViewSet):
         instance = self.get_object()
         program = instance.program
         parent = instance.parent
+
+        role = request.user.tola_user.program_role(program.id)
+        if request.user.is_anonymous or role != 'high':
+            return HttpResponseRedirect('/')
+
         self.perform_destroy(instance)
         try:
             levels_to_shift = Level.objects \
@@ -82,10 +87,14 @@ class LevelViewSet (viewsets.ModelViewSet):
 # TODO: add security
 @api_view(http_method_names=['POST'])
 def insert_new_level(request):
-
     level_data = copy.copy(request.data)
-    # Update new Level data in preparation for saving
     program = Program.objects.get(id=request.data['program'])
+
+    role = request.user.tola_user.program_role(program.id)
+    if request.user.is_anonymous or role != 'high':
+        return HttpResponseRedirect('/')
+
+    # Update new Level data in preparation for saving
     if request.data['parent'] == "root":
         parent = None
     else:
@@ -119,6 +128,10 @@ def insert_new_level(request):
 @api_view(http_method_names=['POST'])
 def save_leveltiers(request):
     program = Program.objects.get(id=request.data['program_id'])
+    role = request.user.tola_user.program_role(program.id)
+    if request.user.is_anonymous or role != 'high':
+        return HttpResponseRedirect('/')
+
     for n, tier in enumerate(request.data['tiers']):
         tierObj = LevelTier.objects.create(
             program=program,
@@ -131,6 +144,11 @@ def save_leveltiers(request):
 # TODO: add security
 @api_view(http_method_names=['POST'])
 def reorder_indicators(request):
+    program_ids = list({Indicator.objects.get(pk=i['id']).program.id for i in request.data})
+    role = request.user.tola_user.program_role(program_ids[0])
+    if request.user.is_anonymous or len(program_ids) > 1 or role != 'high':
+        return HttpResponseRedirect('/')
+
     level_order_map = {i['id']:i['level_order'] for i in request.data}
     for indicator in Indicator.objects.filter(id__in=level_order_map.keys()):
         indicator.level_order = level_order_map[indicator.id]

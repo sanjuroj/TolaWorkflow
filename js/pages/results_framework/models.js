@@ -1,5 +1,4 @@
 import { observable, computed, action, toJS, runInAction } from "mobx";
-import { trimOntology } from '../../level_utils'
 import { api } from "../../api.js"
 
 export class RootStore {
@@ -189,7 +188,16 @@ export class LevelStore {
                 const context = document.getElementById('alerts2')
                 console.log('contextis', context);
                 // Translators: Notification to user that the deletion command that they issued was successful
-                success_notice({message_text: gettext(`${level_label} was successfully deleted.`), context: "rf-page"})
+                success_notice({
+                    message_text: gettext(`${level_label} was successfully deleted.`),
+                    addClass: 'program-page__rationale-form',
+                    stack: {
+                        dir1: 'up',
+                        dir2: 'right',
+                        firstpos1: 0,
+                        firstpas2: 0,
+                    }
+                })
             })
             .catch(error => console.log('error', error))
     };
