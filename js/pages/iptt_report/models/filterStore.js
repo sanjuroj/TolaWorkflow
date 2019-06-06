@@ -111,7 +111,7 @@ export default class FilterStore {
     }
     
     _validFrequency = (frequencyId) => {
-        if (this.program) {
+        if (frequencyId && this.program) {
             if (this.isTVA) {
                 return this.program.validFrequency(frequencyId);
             } else {
@@ -136,7 +136,7 @@ export default class FilterStore {
     }
     
     @computed get frequencyId() {
-        if (this._validFrequency(this._frequencyId)) {
+        if (this._frequencyId) {
             return this._frequencyId;
         }
         return null;
@@ -146,6 +146,9 @@ export default class FilterStore {
         this.programStore.loadProgram(reportType, programId, frequencyId)
             .then(() => {
                 this.frequencyId = this.frequencyId || null;
+                if (!this._validFrequency(frequencyId)) {
+                    this.frequencyId = this.program.frequencies[0];
+                }
                 this.startPeriod = this.startPeriod || 0;
                 this.endPeriod = this.endPeriod || this.lastPeriod.index;
                 if (this.reportType === TVA && this.indicators && this.indicators.length > 0) {
@@ -434,6 +437,9 @@ export default class FilterStore {
         if (this.startPeriod !== null) {
             return this.periods.getPeriod({index: this.startPeriod}).startDisplay;
         }
+        if (this.frequencyId === 1) {
+            return this.program.reportingStart;
+        }
         return null;
     }
     
@@ -445,6 +451,9 @@ export default class FilterStore {
     @computed get endPeriodLabel() {
         if (this.endPeriod !== null) {
             return this.periods.getPeriod({index: this.endPeriod}).endDisplay;
+        }
+        if (this.frequencyId === 1) {
+            return this.program.reportingEnd;
         }
         return null;
     }
@@ -581,7 +590,7 @@ export default class FilterStore {
                 return this.filterIndicators(this.program.indicators, 'indicators')
                     .map(indicator => ({value: indicator.pk, label: indicator.name}));
             } else {
-                return this.filteredLevels.map(
+                return this.filterLevels('indicators').map(
                     level => ({
                         label: `${level.tier.name} ${level.sort}`,
                         options: this.filterIndicators(level.indicators, 'indicators').map(
@@ -595,14 +604,14 @@ export default class FilterStore {
                     }]).filter(({label, options}) => options && options.length > 0);
             }
         }
-        return null;
+        return [];
     }
     
      @computed get indicatorsSelected() {
         if (this.indicators && this.indicators.length > 0) {
-            return flattenArray(
-                this.indicatorOptions.map(optgroup => optgroup.options)
-                ).filter(indicator => this.indicators.includes(indicator.value));
+            let indicatorOptions = this.groupByDisabled ? this.indicatorOptions :
+                flattenArray(this.indicatorOptions.map(optgroup => optgroup.options));
+            return indicatorOptions.filter(indicator => this.indicators.includes(indicator.value));
         }
         return [];
     }
@@ -701,6 +710,10 @@ export default class FilterStore {
     }
     
     @computed get filteredLevels() {
+        return this.filterLevels(false);
+    }
+    
+    filterLevels(skip = false) {
         var levels = false;
         if (this.groupBy === GROUP_BY_LEVEL) {
             levels = this.program.levels.sort(
@@ -715,7 +728,12 @@ export default class FilterStore {
             if (this.noFilters) {
                 return levels;
             }
-            let levelPks = new Set(this.filteredIndicators.map(indicator => indicator.levelpk));
+            var levelPks;
+            if (skip) {
+                levelPks = new Set(this.filterIndicators(this.program.indicators, skip).map(indicator => indicator.levelpk));
+            } else {
+                levelPks = new Set(this.filteredIndicators.map(indicator => indicator.levelpk));
+            }
             return levels.filter(level => levelPks.has(level.pk));
         }
         return [];

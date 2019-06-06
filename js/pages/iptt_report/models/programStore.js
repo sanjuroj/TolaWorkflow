@@ -304,6 +304,8 @@ class PeriodRange {
 class Program {
     @observable pk = null;
     @observable name = null;
+    @observable reportingStart = null;
+    @observable reportingEnd = null;
     @observable frequencies = [];
     @observable validTVA = false;
     @observable validTIMEPERIODS = true;
@@ -328,6 +330,8 @@ class Program {
         this.pk = parseInt(JSON.id);
         this.name = JSON.name;
         this.frequencies = JSON.frequencies.map(Number);
+        this.reportingStart = JSON.reporting_period_start;
+        this.reportingEnd = JSON.reporting_period_end;
         this.validTVA = this.frequencies.length > 0;
         this.validTIMEPERIODS = true;
         this.oldLevels = JSON.old_style_levels === true || JSON.old_style_levels === "True";

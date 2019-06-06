@@ -28,7 +28,7 @@ from rest_framework.serializers import (
 )
 from django.utils.translation import ugettext as _
 
-from openpyxl import Workbook
+from openpyxl import Workbook, utils
 from openpyxl.cell import Cell
 from openpyxl.styles import Alignment, Font
 
@@ -57,6 +57,84 @@ from tola.util import append_GAIT_dates
 from .permissions import (
     HasProgramAdminAccess
 )
+
+def get_audit_log_workbook(ws, program):
+    header = [
+        Cell(ws, value=_("Date and Time")),
+        # Translators: Number of the indicator being shown
+        Cell(ws, value=_('No.')),
+        Cell(ws, value=_('Indicator')),
+        Cell(ws, value=_('User')),
+        Cell(ws, value=_('Organization')),
+        # Translators: Part of change log, indicates the type of change being made to a particular piece of data
+        Cell(ws, value=_('Change Type')),
+        # Translators: Part of change log, shows what the data looked like before the changes
+        Cell(ws, value=_('Previous Entry')),
+        # Translators: Part of change log, shows what the data looks like after the changes
+        Cell(ws, value=_('New Entry')),
+        # Translators: Part of change log, reason for the change as entered by the user
+        Cell(ws, value=_('Rationale'))
+    ]
+
+    header_font = Font(bold=True)
+
+    for h in header:
+        h.font = header_font
+
+    ws.append(header)
+
+    alignment = Alignment(
+        horizontal='general',
+        vertical='top',
+        text_rotation=0,
+        wrap_text=True,
+        shrink_to_fit=False,
+        indent=0
+    )
+
+    for row in program.audit_logs.all().order_by('-date'):
+        prev_string = u''
+        for entry in row.diff_list:
+            if entry['name'] == 'targets':
+                for k, target in entry['prev'].iteritems():
+                    prev_string += unicode(target['name'])+u": "+unicode(target['value'])+u"\r\n"
+
+            else:
+                prev_string += unicode(entry['pretty_name'])+u": "+unicode(entry['prev'] if entry['prev'] else _('N/A'))+u"\r\n"
+
+        new_string = u''
+        for entry in row.diff_list:
+            if entry['name'] == 'targets':
+                for k, target in entry['new'].iteritems():
+                    new_string += unicode(target['name'])+u": "+unicode(target['value'])+u"\r\n"
+
+            else:
+                new_string += unicode(entry['pretty_name'])+u": "+unicode(entry['new'] if entry['new'] else _('N/A'))+u"\r\n"
+
+        xl_row = [
+            Cell(ws, value=row.date),
+            Cell(ws, value=row.indicator.number if row.indicator else _('N/A')),
+            Cell(ws, value=row.indicator.name if row.indicator else _('N/A')),
+            Cell(ws, value=row.user.name),
+            Cell(ws, value=row.organization.name),
+            Cell(ws, value=row.pretty_change_type),
+            Cell(ws, value=prev_string),
+            Cell(ws, value=new_string),
+            Cell(ws, value=row.rationale)
+        ]
+        for cell in xl_row:
+            cell.alignment = alignment
+        ws.append(xl_row)
+
+    for rd in ws.row_dimensions:
+        rd.auto_size = True
+
+    for cd in ws.column_dimensions:
+        cd.auto_size = True
+    widths = [20, 12, 50, 20, 15, 20, 40, 40, 40]
+    for col_no, width in enumerate(widths):
+        ws.column_dimensions[utils.get_column_letter(col_no + 1)].width = width
+    return ws
 
 class Paginator(SmallResultsSetPagination):
     def get_paginated_response(self , data):
@@ -95,6 +173,8 @@ class ProgramAdminSerializer(ModelSerializer):
     description = CharField(allow_blank=True)
     sector = NestedSectorSerializer(required=True, many=True)
     country = NestedCountrySerializer(required=True, many=True)
+    auto_number_indicators = BooleanField(required=False)
+    using_results_framework = BooleanField(required=False)
 
     def validate_country(self, values):
         if not values:
@@ -111,6 +191,8 @@ class ProgramAdminSerializer(ModelSerializer):
             'description',
             'sector',
             'country',
+            'auto_number_indicators',
+            'using_results_framework'
         )
 
     def to_representation(self, program, with_aggregates=True):
@@ -341,81 +423,7 @@ class ProgramAdminViewSet(viewsets.ModelViewSet):
         program = Program.objects.get(pk=pk)
         workbook = Workbook()
         ws = workbook.active
-
-        header = [
-            Cell(ws, value=_("Date and Time")),
-            # Translators: Number of the indicator being shown
-            Cell(ws, value=_('No.')),
-            Cell(ws, value=_('Indicator')),
-            Cell(ws, value=_('User')),
-            Cell(ws, value=_('Organization')),
-            # Translators: Part of change log, indicates the type of change being made to a particular piece of data
-            Cell(ws, value=_('Change Type')),
-            # Translators: Part of change log, shows what the data looked like before the changes
-            Cell(ws, value=_('Previous Entry')),
-            # Translators: Part of change log, shows what the data looks like after the changes
-            Cell(ws, value=_('New Entry')),
-            # Translators: Part of change log, reason for the change as entered by the user
-            Cell(ws, value=_('Rationale'))
-        ]
-
-        header_font = Font(bold=True)
-
-        for h in header:
-            h.font = header_font
-
-        ws.append(header)
-
-        alignment = Alignment(
-            horizontal='general',
-            vertical='top',
-            text_rotation=0,
-            wrap_text=True,
-            shrink_to_fit=False,
-            indent=0
-        )
-
-        for row in program.audit_logs.all().order_by('-date'):
-            prev_string = u''
-            for entry in row.diff_list:
-                if entry['name'] == 'targets':
-                    for k, target in entry['prev'].iteritems():
-                        prev_string += unicode(target['name'])+u": "+unicode(target['value'])+u"\r\n"
-
-                else:
-                    prev_string += unicode(entry['pretty_name'])+u": "+unicode(entry['prev'] if entry['prev'] else _('N/A'))+u"\r\n"
-
-            new_string = u''
-            for entry in row.diff_list:
-                if entry['name'] == 'targets':
-                    for k, target in entry['new'].iteritems():
-                        new_string += unicode(target['name'])+u": "+unicode(target['value'])+u"\r\n"
-
-                else:
-                    new_string += unicode(entry['pretty_name'])+u": "+unicode(entry['new'] if entry['new'] else _('N/A'))+u"\r\n"
-
-            xl_row = [
-                Cell(ws, value=row.date),
-                Cell(ws, value=row.indicator.number if row.indicator else _('N/A')),
-                Cell(ws, value=row.indicator.name if row.indicator else _('N/A')),
-                Cell(ws, value=row.user.name),
-                Cell(ws, value=row.organization.name),
-                Cell(ws, value=row.pretty_change_type),
-                Cell(ws, value=prev_string),
-                Cell(ws, value=new_string),
-                Cell(ws, value=row.rationale)
-            ]
-            for cell in xl_row:
-                cell.alignment = alignment
-            ws.append(xl_row)
-
-        for rd in ws.row_dimensions:
-            rd.auto_size = True
-
-        for cd in ws.column_dimensions:
-            cd.auto_size = True
-
-
+        get_audit_log_workbook(ws, program)
         response = HttpResponse(content_type='application/ms-excel')
         filename = u'{} Audit Log {}.xlsx'.format(program.name, timezone.now().strftime('%b %d, %Y'))
         response['Content-Disposition'] = 'attachment; filename="{}"'.format(filename)

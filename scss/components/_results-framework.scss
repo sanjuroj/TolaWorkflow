@@ -3,6 +3,7 @@
     align-items: flex-start;
     display: flex;
     flex-direction: column;
+    margin-top: $grid-gutter-width/2;
     @include media-breakpoint-up(md) {
         flex-direction: row;
     }
@@ -116,7 +117,10 @@
 .level-card--collapsed__actions {
     // contains: actions__*
 }
-.actions__top {}
+.actions__top {
+    display: flex;
+    justify-content: flex-end;
+}
 .actions__bottom {}
 
 // component LevelCardExpanded

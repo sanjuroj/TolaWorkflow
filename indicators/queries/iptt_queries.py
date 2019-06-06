@@ -138,3 +138,9 @@ class IPTTIndicator(Indicator):
     @property
     def lop_met_target(self):
         return str(int(round(float(self.lop_actual_sum)*100/self.lop_target_sum))) + "%"
+
+    @property
+    def lop_target_real(self):
+        if getattr(self, 'lop_target_calculated'):
+            return self.lop_target_calculated
+        return self.lop_target

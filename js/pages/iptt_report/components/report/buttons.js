@@ -89,19 +89,20 @@ export class PinButton extends React.Component {
             open: false
         };
     }
-    
+
     handleClick(e) {
         this.setState({open: !this.state.open});
     }
-    
+
     handleClose(e) {
         this.setState({open: false});
     }
-    
+
     render() {
         return (
             <React.Fragment>
-                <div
+                <button
+                    href="#"
                     className="btn btn-sm btn-secondary"
                     ref="target"
                     onClick={ this.handleClick.bind(this) }>
@@ -110,7 +111,8 @@ export class PinButton extends React.Component {
                         /* # Translators: a button that lets a user "pin" (verb) a report to their home page */
                         gettext('Pin')
                     }
-                </div>
+                </button>
+
                 <Popover
                     placement='bottom'
                     style={ {width: 'auto' } }
@@ -130,36 +132,34 @@ export class PinButton extends React.Component {
 class ExcelPopover extends React.Component {
     getCurrent = () => {
         if (this.props.routeStore.excelUrl) {
-            window.location=this.props.routeStore.excelUrl;
+            //window.location=this.props.routeStore.excelUrl;
+            window.open(this.props.routeStore.excelUrl, '_blank');
         }
     }
-    
+
     getAll = () => {
         if (this.props.routeStore.fullExcelUrl) {
-            window.location=this.props.routeStore.fullExcelUrl
+            //window.location=this.props.routeStore.fullExcelUrl
+            window.open(this.props.routeStore.fullExcelUrl, '_blank');
         }
     }
     render() {
         return (
-            <div className="container-fluid">
-                <div className="row mt-1 mb-2">
-                    <div className="btn btn-primary btn-block"
-                         onClick={ this.getCurrent }>
-                        {
-                            /* # Translators: a download button for a report containing just the data currently displayed */
-                            gettext('Current view')
-                        }
-                    </div>
-                </div>
-                <div className="row mt-2 mb-1">
-                    <div className="btn btn-primary btn-block"
-                         onClick={ this.getAll }>
-                        {
-                            /* # Translators: a download button for a report containing all available data */
-                            gettext('All program data')
-                        }
-                    </div>
-                </div>
+            <div className="">
+                <button type="button" className="btn btn-primary btn-block"
+                     onClick={ this.getCurrent }>
+                    {
+                        /* # Translators: a download button for a report containing just the data currently displayed */
+                        gettext('Current view')
+                    }
+                </button>
+                <button type="button" className="btn btn-primary btn-block"
+                     onClick={ this.getAll }>
+                    {
+                        /* # Translators: a download button for a report containing all available data */
+                        gettext('All program data')
+                    }
+                </button>
             </div>
         );
     }
@@ -174,26 +174,28 @@ export class ExcelButton extends React.Component {
             open: false
         };
     }
-    
+
     handleClick = () => {
         if (this.props.filterStore.isTVA) {
             this.setState({open: !this.state.open});
         } else if (this.props.routeStore.excelUrl) {
-            window.location=this.props.routeStore.excelUrl;
+            //window.location=this.props.routeStore.excelUrl;
+            window.open(this.props.routeStore.excelUrl, '_blank');
         }
     }
-    
+
     handleClose(e) {
         this.setState({open: false});
     }
     render() {
         return (
             <React.Fragment>
-                <div className="btn btn-sm btn-secondary"
+                <button type="button"
+                     className="btn btn-sm btn-secondary"
                      ref="target"
                      onClick={this.handleClick.bind(this) }>
                      <i className="fas fa-download"></i> Excel
-                     </div>
+                     </button>
                      <Popover
                         placement="bottom"
                         containerStyle={ {paddingRight: '10px'} }

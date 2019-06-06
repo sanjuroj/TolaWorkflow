@@ -15,8 +15,10 @@ const IPTTHeader = inject('filterStore')(
                                                : "" }</h4>
                     </div>
                     <div className="subheader__actions">
-                        <PinButton />
-                        <ExcelButton />
+                        <div className="btn-row">
+                            <PinButton />
+                            <ExcelButton />
+                        </div>
                     </div>
                 </div>
     })

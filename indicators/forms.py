@@ -44,6 +44,19 @@ class LocaleDateField(DateField):
                 self.error_messages['invalid'], code='invalid')
 
 
+class PTFormInputsForm(forms.ModelForm):
+    """
+    Partial IndicatorForm submit for use in generating periodic target form
+    sub-section of the full Indicator form
+    """
+    class Meta:
+        model = Indicator
+        fields = (
+            'target_frequency',
+            'unit_of_measure_type',
+        )
+
+
 class IndicatorForm(forms.ModelForm):
     unit_of_measure_type = forms.ChoiceField(
         choices=Indicator.UNIT_OF_MEASURE_TYPES,
@@ -54,7 +67,7 @@ class IndicatorForm(forms.ModelForm):
 
     class Meta:
         model = Indicator
-        exclude = ['create_date', 'edit_date']
+        exclude = ['create_date', 'edit_date', 'program', 'level_order']
         widgets = {
             'definition': forms.Textarea(attrs={'rows': 4}),
             'justification': forms.Textarea(attrs={'rows': 4}),
@@ -68,9 +81,9 @@ class IndicatorForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         indicator = kwargs.get('instance', None)
-        if not indicator.unit_of_measure_type:
+        if indicator and not indicator.unit_of_measure_type:
             kwargs['initial']['unit_of_measure_type'] = Indicator.UNIT_OF_MEASURE_TYPES[0][0]
-        if indicator.lop_target:
+        if indicator and indicator.lop_target:
             lop_stripped = str(indicator.lop_target)
             lop_stripped = lop_stripped.rstrip('0').rstrip('.') if '.' in lop_stripped else lop_stripped
             kwargs['initial']['lop_target'] = lop_stripped
@@ -86,11 +99,7 @@ class IndicatorForm(forms.ModelForm):
         countries = getCountry(self.request.user)
         self.fields['disaggregation'].queryset = DisaggregationType.objects\
             .filter(country__in=countries, standard=False)
-        self.fields['program'].queryset = Program.objects.filter(
-            Q(country__in=countries) | Q(user_access=self.request.user.tola_user),
-            funding_status="Funded"
-        ).distinct()
-        self.fields['program'].disabled = True
+
         self.fields['objectives'].queryset = Objective.objects.filter(program__id__in=[self.programval.id])
         self.fields['strategic_objectives'].queryset = StrategicObjective.objects.filter(country__in=countries)
         self.fields['approved_by'].queryset = TolaUser.objects.filter(country__in=countries).distinct()
@@ -101,7 +110,6 @@ class IndicatorForm(forms.ModelForm):
         self.fields['name'].widget = forms.Textarea(attrs={'rows': 3})
         self.fields['unit_of_measure'].required = True
         self.fields['target_frequency'].required = True
-        self.fields['target_frequency_start'].widget.attrs['class'] = 'monthPicker'
         # self.fields['is_cumulative'].widget = forms.RadioSelect()
         if self.instance.target_frequency and self.instance.target_frequency != Indicator.LOP:
             self.fields['target_frequency'].widget.attrs['readonly'] = True
@@ -113,13 +121,11 @@ class IndicatorForm(forms.ModelForm):
             raise forms.ValidationError(_('Please enter a number larger than zero.'))
         return data
 
-    # def clean_rationale(self):
-    #     data = self.cleaned_data.get('rationale')
-    #     periodic_targets = self.request.POST.get('periodic_targets')
-    #     if not periodic_targets == 'generateTargets' and len(self.instance.result_set.all()) > 0 and (not data or len(data) <= 0):
-    #         # Translators: Input form error message that the "reason for change" form field is empty when results have already been saved
-    #         raise forms.ValidationError(_('Results have been recorded, reason for change is required.'))
-    #     return data
+    def save(self, commit=True):
+        # set the program on the indicator on create (it's already set on update)
+        if self.instance.program_id is None:
+            self.instance.program_id = self.programval.id
+        return super(IndicatorForm, self).save(commit)
 
 
 class ResultForm(forms.ModelForm):

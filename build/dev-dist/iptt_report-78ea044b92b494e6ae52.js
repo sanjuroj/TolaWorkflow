@@ -136,7 +136,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return ProgramStore; });
 /* harmony import */ var mobx__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! mobx */ "2vnA");
 /* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../constants */ "v38i");
-var _class, _temp, _class3, _class4, _temp2, _class6, _temp3, _class8, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _temp4, _class10, _descriptor16, _temp5;
+var _class, _temp, _class3, _class4, _temp2, _class6, _temp3, _class8, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _descriptor16, _descriptor17, _temp4, _class10, _descriptor18, _temp5;
 
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
 
@@ -599,31 +599,35 @@ function () {
 
     _initializerDefineProperty(this, "name", _descriptor2, this);
 
-    _initializerDefineProperty(this, "frequencies", _descriptor3, this);
+    _initializerDefineProperty(this, "reportingStart", _descriptor3, this);
 
-    _initializerDefineProperty(this, "validTVA", _descriptor4, this);
+    _initializerDefineProperty(this, "reportingEnd", _descriptor4, this);
 
-    _initializerDefineProperty(this, "validTIMEPERIODS", _descriptor5, this);
+    _initializerDefineProperty(this, "frequencies", _descriptor5, this);
 
-    _initializerDefineProperty(this, "periods", _descriptor6, this);
+    _initializerDefineProperty(this, "validTVA", _descriptor6, this);
 
-    _initializerDefineProperty(this, "oldLevels", _descriptor7, this);
+    _initializerDefineProperty(this, "validTIMEPERIODS", _descriptor7, this);
 
-    _initializerDefineProperty(this, "initialized", _descriptor8, this);
+    _initializerDefineProperty(this, "periods", _descriptor8, this);
 
-    _initializerDefineProperty(this, "calls", _descriptor9, this);
+    _initializerDefineProperty(this, "oldLevels", _descriptor9, this);
 
-    _initializerDefineProperty(this, "_levels", _descriptor10, this);
+    _initializerDefineProperty(this, "initialized", _descriptor10, this);
 
-    _initializerDefineProperty(this, "_tiers", _descriptor11, this);
+    _initializerDefineProperty(this, "calls", _descriptor11, this);
 
-    _initializerDefineProperty(this, "_sites", _descriptor12, this);
+    _initializerDefineProperty(this, "_levels", _descriptor12, this);
 
-    _initializerDefineProperty(this, "_sectors", _descriptor13, this);
+    _initializerDefineProperty(this, "_tiers", _descriptor13, this);
 
-    _initializerDefineProperty(this, "_types", _descriptor14, this);
+    _initializerDefineProperty(this, "_sites", _descriptor14, this);
 
-    _initializerDefineProperty(this, "_indicators", _descriptor15, this);
+    _initializerDefineProperty(this, "_sectors", _descriptor15, this);
+
+    _initializerDefineProperty(this, "_types", _descriptor16, this);
+
+    _initializerDefineProperty(this, "_indicators", _descriptor17, this);
 
     this.getIndicator = function (indicatorPk) {
       if (_this7._indicators[indicatorPk] && _this7._indicators[indicatorPk] !== undefined) {
@@ -792,6 +796,8 @@ function () {
     this.pk = parseInt(JSON.id);
     this.name = JSON.name;
     this.frequencies = JSON.frequencies.map(Number);
+    this.reportingStart = JSON.reporting_period_start;
+    this.reportingEnd = JSON.reporting_period_end;
     this.validTVA = this.frequencies.length > 0;
     this.validTIMEPERIODS = true;
     this.oldLevels = JSON.old_style_levels === true || JSON.old_style_levels === "True";
@@ -870,42 +876,56 @@ function () {
   initializer: function initializer() {
     return null;
   }
-}), _descriptor3 = _applyDecoratedDescriptor(_class8.prototype, "frequencies", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor3 = _applyDecoratedDescriptor(_class8.prototype, "reportingStart", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    return null;
+  }
+}), _descriptor4 = _applyDecoratedDescriptor(_class8.prototype, "reportingEnd", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    return null;
+  }
+}), _descriptor5 = _applyDecoratedDescriptor(_class8.prototype, "frequencies", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return [];
   }
-}), _descriptor4 = _applyDecoratedDescriptor(_class8.prototype, "validTVA", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor6 = _applyDecoratedDescriptor(_class8.prototype, "validTVA", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return false;
   }
-}), _descriptor5 = _applyDecoratedDescriptor(_class8.prototype, "validTIMEPERIODS", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor7 = _applyDecoratedDescriptor(_class8.prototype, "validTIMEPERIODS", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return true;
   }
-}), _descriptor6 = _applyDecoratedDescriptor(_class8.prototype, "periods", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor8 = _applyDecoratedDescriptor(_class8.prototype, "periods", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return {};
   }
-}), _descriptor7 = _applyDecoratedDescriptor(_class8.prototype, "oldLevels", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor9 = _applyDecoratedDescriptor(_class8.prototype, "oldLevels", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return false;
   }
-}), _descriptor8 = _applyDecoratedDescriptor(_class8.prototype, "initialized", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor10 = _applyDecoratedDescriptor(_class8.prototype, "initialized", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
@@ -914,7 +934,7 @@ function () {
 
     return _ref4 = {}, _defineProperty(_ref4, _constants__WEBPACK_IMPORTED_MODULE_1__["TVA"], []), _defineProperty(_ref4, _constants__WEBPACK_IMPORTED_MODULE_1__["TIMEPERIODS"], []), _ref4;
   }
-}), _descriptor9 = _applyDecoratedDescriptor(_class8.prototype, "calls", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor11 = _applyDecoratedDescriptor(_class8.prototype, "calls", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
@@ -923,42 +943,42 @@ function () {
 
     return _ref5 = {}, _defineProperty(_ref5, _constants__WEBPACK_IMPORTED_MODULE_1__["TVA"], {}), _defineProperty(_ref5, _constants__WEBPACK_IMPORTED_MODULE_1__["TIMEPERIODS"], {}), _ref5;
   }
-}), _descriptor10 = _applyDecoratedDescriptor(_class8.prototype, "_levels", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor12 = _applyDecoratedDescriptor(_class8.prototype, "_levels", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return {};
   }
-}), _descriptor11 = _applyDecoratedDescriptor(_class8.prototype, "_tiers", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor13 = _applyDecoratedDescriptor(_class8.prototype, "_tiers", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return {};
   }
-}), _descriptor12 = _applyDecoratedDescriptor(_class8.prototype, "_sites", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor14 = _applyDecoratedDescriptor(_class8.prototype, "_sites", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return {};
   }
-}), _descriptor13 = _applyDecoratedDescriptor(_class8.prototype, "_sectors", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor15 = _applyDecoratedDescriptor(_class8.prototype, "_sectors", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return {};
   }
-}), _descriptor14 = _applyDecoratedDescriptor(_class8.prototype, "_types", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor16 = _applyDecoratedDescriptor(_class8.prototype, "_types", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return {};
   }
-}), _descriptor15 = _applyDecoratedDescriptor(_class8.prototype, "_indicators", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor17 = _applyDecoratedDescriptor(_class8.prototype, "_indicators", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
@@ -977,7 +997,7 @@ function () {
 
     _classCallCheck(this, ProgramStore);
 
-    _initializerDefineProperty(this, "_programs", _descriptor16, this);
+    _initializerDefineProperty(this, "_programs", _descriptor18, this);
 
     this.api = null;
 
@@ -1065,7 +1085,7 @@ function () {
   }]);
 
   return ProgramStore;
-}(), _temp5), (_descriptor16 = _applyDecoratedDescriptor(_class10.prototype, "_programs", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}(), _temp5), (_descriptor18 = _applyDecoratedDescriptor(_class10.prototype, "_programs", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
@@ -1242,7 +1262,8 @@ function (_React$Component2) {
   }, {
     key: "render",
     value: function render() {
-      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+        href: "#",
         className: "btn btn-sm btn-secondary",
         ref: "target",
         onClick: this.handleClick.bind(this)
@@ -1284,13 +1305,15 @@ function (_React$Component3) {
 
     _this3.getCurrent = function () {
       if (_this3.props.routeStore.excelUrl) {
-        window.location = _this3.props.routeStore.excelUrl;
+        //window.location=this.props.routeStore.excelUrl;
+        window.open(_this3.props.routeStore.excelUrl, '_blank');
       }
     };
 
     _this3.getAll = function () {
       if (_this3.props.routeStore.fullExcelUrl) {
-        window.location = _this3.props.routeStore.fullExcelUrl;
+        //window.location=this.props.routeStore.fullExcelUrl
+        window.open(_this3.props.routeStore.fullExcelUrl, '_blank');
       }
     };
 
@@ -1301,22 +1324,20 @@ function (_React$Component3) {
     key: "render",
     value: function render() {
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "container-fluid"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "row mt-1 mb-2"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: ""
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+        type: "button",
         className: "btn btn-primary btn-block",
         onClick: this.getCurrent
       },
       /* # Translators: a download button for a report containing just the data currently displayed */
-      gettext('Current view'))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "row mt-2 mb-1"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      gettext('Current view')), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+        type: "button",
         className: "btn btn-primary btn-block",
         onClick: this.getAll
       },
       /* # Translators: a download button for a report containing all available data */
-      gettext('All program data'))));
+      gettext('All program data')));
     }
   }]);
 
@@ -1340,7 +1361,8 @@ function (_React$Component4) {
           open: !_this4.state.open
         });
       } else if (_this4.props.routeStore.excelUrl) {
-        window.location = _this4.props.routeStore.excelUrl;
+        //window.location=this.props.routeStore.excelUrl;
+        window.open(_this4.props.routeStore.excelUrl, '_blank');
       }
     };
 
@@ -1360,7 +1382,8 @@ function (_React$Component4) {
   }, {
     key: "render",
     value: function render() {
-      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+        type: "button",
         className: "btn btn-sm btn-secondary",
         ref: "target",
         onClick: this.handleClick.bind(this)
@@ -1421,7 +1444,7 @@ function ipttRound(value, percent) {
     return percent === true ? "".concat(value, "%") : value;
   }
 
-  return '-';
+  return null;
 }
 
 var IndicatorEditModalCell = function IndicatorEditModalCell(_ref) {
@@ -1475,13 +1498,15 @@ var IndicatorCell = function IndicatorCell(_ref3) {
       resultCell = _ref3.resultCell,
       props = _objectWithoutProperties(_ref3, ["value", "resultCell"]);
 
+  var displayValue = value || '–';
+
   if (resultCell && resultCell === true) {
-    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", props, value);
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", props, displayValue);
   }
 
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", _extends({
     className: "td-no-side-borders"
-  }, props), value);
+  }, props), displayValue);
 };
 
 var PercentCell = function PercentCell(_ref4) {
@@ -2123,7 +2148,7 @@ function () {
     _initializerDefineProperty(this, "_indicators", _descriptor12, this);
 
     this._validFrequency = function (frequencyId) {
-      if (_this.program) {
+      if (frequencyId && _this.program) {
         if (_this.isTVA) {
           return _this.program.validFrequency(frequencyId);
         } else {
@@ -2165,6 +2190,11 @@ function () {
 
       this.programStore.loadProgram(reportType, programId, frequencyId).then(function () {
         _this2.frequencyId = _this2.frequencyId || null;
+
+        if (!_this2._validFrequency(frequencyId)) {
+          _this2.frequencyId = _this2.program.frequencies[0];
+        }
+
         _this2.startPeriod = _this2.startPeriod || 0;
         _this2.endPeriod = _this2.endPeriod || _this2.lastPeriod.index;
 
@@ -2291,6 +2321,49 @@ function () {
       return indicators || [];
     }
   }, {
+    key: "filterLevels",
+    value: function filterLevels() {
+      var skip = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+      var levels = false;
+
+      if (this.groupBy === _constants__WEBPACK_IMPORTED_MODULE_1__["GROUP_BY_LEVEL"]) {
+        levels = this.program.levels.sort(function (levela, levelb) {
+          return levela.sort - levelb.sort;
+        }).sort(function (levela, levelb) {
+          return levela.depth - levelb.depth;
+        });
+      } else if (this.groupBy === _constants__WEBPACK_IMPORTED_MODULE_1__["GROUP_BY_CHAIN"]) {
+        var parents = this.program.levels.filter(function (level) {
+          return !level._parent;
+        });
+        levels = this._findChildren(parents, []);
+      }
+
+      if (levels) {
+        if (this.noFilters) {
+          return levels;
+        }
+
+        var levelPks;
+
+        if (skip) {
+          levelPks = new Set(this.filterIndicators(this.program.indicators, skip).map(function (indicator) {
+            return indicator.levelpk;
+          }));
+        } else {
+          levelPks = new Set(this.filteredIndicators.map(function (indicator) {
+            return indicator.levelpk;
+          }));
+        }
+
+        return levels.filter(function (level) {
+          return levelPks.has(level.pk);
+        });
+      }
+
+      return [];
+    }
+  }, {
     key: "_findChildren",
     value: function _findChildren(parents) {
       var levels = [];
@@ -2372,7 +2445,7 @@ function () {
       }
     },
     get: function get() {
-      if (this._validFrequency(this._frequencyId)) {
+      if (this._frequencyId) {
         return this._frequencyId;
       }
 
@@ -2674,6 +2747,10 @@ function () {
         }).startDisplay;
       }
 
+      if (this.frequencyId === 1) {
+        return this.program.reportingStart;
+      }
+
       return null;
     }
   }, {
@@ -2694,6 +2771,10 @@ function () {
         return this.periods.getPeriod({
           index: this.endPeriod
         }).endDisplay;
+      }
+
+      if (this.frequencyId === 1) {
+        return this.program.reportingEnd;
       }
 
       return null;
@@ -2916,7 +2997,7 @@ function () {
             };
           });
         } else {
-          return this.filteredLevels.map(function (level) {
+          return this.filterLevels('indicators').map(function (level) {
             return {
               label: "".concat(level.tier.name, " ").concat(level.sort),
               options: _this11.filterIndicators(level.indicators, 'indicators').map(function (indicator) {
@@ -2942,7 +3023,7 @@ function () {
         }
       }
 
-      return null;
+      return [];
     }
   }, {
     key: "indicatorsSelected",
@@ -2950,9 +3031,10 @@ function () {
       var _this12 = this;
 
       if (this.indicators && this.indicators.length > 0) {
-        return flattenArray(this.indicatorOptions.map(function (optgroup) {
+        var indicatorOptions = this.groupByDisabled ? this.indicatorOptions : flattenArray(this.indicatorOptions.map(function (optgroup) {
           return optgroup.options;
-        })).filter(function (indicator) {
+        }));
+        return indicatorOptions.filter(function (indicator) {
           return _this12.indicators.includes(indicator.value);
         });
       }
@@ -2990,35 +3072,7 @@ function () {
   }, {
     key: "filteredLevels",
     get: function get() {
-      var levels = false;
-
-      if (this.groupBy === _constants__WEBPACK_IMPORTED_MODULE_1__["GROUP_BY_LEVEL"]) {
-        levels = this.program.levels.sort(function (levela, levelb) {
-          return levela.sort - levelb.sort;
-        }).sort(function (levela, levelb) {
-          return levela.depth - levelb.depth;
-        });
-      } else if (this.groupBy === _constants__WEBPACK_IMPORTED_MODULE_1__["GROUP_BY_CHAIN"]) {
-        var parents = this.program.levels.filter(function (level) {
-          return !level._parent;
-        });
-        levels = this._findChildren(parents, []);
-      }
-
-      if (levels) {
-        if (this.noFilters) {
-          return levels;
-        }
-
-        var levelPks = new Set(this.filteredIndicators.map(function (indicator) {
-          return indicator.levelpk;
-        }));
-        return levels.filter(function (level) {
-          return levelPks.has(level.pk);
-        });
-      }
-
-      return [];
+      return this.filterLevels(false);
     }
   }]);
 
@@ -3309,17 +3363,24 @@ var IPTTFilterForm = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inject"])('
   /* # Translators: Labels a set of filters to select which data to show */
   gettext('Report Options')), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(FilterTop, null)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     id: "filter-middle",
-    className: "p-3"
+    className: "px-3 pt-3 pb-2"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(FilterMiddle, null)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    id: "filter-bottom",
-    className: "d-flex justify-content-between no-gutters p-3"
+    id: "filter-bottom"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_buttons__WEBPACK_IMPORTED_MODULE_4__["IPTTButton"], {
     label:
     /* # Translators: clears all filters set on a report */
-    gettext('Clear'),
+    gettext('Clear filters'),
     action: filterStore.clearFilters,
     isDisabled: filterStore.noFilters
-  })));
+  })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    id: "filter-extra",
+    className: " d-flex justify-content-between no-gutters p-3"
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+    href: "/tola_management/audit_log/" + filterStore.programId,
+    className: "btn-link"
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+    className: "fas fa-history"
+  }), " ", gettext("Change log"))));
 }));
 /* harmony default export */ __webpack_exports__["default"] = (IPTTFilterForm);
 
@@ -3708,8 +3769,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 
 var IPTTButton = function IPTTButton(props) {
-  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "btn btn-primary btn-block" + (props.isDisabled ? " disabled" : ""),
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+    type: "reset",
+    className: "btn btn-block btn-reset" + (props.isDisabled ? " disabled" : ""),
     onClick: props.action
   }, props.label);
 };
@@ -3863,7 +3925,9 @@ var IPTTHeader = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inject"])('filt
     className: "pb-3"
   }, filterStore.startPeriodLabel && filterStore.endPeriodLabel ? filterStore.startPeriodLabel + " - " + filterStore.endPeriodLabel : "")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "subheader__actions"
-  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_buttons__WEBPACK_IMPORTED_MODULE_2__["PinButton"], null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_buttons__WEBPACK_IMPORTED_MODULE_2__["ExcelButton"], null)));
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    className: "btn-row"
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_buttons__WEBPACK_IMPORTED_MODULE_2__["PinButton"], null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_buttons__WEBPACK_IMPORTED_MODULE_2__["ExcelButton"], null))));
 }));
 /* harmony default export */ __webpack_exports__["default"] = (IPTTHeader);
 
@@ -4145,32 +4209,70 @@ var TimeframeRadio = (_dec = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inj
 function (_React$Component) {
   _inherits(TimeframeRadio, _React$Component);
 
-  function TimeframeRadio() {
-    var _getPrototypeOf2;
-
+  function TimeframeRadio(props) {
     var _this;
 
     _classCallCheck(this, TimeframeRadio);
 
-    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-      args[_key] = arguments[_key];
-    }
-
-    _this = _possibleConstructorReturn(this, (_getPrototypeOf2 = _getPrototypeOf(TimeframeRadio)).call.apply(_getPrototypeOf2, [this].concat(args)));
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(TimeframeRadio).call(this, props));
 
     _this.checkMostRecent = function () {
-      //default value of 2 in case of clicking "most recent" radio box - default behavior
-      _this.props.filterStore.mostRecent = 2;
+      _this.mostRecentInputRef.current.focus();
     };
 
-    _this.updateMostRecentCount = function (e) {
-      _this.props.filterStore.mostRecent = e.target.value;
+    _this.handleChange = function (e) {
+      _this.setState({
+        mostRecentValue: e.target.value
+      });
     };
 
+    _this.handleBlur = function (e) {
+      if (!_this.state.revert && _this.state.mostRecentValue !== '') {
+        _this.props.filterStore.mostRecent = _this.state.mostRecentValue;
+      }
+
+      _this.setState({
+        focus: false,
+        revert: false
+      });
+    };
+
+    _this.handleKeyDown = function (e) {
+      if (e.keyCode === 13) {
+        e.target.blur();
+      } else if (e.keyCode === 27) {
+        _this.setState({
+          revert: true
+        }, function () {
+          _this.mostRecentInputRef.current.blur();
+        });
+      }
+    };
+
+    _this.handleFocus = function (e) {
+      _this.setState({
+        focus: true,
+        mostRecentValue: _this.props.filterStore.mostRecent || ''
+      });
+    };
+
+    _this.mostRecentInputRef = react__WEBPACK_IMPORTED_MODULE_0___default.a.createRef();
+    _this.state = {
+      focus: false,
+      mostRecentValue: '',
+      revert: false
+    };
     return _this;
   }
 
   _createClass(TimeframeRadio, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      this.setState({
+        mostRecentValue: this.props.filterStore.mostRecent || ''
+      });
+    }
+  }, {
     key: "render",
     value: function render() {
       var _this2 = this;
@@ -4185,12 +4287,15 @@ function (_React$Component) {
         className: "form-check-input"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         type: "radio",
-        checked: this.props.filterStore.showAll,
+        checked: !this.state.focus && this.props.filterStore.showAll,
         disabled: this.props.filterStore.periodsDisabled,
         onChange: function onChange() {
           _this2.props.filterStore.showAll = true;
         }
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+        onClick: function onClick() {
+          _this2.props.filterStore.showAll = true;
+        },
         className: "form-check-label"
       },
       /* # Translators: option to show all periods for the report */
@@ -4202,10 +4307,11 @@ function (_React$Component) {
         className: "form-check-input"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         type: "radio",
-        checked: this.props.filterStore.mostRecent,
+        checked: this.state.focus || this.props.filterStore.mostRecent,
         disabled: this.props.filterStore.periodsDisabled,
         onChange: this.checkMostRecent
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+        onClick: this.checkMostRecent,
         className: "form-check-label"
       },
       /* # Translators: option to show a number of recent periods for the report */
@@ -4214,10 +4320,23 @@ function (_React$Component) {
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         type: "number",
         className: "form-control",
-        value: this.props.filterStore.mostRecent || '',
+        value: this.mostRecentValue,
+        ref: this.mostRecentInputRef,
         disabled: this.props.filterStore.periodsDisabled,
-        onChange: this.updateMostRecentCount
+        onChange: this.handleChange,
+        onFocus: this.handleFocus,
+        onBlur: this.handleBlur,
+        onKeyDown: this.handleKeyDown
       })));
+    }
+  }, {
+    key: "mostRecentValue",
+    get: function get() {
+      if (this.state.focus) {
+        return this.state.mostRecentValue;
+      }
+
+      return this.props.filterStore.mostRecent;
     }
   }]);
 
@@ -4342,4 +4461,4 @@ function () {
 /***/ })
 
 },[["mYfJ","runtime","vendors"]]]);
-//# sourceMappingURL=iptt_report-75cfde04129b3645c58a.js.map
+//# sourceMappingURL=iptt_report-78ea044b92b494e6ae52.js.map

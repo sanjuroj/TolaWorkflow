@@ -116,12 +116,14 @@ function (_React$Component) {
       classes += this.props.rootStore.uiStore.tierLockStatus == "locked" ? "leveltier-picker__selectbox--disabled" : "";
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: classes
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", null, "Template"), "\xA0", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("small", null, helpIcon), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_3__["default"], {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        class: "form-group"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", null, gettext('Results framework template')), "\xA0", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("small", null, helpIcon), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_3__["default"], {
         options: options,
         value: selectedOption,
         isDisabled: this.props.rootStore.uiStore.tierLockStatus == "locked" ? true : false,
         onChange: this.handleChange
-      }));
+      })));
     }
   }]);
 
@@ -403,22 +405,18 @@ function (_React$Component2) {
       }), "\xA0", this.props.level.name)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "level-card--collapsed__actions"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "actions__top",
-        style: {
-          display: "flex",
-          justifyContent: "flex-end"
-        }
+        className: "actions__top btn-row"
       }, this.props.levelProps.canDelete && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         className: "btn btn-sm btn-link btn-danger",
         onClick: this.deleteLevel
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
         className: "fas fa-trash-alt"
-      }), "\xA0", gettext("Delete")), this.props.levelProps.canEdit && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+      }), gettext("Delete")), this.props.levelProps.canEdit && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         className: "btn btn-sm btn-link btn-text",
         onClick: this.editLevel
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
         className: "fas fa-edit"
-      }), "\xA0", gettext("Edit"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      }), gettext("Edit"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "actions__bottom",
         style: {
           display: "flex",
@@ -1516,4 +1514,4 @@ function (_React$Component2) {
 /***/ })
 
 },[["QTZG","runtime","vendors"]]]);
-//# sourceMappingURL=results_framework-84c0896c9475e381a6fa.js.map
+//# sourceMappingURL=results_framework-e632fc23b0a7efc7934d.js.map

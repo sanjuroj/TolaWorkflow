@@ -198,11 +198,21 @@ class Level(models.Model):
         )
 
     def get_children(self):
+        """ Used in group-by-outcome-chain reports, recursively gets children in tree order"""
         child_levels = []
         for child_level in self.child_levels.all():
             child_levels.append(child_level)
             child_levels += child_level.get_children()
         return child_levels
+
+    @property
+    def next_sort_order(self):
+        current_max = None
+        if self.indicator_set.exists():
+            current_max = self.indicator_set.aggregate(
+                models.Max('level_order')
+            ).get('level_order__max', None)
+        return 0 if current_max is None else current_max + 1
 
 
 class LevelAdmin(admin.ModelAdmin):
@@ -733,11 +743,13 @@ class Indicator(SafeDeleteModel):
         verbose_name=_("Target frequency"), help_text=" "
     )
 
+    # Deprecated - redundant to the event name of the first PeriodicTarget saved by the form
     target_frequency_custom = models.CharField(
         null=True, blank=True, max_length=100,
         verbose_name=_("First event name"), help_text=" "
     )
 
+    # Deprecated - can probably be safely deleted
     target_frequency_start = models.DateField(
         blank=True, null=True, auto_now=False, auto_now_add=False,
         verbose_name=_("First target period begins*"), help_text=" "
@@ -946,12 +958,23 @@ class Indicator(SafeDeleteModel):
         return ""
 
     @property
+    def is_cumulative_display(self):
+        if self.is_cumulative:
+            # Translators: referring to an indicator whose results accumulate over time
+            return _("Cumulative")
+        elif self.is_cumulative is None:
+            return None
+        else:
+            # Translators: referring to an indicator whose results do not accumulate over time
+            return _("Not cumulative")
+
+    @property
     def get_direction_of_change(self):
         if self.direction_of_change == self.DIRECTION_OF_CHANGE_NEGATIVE:
             return _("-")
         elif self.direction_of_change == self.DIRECTION_OF_CHANGE_POSITIVE:
             return _("+")
-        return "N/A"
+        return None
 
     @property
     def get_result_average(self):
@@ -965,11 +988,39 @@ class Indicator(SafeDeleteModel):
         return self.baseline
 
     @property
-    def lop_target_display(self):
+    def calculated_lop_target(self):
+        """
+        We have always manually set the LoP target of an indicator manually via form input
+        but now we are starting to compute it based on the PeriodicTarget values.
+
+        This property returns the calculated value, which may be different than the stored value in the DB
+        """
+        periodic_targets = self.periodictargets.all()
+
+        if not periodic_targets.exists():
+            return None
+
+        if self.is_cumulative:
+            # return the last value in the sequence
+            return periodic_targets.last().target
+        else:
+            # sum the values
+            return sum(pt.target for pt in periodic_targets)
+
+    @property
+    def lop_target_stripped(self):
         """adding logic to strip trailing zeros in case of a decimal with superfluous zeros to the right of the ."""
         if self.lop_target:
             lop_stripped = str(self.lop_target)
             lop_stripped = lop_stripped.rstrip('0').rstrip('.') if '.' in lop_stripped else lop_stripped
+            return lop_stripped
+        return self.lop_target
+
+    @property
+    def lop_target_display(self):
+        """Same as lop_target_stripped but with a trailing % if applicable"""
+        if self.lop_target:
+            lop_stripped = self.lop_target_stripped
             if self.unit_of_measure_type == self.PERCENTAGE:
                 return u"{0}%".format(lop_stripped)
             return lop_stripped
@@ -1029,11 +1080,14 @@ class Indicator(SafeDeleteModel):
 
     @property
     def number_display(self):
-        if self.level and self.level.leveltier:
+        if self.program.using_results_framework and self.level and self.level.leveltier:
             return "{0} {1}{2}".format(
                 self.leveltier_name, self.level.display_ontology, self.level_order_display
             )
-        return None
+        elif self.program.using_results_framework:
+            return None
+        else:
+            return self.number
 
 
 class PeriodicTarget(models.Model):

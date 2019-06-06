@@ -54,13 +54,15 @@ class Picker extends React.Component {
 
         return (
               <div className={classes}>
-                <label>Template</label>&nbsp;<small>{helpIcon}</small>
-                <Select
-                    options={options}
-                    value={selectedOption}
-                    isDisabled={this.props.rootStore.uiStore.tierLockStatus == "locked" ? true : false}
-                    onChange={this.handleChange}
-                />
+                  <div class="form-group">
+                    <label>{gettext('Results framework template')}</label>&nbsp;<small>{helpIcon}</small>
+                    <Select
+                        options={options}
+                        value={selectedOption}
+                        isDisabled={this.props.rootStore.uiStore.tierLockStatus == "locked" ? true : false}
+                        onChange={this.handleChange}
+                    />
+                </div>
             </div>
         )
     }

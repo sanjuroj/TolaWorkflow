@@ -120,17 +120,17 @@ export class LevelCardCollapsed extends React.Component {
                     </span>
                 </div>
                 <div className="level-card--collapsed__actions">
-                    <div className="actions__top" style={{display: "flex", justifyContent: "flex-end"}}>
+                    <div className="actions__top btn-row">
                         { this.props.levelProps.canDelete &&
                             <button
                                 className="btn btn-sm btn-link btn-danger"
                                 onClick={this.deleteLevel}>
-                                <i className="fas fa-trash-alt"></i>&nbsp;{gettext("Delete")}
+                                <i className="fas fa-trash-alt"></i>{gettext("Delete")}
                             </button>
                         }
                         {this.props.levelProps.canEdit &&
                             <button className="btn btn-sm btn-link btn-text" onClick={this.editLevel}>
-                                <i className="fas fa-edit"/>&nbsp;{gettext("Edit")}
+                                <i className="fas fa-edit"/>{gettext("Edit")}
                             </button>
                         }
                     </div>

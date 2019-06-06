@@ -1,8 +1,8 @@
 from views_indicators import (
-    indicator_create,
+    IndicatorCreate,
     IndicatorUpdate,
     IndicatorDelete,
-    PeriodicTargetView,
+    PeriodicTargetDeleteAllView,
     PeriodicTargetDeleteView,
     ResultCreate,
     ResultUpdate,
@@ -15,6 +15,7 @@ from views_indicators import (
     DisaggregationPrint,
     IndicatorExport,
     api_indicator_view,
+    periodic_targets_form,
 )
 
 from views_reports import (
@@ -23,8 +24,7 @@ from views_reports import (
     IPTTQuickstart,
     IPTTReport,
     IPTTReportData,
-    IPTTExcelReport,
-    IPTTExcelExport,
+    IPTTExcelReport
 )
 
 from views_results_framework import (

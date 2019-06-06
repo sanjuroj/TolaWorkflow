@@ -4,18 +4,18 @@ from django.conf.urls import url
 
 
 urlpatterns = [
-    url(r'^indicator_create/(?P<program>\d+)/$', views.indicator_create, name='indicator_create'),
+    url(r'^periodic_targets_form/(?P<program>\d+)/$', views.periodic_targets_form, name='periodic_targets_form'),
+
+    url(r'^indicator_create/(?P<program>\d+)/$', views.IndicatorCreate.as_view(), name='indicator_create'),
 
     url(r'^indicator_update/(?P<pk>\d+)/$', views.IndicatorUpdate.as_view(), name='indicator_update'),
 
     url(r'^indicator_delete/(?P<pk>\d+)/$', views.IndicatorDelete.as_view(), name='indicator_delete'),
 
-    url(r'^periodic_target_generate/(?P<indicator>\d+)/$', views.PeriodicTargetView.as_view(), name='pt_generate'),
+    url(r'^periodic_target_delete/(?P<pk>\d+)/$', views.PeriodicTargetDeleteView.as_view(), name='pt_delete'),  # delete event
 
-    url(r'^periodic_target_delete/(?P<pk>\d+)/$', views.PeriodicTargetDeleteView.as_view(), name='pt_delete'),
-
-    url(r'^periodic_target_deleteall/(?P<indicator>\d+)/(?P<deleteall>\w+)/$',
-        views.PeriodicTargetView.as_view(), name='pt_deleteall'),
+    url(r'^periodic_target_deleteall/(?P<indicator>\d+)/$',  # delete all targets button
+        views.PeriodicTargetDeleteAllView.as_view(), name='pt_deleteall'),
 
     url(r'^result_add/(?P<indicator>\d+)/$', views.ResultCreate.as_view(), name='result_add'),
 
@@ -41,9 +41,8 @@ urlpatterns = [
     url(r'^iptt_quickstart/', views.IPTTQuickstart.as_view(), name='iptt_quickstart'),
     url(r'^iptt_report/(?P<program>\d+)/(?P<reporttype>\w+)/$', views.IPTTReport.as_view(), name='iptt_report'),
     url(r'^iptt_report_data/$', views.IPTTReportData.as_view(), name='iptt_ajax'),
-    url(r'iptt_api/iptt_excel/$', views.IPTTExcelReport.as_view(), name='iptt_excel2'),
+    url(r'iptt_api/iptt_excel/$', views.IPTTExcelReport.as_view(), name='iptt_excel'),
     # Deprecated:
-    url(r'^iptt_excel/$', views.IPTTExcelExport.as_view(), name='iptt_excel'),
 
     url(r'^pinned_report/$', views.create_pinned_report, name='create_pinned_report'),
     url(r'^pinned_report/delete/$', views.delete_pinned_report, name='delete_pinned_report'),
