@@ -1,11 +1,10 @@
 import React from 'react';
 import classNames from 'classnames';
 import { observer, inject } from "mobx-react"
-import { toJS, extendObservable, action } from 'mobx';
+import { toJS, extendObservable } from 'mobx';
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCaretDown, faCaretRight } from '@fortawesome/free-solid-svg-icons'
-import Select from 'react-select';
 import { SingleReactSelect } from "../../../components/selectWidgets";
 import HelpPopover from "../../../components/helpPopover";
 
@@ -163,18 +162,19 @@ export class LevelCardExpanded extends React.Component {
         extendObservable(this, {
             name: props.level.name,
             assumptions: props.level.assumptions,
-            indicators: props.levelProps.indicators.sort( (a, b) => a.level_order < b.level_order),
-            updateIndicatorOrder (changeObj, indicatorId) {
-                console.log('updated val', changeObj, indicatorId)
-                console.log('targt in change', changeObj.target.value)
-                this.indicators.find( (i) => i.id == indicatorId).level_order = changeObj.value;
-                this.indicators.forEach( i => console.log(toJS(i)))
-
-            }
-        },{
-            updateIndicatorOrder: action
-
+            indicators: props.levelProps.indicators.sort((a, b) => a.level_order - b.level_order),
         });
+    }
+
+    updateIndicatorOrder = (changeObj, indicatorId) => {
+
+        console.log('updated val', changeObj, indicatorId);
+        let oldIndex = this.indicators.find( i => i.id == indicatorId).level_order - 1;
+        let newIndex = changeObj.value - 1;
+        let tempIndicators = this.indicators.slice();
+        tempIndicators.splice(newIndex, 0, tempIndicators.splice(oldIndex, 1)[0]);
+        tempIndicators.forEach( (indicator, index) => indicator.level_order = index + 1);
+        this.indicators.replace(tempIndicators);
     }
 
     /*
@@ -197,7 +197,7 @@ export class LevelCardExpanded extends React.Component {
         this.props.rootStore.levelStore.saveLevelToDB(
             this.submitType,
             this.props.level.id,
-            {name: this.name, assumptions: this.assumptions}
+            {name: this.name, assumptions: this.assumptions, indicators: toJS(this.indicators)}
         )
 
     };
@@ -214,7 +214,7 @@ export class LevelCardExpanded extends React.Component {
     render(){
         // Need to reference indicators so it reacts to changes.  Simply passing the observable this.indicators through
         // to IndicatorList will result in a non-reactive Indicator list form fields.
-        const indicators = toJS(this.indicators)
+        const tempIndicators = toJS(this.indicators);
         return (
             <div className="level-card level-card--expanded" id={this.props.level.id}>
                 <div>
@@ -338,32 +338,19 @@ class IndicatorList extends React.Component {
             console.log('levelorder in loop', indicator.id, indicator.level_order);
             // let options = this.props.indicators.map( (entry, index) => <option value={index+1}>{index+1}</option>);
             indicatorMarkup.push(
-                <tr key={indicator.id}>
-                    {/*<td>*/}
-                    {/*    {indicator.name}*/}
-                    {/*</td>*/}
-                    {/*<td>*/}
-                    {/*    <select*/}
-                    {/*        value={indicator.level_order}*/}
-                    {/*        name={"orderFor" + indicator.id}*/}
-                    {/*        onChange = {(event) => this.props.changeFunc(event, indicator.id)}>*/}
-                    {/*        {options}*/}
-                    {/*    </select>*/}
+                <li key={indicator.id}>
 
-                    {/*</td>*/}
-                    {/*<td>*/}
-                    {/*</td>*/}
-                    <td>
-                        <SingleReactSelect
-                            update={(value) => this.props.changeFunc(value, indicator.id)}
-                            selectId={"ind"+indicator.id}
-                            labelClasses="col-form-label"
-                            value={{value: indicator.level_order, label: indicator.level_order}}
-                            label={indicator.name}
-                            options={options}/>
-                        <a href="#" className="indicator-link"><i className="fas fa-cog"></i> Settings</a>
-                    </td>
-                </tr>
+                    <SingleReactSelect
+                        update={(value) => this.props.changeFunc(value, indicator.id)}
+                        selectId={"ind"+indicator.id}
+                        labelClasses="col-form-label"
+                        value={{value: indicator.level_order, label: indicator.level_order}}
+                        label={indicator.name}
+                        options={options}/>
+
+                    <a href="#" className="indicator-link"><i className="fas fa-cog"></i> Settings</a>
+
+                </li>
             )
         });
 
@@ -379,26 +366,20 @@ class IndicatorList extends React.Component {
         }
 
         return(
-            <table id="level-card--indicator-links" style={{backgroundColor: "white", padding: "1em"}}>
-                <tbody>
-                    <tr>
-                        <td>Indicators Linked to this {this.props.tierName}</td>
-                        <td>{order}</td>
-                        <td>
-                            {helpLink}
-                        </td>
-                    </tr>
-                    {indicatorMarkup}
-                    <tr>
-                        <td>
-                            <a href="#" role="button" className="btn btn-link btn-add">
-                                <img className="fas fa-plus-circle"></img>
-                                <span>Add Indicator</span>
-                            </a>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            <ul id="level-card--indicator-links" style={{backgroundColor: "white", padding: "1em"}}>
+                <li>
+                    Indicators Linked to this {this.props.tierName}
+                    {order}
+                    {helpLink}
+                </li>
+                {indicatorMarkup}
+                <li>
+                    <a href="#" role="button" className="btn btn-link btn-add">
+                    <img className="fas fa-plus-circle"></img>
+                    <span>Add Indicator</span>
+                    </a>
+                </li>
+            </ul>
         )
     }
 }
