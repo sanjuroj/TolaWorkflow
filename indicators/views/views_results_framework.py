@@ -24,8 +24,9 @@ class ResultsFrameworkBuilder(ListView):
     def get(self, request, *args, **kwargs):
         # TODO:  put in a try block
         program = Program.objects.get(pk=int(self.kwargs['program_id']))
+        role = request.user.tola_user.program_role(program.id)
 
-        if request.user.is_anonymous or not request.user.tola_user.program_role(program_id=program.id):
+        if request.user.is_anonymous or not role:
             return HttpResponseRedirect('/')
 
         tiers = LevelTier.objects.filter(program=program)
@@ -38,7 +39,7 @@ class ResultsFrameworkBuilder(ListView):
             'indicators': IndicatorSerializerMinimal(indicators, many=True).data,
             'levelTiers': LevelTierSerializer(tiers, many=True).data,
             'tierTemplates': LevelTier.TEMPLATES,
-            'accessLevel': request.user.tola_user.program_role(program.id),
+            'accessLevel': role,
         }
 
         context_data = {
