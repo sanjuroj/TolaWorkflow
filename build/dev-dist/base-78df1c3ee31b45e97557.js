@@ -351,12 +351,6 @@ var target_with_results_text = function target_with_results_text(numResults) {
 
 window.target_with_results_text = target_with_results_text;
 
-var lop_to_non_lop_with_results_text = function lop_to_non_lop_with_results_text(numResults) {
-  return interpolate(ngettext('If we make these changes, %s data record will no longer be associated with the Life of Program target, and will need to be reassigned to a new target.\n\n Proceed anyway?', 'If we make these changes, %s data records will no longer be associated with the Life of Program target, and will need to be reassigned to new targets.\n\n Proceed anyway?', numResults), [numResults]);
-};
-
-window.lop_to_non_lop_with_results_text = lop_to_non_lop_with_results_text;
-
 var create_changeset_notice = function create_changeset_notice() {
   var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
       _ref$message_text = _ref.message_text,
@@ -667,4 +661,4 @@ window.scrollToBottom = scrollToBottom;
 /***/ })
 
 },[["YqHn","runtime","vendors"]]]);
-//# sourceMappingURL=base-dc64f0a452b555e8e63c.js.map
+//# sourceMappingURL=base-78df1c3ee31b45e97557.js.map

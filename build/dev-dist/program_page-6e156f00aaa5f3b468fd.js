@@ -162,9 +162,11 @@ function (_React$Component) {
         id: "show-all-indicators",
         onClick: this.onShowAllClick
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("small", null, gettext('Show all')))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, !readonly && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
-        href: "/indicators/indicator_create/".concat(programId),
         role: "button",
-        className: "btn-link btn-add"
+        className: "btn-link btn-add",
+        onClick: function onClick(e) {
+          return openCreateIndicatorFormModal(programId);
+        }
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
         className: "fas fa-plus-circle"
       }), " ", gettext("Add indicator"))));
@@ -799,7 +801,7 @@ var uiStore = new _models__WEBPACK_IMPORTED_MODULE_7__["ProgramPageUIStore"]();
 
 _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].on('open-indicator-update-modal', function (indicatorId) {
   // Note: depends on indicator_list_modals.html
-  var url = "/indicators/indicator_update/".concat(indicatorId, "/?modal=1");
+  var url = "/indicators/indicator_update/".concat(indicatorId, "/");
   $("#indicator_modal_content").empty();
   $("#modalmessages").empty();
   $("#indicator_modal_content").load(url);
@@ -1506,4 +1508,4 @@ var ProgramMetrics = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])
 /***/ })
 
 },[["aJgA","runtime","vendors"]]]);
-//# sourceMappingURL=program_page-a2c30b401e06d8b25ff8.js.map
+//# sourceMappingURL=program_page-6e156f00aaa5f3b468fd.js.map

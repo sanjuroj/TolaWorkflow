@@ -81,7 +81,7 @@ class StatusHeader extends React.Component {
             </h3>
             <div>
             {!readonly &&
-            <a href={`/indicators/indicator_create/${programId}`} role="button" className="btn-link btn-add">
+            <a role="button" className="btn-link btn-add" onClick={e => openCreateIndicatorFormModal(programId)}>
                 <i className="fas fa-plus-circle"/> {gettext("Add indicator")}
             </a>
             }

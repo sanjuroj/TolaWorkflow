@@ -3,9 +3,8 @@ indicators/
     indicator_create/<program> indicator_create
     indicator_update/<pk> indicator_update
     indicator_delete/<pk> indicator_delete
-    periodic_target_generate/<indicator> pt_generate
     periodic_target_delete/<pk> pt_delete
-    periodic_target_deleteall/<indicator>/<deleteall> pt_deleteall (deleteall = true)
+    periodic_target_deleteall/<indicator>/<deleteall> pt_deleteall
     result_add/<indicator> result_add
     result_update/<pk> result_update
     result_delete/<pk> result_delete
@@ -19,18 +18,18 @@ import unittest
 class TestIndicatorCreateEndpoint(EndpointTestBase, test.TestCase):
     url = 'indicator_create'
     url_kwargs = {'program': None}
-    access_level = 'high'
+    access_level = None # access level changes get / post
     post_data = {
-        'services': 0,
         'name': 'endpoint test indicator',
-        'program': None
     }
 
     def setUp(self):
         self.init()
 
     def test_http_methods(self):
+        self.access_level = 'low'
         self.run_get_tests()
+        self.access_level = 'high'
         self.run_post_tests()
 
 class TestIndicatorUpdateEndpoint(EndpointTestBase, test.TestCase):
@@ -65,24 +64,6 @@ class TestIndicatorDeleteEndpoint(EndpointTestBase, test.TestCase):
     def test_http_methods(self):
         self.run_post_tests()
 
-class TestPeriodicTargetGenerateEndpoint(EndpointTestBase, test.TestCase):
-    url = 'pt_generate'
-    url_kwargs = {'indicator': None}
-    access_level = None # varies GET to POST
-    post_data = {
-        'rationale': 'pt generate delete endpoint test'
-    }
-
-    def setUp(self):
-        self.init()
-
-    def test_http_methods(self):
-        # QUESTION: do we want to let low-level (read-access) users "generate" (doesn't save) periodic targets?
-        self.access_level = 'low'
-        self.run_get_tests()
-        self.access_level = 'high'
-        self.run_post_tests()
-
 class TestPeriodTargetDeleteEndpoint(EndpointTestBase, test.TestCase):
     url = 'pt_delete'
     url_kwargs = {'pk': 'periodic_target'}
@@ -97,8 +78,7 @@ class TestPeriodTargetDeleteEndpoint(EndpointTestBase, test.TestCase):
 
 class TestPeriodicTargetDeleteAllEndpoint(EndpointTestBase, test.TestCase):
     url = 'pt_deleteall'
-    url_kwargs = {'indicator': None,
-                  'deleteall': 'True'}
+    url_kwargs = {'indicator': None}
     access_level = 'high'
     delete = 'periodic_target'
 
