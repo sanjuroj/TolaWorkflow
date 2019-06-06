@@ -82,23 +82,29 @@ export class IndicatorStore {
         if (oldStyleLevels) {
             return indicators;
         } else if (!sortByChain) {
-            let sorted = indicators.sort(
+            return indicators.slice().sort(
                 (a, b) => {
-                    if (a.level && a.level.leveltier_depth) {
-                        if (b.level && b.level.leveltier_depth) {
-                            return (
-                                a.level.level_depth - b.level.level_depth ||
-                                a.level.customsort - b.level.customsort ||
-                                a.level_order - b.level_order);
+                    if (a.level && a.level.level_depth) {
+                        if (b.level && b.level.level_depth) {
+                            if (a.level.level_depth === b.level.level_depth) {
+                                let a_ontology = a.level.ontology.split('.');
+                                let b_ontology = b.level.ontology.split('.');
+                                for (let i=0; i < a_ontology.length; i++) {
+                                    if (a_ontology[i] != b_ontology[i]) {
+                                        return a_ontology[i] - b_ontology[i]
+                                    }
+                                }
+                                return (a.level_order || 0) - (b.level_order || 0);
+                            }
+                            return a.level.level_depth - b.level.level_depth;
                         }
                         return -1;
                     }
-                    return (b.level && b.level.ontology) ? 1 : 0;
+                    return (b.level && b.level.level_depth) ? 1 : 0;
                 }
             );
-            return sorted;
         } else {
-            let sorted = indicators.sort(
+            return indicators.slice().sort(
                 (a, b) => {
                     if (a.level && a.level.ontology) {
                         if (b.level && b.level.ontology) {
@@ -116,7 +122,6 @@ export class IndicatorStore {
                     return (b.level && b.level.ontology) ? 1 : 0;
                 }
             );
-            return sorted;
         }
     }
 
@@ -198,9 +203,10 @@ export class ProgramPageStore {
 export class ProgramPageUIStore {
     @observable currentIndicatorFilter;  // selected gas gauge filter
     @observable selectedIndicatorId; // indicators filter
-    @observable groupByChain = false;
+    @observable groupByChain = true;
 
-    constructor() {
+    constructor(resultChainFilterLabel) {
+        this.resultChainFilterLabel = resultChainFilterLabel;
         this.setIndicatorFilter = this.setIndicatorFilter.bind(this);
         this.clearIndicatorFilter = this.clearIndicatorFilter.bind(this);
         this.setSelectedIndicatorId = this.setSelectedIndicatorId.bind(this);
@@ -219,6 +225,30 @@ export class ProgramPageUIStore {
     @action
     setSelectedIndicatorId(selectedIndicatorId) {
         this.selectedIndicatorId = selectedIndicatorId;
+    }
+    
+    @computed
+    get groupByOptions() {
+        return [
+            {
+                value: 1,
+                label: this.resultChainFilterLabel
+            },
+            {
+                value: 2,
+                label: gettext('by Level')
+            }
+        ];
+    }
+    
+    @computed
+    get selectedGroupByOption() {
+        return this.groupByChain ? this.groupByOptions[0] : this.groupByOptions[1];
+    }
+    
+    @action
+    setGroupBy(value) {
+        this.groupByChain = value == 1;
     }
 
 }

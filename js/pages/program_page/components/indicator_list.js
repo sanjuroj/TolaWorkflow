@@ -100,6 +100,10 @@ class IndicatorFilter extends React.Component{
             eventBus.emit('nav-select-indicator-to-filter', selectedIndicatorId);
         }
     };
+    
+    onGroupingSelection = (selected) => {
+        this.props.uiStore.setGroupBy(selected.value);
+    }
 
     render() {
         const indicators = this.props.rootStore.indicatorStore.indicators;
@@ -116,7 +120,9 @@ class IndicatorFilter extends React.Component{
         if (selectedIndicatorId) {
             selectedValue = indicatorSelectOptions.find(i => i.value === selectedIndicatorId);
         }
-
+        
+        const indicatorGroupingOptions = this.props.uiStore.groupByOptions;
+        const groupingValue = this.props.uiStore.selectedGroupByOption;
         return <nav className="list__filters list__filters--inline-label" id="id_div_indicators">
             <label className="filters__label">
                 {gettext("Find an indicator:")}
@@ -130,6 +136,20 @@ class IndicatorFilter extends React.Component{
                     onChange={this.onSelection}
                 />
             </div>
+            {!this.props.rootStore.oldStyleLevels &&
+            <React.Fragment>
+                <label className="filters__label">
+                    {gettext("Group indicators:")}
+                </label>
+                <div className="filters__control">
+                    <Select
+                           options={indicatorGroupingOptions}
+                           value={groupingValue}
+                           isClearable={false}
+                           onChange={this.onGroupingSelection}
+                    />
+                </div>
+            </React.Fragment>}
         </nav>;
     }
 }
@@ -202,9 +222,6 @@ class IndicatorListTable extends React.Component {
                                     { indicator.number_display ? indicator.number_display + ':' : indicator.number }
                                 </strong>&nbsp;
                                 <span className="indicator_name">{ indicator.name }</span>
-                                lt { indicator.level ? indicator.level.level_depth : '' }
-                                lc { indicator.level ? indicator.level.customsort : '' }
-                                lo { indicator.level_order || '' }
                             </a>
 
                             {indicator.key_performance_indicator &&
@@ -225,7 +242,7 @@ class IndicatorListTable extends React.Component {
                                onClick={(e) => this.onIndicatorUpdateClick(e, indicator.id)}><i
                                 className="fas fa-cog"/></a>
                         </td>
-                        {this.props.oldStyleLevels &&<td>{indicator.level ? indicator.level.name : ''}</td>}
+                        {this.props.oldStyleLevels &&<td>{indicator.level ? indicator.level.name : indicator.old_level}</td>}
                         <td>{indicator.unit_of_measure}</td>
                         <td className="text-right">{indicator.baseline_display}</td>
                         <td className="text-right">{indicator.lop_target_display}</td>

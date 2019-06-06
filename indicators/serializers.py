@@ -78,7 +78,7 @@ class IndicatorSerializer(serializers.ModelSerializer):
             'number_display',
             'number',
             'level',
-            'leveltier_depth',
+            'old_level',
             'level_order',
             'unit_of_measure',
             'baseline_display',
