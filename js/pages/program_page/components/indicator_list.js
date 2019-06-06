@@ -100,6 +100,10 @@ class IndicatorFilter extends React.Component{
             eventBus.emit('nav-select-indicator-to-filter', selectedIndicatorId);
         }
     };
+    
+    onGroupingSelection = (selected) => {
+        this.props.uiStore.setGroupBy(selected.value);
+    }
 
     render() {
         const indicators = this.props.rootStore.indicatorStore.indicators;
@@ -116,7 +120,9 @@ class IndicatorFilter extends React.Component{
         if (selectedIndicatorId) {
             selectedValue = indicatorSelectOptions.find(i => i.value === selectedIndicatorId);
         }
-
+        
+        const indicatorGroupingOptions = this.props.uiStore.groupByOptions;
+        const groupingValue = this.props.uiStore.selectedGroupByOption;
         return <nav className="list__filters list__filters--inline-label" id="id_div_indicators">
             <label className="filters__label">
                 {gettext("Find an indicator:")}
@@ -130,6 +136,20 @@ class IndicatorFilter extends React.Component{
                     onChange={this.onSelection}
                 />
             </div>
+            {!this.props.rootStore.oldStyleLevels &&
+            <React.Fragment>
+                <label className="filters__label">
+                    {gettext("Group indicators:")}
+                </label>
+                <div className="filters__control">
+                    <Select
+                           options={indicatorGroupingOptions}
+                           value={groupingValue}
+                           isClearable={false}
+                           onChange={this.onGroupingSelection}
+                    />
+                </div>
+            </React.Fragment>}
         </nav>;
     }
 }
@@ -173,7 +193,7 @@ class IndicatorListTable extends React.Component {
             <tr className="table-header">
                 <th className="" id="id_indicator_name_col_header">{gettext("Indicator")}</th>
                 <th className="" id="id_indicator_buttons_col_header">&nbsp;</th>
-                <th className="" id="id_indicator_level_col_header">{gettext("Level")}</th>
+                {this.props.oldStyleLevels && <th className="" id="id_indicator_level_col_header">{gettext("Level")}</th>}
                 <th className="" id="id_indicator_unit_col_header">{gettext("Unit of measure")}</th>
                 <th className="text-right" id="id_indicator_baseline_col_header">{gettext("Baseline")}</th>
                 <th className="text-right" id="id_indicator_target_col_header">{gettext("Target")}</th>
@@ -198,8 +218,10 @@ class IndicatorListTable extends React.Component {
                                onClick={(e) => this.onIndicatorResultsToggleClick(e, indicator.id)}
                             >
                                 <FontAwesomeIcon icon={resultsExist ? 'caret-down' : 'caret-right'} />
-                                <strong>{indicator.number}</strong>&nbsp;
-                                <span className="indicator_name">{indicator.name}</span>
+                                <strong>
+                                    { indicator.number_display ? indicator.number_display + ':' : indicator.number }
+                                </strong>&nbsp;
+                                <span className="indicator_name">{ indicator.name }</span>
                             </a>
 
                             {indicator.key_performance_indicator &&
@@ -220,7 +242,7 @@ class IndicatorListTable extends React.Component {
                                onClick={(e) => this.onIndicatorUpdateClick(e, indicator.id)}><i
                                 className="fas fa-cog"/></a>
                         </td>
-                        <td>{indicator.level ? indicator.level.name : ''}</td>
+                        {this.props.oldStyleLevels &&<td>{indicator.level ? indicator.level.name : indicator.old_level}</td>}
                         <td>{indicator.unit_of_measure}</td>
                         <td className="text-right">{indicator.baseline_display}</td>
                         <td className="text-right">{indicator.lop_target_display}</td>
@@ -250,10 +272,14 @@ export const IndicatorList = observer(function (props) {
     const resultsMap = props.rootStore.resultsMap;
     const currentIndicatorFilter = props.uiStore.currentIndicatorFilter;
     const selectedIndicatorId = props.uiStore.selectedIndicatorId;
+    const sortByChain = props.uiStore.groupByChain;
     // Either a gas gauge filter is applied, or an indicator has been selected, but not both
 
     // apply gas gauge filter
     let filteredIndicators = indicatorStore.filterIndicators(currentIndicatorFilter);
+    
+    filteredIndicators = indicatorStore.sortIndicators(
+        props.rootStore.oldStyleLevels, sortByChain, filteredIndicators);
 
     if (selectedIndicatorId) {
         filteredIndicators = filteredIndicators.filter((i) => i.id == selectedIndicatorId);
@@ -275,6 +301,7 @@ export const IndicatorList = observer(function (props) {
             </div>
         }
 
-        <IndicatorListTable indicators={filteredIndicators} resultsMap={resultsMap} program={program} />
+        <IndicatorListTable indicators={filteredIndicators} resultsMap={resultsMap}
+                            program={program} oldStyleLevels={ props.rootStore.oldStyleLevels } />
     </React.Fragment>
 });

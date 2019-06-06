@@ -75,8 +75,11 @@ class IndicatorSerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'name',
+            'number_display',
             'number',
             'level',
+            'old_level',
+            'level_order',
             'unit_of_measure',
             'baseline_display',
             'lop_target_display',
@@ -106,6 +109,7 @@ class ProgramSerializer(serializers.ModelSerializer):
             'does_it_need_additional_target_periods',
             'reporting_period_start',
             'reporting_period_end',
+            'using_results_framework',
         ]
 
 

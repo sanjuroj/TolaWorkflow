@@ -15,7 +15,7 @@ import './pinned_reports';
  * Model/Store setup
  */
 const rootStore = new ProgramPageStore(jsContext.indicators, jsContext.program);
-const uiStore = new ProgramPageUIStore();
+const uiStore = new ProgramPageUIStore(jsContext.result_chain_filter);
 
 
 /*

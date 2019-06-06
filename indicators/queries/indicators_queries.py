@@ -94,6 +94,7 @@ class MetricsIndicator(Indicator):
             return self.data_count
         return self.result_set.count()
 
+
 class ResultsIndicatorQuerySet(SafeDeleteQueryset):
     def annotated(self):
         qs = self.filter(deleted__isnull=True)
