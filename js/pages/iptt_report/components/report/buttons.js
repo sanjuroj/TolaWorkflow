@@ -1,8 +1,7 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import { inject, observer } from 'mobx-react';
-import Popover from 'react-simple-popover';
 
-@inject('filterStore', 'routeStore')
 class PinPopover extends React.Component {
     constructor(props) {
         super(props);
@@ -82,6 +81,7 @@ class PinPopover extends React.Component {
     }
 }
 
+@inject('filterStore', 'routeStore')
 export class PinButton extends React.Component {
     constructor(props) {
         super(props);
@@ -89,9 +89,23 @@ export class PinButton extends React.Component {
             open: false
         };
     }
-
-    handleClick(e) {
-        this.setState({open: !this.state.open});
+    
+    componentDidMount = () => {
+        var content = `<div id="pin_popover_content"></div>`;
+        var showFn = ($el) => {
+            ReactDOM.render(
+                <PinPopover
+                    filterStore={this.props.filterStore}
+                    routeStore={this.props.routeStore}
+                />,
+                document.querySelector('#pin_popover_content')
+            );
+        };
+        $(this.refs.target).popover({
+            content: content,
+            html: true,
+            placement: 'bottom'
+        }).on('shown.bs.popover', showFn);
     }
 
     handleClose(e) {
@@ -104,42 +118,29 @@ export class PinButton extends React.Component {
                 <button
                     href="#"
                     className="btn btn-sm btn-secondary"
-                    ref="target"
-                    onClick={ this.handleClick.bind(this) }>
+                    ref="target">
                 <i className="fas fa-thumbtack"></i>
                     {
                         /* # Translators: a button that lets a user "pin" (verb) a report to their home page */
                         gettext('Pin')
                     }
                 </button>
-
-                <Popover
-                    placement='bottom'
-                    style={ {width: 'auto' } }
-                    target={ this.refs.target }
-                    show={ this.state.open }
-                    onHide={ this.handleClose.bind(this) } >
-                    <PinPopover />
-                </Popover>
             </React.Fragment>
         );
     }
 }
 
 
-@inject('filterStore', 'routeStore')
 @observer
 class ExcelPopover extends React.Component {
     getCurrent = () => {
         if (this.props.routeStore.excelUrl) {
-            //window.location=this.props.routeStore.excelUrl;
             window.open(this.props.routeStore.excelUrl, '_blank');
         }
     }
 
     getAll = () => {
         if (this.props.routeStore.fullExcelUrl) {
-            //window.location=this.props.routeStore.fullExcelUrl
             window.open(this.props.routeStore.fullExcelUrl, '_blank');
         }
     }
@@ -174,19 +175,33 @@ export class ExcelButton extends React.Component {
             open: false
         };
     }
+    
+    componentDidMount = () => {
+        if (this.props.filterStore.isTVA) {
+            var content = `<div id="excel_popover_content"></div>`;
+            var showFn = ($el) => {
+                ReactDOM.render(
+                    <ExcelPopover
+                        filterStore={this.props.filterStore}
+                        routeStore={this.props.routeStore} />,
+                    document.querySelector('#excel_popover_content')
+                );
+            };
+            $(this.refs.target).popover({
+                content: content,
+                html: true,
+                placement: 'bottom'
+            }).on('shown.bs.popover', showFn);
+        }
+        
+    }
 
     handleClick = () => {
-        if (this.props.filterStore.isTVA) {
-            this.setState({open: !this.state.open});
-        } else if (this.props.routeStore.excelUrl) {
-            //window.location=this.props.routeStore.excelUrl;
+        if (!this.props.filterStore.isTVA && this.props.routeStore.excelUrl) {
             window.open(this.props.routeStore.excelUrl, '_blank');
         }
     }
 
-    handleClose(e) {
-        this.setState({open: false});
-    }
     render() {
         return (
             <React.Fragment>
@@ -196,15 +211,6 @@ export class ExcelButton extends React.Component {
                      onClick={this.handleClick.bind(this) }>
                      <i className="fas fa-download"></i> Excel
                      </button>
-                     <Popover
-                        placement="bottom"
-                        containerStyle={ {paddingRight: '10px'} }
-                        style={ {width: 'auto' } }
-                        target={ this.refs.target }
-                        show={ this.state.open }
-                        onHide={ this.handleClose.bind(this) } >
-                        <ExcelPopover />
-                      </Popover>
             </React.Fragment>
         );
     }
