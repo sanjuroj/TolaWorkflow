@@ -196,7 +196,11 @@ export class LevelStore {
 
 
     // TODO: better error handling for API
-    saveLevelToDB = (submitType, levelId, formData) => {
+    saveLevelToDB = (submitType, levelId, indicatorWasUpdated, formData) => {
+        if (indicatorWasUpdated) {
+            this.saveReorderedIndicatorsToDB(formData.indicators)
+        }
+        delete formData.indicators;
         let targetLevel = this.levels.find(level => level.id == levelId);
         let levelToSave = Object.assign(toJS(targetLevel), formData);
         if (levelId == "new") {
@@ -242,6 +246,17 @@ export class LevelStore {
         }
 
     };
+
+    saveReorderedIndicatorsToDB = (indicators) =>{
+        console.log('ind in reorder', indicators)
+        api.post("/reorder_indicators/", indicators)
+                .then(response => {
+                })
+                .catch( error => {
+                    console.log("There was an error:", error);
+                })
+    }
+
 
     deriveTemplateKey = () => {
         // Check each tier set in the templates to see if the tier order and content are exactly the same

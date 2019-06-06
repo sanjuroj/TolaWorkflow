@@ -159,6 +159,7 @@ export class LevelCardExpanded extends React.Component {
     constructor(props){
         super(props);
         this.submitType = "saveOnly";
+        this.indicatorWasReordered = false;
         extendObservable(this, {
             name: props.level.name,
             assumptions: props.level.assumptions,
@@ -167,7 +168,7 @@ export class LevelCardExpanded extends React.Component {
     }
 
     updateIndicatorOrder = (changeObj, indicatorId) => {
-
+        this.indicatorWasReordered = true;
         console.log('updated val', changeObj, indicatorId);
         let oldIndex = this.indicators.find( i => i.id == indicatorId).level_order - 1;
         let newIndex = changeObj.value - 1;
@@ -197,7 +198,8 @@ export class LevelCardExpanded extends React.Component {
         this.props.rootStore.levelStore.saveLevelToDB(
             this.submitType,
             this.props.level.id,
-            {name: this.name, assumptions: this.assumptions, indicators: toJS(this.indicators)}
+            this.indicatorWasReordered,
+            {name: this.name,assumptions: this.assumptions,indicators: toJS(this.indicators)}
         )
 
     };

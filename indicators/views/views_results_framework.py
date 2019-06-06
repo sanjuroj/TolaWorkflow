@@ -126,3 +126,13 @@ def save_leveltiers(request):
         )
         tierObj.save()
     return Response({"message": "success"})
+
+# TODO: add security
+@api_view(http_method_names=['POST'])
+def reorder_indicators(request):
+    level_order_map = {i['id']:i['level_order'] for i in request.data}
+    for indicator in Indicator.objects.filter(id__in=level_order_map.keys()):
+        indicator.level_order = level_order_map[indicator.id]
+        indicator.save()
+    return Response({"message": "success"})
+
