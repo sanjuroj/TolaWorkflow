@@ -55,6 +55,7 @@ class IndicatorSerializerMinimal(serializers.ModelSerializer):
             'id',
             'name',
             'level',
+            'level_order'
         ]
 
 

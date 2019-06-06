@@ -6,11 +6,12 @@ import { uniqueId } from '../formUtils';
 
 export const SingleReactSelect = ( props ) => {
     let selectId = uniqueId('react-select');
+    let labelClasses = props.labelClasses || "col-form-label text-uppercase";
     return (
         <div className="form-row mb-3">
             <label
                 htmlFor={ selectId }
-                className="col-form-label text-uppercase">
+                className={labelClasses}>
                     { props.label }
             </label>
             <Select
