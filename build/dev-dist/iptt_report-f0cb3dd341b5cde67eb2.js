@@ -1110,10 +1110,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ExcelButton", function() { return ExcelButton; });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "q1tI");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! mobx-react */ "okNM");
-/* harmony import */ var react_simple_popover__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-simple-popover */ "MWn0");
-/* harmony import */ var react_simple_popover__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react_simple_popover__WEBPACK_IMPORTED_MODULE_2__);
-var _dec, _class, _temp, _dec2, _class3, _temp2, _dec3, _class5, _temp3;
+/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-dom */ "i8i4");
+/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react_dom__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! mobx-react */ "okNM");
+var _dec, _class, _temp, _class3, _temp2, _dec2, _class5, _temp3;
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
@@ -1140,7 +1140,8 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 
 
-var PinPopover = (_dec = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inject"])('filterStore', 'routeStore'), _dec(_class = (_temp =
+
+var PinPopover =
 /*#__PURE__*/
 function (_React$Component) {
   _inherits(PinPopover, _React$Component);
@@ -1227,8 +1228,9 @@ function (_React$Component) {
   }]);
 
   return PinPopover;
-}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component), _temp)) || _class);
-var PinButton =
+}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component);
+
+var PinButton = (_dec = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["inject"])('filterStore', 'routeStore'), _dec(_class = (_temp =
 /*#__PURE__*/
 function (_React$Component2) {
   _inherits(PinButton, _React$Component2);
@@ -1239,6 +1241,24 @@ function (_React$Component2) {
     _classCallCheck(this, PinButton);
 
     _this2 = _possibleConstructorReturn(this, _getPrototypeOf(PinButton).call(this, props));
+
+    _this2.componentDidMount = function () {
+      var content = "<div id=\"pin_popover_content\"></div>";
+
+      var showFn = function showFn($el) {
+        react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render(react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(PinPopover, {
+          filterStore: _this2.props.filterStore,
+          routeStore: _this2.props.routeStore
+        }), document.querySelector('#pin_popover_content'));
+      };
+
+      $(_this2.refs.target).popover({
+        content: content,
+        html: true,
+        placement: 'bottom'
+      }).on('shown.bs.popover', showFn);
+    };
+
     _this2.state = {
       open: false
     };
@@ -1246,13 +1266,6 @@ function (_React$Component2) {
   }
 
   _createClass(PinButton, [{
-    key: "handleClick",
-    value: function handleClick(e) {
-      this.setState({
-        open: !this.state.open
-      });
-    }
-  }, {
     key: "handleClose",
     value: function handleClose(e) {
       this.setState({
@@ -1265,27 +1278,19 @@ function (_React$Component2) {
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         href: "#",
         className: "btn btn-sm btn-secondary",
-        ref: "target",
-        onClick: this.handleClick.bind(this)
+        ref: "target"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
         className: "fas fa-thumbtack"
       }),
       /* # Translators: a button that lets a user "pin" (verb) a report to their home page */
-      gettext('Pin')), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_simple_popover__WEBPACK_IMPORTED_MODULE_2___default.a, {
-        placement: "bottom",
-        style: {
-          width: 'auto'
-        },
-        target: this.refs.target,
-        show: this.state.open,
-        onHide: this.handleClose.bind(this)
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(PinPopover, null)));
+      gettext('Pin')));
     }
   }]);
 
   return PinButton;
-}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component);
-var ExcelPopover = (_dec2 = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inject"])('filterStore', 'routeStore'), _dec2(_class3 = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(_class3 = (_temp2 =
+}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component), _temp)) || _class);
+
+var ExcelPopover = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])(_class3 = (_temp2 =
 /*#__PURE__*/
 function (_React$Component3) {
   _inherits(ExcelPopover, _React$Component3);
@@ -1305,14 +1310,12 @@ function (_React$Component3) {
 
     _this3.getCurrent = function () {
       if (_this3.props.routeStore.excelUrl) {
-        //window.location=this.props.routeStore.excelUrl;
         window.open(_this3.props.routeStore.excelUrl, '_blank');
       }
     };
 
     _this3.getAll = function () {
       if (_this3.props.routeStore.fullExcelUrl) {
-        //window.location=this.props.routeStore.fullExcelUrl
         window.open(_this3.props.routeStore.fullExcelUrl, '_blank');
       }
     };
@@ -1342,8 +1345,9 @@ function (_React$Component3) {
   }]);
 
   return ExcelPopover;
-}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component), _temp2)) || _class3) || _class3);
-var ExcelButton = (_dec3 = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inject"])('filterStore', 'routeStore'), _dec3(_class5 = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(_class5 = (_temp3 =
+}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component), _temp2)) || _class3;
+
+var ExcelButton = (_dec2 = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["inject"])('filterStore', 'routeStore'), _dec2(_class5 = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])(_class5 = (_temp3 =
 /*#__PURE__*/
 function (_React$Component4) {
   _inherits(ExcelButton, _React$Component4);
@@ -1355,13 +1359,27 @@ function (_React$Component4) {
 
     _this4 = _possibleConstructorReturn(this, _getPrototypeOf(ExcelButton).call(this, props));
 
-    _this4.handleClick = function () {
+    _this4.componentDidMount = function () {
       if (_this4.props.filterStore.isTVA) {
-        _this4.setState({
-          open: !_this4.state.open
-        });
-      } else if (_this4.props.routeStore.excelUrl) {
-        //window.location=this.props.routeStore.excelUrl;
+        var content = "<div id=\"excel_popover_content\"></div>";
+
+        var showFn = function showFn($el) {
+          react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render(react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ExcelPopover, {
+            filterStore: _this4.props.filterStore,
+            routeStore: _this4.props.routeStore
+          }), document.querySelector('#excel_popover_content'));
+        };
+
+        $(_this4.refs.target).popover({
+          content: content,
+          html: true,
+          placement: 'bottom'
+        }).on('shown.bs.popover', showFn);
+      }
+    };
+
+    _this4.handleClick = function () {
+      if (!_this4.props.filterStore.isTVA && _this4.props.routeStore.excelUrl) {
         window.open(_this4.props.routeStore.excelUrl, '_blank');
       }
     };
@@ -1373,13 +1391,6 @@ function (_React$Component4) {
   }
 
   _createClass(ExcelButton, [{
-    key: "handleClose",
-    value: function handleClose(e) {
-      this.setState({
-        open: false
-      });
-    }
-  }, {
     key: "render",
     value: function render() {
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
@@ -1389,18 +1400,7 @@ function (_React$Component4) {
         onClick: this.handleClick.bind(this)
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
         className: "fas fa-download"
-      }), " Excel"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_simple_popover__WEBPACK_IMPORTED_MODULE_2___default.a, {
-        placement: "bottom",
-        containerStyle: {
-          paddingRight: '10px'
-        },
-        style: {
-          width: 'auto'
-        },
-        target: this.refs.target,
-        show: this.state.open,
-        onHide: this.handleClose.bind(this)
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ExcelPopover, null)));
+      }), " Excel"));
     }
   }]);
 
@@ -4462,4 +4462,4 @@ function () {
 /***/ })
 
 },[["mYfJ","runtime","vendors"]]]);
-//# sourceMappingURL=iptt_report-ab8523104b9649fad1e4.js.map
+//# sourceMappingURL=iptt_report-f0cb3dd341b5cde67eb2.js.map
