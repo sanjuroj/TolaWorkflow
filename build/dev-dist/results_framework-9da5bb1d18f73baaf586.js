@@ -204,6 +204,77 @@ var LevelTierPicker = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inject"])(
 
 /***/ }),
 
+/***/ "4L+s":
+/*!**************************************!*\
+  !*** ./js/components/helpPopover.js ***!
+  \**************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return HelpPopover; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "q1tI");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+
+
+var HelpPopover =
+/*#__PURE__*/
+function (_React$Component) {
+  _inherits(HelpPopover, _React$Component);
+
+  function HelpPopover(props) {
+    var _this;
+
+    _classCallCheck(this, HelpPopover);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(HelpPopover).call(this, props));
+    _this.content = props.content;
+    _this.placement = props.placement || null;
+    return _this;
+  }
+
+  _createClass(HelpPopover, [{
+    key: "render",
+    value: function render() {
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+        tabIndex: "0",
+        "data-toggle": "popover",
+        "data-trigger": "focus",
+        "data-html": "true",
+        "data-placement": this.placement,
+        "data-content": this.content
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+        className: "far fa-question-circle"
+      }));
+    }
+  }]);
+
+  return HelpPopover;
+}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component);
+
+
+
+/***/ }),
+
 /***/ "5Za8":
 /*!**************************************************************!*\
   !*** ./js/pages/results_framework/components/level_cards.js ***!
@@ -225,7 +296,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _fortawesome_fontawesome_svg_core__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @fortawesome/fontawesome-svg-core */ "7O5W");
 /* harmony import */ var _fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @fortawesome/react-fontawesome */ "IP2g");
 /* harmony import */ var _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @fortawesome/free-solid-svg-icons */ "wHSu");
-/* harmony import */ var react_select__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! react-select */ "y2Vs");
+/* harmony import */ var _components_selectWidgets__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../../components/selectWidgets */ "Ez0T");
+/* harmony import */ var _components_helpPopover__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../../components/helpPopover */ "4L+s");
 var _dec, _class, _temp, _dec2, _class3, _temp2, _dec3, _class5;
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -245,6 +317,7 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
 
 
 
@@ -322,8 +395,8 @@ function (_React$Component2) {
   }
 
   _createClass(LevelCardCollapsed, [{
-    key: "componentDidUpdate",
-    value: function componentDidUpdate() {
+    key: "componentDidMount",
+    value: function componentDidMount() {
       // Enable popovers after update (they break otherwise)
       $('*[data-toggle="popover"]').popover({
         html: true
@@ -350,7 +423,7 @@ function (_React$Component2) {
       if (sameLevelIndicatorIds.length > 0) {
         var linkText = "All indicators linked to ".concat(this.props.levelProps.tierName, " ").concat(this.props.levelProps.ontologyLabel);
         allIndicatorLinks.push("<a href=".concat(this.buildIPTTUrl(sameLevelIndicatorIds), ">").concat(linkText, "</a>"));
-      } // Get indicator ids linked to the children of this level, add the indicator ids identified
+      } // Get indicator ids linked to the descendants of this level, add the indicator ids identified
       // above, and create a hyperlink for a filtered IPTT.
 
 
@@ -368,8 +441,7 @@ function (_React$Component2) {
         return "<li class=\"nav-item\"><a href=".concat(_this2.buildIPTTUrl([indicator.id]), ">").concat(indicator.name, "</a></li>");
       });
       allIndicatorLinks = allIndicatorLinks.concat(individualLinks);
-      allIndicatorLinks = "<ul class=\"nav flex-column\">".concat(allIndicatorLinks.join("<br>"), "</ul>"); // TODO: popover breaks if you click edit and cancel
-
+      allIndicatorLinks = "<ul class=\"nav flex-column\">".concat(allIndicatorLinks.join("<br>"), "</ul>");
       var iCount = this.props.levelProps.indicators.length;
       /* # Translators: This is a count of indicators associated with another object */
 
@@ -448,6 +520,24 @@ function (_React$Component3) {
 
     _this3 = _possibleConstructorReturn(this, _getPrototypeOf(LevelCardExpanded).call(this, props));
 
+    _this3.updateIndicatorOrder = function (changeObj, indicatorId) {
+      _this3.indicatorWasReordered = true;
+      console.log('updated val', changeObj, indicatorId);
+      var oldIndex = _this3.indicators.find(function (i) {
+        return i.id == indicatorId;
+      }).level_order - 1;
+      var newIndex = changeObj.value - 1;
+
+      var tempIndicators = _this3.indicators.slice();
+
+      tempIndicators.splice(newIndex, 0, tempIndicators.splice(oldIndex, 1)[0]);
+      tempIndicators.forEach(function (indicator, index) {
+        return indicator.level_order = index + 1;
+      });
+
+      _this3.indicators.replace(tempIndicators);
+    };
+
     _this3.updateSubmitType = function (newType) {
       _this3.submitType = newType;
     };
@@ -455,9 +545,10 @@ function (_React$Component3) {
     _this3.saveLevel = function (event) {
       event.preventDefault();
 
-      _this3.props.rootStore.levelStore.saveLevelToDB(_this3.submitType, _this3.props.level.id, {
+      _this3.props.rootStore.levelStore.saveLevelToDB(_this3.submitType, _this3.props.level.id, _this3.indicatorWasReordered, {
         name: _this3.name,
-        assumptions: _this3.assumptions
+        assumptions: _this3.assumptions,
+        indicators: Object(mobx__WEBPACK_IMPORTED_MODULE_3__["toJS"])(_this3.indicators)
       });
     };
 
@@ -471,21 +562,31 @@ function (_React$Component3) {
     };
 
     _this3.submitType = "saveOnly";
+    _this3.indicatorWasReordered = false;
     Object(mobx__WEBPACK_IMPORTED_MODULE_3__["extendObservable"])(_assertThisInitialized(_assertThisInitialized(_this3)), {
       name: props.level.name,
-      assumptions: props.level.assumptions
+      assumptions: props.level.assumptions,
+      indicators: props.levelProps.indicators.sort(function (a, b) {
+        return a.level_order - b.level_order;
+      })
     });
     return _this3;
   }
-  /*
-  Using this allows us to use the same submit function for all three buttons.  Shame the function has to
-  be passed all the way down to the button to work.
-   */
-
 
   _createClass(LevelCardExpanded, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      // Enable popovers after update (they break otherwise)
+      $('*[data-toggle="popover"]').popover({
+        html: true
+      });
+    }
+  }, {
     key: "render",
     value: function render() {
+      // Need to reference indicators so it reacts to changes.  Simply passing the observable this.indicators through
+      // to IndicatorList will result in a non-reactive Indicator list form fields.
+      var tempIndicators = Object(mobx__WEBPACK_IMPORTED_MODULE_3__["toJS"])(this.indicators);
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "level-card level-card--expanded",
         id: this.props.level.id
@@ -517,7 +618,12 @@ function (_React$Component3) {
         autoComplete: "off",
         value: this.assumptions || "",
         onChange: this.onFormChange
-      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ButtonBar, {
+      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(IndicatorList, {
+        level: this.props.level,
+        tierName: this.props.levelProps.tierName,
+        indicators: this.indicators,
+        changeFunc: this.updateIndicatorOrder
+      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ButtonBar, {
         level: this.props.level,
         levelProps: this.props.levelProps,
         isActive: this.props.rootStore.uiStore.expandedCards[0] == this.props.level.id,
@@ -637,6 +743,295 @@ function (_React$Component5) {
   return LevelButton;
 }(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component);
 
+var IndicatorList =
+/*#__PURE__*/
+function (_React$Component6) {
+  _inherits(IndicatorList, _React$Component6);
+
+  function IndicatorList() {
+    _classCallCheck(this, IndicatorList);
+
+    return _possibleConstructorReturn(this, _getPrototypeOf(IndicatorList).apply(this, arguments));
+  }
+
+  _createClass(IndicatorList, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      // Enable popovers after update (they break otherwise)
+      $('*[data-toggle="popover"]').popover({
+        html: true
+      });
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      var _this5 = this;
+
+      // Create the list of indicators and the dropdowns for setting the indicator order
+      var options = this.props.indicators.map(function (entry, index) {
+        return {
+          value: index + 1,
+          label: index + 1
+        };
+      });
+      var indicatorMarkup = [];
+      this.props.indicators.forEach(function (indicator) {
+        console.log('levelorder in loop', indicator.id, indicator.level_order); // let options = this.props.indicators.map( (entry, index) => <option value={index+1}>{index+1}</option>);
+
+        indicatorMarkup.push(react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
+          key: indicator.id
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_selectWidgets__WEBPACK_IMPORTED_MODULE_7__["SingleReactSelect"], {
+          update: function update(value) {
+            return _this5.props.changeFunc(value, indicator.id);
+          },
+          selectId: "ind" + indicator.id,
+          labelClasses: "col-form-label",
+          value: {
+            value: indicator.level_order,
+            label: indicator.level_order
+          },
+          label: indicator.name,
+          options: options
+        }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+          href: "#",
+          className: "indicator-link"
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+          className: "fas fa-cog"
+        }), " Settings")));
+      }); // Conditionally set the other elements that are only visible when there are indicators
+
+      var order = null;
+      var helpLink = null;
+
+      if (this.props.indicators.length > 0) {
+        order = "Order";
+        helpLink = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_helpPopover__WEBPACK_IMPORTED_MODULE_8__["default"], {
+          content: "To remove an indicator: Click \u201CSettings\u201D, where you can reassign the indicator to a different level or delete it.",
+          placement: "bottom"
+        });
+      }
+
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("ul", {
+        id: "level-card--indicator-links",
+        style: {
+          backgroundColor: "white",
+          padding: "1em"
+        }
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", null, "Indicators Linked to this ", this.props.tierName, order, helpLink), indicatorMarkup, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+        href: "#",
+        role: "button",
+        className: "btn btn-link btn-add"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("img", {
+        className: "fas fa-plus-circle"
+      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, "Add Indicator"))));
+    }
+  }]);
+
+  return IndicatorList;
+}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component);
+
+/***/ }),
+
+/***/ "Ez0T":
+/*!****************************************!*\
+  !*** ./js/components/selectWidgets.js ***!
+  \****************************************/
+/*! exports provided: SingleReactSelect, DateSelect, SingleSelect, MultiSelectCheckbox */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SingleReactSelect", function() { return SingleReactSelect; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DateSelect", function() { return DateSelect; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SingleSelect", function() { return SingleSelect; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MultiSelectCheckbox", function() { return MultiSelectCheckbox; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "q1tI");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var react_select__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-select */ "y2Vs");
+/* harmony import */ var react_multiselect_checkboxes__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-multiselect-checkboxes */ "VCnP");
+/* harmony import */ var react_multiselect_checkboxes__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react_multiselect_checkboxes__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _formUtils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../formUtils */ "G56O");
+function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+
+
+
+
+var SingleReactSelect = function SingleReactSelect(props) {
+  var selectId = Object(_formUtils__WEBPACK_IMPORTED_MODULE_3__["uniqueId"])('react-select');
+  var labelClasses = props.labelClasses || "col-form-label text-uppercase";
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    className: "form-row mb-3"
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+    htmlFor: selectId,
+    className: labelClasses
+  }, props.label), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_1__["default"], {
+    onChange: props.update,
+    value: props.value,
+    id: selectId,
+    className: "tola-react-select",
+    disabled: props.disabled,
+    options: props.options
+  }));
+};
+var DateSelect = function DateSelect(props) {
+  var selectId = Object(_formUtils__WEBPACK_IMPORTED_MODULE_3__["uniqueId"])('date-select');
+  var formattedOptions = props.options && props.options.length == 1 && props.options[0].value !== undefined ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
+    value: props.options[0].value
+  }, props.options[0].label) : props.options && props.options[0].options !== undefined ? props.options.map(function (optgroup, index) {
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("optgroup", {
+      label: optgroup.label,
+      key: index
+    }, optgroup.options.map(function (option) {
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
+        value: option.value,
+        key: option.value
+      }, option.label);
+    }));
+  }) : props.options.map(function (option, index) {
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
+      value: option.value,
+      key: index
+    }, option.label);
+  });
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    className: "form-row mb-3"
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+    htmlFor: selectId,
+    className: "col-form-label text-uppercase"
+  }, props.label), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("select", {
+    className: "form-control",
+    id: selectId,
+    value: props.value,
+    onChange: props.update,
+    disabled: props.disabled
+  }, formattedOptions));
+};
+var SingleSelect = function SingleSelect(props) {
+  var selectId = Object(_formUtils__WEBPACK_IMPORTED_MODULE_3__["uniqueId"])('react-select');
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    className: "form-row mb-3"
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+    htmlFor: selectId,
+    className: "col-form-label text-uppercase"
+  }, props.label), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("select", {
+    onChange: props.update,
+    value: props.value,
+    id: selectId,
+    className: "form-control",
+    disabled: props.disabled
+  }, props.options));
+};
+/**
+ * styling element to replace OptGroup headings in react multiselect checkbox widgets - used for
+ * MultiSelectCheckbox when optgroups are required
+ */
+
+var GroupHeading = function GroupHeading(props) {
+  if (props.children == '') {
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null);
+  } else {
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("hr", {
+      style: {
+        margin: '3px 0px 0px 0px'
+      }
+    }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      style: {
+        textTransform: 'uppercase',
+        paddingLeft: '4px',
+        marginBottom: '2px'
+      }
+    }, props.children));
+  }
+};
+/**
+ * Styles ReactMultiSelectCheckbox to fit Tola styles
+ */
+
+
+var MultiSelectCheckbox = function MultiSelectCheckbox(props) {
+  var selectId = Object(_formUtils__WEBPACK_IMPORTED_MODULE_3__["uniqueId"])('multiselect');
+  var multiSelectProps = !props.options || props.options.length == 0 ? {
+    getDropdownButtonLabel: function getDropdownButtonLabel() {
+      return gettext('None available');
+    },
+    isDisabled: true,
+    menuIsOpen: false,
+    options: []
+  } : {
+    isMulti: true,
+    options: props.options,
+    getDropdownButtonLabel: function getDropdownButtonLabel(_ref) {
+      if (!_ref.value) {
+        return gettext('None selected');
+      }
+
+      if (Array.isArray(_ref.value)) {
+        if (_ref.value.length == 0) {
+          return gettext('None selected');
+        }
+
+        if (_ref.value.length == 1) {
+          return _ref.value[0].label;
+        }
+
+        return "".concat(_ref.value.length, "  ").concat(gettext('selected'));
+      }
+
+      return _ref.value.label;
+    }
+  };
+  var baseStyles = {
+    dropdownButton: function dropdownButton(base) {
+      return !props.options || props.options.length == 0 ? _objectSpread({}, base, {
+        backgroundColor: '#E5E6E8',
+        background: ''
+      }) : base;
+    },
+    option: function option(provided, state) {
+      return _objectSpread({}, provided, {
+        padding: '1px 12px',
+        display: 'inline-block'
+      });
+    },
+    container: function container(provided, state) {
+      return _objectSpread({}, provided, {
+        backgroundColor: '#f5f5f5'
+      });
+    }
+  };
+
+  var formatOptionLabel = function formatOptionLabel(props) {
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      style: {
+        display: "inline-block",
+        float: "right",
+        width: "90%"
+      }
+    }, props.label);
+  };
+
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    className: "form-row mb-2 tola-react-multiselect-row"
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+    htmlFor: selectId,
+    className: "col-form-label text-uppercase"
+  }, props.label), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_multiselect_checkboxes__WEBPACK_IMPORTED_MODULE_2___default.a, _extends({
+    id: selectId,
+    styles: baseStyles,
+    formatOptionLabel: formatOptionLabel,
+    components: {
+      GroupHeading: GroupHeading
+    },
+    value: props.value,
+    onChange: props.update
+  }, multiSelectProps)));
+};
+
 /***/ }),
 
 /***/ "FtQq":
@@ -680,7 +1075,7 @@ var RootStore = function RootStore(program_id, levels, indicators, levelTiers, t
 var LevelStore = (_class = (_temp =
 /*#__PURE__*/
 function () {
-  function LevelStore(program_id, levels, indicators, levelTiers, tierTemplates, accessLevel, rootStore) {
+  function LevelStore(program_id, levels, _indicators, levelTiers, tierTemplates, accessLevel, rootStore) {
     var _this = this;
 
     _classCallCheck(this, LevelStore);
@@ -732,14 +1127,21 @@ function () {
         console.log('contextis', context); // Translators: Notification to user that the deletion command that they issued was successful
 
         success_notice({
-          message_text: gettext("".concat(level_label, " was successfully deleted."))
+          message_text: gettext("".concat(level_label, " was successfully deleted.")),
+          context: "rf-page"
         });
       }).catch(function (error) {
         return console.log('error', error);
       });
     };
 
-    this.saveLevelToDB = function (submitType, levelId, formData) {
+    this.saveLevelToDB = function (submitType, levelId, indicatorWasUpdated, formData) {
+      if (indicatorWasUpdated) {
+        _this.saveReorderedIndicatorsToDB(formData.indicators);
+      }
+
+      delete formData.indicators;
+
       var targetLevel = _this.levels.find(function (level) {
         return level.id == levelId;
       });
@@ -785,6 +1187,13 @@ function () {
           console.log("There was an error:", error);
         });
       }
+    };
+
+    this.saveReorderedIndicatorsToDB = function (indicators) {
+      console.log('ind in reorder', indicators);
+      _api_js__WEBPACK_IMPORTED_MODULE_2__["api"].post("/reorder_indicators/", indicators).then(function (response) {}).catch(function (error) {
+        console.log("There was an error:", error);
+      });
     };
 
     this.deriveTemplateKey = function () {
@@ -867,7 +1276,7 @@ function () {
 
     this.rootStore = rootStore;
     this.levels = levels;
-    this.indicators = indicators;
+    this.indicators = _indicators;
     this.tierTemplates = tierTemplates;
     this.defaultTemplateKey = "mc_standard";
     this.customTierSetKey = "custom";
@@ -1240,6 +1649,28 @@ function () {
 
 /***/ }),
 
+/***/ "G56O":
+/*!*************************!*\
+  !*** ./js/formUtils.js ***!
+  \*************************/
+/*! exports provided: uniqueId */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "uniqueId", function() { return uniqueId; });
+/*
+ * ID generating code &c. for form inputs
+ */
+var lastId = 0;
+function uniqueId() {
+  var prefix = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'id';
+  lastId++;
+  return "".concat(prefix).concat(lastId);
+}
+
+/***/ }),
+
 /***/ "IzLX":
 /*!***************************!*\
   !*** ./js/level_utils.js ***!
@@ -1514,4 +1945,4 @@ function (_React$Component2) {
 /***/ })
 
 },[["QTZG","runtime","vendors"]]]);
-//# sourceMappingURL=results_framework-e632fc23b0a7efc7934d.js.map
+//# sourceMappingURL=results_framework-9da5bb1d18f73baaf586.js.map

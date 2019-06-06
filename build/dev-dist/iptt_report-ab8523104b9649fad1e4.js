@@ -1676,11 +1676,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 var SingleReactSelect = function SingleReactSelect(props) {
   var selectId = Object(_formUtils__WEBPACK_IMPORTED_MODULE_3__["uniqueId"])('react-select');
+  var labelClasses = props.labelClasses || "col-form-label text-uppercase";
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "form-row mb-3"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
     htmlFor: selectId,
-    className: "col-form-label text-uppercase"
+    className: labelClasses
   }, props.label), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_1__["default"], {
     onChange: props.update,
     value: props.value,
@@ -4461,4 +4462,4 @@ function () {
 /***/ })
 
 },[["mYfJ","runtime","vendors"]]]);
-//# sourceMappingURL=iptt_report-78ea044b92b494e6ae52.js.map
+//# sourceMappingURL=iptt_report-ab8523104b9649fad1e4.js.map
