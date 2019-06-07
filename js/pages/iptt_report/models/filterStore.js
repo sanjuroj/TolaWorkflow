@@ -1,40 +1,19 @@
 import { observable, action, computed, reaction } from 'mobx';
-import { TVA, TIMEPERIODS, GROUP_BY_CHAIN, GROUP_BY_LEVEL, BLANK_OPTION, TIME_AWARE_FREQUENCIES } from '../../../constants';
+import {
+    TVA,
+    TIMEPERIODS,
+    GROUP_BY_CHAIN,
+    GROUP_BY_LEVEL,
+    BLANK_OPTION,
+    TIME_AWARE_FREQUENCIES,
+    getPeriodLabels
+} from '../../../constants';
+
+import { flattenArray, ensureNumericArray } from '../../../general_utilities';
 
 const _gettext = (typeof gettext !== 'undefined') ?  gettext : (s) => s;
 
-function flattenArray(arr, depth = 1) {
-    if (depth == 5) {
-        return arr;
-    }
-    let flattened = [];
-    arr.forEach(item => {
-        if (Array.isArray(item)) {
-            flattened = flattened.concat(flattenArray(item, depth+1));
-        } else {
-            flattened.push(item);
-        }
-    });
-    return flattened;
-}
-
-var targetperiodLabels = {
-    1: _gettext("Life of Program (LoP) only"),
-    3: _gettext("Annual"),
-    2: _gettext("Midline and endline"),
-    5: _gettext("Tri-annual"),
-    4: _gettext("Semi-annual"),
-    7: _gettext("Monthly"),
-    6: _gettext("Quarterly")
-}
-
-var timeperiodLabels = {
-    3: _gettext("Years"),
-    5: _gettext("Tri-annual periods"),
-    4: _gettext("Semi-annual periods"),
-    7: _gettext("Months"),
-    6: _gettext("Quarters")
-}
+const {targetperiodLabels, timeperiodLabels } = getPeriodLabels();
 
 export default class FilterStore {
     programStore = null;
@@ -60,7 +39,8 @@ export default class FilterStore {
     }
 
     set reportType(reportType) {
-        if ([TVA, TIMEPERIODS].includes(reportType)) {
+        reportType = parseInt(reportType);
+        if (reportType && [TVA, TIMEPERIODS].includes(reportType)) {
             this._reportType = reportType;
         } else {
             this._reportType = null;
@@ -75,6 +55,10 @@ export default class FilterStore {
         return this.reportType === TVA;
     }
     
+    /* returns a function which will check program IDs for validity given the report type:
+     * - for timeperiods: does the program exist and have indicators
+     * - for tva: does the program exist and have indicators in TVA frequencies
+     */
     @computed get _validProgramId() {
         return this.programStore.validProgramId(this._reportType);
     }
@@ -97,19 +81,15 @@ export default class FilterStore {
         return null;
     }
     
-    
-    getLoadedProgram() {
-        if (this.reportType && this.program && this.frequencyId) {
-            return this.programStore.getLoadedProgram(this.reportType, this.programId, this.frequencyId);
-        } else {
-            return Promise.reject(false);
-        }
-    }
-    
+    /* Whether the frequency selector is disabled */
     @computed get frequencyDisabled() {
         return !(this.program !== null);
     }
-    
+
+    /* Internally checks if frequency is valid selection before saving
+     *  - must be time-aware for Timeperiods report
+     *  - must be a valid frequency for the program for TVA report
+     */
     _validFrequency = (frequencyId) => {
         if (frequencyId && this.program) {
             if (this.isTVA) {
@@ -117,13 +97,6 @@ export default class FilterStore {
             } else {
                 return TIME_AWARE_FREQUENCIES.includes(frequencyId);
             }
-        }
-        return false;
-    }
-    
-    @computed get programIsLoaded() {
-        if (this.frequencyId) {
-            return this.program.isLoaded(this.reportType, this.frequencyId);
         }
         return false;
     }
@@ -141,13 +114,43 @@ export default class FilterStore {
         }
         return null;
     }
-
+    
+    /* Returns a promise to be completed after programStore loads the program from the API call
+     * promise will immediately complete if the program is already loaded
+     */
+    getLoadedProgram() {
+        if (this.reportType && this.program && this.frequencyId) {
+            return this.programStore.getLoadedProgram(
+                this.reportType, this.programId, this.frequencyId
+            );
+        } else {
+            return Promise.reject(false);
+        }
+    }
+    
+    @computed get programIsLoaded() {
+        if (this.frequencyId) {
+            return this.program.isLoaded(this.reportType, this.frequencyId);
+        }
+        return false;
+    }
+    
+    
+    /* Action to take (as a reaction) when report type, program id, or frequencyid change
+     * contains logic for:
+     *  - updating the program in the programstore (including api call if necessary)
+     *  - making sure the new frequency is valid (and if not replacing with one that is)
+     *  - updating start and end periods to make sense in the new frequency
+     *  - clearing indicator filters
+     */
     @action _reportParamsUpdated([reportType, programId, frequencyId]) {
         this.programStore.loadProgram(reportType, programId, frequencyId)
             .then(() => {
                 this.frequencyId = this.frequencyId || null;
                 if (!this._validFrequency(frequencyId)) {
-                    this.frequencyId = this.program.frequencies[0];
+                    this.frequencyId = this.isTVA ?
+                        this.program.frequencies[0] :
+                        TIME_AWARE_FREQUENCIES[0];
                 }
                 this.startPeriod = this.startPeriod || 0;
                 this.endPeriod = this.endPeriod || this.lastPeriod.index;
@@ -156,30 +159,37 @@ export default class FilterStore {
                 }
             });
     }
-    
+
+    /* Whether the start and end period selectors are enabled */    
     @computed get periodsDisabled() {
         let ret = !(TIME_AWARE_FREQUENCIES.includes(this.frequencyId));
         return ret;
     }
     
+    /* Returns all periods for the given program and frequency
+     *   Note this returns a PeriodRange (see ./programStore.js for details)
+     */
     @computed get periods() {
         if (this.frequencyId && this.frequencyId !== 1) {
             return this.program.periodsFor(this.frequencyId);
         }
         return null;
     }
-    
+
+    /* Returns the last period for the current program/frequency (for setting end) */
     @computed get lastPeriod() {
         if (this.frequencyId) {
             return this.program.lastPeriod(this.frequencyId);
         }
         return null;
     }
-    
+
+    /* "Current" here means most recently completed (for calculating most recent x periods) */
     @computed get currentPeriod() {
         if (this.frequencyId) {
             return this.program.currentPeriod(this.frequencyId);
         }
+        return null;
     }
     
     set startPeriod(startPeriod) {
@@ -219,7 +229,9 @@ export default class FilterStore {
     }
     
     @computed get showAll() {
-        return this.startPeriod === 0 && this.lastPeriod && this.endPeriod === this.lastPeriod.index;
+        return (
+            this.startPeriod === 0 && this.lastPeriod && this.endPeriod === this.lastPeriod.index
+            );
     }
     
     set mostRecent(count) {
@@ -231,6 +243,14 @@ export default class FilterStore {
     
     @computed get mostRecent() {
         if (!this.showAll && this.currentPeriod && this.endPeriod === this.currentPeriod.index) {
+            return this.currentPeriod.index - this.startPeriod + 1;
+        }
+        return false;
+    }
+
+    /* Added so that the most recent display can bypass show-all logic and display a value */
+    @computed get _mostRecentValue() {
+        if (this.currentPeriod && this.endPeriod === this.currentPeriod.index) {
             return this.currentPeriod.index - this.startPeriod + 1;
         }
         return false;
@@ -250,6 +270,7 @@ export default class FilterStore {
         return null;
     }
     
+    /* whether the program is using old-style (non-satsuma) levels */
     @computed get oldLevels() {
         if (this.program !== null) {
             return this.program.oldLevels;
@@ -278,96 +299,113 @@ export default class FilterStore {
         return this.program.resultChainFilterLabel;
     }
     
-    @computed get reportLoaded() {
-        if (this.frequencyId) {
-            return this.program.isLoaded(this.reportType, this.frequencyId);
-        }
-        return null;
-    }
-    
+    /* whether the lower-half filters (which filter visible indicators) are enabled
+     * Logic: they are enabled when the program is fully loaded for this frequency
+     */
     @computed get filtersDisabled() {
-        return !(this.reportLoaded);
+        return !(this.programIsLoaded);
     }
     
+    /* Levels = old-style levels (assigned pk manually in views_reports.py)
+     * or new style levels (specific rf level items, i.e. Output 1.1) by pk
+     */
     set levels(levels) {
-        if (!this.filtersDisabled) {
-            this._levels = levels;
-            this._tiers = null;
+        if (!this.filtersDisabled && ensureNumericArray(levels)) {
+            this._levels = ensureNumericArray(levels);
+            this._tiers = [];
+        } else {
+            this._levels = [];
         }
     }
     
     @computed get levels() {
-        if (this._levels && this._levels.length > 0 && !this.filtersDisabled) {
+        if (!this.filtersDisabled && this._levels && this._levels.length > 0) {
             return this._levels.filter(this.program.validLevel);
         }
         return [];
     }
     
+    /* Tiers: only for new style levels, the leveltier (i.e. Outcome) */
     set tiers(tiers) {
-        if (!this.filtersDisabled && !this.groupByDisabled) {
-            this._tiers = tiers;
-            this._levels = null;
+        if (!this.filtersDisabled && !this.groupByDisabled && ensureNumericArray(tiers)) {
+            this._tiers = ensureNumericArray(tiers);
+            this._levels = [];
+        } else {
+            this._tiers = [];
         }
     }
     
     @computed get tiers() {
-        if (this._tiers && this._tiers.length > 0 && !this.groupByDisabled) {
+        if (!this.filtersDisabled && this._tiers &&
+            this._tiers.length > 0 && !this.groupByDisabled) {
             return this._tiers.filter(this.program.validTier);
         }
         return [];
     }
     
     set sites(sites) {
-        if (!this.filtersDisabled) {
-            this._sites = sites;
+        if (!this.filtersDisabled && ensureNumericArray(sites)) {
+            this._sites = ensureNumericArray(sites);
+        } else {
+            this._sites = [];
         }
     }
     
     @computed get sites() {
-        if (this._sites && this._sites.length > 0 && !this.filtersDisabled) {
+        if (!this.filtersDisabled && this._sites && this._sites.length > 0) {
             return this._sites.filter(this.program.validSite);
         }
         return [];
     }
     
+    /* "Types" as in Indicator Types (i.e. Custom/donor) */
     set types(types) {
-        if (!this.filtersDisabled) {
-            this._types = types;
+        if (!this.filtersDisabled && ensureNumericArray(types)) {
+            this._types = ensureNumericArray(types);
+        } else {
+            this._types = [];
         }
     }
     
     @computed get types() {
-        if (this._types && this._types.length > 0 && !this.filtersDisabled) {
+        if (!this.filtersDisabled && this._types && this._types.length > 0) {
             return this._types.filter(this.program.validType);
         }
         return [];
     }
     
     set sectors(sectors) {
-        if (!this.filtersDisabled) {
-            this._sectors = sectors;
+        if (!this.filtersDisabled && ensureNumericArray(sectors)) {
+            this._sectors = ensureNumericArray(sectors);
+        } else {
+            this._sectors = [];
         }
     }
     
     @computed get sectors() {
-        if (this._sectors && this._sectors.length > 0 && !this.filtersDisabled) {
+        if (!this.filtersDisabled && this._sectors && this._sectors.length > 0) {
             return this._sectors.filter(this.program.validSector);
         }
         return [];
     }
     
+    /* setting indicator PKs for filtering ( show only those indicators) */
     set indicators(indicators) {
-        if (!this.filtersDisabled) {
-            this._indicators = indicators;
+        if (!this.filtersDisabled && ensureNumericArray(indicators)) {
+            this._indicators = ensureNumericArray(indicators);
+        } else {
+            this._indicators = [];
         }
     }
     
     @computed get indicators() {
-        if (this._indicators && this._indicators.length > 0 && !this.filtersDisabled) {
+        if (!this.filtersDisabled && this._indicators && this._indicators.length > 0) {
             return this._indicators.filter(this.program.validIndicator);
         }
         return [];
     }
+    
+    /** OPTION providers for select widgets: ******/
     
     
     @computed get programOptions() {
@@ -391,7 +429,8 @@ export default class FilterStore {
         if (this.program && this.reportType === TIMEPERIODS) {
             return TIME_AWARE_FREQUENCIES.map(pk => ({value: pk, label: timeperiodLabels[pk]}));
         } else if (this.program && this.reportType === TVA) {
-            return this.program.frequencies.filter(pk => pk !== 8).map(pk => ({value: pk, label: targetperiodLabels[pk]}));
+            return this.program.frequencies.filter(pk => pk !== 8)
+                .map(pk => ({value: pk, label: targetperiodLabels[pk]}));
         } else {
             return [BLANK_OPTION];
         }
@@ -413,19 +452,24 @@ export default class FilterStore {
         if (!this.frequencyId || !TIME_AWARE_FREQUENCIES.includes(this.frequencyId)) {
             return [BLANK_OPTION];
         } else if (this.frequencyId == 3) {
+            // years don't have year-based opt-groups:
             return this.periods.filter(periodFilter).map(
                 period => ({label:period.display, value: period.index})
             );
         } else {
+            let periods = this.periods.filter(periodFilter);
+            // all non-annual time-aware frequencies are opt-grouped by year:
             let years = Array.from(new Set(this.periods.filter(periodFilter)
                                             .map(period => period.year))).sort();
             return years.map(
-                year => ({
-                    label: year,
-                    options: this.periods.filter(periodFilter).filter(period => period.year === year)
-                                .map(period => ({label: period.display, value: period.index}))
-                })
-            );
+                year => {
+                    let options = periods.filter(period => period.year === year)
+                                    .map(period => ({label: period.display, value: period.index}));
+                    return {
+                        label: year,
+                        options: options
+                    };
+                });
         }
     }
     
@@ -433,11 +477,12 @@ export default class FilterStore {
         return this._getPeriodOptions(() => true);
     }
     
+    /* Label for the date section under the title of the report */
     @computed get startPeriodLabel() {
         if (this.startPeriod !== null) {
             return this.periods.getPeriod({index: this.startPeriod}).startDisplay;
         }
-        if (this.frequencyId === 1) {
+        if (this.frequencyId === 1 || this.frequencyId === 2) {
             return this.program.reportingStart;
         }
         return null;
@@ -448,18 +493,21 @@ export default class FilterStore {
         return this._getPeriodOptions(periodFilter);
     }
     
+    /* Label for the date section under the title of the report */
     @computed get endPeriodLabel() {
         if (this.endPeriod !== null) {
             return this.periods.getPeriod({index: this.endPeriod}).endDisplay;
         }
-        if (this.frequencyId === 1) {
+        if (this.frequencyId === 1 || this.frequencyId === 2) {
             return this.program.reportingEnd;
         }
         return null;
     }
     
+    
     @computed get levelOptions() {
         if (!this.filtersDisabled && this.groupByDisabled) {
+            // old-style (non-RF) levels:
             let availableLevels = this.levels.concat(
                 this.filterIndicators(this.program.indicators, 'levels').map(
                     indicator => indicator.level ? indicator.level.pk : null
@@ -469,6 +517,7 @@ export default class FilterStore {
                 ).sort((x, y) => x.pk - y.pk)
                 .map(level => ({value: level.pk, label: level.name, filterType: 'level'}));
         } else if (!this.filtersDisabled) {
+            // new style levels and leveltiers:
             let availableTiers = this.tiers.concat(
                 this.filterIndicators(this.program.indicators, 'levels').map(
                     indicator => indicator.level ? indicator.level.tierPk : null
@@ -594,12 +643,16 @@ export default class FilterStore {
                     level => ({
                         label: `${level.tier.name} ${level.sort}`,
                         options: this.filterIndicators(level.indicators, 'indicators').map(
-                            indicator => ({value: indicator.pk, label: `${indicator.number} ${indicator.name}`})
+                            indicator => ({
+                                    value: indicator.pk,
+                                    label: `${indicator.number} ${indicator.name}`
+                                })
                         )
                     })
-                ).concat([
-                    {label: gettext('Indicators unassigned to a results framework level'),
-                    options: this.filterIndicators(this.program.unassignedIndicators, 'indicators').map(
+                ).concat([{
+                    label: gettext('Indicators unassigned to a results framework level'),
+                    options: this.filterIndicators(
+                        this.program.unassignedIndicators, 'indicators').map(
                             indicator => ({value: indicator.pk, label: indicator.name}))
                     }]).filter(({label, options}) => options && options.length > 0);
             }
@@ -625,6 +678,7 @@ export default class FilterStore {
         this.tiers = [];
     }
     
+    /* whether this is in an unfiltered state */
     @computed get noFilters() {
         return (
             (!this.indicators || this.indicators.length == 0) &&
@@ -634,13 +688,6 @@ export default class FilterStore {
             (!this.sectors || this.sectors.length == 0) &&
             (!this.sites || this.sites.length == 0)
             );
-    }
-    
-    @computed get pinData() {
-        if (this.frequencyId) {
-            return this.router.pinData;
-        }
-        return false;
     }
     
     @computed get programPageUrl() {

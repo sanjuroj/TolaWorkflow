@@ -504,13 +504,13 @@ describe('dataStore with program selected', () => {
     });
     it('reports initialized', () => {
         instanceTVA.frequencyId = 4;
-        expect(instanceTVA.reportLoaded).toBeTruthy();
+        expect(instanceTVA.programIsLoaded).toBeTruthy();
         instanceTVA.frequencyId = 7;
-        expect(instanceTVA.reportLoaded).toBeFalsy();
+        expect(instanceTVA.programIsLoaded).toBeFalsy();
         instanceTIMEPERIODS.frequencyId = 5;
-        expect(instanceTIMEPERIODS.reportLoaded).toBeTruthy();
+        expect(instanceTIMEPERIODS.programIsLoaded).toBeTruthy();
         instanceTIMEPERIODS.frequencyId = 4;
-        expect(instanceTIMEPERIODS.reportLoaded).toBeFalsy();
+        expect(instanceTIMEPERIODS.programIsLoaded).toBeFalsy();
     });
     it('shows start options', () => {
         instanceTVA.frequencyId = 4;

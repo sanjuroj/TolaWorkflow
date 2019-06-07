@@ -1,5 +1,5 @@
 import { observable, computed } from 'mobx';
-import { TVA, TIMEPERIODS, GROUP_BY_CHAIN, GROUP_BY_LEVEL, TIME_AWARE_FREQUENCIES } from '../../../constants';
+import { TVA, TIMEPERIODS, TIME_AWARE_FREQUENCIES } from '../../../constants';
 
 const _gettext = (typeof gettext !== 'undefined') ?  gettext : (s) => s;
 
