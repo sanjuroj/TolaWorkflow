@@ -96,6 +96,13 @@
         return $('#initialLopTarget').text() ? parseFloat($('#initialLopTarget').text()) : undefined;
     }
 
+    function saveEventParams() {
+        return {
+            programId: programId(),
+            indicatorId: indicatorId()
+        };
+    }
+
     // differentiate between create and update form
     function isCreateForm() {
         return !indicatorId();
@@ -125,54 +132,39 @@
     $('#indicator_modal_content').on("click", "#id_delete_indicator_btn", function(e) {
         e.preventDefault();
         var url = $(this).attr('href');
-        var delete_indicator;
-        if ($('#indicator_modal_content').attr('iptt-modal') === 'true') {
-            delete_indicator = (rationale) => {
-                $.post(url, {rationale: rationale, redirect: true})
-                .done(function(data, textStatus, jqXHR){
+        var delete_indicator = (rationale) => {
+            $.post(url, {rationale: rationale})
+             .done(function(data, textStatus, jqXHR){
                  if (data.status == "success") {
-                    window.location.reload();
+                    var success = PNotify.success({
+                        title: "{% trans 'Success' %}",
+                        text: data.msg,
+                        type: 'success',
+                        width: '350px',
+                        minHeight: '150px',
+                        stack: {
+                            'dir1': 'right',
+                            'dir2': 'up',
+                            'firstpos1': 0,
+                            'firstpos2': 0
+                            },
+                        modules: {
+                            Buttons: {
+                                closer: true,
+                                closerHover: false,
+                                sticker: false
+                            }
+                        }
+                        });
+                    $('#indicator_modal_div').trigger('deleted.tola.save', saveEventParams())
+                        .find('form').attr('deleted', true);
+                    closeIndicatorFormModal();
                  } else {
                      createAlert("danger", data.msg, true, "#modalmessages");
                      $('#indicator_modal_div').animate({ scrollTop: 0 }, 'slow');
                  }
              });
-            }
-        } else {
-            delete_indicator = (rationale) => {
-                var url = $(this).attr('href');
-                $.post(url, {rationale: rationale})
-                 .done(function(data, textStatus, jqXHR){
-                     if (data.status == "success") {
-                        var success = PNotify.success({
-                            title: "{% trans 'Success' %}",
-                            text: data.msg,
-                            type: 'success',
-                            width: '350px',
-                            minHeight: '150px',
-                            stack: {
-                                'dir1': 'right',
-                                'dir2': 'up',
-                                'firstpos1': 0,
-                                'firstpos2': 0
-                                },
-                            modules: {
-                                Buttons: {
-                                    closer: true,
-                                    closerHover: false,
-                                    sticker: false
-                                }
-                            }
-                            });
-                        $('#indicator_modal_div').find('form').attr('deleted', true);
-                        closeIndicatorFormModal();
-                     } else {
-                         createAlert("danger", data.msg, true, "#modalmessages");
-                         $('#indicator_modal_div').animate({ scrollTop: 0 }, 'slow');
-                     }
-                 });
-            }
-        }
+        };
         confirmAndRedirect(delete_indicator);
     });
 
@@ -208,6 +200,7 @@
                 $.post(url, {rationale: rationale})
                     .done((data) => {
                         if (data.status === "success") {
+                            $('#indicator_modal_div').trigger('success.tola.save', saveEventParams());
                             row.remove();
                             if (updateSnapshot) updateTargetSnapshot();
                             updateIfLastEvent();
@@ -249,7 +242,14 @@
 
         const actionCb = isCreateForm() ? clearPeriodicTargetsForm :
             (rationale) => {
-                $.post('/indicators/periodic_target_deleteall/' + indicatorId() + '/', {rationale}, clearPeriodicTargetsForm);
+                $.post('/indicators/periodic_target_deleteall/' + indicatorId() + '/',
+                       {rationale},
+                       clearPeriodicTargetsForm).done(
+                            (data) => {
+                            if (data.status === "success") {
+                                $('#indicator_modal_div').trigger('success.tola.save', saveEventParams());
+                            }
+                        });
             };
 
 
@@ -449,6 +449,7 @@
             url: form_url,
             data: formArr,
         }).done(function(data, textStatus, jqXHR) {
+            $('#indicator_modal_div').trigger('success.tola.save', saveEventParams());
             insertPeriodicTargetForm(data["content"]);
         });
     }

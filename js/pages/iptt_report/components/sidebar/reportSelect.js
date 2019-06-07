@@ -70,7 +70,11 @@ class TimeframeRadio extends React.Component {
     }
 
     setShowAll = () => {
-        this.setState({latch: false});
+        this.setState({
+            latch: false,
+            focus: false,
+            revert: false,
+            });
         this.props.filterStore.showAll = true;
     }
 
@@ -94,7 +98,7 @@ class TimeframeRadio extends React.Component {
             () => {
                 if (this.state.latch) {
                     when(
-                        () => !this.props.filterStore.showAll || this.props.filterStore.mostRecent,
+                        () => !this.props.filterStore.showAll || !this.props.filterStore.mostRecent,
                         () => {this.setState({latch: false});}
                     );
                 }
@@ -112,14 +116,21 @@ class TimeframeRadio extends React.Component {
     }
 
     handleFocus = (e) => {
-        this.setState({focus: true, mostRecentValue: (this.props.filterStore._mostRecentValue || '')});
+        let newState = {
+            focus: true,
+            mostRecentValue: (this.props.filterStore._mostRecentValue || '')
+            };;
+        if (!this.mostRecentValue) {
+            newState.mostRecentValue = '';
+        }
+        this.setState(newState);
     }
 
     get mostRecentValue() {
         if (this.state.focus || this.state.latch) {
             return this.state.mostRecentValue;
         } else {
-            return this.props.filterStore.mostRecent;
+            return this.props.filterStore.mostRecent || '';
         }
     }
 
@@ -134,7 +145,7 @@ class TimeframeRadio extends React.Component {
                                        onChange={ this.setShowAll }
                                        />
                             </span>
-                            <label onClick={ () => {this.props.filterStore.showAll = true;} }
+                            <label onClick={ this.setShowAll } 
                                    className="form-check-label">
                                 {
                                     /* # Translators: option to show all periods for the report */
