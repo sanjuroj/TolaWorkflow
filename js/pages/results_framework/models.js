@@ -185,8 +185,7 @@ export class LevelStore {
                 if (this.levels.length == 0){
                     this.createFirstLevel()
                 }
-                const context = document.getElementById('alerts2')
-                console.log('contextis', context);
+
                 // Translators: Notification to user that the deletion command that they issued was successful
                 success_notice({
                     message_text: gettext(`${level_label} was successfully deleted.`),
@@ -256,7 +255,6 @@ export class LevelStore {
     };
 
     saveReorderedIndicatorsToDB = (indicators) =>{
-        console.log('ind in reorder', indicators)
         api.post("/reorder_indicators/", indicators)
                 .then(response => {
                 })
@@ -306,16 +304,13 @@ export class LevelStore {
     getLevelIndicators = levelId => this.indicators.filter( i => i.level == levelId)
 
     getDescendantIndicatorIds = (childLevelIds) => {
-        // console.log('childidsss', childIds)
         const childLevels = this.levels.filter( l => childLevelIds.includes(l.id));
-        // console.log('before loop', toJS(childLevels))
         let newIndicatorIds = []
         childLevels.forEach( childLevel => {
             newIndicatorIds = newIndicatorIds.concat(this.indicators.filter( i => i.level == childLevel.id).map( i => i.id))
             let grandChildIds = this.levels.filter( l => l.parent == childLevel.id).map( l => l.id);
             newIndicatorIds = newIndicatorIds.concat(this.getDescendantIndicatorIds(grandChildIds, newIndicatorIds));
         });
-        // console.log('after loop', priorIds)
         return newIndicatorIds
     }
 
