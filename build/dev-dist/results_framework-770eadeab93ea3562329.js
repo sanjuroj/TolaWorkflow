@@ -1226,8 +1226,8 @@ function () {
           stack: {
             dir1: 'up',
             dir2: 'right',
-            firstpos1: 0,
-            firstpas2: 0
+            firstpos1: 20,
+            firstpos2: 20
           }
         });
       }).catch(function (error) {
@@ -2021,4 +2021,4 @@ function (_React$Component2) {
 /***/ })
 
 },[["QTZG","runtime","vendors"]]]);
-//# sourceMappingURL=results_framework-bbede200a8f1f5778946.js.map
+//# sourceMappingURL=results_framework-770eadeab93ea3562329.js.map
