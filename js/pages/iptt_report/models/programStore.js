@@ -1,5 +1,5 @@
 import { observable, computed, action } from 'mobx';
-import { TVA, TIMEPERIODS, TIME_AWARE_FREQUENCIES } from '../../../constants';
+import { TVA, TIMEPERIODS, TIME_AWARE_FREQUENCIES, STATUS_CODES } from '../../../constants';
 
 const _gettext = (typeof gettext !== 'undefined') ?  gettext : (s) => s;
 
@@ -11,7 +11,7 @@ class Indicator {
     name = null;
     unitOfMeasure = null;
     directionOfChange = null;
-    cumulative = null;
+    is_cumulative = null;
     unitType = null;
     baseline = null;
     baseline_na = null;
@@ -34,10 +34,10 @@ class Indicator {
         this.name = indicatorJSON.name;
         this.unitOfMeasure = indicatorJSON.unitOfMeasure;
         this.directionOfChange = indicatorJSON.directionOfChange;
-        this.cumulative = indicatorJSON.cumulative;
+        this.is_cumulative = indicatorJSON.is_cumulative;
         this.unitType = indicatorJSON.unitType;
         this.baseline = indicatorJSON.baseline;
-        this.baseline_na = indicatorJSON.baseline_na;
+        this.baseline_na = this.baseline === null ? true : indicatorJSON.baseline_na;
         this.typePks = indicatorJSON.indicatorTypes.map(indicatorType => parseInt(indicatorType.pk));
         this.sitePks = indicatorJSON.sites.map(site => parseInt(site.pk));
         this.sectorPk = (indicatorJSON.sector && indicatorJSON.sector.pk && parseInt(indicatorJSON.sector.pk));
@@ -85,6 +85,10 @@ class Indicator {
     
     get levelName() {
         return this.level ? this.level.name : null;
+    }
+    
+    get cumulative() {
+        return this.is_cumulative;
     }
 
 }
@@ -414,6 +418,9 @@ class Program {
                 delete this._indicators[indicatorPk];
             }
             this._indicators[indicatorPk] = new Indicator(reportJSON.indicator, this);
+            return Promise.resolve(indicatorPk);
+        } else {
+            return Promise.reject(STATUS_CODES.NO_INDICATOR_IN_UPDATE)
         }
     }
     
@@ -617,7 +624,14 @@ export default class ProgramStore {
         let program = this.getProgram(programId) || null;
         if (program) {
             let call = this.api.callForIndicatorData( reportType, programId, frequencyId, indicatorId )
-                        .then(program.loadIndicatorData);
+                        .then(program.loadIndicatorData).then(
+                            (pk) => {
+                                //do something with the pk here?  It updated!
+                                },
+                            (code) => {
+                                //do something with the failure here?
+                                }
+                        );
             return call;
         }
     }

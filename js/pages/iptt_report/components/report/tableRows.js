@@ -116,6 +116,9 @@ const IndicatorRow = inject('reportStore')(
             ValueCell = NumberCell;
             PeriodCell = reportStore.isTVA ? TVAResultsGroup : NumberCell;
         }
+        let cumulative = indicator.cumulative === null ? null
+                : indicator.cumulative ? gettext('Cumulative')
+                            : gettext('Non-cumulative');
         return (
             <tr>
                 <IndicatorCell value={ indicator.number } align="center" />
@@ -124,7 +127,7 @@ const IndicatorRow = inject('reportStore')(
                 { levelCol && <IndicatorCell value={ indicator.levelName } /> }
                 <IndicatorCell value={ indicator.unitOfMeasure } />
                 <IndicatorCell value={ indicator.directionOfChange || gettext('N/A') } align="center" />
-                <IndicatorCell value={ indicator.cumulative || gettext('N/A') } />
+                <IndicatorCell value={ cumulative || gettext('N/A') } />
                 <IndicatorCell value={ indicator.unitType } align="center" />
                 { indicator.baseline_na ? <IndicatorCell value={ gettext('N/A') } align="right"/> : <ValueCell value={ indicator.baseline } /> }
                 <ValueCell value={ indicator.lopTarget } />

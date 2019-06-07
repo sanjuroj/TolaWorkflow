@@ -46,3 +46,7 @@ function getPeriodLabels() {
 }
 
 export {getPeriodLabels};
+
+export const STATUS_CODES = {
+    NO_INDICATOR_IN_UPDATE: 1
+};
