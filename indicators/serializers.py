@@ -70,6 +70,7 @@ class IndicatorSerializer(serializers.ModelSerializer):
     over_under = serializers.IntegerField()
     target_period_last_end_date = serializers.DateField()
     level = LevelSerializer(read_only=True)
+    lop_target_active = serializers.FloatField()
 
     class Meta:
         model = Indicator
@@ -83,7 +84,7 @@ class IndicatorSerializer(serializers.ModelSerializer):
             'level_order',
             'unit_of_measure',
             'baseline_display',
-            'lop_target_display',
+            'lop_target_active',
             'key_performance_indicator',
             'just_created',
 
@@ -423,7 +424,7 @@ class FullReportExcelRenderer(ExcelRendererBase):
                 self.add_headers(sheet)
                 self.add_data(sheet)
                 self.set_column_widths(sheet)
-        sheet = self.add_sheet('Change Log')
+        sheet = self.add_sheet('Change log')
         program = Program.objects.get(pk=self.serializer.program_data['pk'])
         get_audit_log_workbook(sheet, program)
 

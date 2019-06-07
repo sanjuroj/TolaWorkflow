@@ -310,7 +310,7 @@ def indicator_lop_target_calculated_annotation():
                 PeriodicTarget.objects.filter(
                     indicator=models.OuterRef('pk')
                 ).order_by('-customsort').values('target')[:1],
-                output_field=models.IntegerField()
+                output_field=models.FloatField()
                 )
             ),
         models.When(
@@ -322,7 +322,7 @@ def indicator_lop_target_calculated_annotation():
                 PeriodicTarget.objects.filter(
                     indicator=models.OuterRef('pk')
                 ).order_by('-end_date').values('target')[:1],
-                output_field=models.IntegerField()
+                output_field=models.FloatField()
                 )
             ),
         default=models.Subquery(
@@ -331,7 +331,7 @@ def indicator_lop_target_calculated_annotation():
             ).order_by().values('indicator').annotate(
                 target_sum=models.Sum('target')
             ).values('target_sum')[:1],
-            output_field=models.IntegerField()
+            output_field=models.FloatField()
         )
     )
 

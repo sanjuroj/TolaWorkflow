@@ -616,7 +616,8 @@
         let sum = validValues.reduce((total, n) => total + n)
 
         // the last value is the target when cumulative
-        return getIsCumulative() ? validValues[validValues.length - 1] : sum;
+        let value = getIsCumulative() ? validValues[validValues.length - 1] : sum;
+        return isNaN(parseFloat(value)) ? value : parseFloat(value).toFixed(2);
     }
 
     /*
