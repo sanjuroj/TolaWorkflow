@@ -2388,6 +2388,9 @@ function () {
 
     _initializerDefineProperty(this, "_indicators", _descriptor12, this);
 
+    this._oldShowAll = null;
+    this._oldMostRecent = null;
+
     this._validFrequency = function (frequencyId) {
       if (frequencyId && _this.program) {
         if (_this.isTVA) {
@@ -2428,6 +2431,18 @@ function () {
       }
     }
   }, {
+    key: "updateTransitionParams",
+    value: function updateTransitionParams() {
+      this._oldShowAll = this.showAll;
+      this._oldMostRecent = this.mostRecent;
+    }
+  }, {
+    key: "clearTransitionParams",
+    value: function clearTransitionParams() {
+      this._oldShowAll = null;
+      this._oldMostRecent = null;
+    }
+  }, {
     key: "_reportParamsUpdated",
 
     /* Action to take (as a reaction) when report type, program id, or frequencyid change
@@ -2445,15 +2460,25 @@ function () {
           programId = _ref2[1],
           frequencyId = _ref2[2];
 
+      var showAll = this.oldShowAll;
+      var mostRecent = this.oldMostRecent;
       this.programStore.loadProgram(reportType, programId, frequencyId).then(function () {
+        _this2.clearTransitionParams();
+
         _this2.frequencyId = _this2.frequencyId || null;
 
         if (!_this2._validFrequency(frequencyId)) {
           _this2.frequencyId = _this2.isTVA ? _this2.program.frequencies[0] : _constants__WEBPACK_IMPORTED_MODULE_1__["TIME_AWARE_FREQUENCIES"][0];
         }
 
-        _this2.startPeriod = _this2.startPeriod || 0;
-        _this2.endPeriod = _this2.endPeriod || _this2.lastPeriod.index;
+        if (showAll) {
+          _this2.showAll = true;
+        } else if (mostRecent) {
+          _this2.mostRecent = mostRecent;
+        } else {
+          _this2.startPeriod = _this2.startPeriod || 0;
+          _this2.endPeriod = _this2.endPeriod || _this2.lastPeriod.index;
+        }
 
         if (_this2.reportType === _constants__WEBPACK_IMPORTED_MODULE_1__["TVA"] && _this2.indicators && _this2.indicators.length > 0) {
           _this2.indicators = [];
@@ -2676,6 +2701,7 @@ function () {
       programId = parseInt(programId);
 
       if (this._validProgramId(programId)) {
+        this.updateTransitionParams();
         this._programId = programId;
       }
     },
@@ -2709,6 +2735,7 @@ function () {
       frequencyId = parseInt(frequencyId);
 
       if (this._validFrequency(frequencyId)) {
+        this.updateTransitionParams();
         this._frequencyId = frequencyId;
       }
     },
@@ -2727,6 +2754,16 @@ function () {
       }
 
       return false;
+    }
+  }, {
+    key: "oldShowAll",
+    get: function get() {
+      return this._oldShowAll;
+    }
+  }, {
+    key: "oldMostRecent",
+    get: function get() {
+      return this._oldMostRecent;
     }
   }, {
     key: "periodsDisabled",
@@ -4649,7 +4686,9 @@ function (_React$Component) {
 
     _this.setShowAll = function () {
       _this.setState({
-        latch: false
+        latch: false,
+        focus: false,
+        revert: false
       });
 
       _this.props.filterStore.showAll = true;
@@ -4677,7 +4716,7 @@ function (_React$Component) {
         }, function () {
           if (_this.state.latch) {
             Object(mobx__WEBPACK_IMPORTED_MODULE_2__["when"])(function () {
-              return !_this.props.filterStore.showAll || _this.props.filterStore.mostRecent;
+              return !_this.props.filterStore.showAll || !_this.props.filterStore.mostRecent;
             }, function () {
               _this.setState({
                 latch: false
@@ -4701,10 +4740,17 @@ function (_React$Component) {
     };
 
     _this.handleFocus = function (e) {
-      _this.setState({
+      var newState = {
         focus: true,
         mostRecentValue: _this.props.filterStore._mostRecentValue || ''
-      });
+      };
+      ;
+
+      if (!_this.mostRecentValue) {
+        newState.mostRecentValue = '';
+      }
+
+      _this.setState(newState);
     };
 
     _this.mostRecentInputRef = react__WEBPACK_IMPORTED_MODULE_0___default.a.createRef();
@@ -4720,8 +4766,6 @@ function (_React$Component) {
   _createClass(TimeframeRadio, [{
     key: "render",
     value: function render() {
-      var _this2 = this;
-
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-row mb-3"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -4736,9 +4780,7 @@ function (_React$Component) {
         disabled: this.props.filterStore.periodsDisabled,
         onChange: this.setShowAll
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
-        onClick: function onClick() {
-          _this2.props.filterStore.showAll = true;
-        },
+        onClick: this.setShowAll,
         className: "form-check-label"
       },
       /* # Translators: option to show all periods for the report */
@@ -4778,7 +4820,7 @@ function (_React$Component) {
       if (this.state.focus || this.state.latch) {
         return this.state.mostRecentValue;
       } else {
-        return this.props.filterStore.mostRecent;
+        return this.props.filterStore.mostRecent || '';
       }
     }
   }]);
@@ -4916,4 +4958,4 @@ function () {
 /***/ })
 
 },[["mYfJ","runtime","vendors"]]]);
-//# sourceMappingURL=iptt_report-9950e9e21145ef9bfcc1.js.map
+//# sourceMappingURL=iptt_report-a4388c248081d26e4566.js.map
