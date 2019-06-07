@@ -100,7 +100,7 @@ class IndicatorFilter extends React.Component{
             eventBus.emit('nav-select-indicator-to-filter', selectedIndicatorId);
         }
     };
-    
+
     onGroupingSelection = (selected) => {
         this.props.uiStore.setGroupBy(selected.value);
     }
@@ -120,7 +120,7 @@ class IndicatorFilter extends React.Component{
         if (selectedIndicatorId) {
             selectedValue = indicatorSelectOptions.find(i => i.value === selectedIndicatorId);
         }
-        
+
         const indicatorGroupingOptions = this.props.uiStore.groupByOptions;
         const groupingValue = this.props.uiStore.selectedGroupByOption;
         return <nav className="list__filters list__filters--inline-label" id="id_div_indicators">
@@ -228,7 +228,7 @@ class IndicatorListTable extends React.Component {
                     })}>
                         <td>
                             <a href="#"
-                               className="indicator_results_toggle"
+                               className="indicator_results_toggle btn btn-link text-left"
                                onClick={(e) => this.onIndicatorResultsToggleClick(e, indicator.id)}
                             >
                                 <FontAwesomeIcon icon={resultsExist ? 'caret-down' : 'caret-right'} />
@@ -291,7 +291,7 @@ export const IndicatorList = observer(function (props) {
 
     // apply gas gauge filter
     let filteredIndicators = indicatorStore.filterIndicators(currentIndicatorFilter);
-    
+
     filteredIndicators = indicatorStore.sortIndicators(
         props.rootStore.oldStyleLevels, sortByChain, filteredIndicators);
 
