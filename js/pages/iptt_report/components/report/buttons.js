@@ -71,7 +71,7 @@ class PinPopover extends React.Component {
                     return (
                         <React.Fragment>
                             <div className="form-group">
-                                <label className="text-uppercase">
+                                <label className="">
                                     {
                                         /* # Translators: a field where users can name their newly created report */
                                         gettext('Report name')
@@ -85,7 +85,7 @@ class PinPopover extends React.Component {
                             <button type="button"
                                       onClick={ this.handleClick }
                                       disabled={ this.isDisabled() }
-                                      className="btn btn-primary">
+                                      className="btn btn-primary btn-block">
                                         {
                                             gettext('Pin to program page')
                                         }
@@ -94,7 +94,7 @@ class PinPopover extends React.Component {
                     );
                 case this.SENDING:
                     return (
-                        <div className="btn btn-outline-primary" disabled>
+                        <div className="btn btn-primary" disabled>
                             <img src='/static/img/ajax-loader.gif' />&nbsp;
                                 { gettext('Sending') }
                         </div>
@@ -177,7 +177,7 @@ class ExcelPopover extends React.Component {
 @observer
 export class ExcelPopoverButton extends BootstrapPopoverButton {
     popoverName = 'excel';
-    
+
     getPopoverContent = () => {
         return (
             <ExcelPopover
