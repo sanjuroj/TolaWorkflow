@@ -44,7 +44,7 @@ from workflow.models import (
 from ..forms import IndicatorForm, ResultForm, PTFormInputsForm
 from ..models import (
     Indicator, PeriodicTarget, DisaggregationLabel, DisaggregationValue,
-    Result, IndicatorType, Level, ExternalServiceRecord,
+    Result, IndicatorType, Level, LevelTier, ExternalServiceRecord,
     ExternalService, TolaTable, PinnedReport
 )
 from indicators.queries import ProgramWithMetrics, ResultsIndicator
@@ -1024,7 +1024,7 @@ class ProgramPage(ListView):
             return HttpResponseRedirect('/')
         unannotated_program = Program.objects.only(
             'reporting_period_start', 'reporting_period_end',
-            'start_date', 'end_date'
+            'start_date', 'end_date', 'using_results_framework'
             ).get(pk=program_id)
         if unannotated_program.reporting_period_start is None or unannotated_program.reporting_period_end is None:
             context = {
@@ -1034,11 +1034,20 @@ class ProgramPage(ListView):
             return render(
                 request, 'indicators/program_setup_incomplete.html', context
                 )
+        if unannotated_program.using_results_framework:
+            second_leveltier = LevelTier.objects.filter(program_id=program_id, tier_depth=2)
+            if second_leveltier.exists():
+                second_tier_name = second_leveltier.first().name
+            else:
+                second_tier_name = _('Outcome')
+        else:
+            second_tier_name = None
         program = ProgramWithMetrics.program_page.get(pk=program_id)
         program.indicator_filters = {}
 
         indicators = program.annotated_indicators\
             .annotate(target_period_last_end_date=Max('periodictargets__end_date')).select_related('level')
+
         site_count = len(program.get_sites())
 
         pinned_reports = list(program.pinned_reports.filter(tola_user=request.user.tola_user)) + \
@@ -1049,6 +1058,7 @@ class ProgramPage(ListView):
         js_context = {
             'delete_pinned_report_url': str(reverse_lazy('delete_pinned_report')),
             'program': ProgramSerializer(program).data,
+            'result_chain_filter': _('by %(tier)s chain') % {'tier': second_tier_name},
             'indicators': IndicatorSerializer(indicators, many=True).data,
             'indicator_on_scope_margin': Indicator.ONSCOPE_MARGIN,
             'readonly': readonly,  # controls "Add indicator" link

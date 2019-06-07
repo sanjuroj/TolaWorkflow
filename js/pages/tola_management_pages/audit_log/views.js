@@ -139,7 +139,7 @@ export const IndexView = observer(
                                     <td className="text-action">
                                         <FontAwesomeIcon icon={is_expanded ? 'caret-down' : 'caret-right'} />&nbsp;{data.date}
                                     </td>
-                                    <td>{(data.indicator) ? data.indicator.number : gettext('N/A')}</td>
+                                    <td>{(data.indicator) ? data.indicator.number_display : gettext('N/A')}</td>
                                     <td>{(data.indicator) ? data.indicator.name : gettext('N/A')}</td>
                                     <td>{data.user}</td>
                                     <td>{data.organization}</td>

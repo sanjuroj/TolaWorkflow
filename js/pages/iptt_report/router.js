@@ -53,7 +53,6 @@ export default class ipttRouter {
         this.router = createRouter(this.routes, {trailingSlashMode: 'always'});
         this.router.setRootPath(this.queryParams);
         this.router.usePlugin(browserPlugin({useHash: false, base: '/indicators'}));
-        this.router.subscribe(this.updateRoute);
         this.router.start();
         let { name: currentRouteName, params: currentRouteParams} = this.router.getState();
         this.processParams({name: currentRouteName, ...currentRouteParams}).then(
@@ -68,14 +67,6 @@ export default class ipttRouter {
                 );
             });
         
-    }
-    
-    updateRoute = ({ previousRoute, route: {name, params, ...route}}) => {
-        //this.reportType = name == 'iptt.tva' ? TVA : (name == 'iptt.timeperiods' ? TIMEPERIODS : null);
-        //console.log("route name", name);
-        //console.log("route params", params);
-        //console.log("updating route from", previousRoute, " to ", route);
-        //console.log("router state", this.router.getState());
     }
     
     processParams = ({
@@ -228,7 +219,9 @@ export default class ipttRouter {
         return {
             program: programId,
             report_type: reportType,
-            query_string: Object.keys(params).map(k => `${k}=${params[k]}`).join('&')
+            query_string: Object.keys(params)
+                .filter(k => (params[k] && (!Array.isArray(params[k]) || params[k].length > 0)))
+                .map(k => `${k}=${params[k]}`).join('&')
         };
     }
     
@@ -251,7 +244,8 @@ export default class ipttRouter {
         if (this.filterStore.isTVA && this.filterStore.programId) {
             return this.router.buildUrl('ipttAPI.ipttExcel', {
                                             programId: this.filterStore.programId,
-                                            fullTVA: true
+                                            fullTVA: true,
+                                            groupby: this.filterStore.groupBy
                                         });
         }
         return false;

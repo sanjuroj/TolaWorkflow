@@ -202,6 +202,10 @@ function (_React$Component2) {
       }
     };
 
+    _this2.onGroupingSelection = function (selected) {
+      _this2.props.uiStore.setGroupBy(selected.value);
+    };
+
     return _this2;
   }
 
@@ -224,6 +228,8 @@ function (_React$Component2) {
         });
       }
 
+      var indicatorGroupingOptions = this.props.uiStore.groupByOptions;
+      var groupingValue = this.props.uiStore.selectedGroupByOption;
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("nav", {
         className: "list__filters list__filters--inline-label",
         id: "id_div_indicators"
@@ -237,7 +243,16 @@ function (_React$Component2) {
         isClearable: false,
         placeholder: gettext('None'),
         onChange: this.onSelection
-      })));
+      })), !this.props.rootStore.oldStyleLevels && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+        className: "filters__label"
+      }, gettext("Group indicators:")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "filters__control"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_8__["default"], {
+        options: indicatorGroupingOptions,
+        value: groupingValue,
+        isClearable: false,
+        onChange: this.onGroupingSelection
+      }))));
     }
   }]);
 
@@ -297,7 +312,7 @@ function (_React$Component3) {
       }, gettext("Indicator")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
         className: "",
         id: "id_indicator_buttons_col_header"
-      }, "\xA0"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
+      }, "\xA0"), this.props.oldStyleLevels && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
         className: "",
         id: "id_indicator_level_col_header"
       }, gettext("Level")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
@@ -314,6 +329,28 @@ function (_React$Component3) {
         var resultsStr = resultsMap.get(indicator.id);
         var targetPeriodLastEndDate = indicator.target_period_last_end_date ? new Date(indicator.target_period_last_end_date) : null; // ^^^ Because calling Date() on null returns the current date, and we actually need null!
 
+        var displayFunc = parseInt(indicator.unit_of_measure_type) == 2 ? function (val) {
+          return val ? "".concat(val, "%") : '';
+        } : function (val) {
+          return val ? "".concat(val) : '';
+        };
+
+        var numberCellFunc = function numberCellFunc(val) {
+          if (val == '' || isNaN(parseFloat(val))) {
+            return '';
+          }
+
+          val = parseFloat(val).toFixed(2);
+
+          if (val.slice(-2) == "00") {
+            return displayFunc(val.slice(0, -3));
+          } else if (val.slice(-1) == "0") {
+            return displayFunc(val.slice(0, -1));
+          }
+
+          return displayFunc(val);
+        };
+
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, {
           key: indicator.id
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
@@ -329,7 +366,7 @@ function (_React$Component3) {
           }
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_5__["FontAwesomeIcon"], {
           icon: resultsExist ? 'caret-down' : 'caret-right'
-        }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, indicator.number), "\xA0", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+        }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, indicator.number_display ? indicator.number_display + ':' : indicator.number), "\xA0", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
           className: "indicator_name"
         }, indicator.name)), indicator.key_performance_indicator && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
           className: "badge"
@@ -349,11 +386,11 @@ function (_React$Component3) {
           }
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
           className: "fas fa-cog"
-        }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, indicator.level ? indicator.level.name : ''), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, indicator.unit_of_measure), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
+        }))), _this4.props.oldStyleLevels && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, indicator.old_level), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, indicator.unit_of_measure), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
           className: "text-right"
-        }, indicator.baseline_display), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
+        }, numberCellFunc(indicator.baseline)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
           className: "text-right"
-        }, indicator.lop_target_display)), resultsExist && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
+        }, numberCellFunc(indicator.lop_target_active))), resultsExist && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
           className: "indicators-list__row indicators-list__indicator-body"
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
           colSpan: "6",
@@ -380,10 +417,12 @@ var IndicatorList = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])(
 
   var resultsMap = props.rootStore.resultsMap;
   var currentIndicatorFilter = props.uiStore.currentIndicatorFilter;
-  var selectedIndicatorId = props.uiStore.selectedIndicatorId; // Either a gas gauge filter is applied, or an indicator has been selected, but not both
+  var selectedIndicatorId = props.uiStore.selectedIndicatorId;
+  var sortByChain = props.uiStore.groupByChain; // Either a gas gauge filter is applied, or an indicator has been selected, but not both
   // apply gas gauge filter
 
   var filteredIndicators = indicatorStore.filterIndicators(currentIndicatorFilter);
+  filteredIndicators = indicatorStore.sortIndicators(props.rootStore.oldStyleLevels, sortByChain, filteredIndicators);
 
   if (selectedIndicatorId) {
     filteredIndicators = filteredIndicators.filter(function (i) {
@@ -408,7 +447,8 @@ var IndicatorList = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])(
   }), "\xA0", gettext('Some indicators have missing targets. To enter these values, click the target icon near the indicator name.')), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(IndicatorListTable, {
     indicators: filteredIndicators,
     resultsMap: resultsMap,
-    program: program
+    program: program,
+    oldStyleLevels: props.rootStore.oldStyleLevels
   }));
 });
 
@@ -482,7 +522,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ProgramPageStore", function() { return ProgramPageStore; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ProgramPageUIStore", function() { return ProgramPageUIStore; });
 /* harmony import */ var mobx__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! mobx */ "2vnA");
-var _class, _descriptor, _temp, _class3, _descriptor2, _descriptor3, _temp2, _class5, _descriptor4, _descriptor5, _temp3;
+var _class, _descriptor, _temp, _class3, _descriptor2, _descriptor3, _temp2, _class5, _descriptor4, _descriptor5, _descriptor6, _temp3;
 
 function _initializerDefineProperty(target, property, descriptor, context) { if (!descriptor) return; Object.defineProperty(target, property, { enumerable: descriptor.enumerable, configurable: descriptor.configurable, writable: descriptor.writable, value: descriptor.initializer ? descriptor.initializer.call(context) : void 0 }); }
 
@@ -538,6 +578,59 @@ function () {
       this.indicators = this.indicators.filter(function (e) {
         return e.id != indicatorId;
       });
+    }
+  }, {
+    key: "sortIndicators",
+    value: function sortIndicators(oldStyleLevels, sortByChain, indicators) {
+      if (oldStyleLevels) {
+        return indicators;
+      } else if (!sortByChain) {
+        return indicators.slice().sort(function (a, b) {
+          if (a.level && a.level.level_depth) {
+            if (b.level && b.level.level_depth) {
+              if (a.level.level_depth === b.level.level_depth) {
+                var a_ontology = a.level.ontology.split('.');
+                var b_ontology = b.level.ontology.split('.');
+
+                for (var i = 0; i < a_ontology.length; i++) {
+                  if (a_ontology[i] != b_ontology[i]) {
+                    return a_ontology[i] - b_ontology[i];
+                  }
+                }
+
+                return (a.level_order || 0) - (b.level_order || 0);
+              }
+
+              return a.level.level_depth - b.level.level_depth;
+            }
+
+            return -1;
+          }
+
+          return b.level && b.level.level_depth ? 1 : 0;
+        });
+      } else {
+        return indicators.slice().sort(function (a, b) {
+          if (a.level && a.level.ontology) {
+            if (b.level && b.level.ontology) {
+              var a_ontology = a.level.ontology.split('.');
+              var b_ontology = b.level.ontology.split('.');
+
+              for (var i = 0; i < a_ontology.length; i++) {
+                if (a_ontology[i] != b_ontology[i]) {
+                  return a_ontology[i] - b_ontology[i];
+                }
+              }
+
+              return 0;
+            }
+
+            return -1;
+          }
+
+          return b.level && b.level.ontology ? 1 : 0;
+        });
+      }
     }
   }, {
     key: "filterIndicators",
@@ -656,7 +749,7 @@ function () {
   initializer: function initializer() {
     return [];
   }
-}), _applyDecoratedDescriptor(_class.prototype, "updateIndicator", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "updateIndicator"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "removeIndicator", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "removeIndicator"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "getIndicatorsNeedingTargets", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "getIndicatorsNeedingTargets"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "getIndicatorsNeedingResults", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "getIndicatorsNeedingResults"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "getIndicatorsNeedingEvidence", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "getIndicatorsNeedingEvidence"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "getIndicatorsNotReporting", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "getIndicatorsNotReporting"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "getIndicatorsAboveTarget", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "getIndicatorsAboveTarget"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "getIndicatorsBelowTarget", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "getIndicatorsBelowTarget"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "getIndicatorsOnTarget", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "getIndicatorsOnTarget"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "getIndicatorsReporting", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "getIndicatorsReporting"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "getTotalResultsCount", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "getTotalResultsCount"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "getTotalResultsWithEvidenceCount", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "getTotalResultsWithEvidenceCount"), _class.prototype)), _class);
+}), _applyDecoratedDescriptor(_class.prototype, "updateIndicator", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "updateIndicator"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "removeIndicator", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "removeIndicator"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "getIndicatorsNeedingTargets", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "getIndicatorsNeedingTargets"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "getIndicatorsNeedingResults", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "getIndicatorsNeedingResults"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "getIndicatorsNeedingEvidence", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "getIndicatorsNeedingEvidence"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "getIndicatorsNotReporting", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "getIndicatorsNotReporting"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "getIndicatorsAboveTarget", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "getIndicatorsAboveTarget"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "getIndicatorsBelowTarget", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "getIndicatorsBelowTarget"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "getIndicatorsOnTarget", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "getIndicatorsOnTarget"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "getIndicatorsReporting", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "getIndicatorsReporting"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "sortIndicators", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "sortIndicators"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "getTotalResultsCount", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "getTotalResultsCount"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "getTotalResultsWithEvidenceCount", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "getTotalResultsWithEvidenceCount"), _class.prototype)), _class);
 var ProgramPageStore = (_class3 = (_temp2 =
 /*#__PURE__*/
 function () {
@@ -691,6 +784,11 @@ function () {
     value: function deleteAllResultsHTML() {
       this.resultsMap.clear();
     }
+  }, {
+    key: "oldStyleLevels",
+    get: function get() {
+      return !this.program.using_results_framework;
+    }
   }]);
 
   return ProgramPageStore;
@@ -708,19 +806,22 @@ function () {
   initializer: function initializer() {
     return new Map();
   }
-}), _applyDecoratedDescriptor(_class3.prototype, "addResultsHTML", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class3.prototype, "addResultsHTML"), _class3.prototype), _applyDecoratedDescriptor(_class3.prototype, "deleteResultsHTML", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class3.prototype, "deleteResultsHTML"), _class3.prototype), _applyDecoratedDescriptor(_class3.prototype, "deleteAllResultsHTML", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class3.prototype, "deleteAllResultsHTML"), _class3.prototype)), _class3);
+}), _applyDecoratedDescriptor(_class3.prototype, "addResultsHTML", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class3.prototype, "addResultsHTML"), _class3.prototype), _applyDecoratedDescriptor(_class3.prototype, "deleteResultsHTML", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class3.prototype, "deleteResultsHTML"), _class3.prototype), _applyDecoratedDescriptor(_class3.prototype, "deleteAllResultsHTML", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class3.prototype, "deleteAllResultsHTML"), _class3.prototype), _applyDecoratedDescriptor(_class3.prototype, "oldStyleLevels", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class3.prototype, "oldStyleLevels"), _class3.prototype)), _class3);
 var ProgramPageUIStore = (_class5 = (_temp3 =
 /*#__PURE__*/
 function () {
   // selected gas gauge filter
   // indicators filter
-  function ProgramPageUIStore() {
+  function ProgramPageUIStore(resultChainFilterLabel) {
     _classCallCheck(this, ProgramPageUIStore);
 
     _initializerDefineProperty(this, "currentIndicatorFilter", _descriptor4, this);
 
     _initializerDefineProperty(this, "selectedIndicatorId", _descriptor5, this);
 
+    _initializerDefineProperty(this, "groupByChain", _descriptor6, this);
+
+    this.resultChainFilterLabel = resultChainFilterLabel;
     this.setIndicatorFilter = this.setIndicatorFilter.bind(this);
     this.clearIndicatorFilter = this.clearIndicatorFilter.bind(this);
     this.setSelectedIndicatorId = this.setSelectedIndicatorId.bind(this);
@@ -741,6 +842,27 @@ function () {
     value: function setSelectedIndicatorId(selectedIndicatorId) {
       this.selectedIndicatorId = selectedIndicatorId;
     }
+  }, {
+    key: "setGroupBy",
+    value: function setGroupBy(value) {
+      this.groupByChain = value == 1;
+    }
+  }, {
+    key: "groupByOptions",
+    get: function get() {
+      return [{
+        value: 1,
+        label: this.resultChainFilterLabel
+      }, {
+        value: 2,
+        label: gettext('by Level')
+      }];
+    }
+  }, {
+    key: "selectedGroupByOption",
+    get: function get() {
+      return this.groupByChain ? this.groupByOptions[0] : this.groupByOptions[1];
+    }
   }]);
 
   return ProgramPageUIStore;
@@ -754,7 +876,14 @@ function () {
   enumerable: true,
   writable: true,
   initializer: null
-}), _applyDecoratedDescriptor(_class5.prototype, "setIndicatorFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class5.prototype, "setIndicatorFilter"), _class5.prototype), _applyDecoratedDescriptor(_class5.prototype, "clearIndicatorFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class5.prototype, "clearIndicatorFilter"), _class5.prototype), _applyDecoratedDescriptor(_class5.prototype, "setSelectedIndicatorId", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class5.prototype, "setSelectedIndicatorId"), _class5.prototype)), _class5);
+}), _descriptor6 = _applyDecoratedDescriptor(_class5.prototype, "groupByChain", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    return true;
+  }
+}), _applyDecoratedDescriptor(_class5.prototype, "setIndicatorFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class5.prototype, "setIndicatorFilter"), _class5.prototype), _applyDecoratedDescriptor(_class5.prototype, "clearIndicatorFilter", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class5.prototype, "clearIndicatorFilter"), _class5.prototype), _applyDecoratedDescriptor(_class5.prototype, "setSelectedIndicatorId", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class5.prototype, "setSelectedIndicatorId"), _class5.prototype), _applyDecoratedDescriptor(_class5.prototype, "groupByOptions", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class5.prototype, "groupByOptions"), _class5.prototype), _applyDecoratedDescriptor(_class5.prototype, "selectedGroupByOption", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class5.prototype, "selectedGroupByOption"), _class5.prototype), _applyDecoratedDescriptor(_class5.prototype, "setGroupBy", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class5.prototype, "setGroupBy"), _class5.prototype)), _class5);
 
 /***/ }),
 
@@ -793,7 +922,7 @@ __webpack_require__.r(__webpack_exports__);
  */
 
 var rootStore = new _models__WEBPACK_IMPORTED_MODULE_7__["ProgramPageStore"](jsContext.indicators, jsContext.program);
-var uiStore = new _models__WEBPACK_IMPORTED_MODULE_7__["ProgramPageUIStore"]();
+var uiStore = new _models__WEBPACK_IMPORTED_MODULE_7__["ProgramPageUIStore"](jsContext.result_chain_filter);
 /*
  * Event Handlers
  */
@@ -1508,4 +1637,4 @@ var ProgramMetrics = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])
 /***/ })
 
 },[["aJgA","runtime","vendors"]]]);
-//# sourceMappingURL=program_page-6e156f00aaa5f3b468fd.js.map
+//# sourceMappingURL=program_page-6e9df074cb2f4761c938.js.map

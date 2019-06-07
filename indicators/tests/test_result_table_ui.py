@@ -7,7 +7,14 @@ import datetime
 from django import test
 from django.urls import reverse_lazy
 
-from factories import ProgramFactory, IndicatorFactory, ResultFactory, PeriodicTargetFactory, UserFactory, TolaUserFactory
+from factories import (
+    ProgramFactory,
+    IndicatorFactory,
+    ResultFactory,
+    PeriodicTargetFactory,
+    UserFactory,
+    TolaUserFactory
+)
 from indicators.models import Indicator
 
 
@@ -44,6 +51,10 @@ class TestResultUnassignedUIDateFallsOutsideProgramPeriod(test.TestCase):
             record_name='My Test Record',
             evidence_url='http://my_evidence_url',
         )
+        self.count = 1
+        self.count += str(self.indicator.pk).count('42') * 2
+        self.count += str(self.indicator.name).count('42')
+        self.count += str(self.result.pk).count('42')
         self.user = UserFactory(first_name="FN", last_name="LN", username="tester", is_superuser=True)
         self.user.set_password('password')
         self.user.save()
@@ -59,11 +70,14 @@ class TestResultUnassignedUIDateFallsOutsideProgramPeriod(test.TestCase):
             'Jan 1, 2017',
         )
         # only 1 expected now as no longer displaying the value for unassigned indicators
-        self.assertContains(response, '42', count=1)
+        self.assertContains(
+            response, '42', count=self.count, msg_prefix=response.content.decode('utf-8')
+        )
         # expected warning message
         self.assertContains(
             response,
-            'This date falls outside the range of your target periods. Please select a date between Jan 1, 2018 and Jan 1, 2019.'
+            "This date falls outside the range of your target periods."\
+            " Please select a date between Jan 1, 2018 and Jan 1, 2019."
         )
 
 
@@ -100,6 +114,10 @@ class TestResultUnassignedUITargetsMidlineEndline(test.TestCase):
             record_name='My Test Record',
             evidence_url='http://my_evidence_url',
         )
+        self.count = 1
+        self.count += str(self.indicator.pk).count('42') * 2
+        self.count += str(self.indicator.name).count('42')
+        self.count += str(self.result.pk).count('42')
         self.user = UserFactory(first_name="FN", last_name="LN", username="tester", is_superuser=True)
         self.user.set_password('password')
         self.user.save()
@@ -114,11 +132,14 @@ class TestResultUnassignedUITargetsMidlineEndline(test.TestCase):
             response,
             'Jan 1, 2017',
         )
-        self.assertContains(response, '42', count=1)
+        self.assertContains(
+            response, '42', count=self.count, msg_prefix=response.content.decode('utf-8')
+        )
         # expected warning message
         self.assertContains(
             response,
-            'This record is not associated with a target. Open the data record and select an option from the “Measure against target” menu.'
+            "This record is not associated with a target. Open the data record and select "\
+            "an option from the “Measure against target” menu."
         )
 
 
@@ -127,7 +148,8 @@ class TestResultUnassignedUITargetsNotSetup(test.TestCase):
     When a result is unassigned because no targets are set up, the following are true:
 
     1. The result is displayed in the table.
-    2. Under the table, we display error message: Targets are not set up for this indicator. Start by selecting a target frequency.
+    2. Under the table, we display error message: Targets are not set up for this indicator.
+        Start by selecting a target frequency.
     3. The string "Start by selecting a target frequency" links to the Targets tab of the indicator setup form.
     """
 
@@ -147,6 +169,10 @@ class TestResultUnassignedUITargetsNotSetup(test.TestCase):
             record_name='My Test Record',
             evidence_url='http://my_evidence_url',
         )
+        self.count = 1
+        self.count += str(self.indicator.pk).count('42') * 3
+        self.count += str(self.indicator.name).count('42')
+        self.count += str(self.result.pk).count('42')
         self.user = UserFactory(first_name="FN", last_name="LN", username="tester", is_superuser=True)
         self.user.set_password('password')
         self.user.save()
@@ -161,7 +187,9 @@ class TestResultUnassignedUITargetsNotSetup(test.TestCase):
             response,
             'Jan 1, 2017',
         )
-        self.assertContains(response, '42', count=1)
+        self.assertContains(
+            response, '42', count=self.count, msg_prefix=response.content.decode('utf-8')
+        )
         # expected warning message
         self.assertContains(
             response,

@@ -1,15 +1,18 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import { inject, observer } from 'mobx-react';
-import Popover from 'react-simple-popover';
+import { BootstrapPopoverButton } from '../../../../components/helpPopover';
 
-@inject('filterStore', 'routeStore')
 class PinPopover extends React.Component {
+    NOT_SENT = 0;
+    SENDING = 1;
+    SENT = 2;
+    FAILED = 3;
     constructor(props) {
         super(props);
         this.state = {
             reportName: '',
-            sending: false,
-            sent: false
+            status: this.NOT_SENT
         };
     }
     handleChange = (e) => {
@@ -19,83 +22,103 @@ class PinPopover extends React.Component {
         return !this.props.routeStore.pinData || !this.state.reportName;
     }
     handleClick = () => {
-        this.setState({sending: true});
+        this.setState({status: this.SENDING});
         $.ajax({
             type: "POST",
             url: this.props.routeStore.pinUrl,
             data: {name: this.state.reportName, ...this.props.routeStore.pinData },
-            success: () => {this.setState({sending:false, sent: true}); },
-            error: () => {console.log("AJAX ERROR");}
+            success: () => {
+                this.setState({status: this.SENT});
+                this.props.updatePosition();
+            },
+            error: (ev) => {
+                this.setState({status: this.FAILED});
+                console.log("ajax error:", ev);
+                }
         });
     }
     render() {
         return (
             <React.Fragment>
-                { this.state.sent
-                    ? <div className="form-group">
-                        <p>
-                            <span>
+            {(() => {
+            switch(this.state.status) {
+                case this.SENT:
+                    return (
+                        <div className="form-group">
+                            <p><span>
                                 {
                                     gettext('Success!  This report is now pinned to the program page')
                                 }
-                            </span>
-                        </p>
-                        <p>
-                           <a href={ this.props.filterStore.programPageUrl }>
+                            </span></p>
+                            <p><a href={ this.props.filterStore.programPageUrl }>
                                 {
                                     gettext('Visit the program page now.')
                                 }
-                           </a>
-                        </p>
-                      </div>
-                    : <React.Fragment>
-                        <div className="form-group">
-                            <label className="text-uppercase">
-                                {
-                                    /* # Translators: a field where users can name their newly created report */
-                                    gettext('Report name')
-                                }
-                            </label>
-                            <input type="text" className="form-control"
-                                 value={ this.state.reportName }
-                                 onChange={ this.handleChange }
-                                 disabled={ this.state.sending }/>
+                            </a></p>
                         </div>
-                        { this.state.sending
-                            ? <div className="btn btn-outline-primary" disabled>
-                                <img src='/static/img/ajax-loader.gif' />&nbsp;
-                                    { gettext('Loading') }
-                              </div>
-                            : <button type="button"
-                                  onClick={ this.handleClick }
-                                  disabled={ this.isDisabled() }
-                                  className="btn btn-primary">
+                    );
+                case this.FAILED:
+                    return (
+                        <div className="form-group">
+                            <p><span>
+                                {
+                                    gettext('Something went wrong when attempting to pin this report')
+                                }
+                            </span></p>
+                        </div>
+                    );
+                case this.NOT_SENT:
+                    return (
+                        <React.Fragment>
+                            <div className="form-group">
+                                <label className="">
                                     {
-                                        gettext('Pin to program page')
+                                        /* # Translators: a field where users can name their newly created report */
+                                        gettext('Report name')
                                     }
-                              </button>
-                        }
+                                </label>
+                                <input type="text" className="form-control"
+                                     value={ this.state.reportName }
+                                     onChange={ this.handleChange }
+                                     disabled={ this.state.sending }/>
+                            </div>
+                            <button type="button"
+                                      onClick={ this.handleClick }
+                                      disabled={ this.isDisabled() }
+                                      className="btn btn-primary btn-block">
+                                        {
+                                            gettext('Pin to program page')
+                                        }
+                            </button>
                         </React.Fragment>
+                    );
+                case this.SENDING:
+                    return (
+                        <div className="btn btn-primary" disabled>
+                            <img src='/static/img/ajax-loader.gif' />&nbsp;
+                                { gettext('Sending') }
+                        </div>
+                    );
                 }
+            })()}
             </React.Fragment>
         );
     }
 }
 
-export class PinButton extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            open: false
-        };
-    }
 
-    handleClick(e) {
-        this.setState({open: !this.state.open});
-    }
+@inject('filterStore', 'routeStore')
+export class PinButton extends BootstrapPopoverButton {
+    popoverName = 'pin';
 
-    handleClose(e) {
-        this.setState({open: false});
+    getPopoverContent = () => {
+        return (
+            <PinPopover
+                filterStore={this.props.filterStore}
+                routeStore={this.props.routeStore}
+                updatePosition={() => {$(this.refs.target).popover('update');}}
+            />
+            );
     }
 
     render() {
@@ -104,57 +127,42 @@ export class PinButton extends React.Component {
                 <button
                     href="#"
                     className="btn btn-sm btn-secondary"
-                    ref="target"
-                    onClick={ this.handleClick.bind(this) }>
+                    ref="target">
                 <i className="fas fa-thumbtack"></i>
                     {
                         /* # Translators: a button that lets a user "pin" (verb) a report to their home page */
                         gettext('Pin')
                     }
                 </button>
-
-                <Popover
-                    placement='bottom'
-                    style={ {width: 'auto' } }
-                    target={ this.refs.target }
-                    show={ this.state.open }
-                    onHide={ this.handleClose.bind(this) } >
-                    <PinPopover />
-                </Popover>
             </React.Fragment>
         );
     }
 }
 
 
-@inject('filterStore', 'routeStore')
 @observer
 class ExcelPopover extends React.Component {
     getCurrent = () => {
         if (this.props.routeStore.excelUrl) {
-            //window.location=this.props.routeStore.excelUrl;
             window.open(this.props.routeStore.excelUrl, '_blank');
         }
     }
 
     getAll = () => {
         if (this.props.routeStore.fullExcelUrl) {
-            //window.location=this.props.routeStore.fullExcelUrl
             window.open(this.props.routeStore.fullExcelUrl, '_blank');
         }
     }
     render() {
         return (
-            <div className="">
-                <button type="button" className="btn btn-primary btn-block"
-                     onClick={ this.getCurrent }>
+            <div>
+                <button type="button" className="btn btn-primary btn-block" onClick={ this.getCurrent }>
                     {
                         /* # Translators: a download button for a report containing just the data currently displayed */
                         gettext('Current view')
                     }
                 </button>
-                <button type="button" className="btn btn-primary btn-block"
-                     onClick={ this.getAll }>
+                <button type="button" className="btn btn-primary btn-block" onClick={ this.getAll }>
                     {
                         /* # Translators: a download button for a report containing all available data */
                         gettext('All program data')
@@ -167,44 +175,48 @@ class ExcelPopover extends React.Component {
 
 @inject('filterStore', 'routeStore')
 @observer
-export class ExcelButton extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            open: false
-        };
+export class ExcelPopoverButton extends BootstrapPopoverButton {
+    popoverName = 'excel';
+
+    getPopoverContent = () => {
+        return (
+            <ExcelPopover
+                filterStore={this.props.filterStore}
+                routeStore={this.props.routeStore} />
+            );
     }
 
-    handleClick = () => {
-        if (this.props.filterStore.isTVA) {
-            this.setState({open: !this.state.open});
-        } else if (this.props.routeStore.excelUrl) {
-            //window.location=this.props.routeStore.excelUrl;
-            window.open(this.props.routeStore.excelUrl, '_blank');
-        }
-    }
-
-    handleClose(e) {
-        this.setState({open: false});
-    }
     render() {
         return (
             <React.Fragment>
                 <button type="button"
                      className="btn btn-sm btn-secondary"
-                     ref="target"
-                     onClick={this.handleClick.bind(this) }>
+                     ref="target">
                      <i className="fas fa-download"></i> Excel
                      </button>
-                     <Popover
-                        placement="bottom"
-                        containerStyle={ {paddingRight: '10px'} }
-                        style={ {width: 'auto' } }
-                        target={ this.refs.target }
-                        show={ this.state.open }
-                        onHide={ this.handleClose.bind(this) } >
-                        <ExcelPopover />
-                      </Popover>
+            </React.Fragment>
+        );
+    }
+}
+
+
+@inject('routeStore')
+@observer
+export class ExcelButton extends React.Component {
+     handleClick = () => {
+        if (this.props.routeStore.excelUrl) {
+            window.open(this.props.routeStore.excelUrl, '_blank');
+        }
+    }
+
+    render() {
+        return (
+            <React.Fragment>
+                <button type="button"
+                     className="btn btn-sm btn-secondary"
+                     onClick={this.handleClick }>
+                     <i className="fas fa-download"></i> Excel
+                     </button>
             </React.Fragment>
         );
     }
