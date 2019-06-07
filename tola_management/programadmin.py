@@ -30,7 +30,7 @@ from django.utils.translation import ugettext as _
 
 from openpyxl import Workbook, utils
 from openpyxl.cell import Cell
-from openpyxl.styles import Alignment, Font
+from openpyxl.styles import Alignment, Font, PatternFill
 
 from feed.views import SmallResultsSetPagination
 
@@ -67,20 +67,33 @@ def get_audit_log_workbook(ws, program):
         Cell(ws, value=_('User')),
         Cell(ws, value=_('Organization')),
         # Translators: Part of change log, indicates the type of change being made to a particular piece of data
-        Cell(ws, value=_('Change Type')),
+        Cell(ws, value=_('Change type')),
         # Translators: Part of change log, shows what the data looked like before the changes
-        Cell(ws, value=_('Previous Entry')),
+        Cell(ws, value=_('Previous entry')),
         # Translators: Part of change log, shows what the data looks like after the changes
-        Cell(ws, value=_('New Entry')),
+        Cell(ws, value=_('New entry')),
         # Translators: Part of change log, reason for the change as entered by the user
         Cell(ws, value=_('Rationale'))
     ]
+    
+    title = Cell(ws, value=_("Change log"))
+    title.font = Font(bold=True, size=18)
+    ws.append([title,])
+    ws.merge_cells(start_row=1, end_row=1, start_column=1, end_column=len(header))
+    subtitle = Cell(ws, value=program.name)
+    subtitle.font = Font(bold=True, size=18)
+    ws.append([subtitle,])
+    ws.merge_cells(start_row=2, end_row=2, start_column=1, end_column=len(header))
+    
 
     header_font = Font(bold=True)
+    header_fill = PatternFill('solid', 'EEEEEE')
 
     for h in header:
         h.font = header_font
-
+        h.fill = header_fill
+    
+    
     ws.append(header)
 
     alignment = Alignment(
