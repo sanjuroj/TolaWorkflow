@@ -9298,6 +9298,16 @@ span[data-toggle="popover"]:hover {
   margin-bottom: 15px;
   margin-top: 15px; }
 
+.list__filters--block-label {
+  align-items: flex-start;
+  display: flex;
+  flex-direction: row; }
+  .list__filters--block-label .form-group {
+    flex-basis: 100%;
+    margin-left: 7.5px; }
+    .list__filters--block-label .form-group:first-child {
+      margin-left: 0; }
+
 .list__filters--inline-label {
   align-items: center;
   display: flex; }
@@ -10475,8 +10485,13 @@ a:hover {
 
 .indicator_results_toggle {
   display: block;
-  text-indent: -15px;
-  margin-left: 15px; }
+  font-weight: normal;
+  margin-bottom: 0 !important;
+  margin-left: 22.5px;
+  margin-right: 0 !important;
+  margin-top: 0 !important;
+  padding: 0 !important;
+  text-indent: -22.5px; }
 
 .is-shown-in-modals {
   display: none; }
@@ -10510,5 +10525,3 @@ a:hover {
 
 /* Unsorted custom selectors */
 
-
-/*# sourceMappingURL=base-f833e7011becf829a312.css.map*/

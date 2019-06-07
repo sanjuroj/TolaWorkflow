@@ -366,8 +366,8 @@ const create_changeset_notice = ({
             'overlayClose': true,
             'dir1': 'right',
             'dir2': 'up',
-            'firstpos1': 0,
-            'firstpos2': 0,
+            'firstpos1': 20,
+            'firstpos2': 20,
             'context': context
         },
         modules: {

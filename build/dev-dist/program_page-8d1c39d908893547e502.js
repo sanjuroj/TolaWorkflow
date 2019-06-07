@@ -231,28 +231,32 @@ function (_React$Component2) {
       var indicatorGroupingOptions = this.props.uiStore.groupByOptions;
       var groupingValue = this.props.uiStore.selectedGroupByOption;
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("nav", {
-        className: "list__filters list__filters--inline-label",
+        className: "list__filters list__filters--block-label",
         id: "id_div_indicators"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        class: "form-group"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
-        className: "filters__label"
+        className: ""
       }, gettext("Find an indicator:")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "filters__control"
+        className: ""
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_8__["default"], {
         options: indicatorSelectOptions,
         value: selectedValue,
         isClearable: false,
         placeholder: gettext('None'),
         onChange: this.onSelection
-      })), !this.props.rootStore.oldStyleLevels && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
-        className: "filters__label"
+      }))), !this.props.rootStore.oldStyleLevels && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        class: "form-group"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+        className: ""
       }, gettext("Group indicators:")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "filters__control"
+        className: ""
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_8__["default"], {
         options: indicatorGroupingOptions,
         value: groupingValue,
         isClearable: false,
         onChange: this.onGroupingSelection
-      }))));
+      })))));
     }
   }]);
 
@@ -360,7 +364,7 @@ function (_React$Component3) {
           })
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
           href: "#",
-          className: "indicator_results_toggle",
+          className: "indicator_results_toggle btn btn-link text-left",
           onClick: function onClick(e) {
             return _this4.onIndicatorResultsToggleClick(e, indicator.id);
           }
@@ -1637,4 +1641,4 @@ var ProgramMetrics = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])
 /***/ })
 
 },[["aJgA","runtime","vendors"]]]);
-//# sourceMappingURL=program_page-6e9df074cb2f4761c938.js.map
+//# sourceMappingURL=program_page-8d1c39d908893547e502.js.map

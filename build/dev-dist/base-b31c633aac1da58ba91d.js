@@ -386,8 +386,8 @@ var create_changeset_notice = function create_changeset_notice() {
       'overlayClose': true,
       'dir1': 'right',
       'dir2': 'up',
-      'firstpos1': 0,
-      'firstpos2': 0,
+      'firstpos1': 20,
+      'firstpos2': 20,
       'context': context
     },
     modules: {
@@ -635,4 +635,4 @@ window.scrollToBottom = scrollToBottom;
 /***/ })
 
 },[["YqHn","runtime","vendors"]]]);
-//# sourceMappingURL=base-3fe94183e8fff881d909.js.map
+//# sourceMappingURL=base-b31c633aac1da58ba91d.js.map
