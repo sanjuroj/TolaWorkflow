@@ -60,7 +60,13 @@
 
     });
 
-    $("#indicator_modal_div").on('shown.bs.tab', function() {
+
+    $("#indicator_modal_div").on('hide.bs.modal', function(e) {
+
+        if (isCreateForm()) {
+            console.log(e)
+            e.preventDefault();
+        }
 
     });
 

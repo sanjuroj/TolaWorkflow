@@ -142,7 +142,7 @@ $("#indicator-list-react-component").on("click", ".indicator-link[data-tab]", fu
 });
 
 // when indicator update modal is closed, update targets
-$('#indicator_modal_div').on('hide.bs.modal', function (e) {
+$('#indicator_modal_div').on('hidden.bs.modal', function (e) {
     let form = $(this).find('form');
     let form_action = form.attr('action').split('/');
     let indicator_id = parseInt(form_action[form_action.length -2]);
@@ -160,7 +160,7 @@ $('#indicator_modal_div').on('hide.bs.modal', function (e) {
 
 // When "add results" modal is closed, the targets data needs refreshing
 // the indicator itself also needs refreshing for the gas tank gauge
-$('#indicator_results_div').on('hide.bs.modal', function (e) {
+$('#indicator_results_div').on('hidden.bs.modal', function (e) {
     let recordchanged = $(this).find('form').data('recordchanged');
     if (recordchanged === true) {
         let indicator_id = $(this).find('form #id_indicator').val();
