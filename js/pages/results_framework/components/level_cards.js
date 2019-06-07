@@ -86,8 +86,10 @@ export class LevelCardCollapsed extends React.Component {
         }
 
         // Create IPTT hyperlinks for each individual indicator linked to this level.
-        let individualLinks = this.props.levelProps.indicators.map( indicator => {
-            return `<li class="nav-item"><a href=${this.buildIPTTUrl([indicator.id])}>${indicator.name}</a></li>`;
+        console.log('char code and ontology, ', 'a'.charCodeAt(0), this.props.levelProps.ontologyLabel)
+        let individualLinks = this.props.levelProps.indicators.map( (indicator, index) => {
+            const ontologyLabel = this.props.levelProps.ontologyLabel + String.fromCharCode(97+index) + ": ";
+            return `<li class="nav-item"><a href=${this.buildIPTTUrl([indicator.id])}>${ontologyLabel}${indicator.name}</a></li>`;
         });
         allIndicatorLinks = allIndicatorLinks.concat(individualLinks);
 
