@@ -1,5 +1,6 @@
 import React from 'react';
 import { observer, inject } from 'mobx-react';
+import { when } from 'mobx';
 import { SingleReactSelect, SingleSelect, DateSelect } from '../../../../components/selectWidgets';
 
 
@@ -62,25 +63,45 @@ class TimeframeRadio extends React.Component {
         this.mostRecentInputRef = React.createRef();
         this.state = {
             focus: false,
-            mostRecentValue: '',
-            revert: false
+            mostRecentValue: props.filterStore.mostRecent || '',
+            revert: false,
+            latch: false
         };
     }
-    componentDidMount() {
-        this.setState({mostRecentValue: (this.props.filterStore.mostRecent || '')});
+
+    setShowAll = () => {
+        this.setState({latch: false});
+        this.props.filterStore.showAll = true;
     }
+
     checkMostRecent = () => {
         this.mostRecentInputRef.current.focus();
     }
+
     handleChange = (e) => {
         this.setState({mostRecentValue: e.target.value});
     }
+
     handleBlur = (e) => {
         if (!this.state.revert && this.state.mostRecentValue !== '') {
             this.props.filterStore.mostRecent = this.state.mostRecentValue;
+            this.setState({
+                focus: false,
+                revert: false,
+                mostRecentValue: this.props.filterStore._mostRecentValue,
+                latch: this.props.filterStore.showAll !== false
+            },
+            () => {
+                if (this.state.latch) {
+                    when(
+                        () => !this.props.filterStore.showAll || this.props.filterStore.mostRecent,
+                        () => {this.setState({latch: false});}
+                    );
+                }
+            });
         }
-        this.setState({focus: false, revert: false});
     }
+
     handleKeyDown = (e) => {
         if (e.keyCode === 13) {
             e.target.blur();
@@ -89,24 +110,28 @@ class TimeframeRadio extends React.Component {
             () => {this.mostRecentInputRef.current.blur();});
         }
     }
+
     handleFocus = (e) => {
-        this.setState({focus: true, mostRecentValue: (this.props.filterStore.mostRecent || '')});
+        this.setState({focus: true, mostRecentValue: (this.props.filterStore._mostRecentValue || '')});
     }
+
     get mostRecentValue() {
-        if (this.state.focus) {
+        if (this.state.focus || this.state.latch) {
             return this.state.mostRecentValue;
+        } else {
+            return this.props.filterStore.mostRecent;
         }
-        return this.props.filterStore.mostRecent;
     }
+
     render() {
         return <div className="form-row mb-3">
                     <div className="col-sm-4">
                         <div className="form-check form-check-inline pt-1">
                             <span className="form-check-input">
                                 <input type="radio"
-                                       checked={ !this.state.focus && this.props.filterStore.showAll }
+                                       checked={ !this.state.latch && !this.state.focus && this.props.filterStore.showAll }
                                        disabled={ this.props.filterStore.periodsDisabled }
-                                       onChange={ () => {this.props.filterStore.showAll = true;} }
+                                       onChange={ this.setShowAll }
                                        />
                             </span>
                             <label onClick={ () => {this.props.filterStore.showAll = true;} }
@@ -122,7 +147,7 @@ class TimeframeRadio extends React.Component {
                         <div className="form-check form-check-inline pt-1">
                             <span className="form-check-input">
                                 <input type="radio"
-                                       checked={ this.state.focus || this.props.filterStore.mostRecent }
+                                       checked={ this.state.latch || this.state.focus || this.props.filterStore.mostRecent }
                                        disabled={ this.props.filterStore.periodsDisabled }
                                        onChange={ this.checkMostRecent }
                                        />

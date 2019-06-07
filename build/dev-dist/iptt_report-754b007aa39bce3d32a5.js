@@ -121,6 +121,138 @@ var IPTTReportApp = function IPTTReportApp() {
 
 /***/ }),
 
+/***/ "4L+s":
+/*!**************************************!*\
+  !*** ./js/components/helpPopover.js ***!
+  \**************************************/
+/*! exports provided: default, BootstrapPopoverButton */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return HelpPopover; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BootstrapPopoverButton", function() { return BootstrapPopoverButton; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "q1tI");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-dom */ "i8i4");
+/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react_dom__WEBPACK_IMPORTED_MODULE_1__);
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+
+
+
+var HelpPopover =
+/*#__PURE__*/
+function (_React$Component) {
+  _inherits(HelpPopover, _React$Component);
+
+  function HelpPopover(props) {
+    var _this;
+
+    _classCallCheck(this, HelpPopover);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(HelpPopover).call(this, props));
+    _this.content = props.content;
+    _this.placement = props.placement || null;
+    return _this;
+  }
+
+  _createClass(HelpPopover, [{
+    key: "render",
+    value: function render() {
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+        tabIndex: "0",
+        "data-toggle": "popover",
+        "data-trigger": "focus",
+        "data-html": "true",
+        "data-placement": this.placement,
+        "data-content": this.content
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+        className: "far fa-question-circle"
+      }));
+    }
+  }]);
+
+  return HelpPopover;
+}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component);
+
+
+var BootstrapPopoverButton =
+/*#__PURE__*/
+function (_React$Component2) {
+  _inherits(BootstrapPopoverButton, _React$Component2);
+
+  function BootstrapPopoverButton() {
+    var _getPrototypeOf2;
+
+    var _this2;
+
+    _classCallCheck(this, BootstrapPopoverButton);
+
+    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    _this2 = _possibleConstructorReturn(this, (_getPrototypeOf2 = _getPrototypeOf(BootstrapPopoverButton)).call.apply(_getPrototypeOf2, [this].concat(args)));
+    _this2.popoverName = 'base';
+
+    _this2.componentDidMount = function () {
+      // make a cancelable (class method) function so clicking out of the popover will close it:
+      _this2.bodyClickHandler = function (ev) {
+        if ($("#".concat(_this2.popoverName, "_popover_content")).parent().find($(ev.target)).length == 0) {
+          $(_this2.refs.target).popover('hide');
+        }
+      };
+
+      var popoverOpenHandler = function popoverOpenHandler() {
+        // first make it so any click outside of the popover will hide it:
+        $('body').on('click', _this2.bodyClickHandler); // update position (it's had content loaded):
+
+        $(_this2.refs.target).popover('update') //when it hides destroy the body clickhandler:
+        .on('hide.bs.popover', function () {
+          $('body').off('click', _this2.bodyClickHandler);
+        });
+      };
+
+      var shownFn = function shownFn(ev) {
+        react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render(_this2.getPopoverContent(), document.querySelector("#".concat(_this2.popoverName, "_popover_content")), popoverOpenHandler);
+      };
+
+      $(_this2.refs.target).popover({
+        content: "<div id=\"".concat(_this2.popoverName, "_popover_content\"></div>"),
+        html: true,
+        placement: 'bottom'
+      }).on('shown.bs.popover', shownFn);
+    };
+
+    _this2.getPopoverContent = function () {
+      throw new Error('not implemented');
+    };
+
+    return _this2;
+  }
+
+  return BootstrapPopoverButton;
+}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component);
+
+/***/ }),
+
 /***/ "B3lr":
 /*!*****************************************************!*\
   !*** ./js/pages/iptt_report/models/programStore.js ***!
@@ -1101,19 +1233,21 @@ function () {
 /*!***********************************************************!*\
   !*** ./js/pages/iptt_report/components/report/buttons.js ***!
   \***********************************************************/
-/*! exports provided: PinButton, ExcelButton */
+/*! exports provided: PinButton, ExcelPopoverButton, ExcelButton */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PinButton", function() { return PinButton; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ExcelPopoverButton", function() { return ExcelPopoverButton; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ExcelButton", function() { return ExcelButton; });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "q1tI");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! mobx-react */ "okNM");
-/* harmony import */ var react_simple_popover__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-simple-popover */ "MWn0");
-/* harmony import */ var react_simple_popover__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react_simple_popover__WEBPACK_IMPORTED_MODULE_2__);
-var _dec, _class, _temp, _dec2, _class3, _temp2, _dec3, _class5, _temp3;
+/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-dom */ "i8i4");
+/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react_dom__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! mobx-react */ "okNM");
+/* harmony import */ var _components_helpPopover__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../../components/helpPopover */ "4L+s");
+var _dec, _class, _temp, _class3, _temp2, _dec2, _class5, _temp3, _dec3, _class7, _temp4;
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
@@ -1140,7 +1274,9 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 
 
-var PinPopover = (_dec = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inject"])('filterStore', 'routeStore'), _dec(_class = (_temp =
+
+
+var PinPopover =
 /*#__PURE__*/
 function (_React$Component) {
   _inherits(PinPopover, _React$Component);
@@ -1151,6 +1287,10 @@ function (_React$Component) {
     _classCallCheck(this, PinPopover);
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(PinPopover).call(this, props));
+    _this.NOT_SENT = 0;
+    _this.SENDING = 1;
+    _this.SENT = 2;
+    _this.FAILED = 3;
 
     _this.handleChange = function (e) {
       _this.setState({
@@ -1164,7 +1304,7 @@ function (_React$Component) {
 
     _this.handleClick = function () {
       _this.setState({
-        sending: true
+        status: _this.SENDING
       });
 
       $.ajax({
@@ -1175,20 +1315,24 @@ function (_React$Component) {
         }, _this.props.routeStore.pinData),
         success: function success() {
           _this.setState({
-            sending: false,
-            sent: true
+            status: _this.SENT
           });
+
+          _this.props.updatePosition();
         },
-        error: function error() {
-          console.log("AJAX ERROR");
+        error: function error(ev) {
+          _this.setState({
+            status: _this.FAILED
+          });
+
+          console.log("ajax error:", ev);
         }
       });
     };
 
     _this.state = {
       reportName: '',
-      sending: false,
-      sent: false
+      status: _this.NOT_SENT
     };
     return _this;
   }
@@ -1196,136 +1340,144 @@ function (_React$Component) {
   _createClass(PinPopover, [{
     key: "render",
     value: function render() {
-      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, this.state.sent ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "form-group"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, gettext('Success!  This report is now pinned to the program page'))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
-        href: this.props.filterStore.programPageUrl
-      }, gettext('Visit the program page now.')))) : react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "form-group"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
-        className: "text-uppercase"
-      },
-      /* # Translators: a field where users can name their newly created report */
-      gettext('Report name')), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
-        type: "text",
-        className: "form-control",
-        value: this.state.reportName,
-        onChange: this.handleChange,
-        disabled: this.state.sending
-      })), this.state.sending ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "btn btn-outline-primary",
-        disabled: true
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("img", {
-        src: "/static/img/ajax-loader.gif"
-      }), "\xA0", gettext('Loading')) : react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
-        type: "button",
-        onClick: this.handleClick,
-        disabled: this.isDisabled(),
-        className: "btn btn-primary"
-      }, gettext('Pin to program page'))));
+      var _this2 = this;
+
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, function () {
+        switch (_this2.state.status) {
+          case _this2.SENT:
+            return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+              className: "form-group"
+            }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, gettext('Success!  This report is now pinned to the program page'))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+              href: _this2.props.filterStore.programPageUrl
+            }, gettext('Visit the program page now.'))));
+
+          case _this2.FAILED:
+            return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+              className: "form-group"
+            }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, gettext('Something went wrong when attempting to pin this report'))));
+
+          case _this2.NOT_SENT:
+            return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+              className: "form-group"
+            }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+              className: "text-uppercase"
+            },
+            /* # Translators: a field where users can name their newly created report */
+            gettext('Report name')), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+              type: "text",
+              className: "form-control",
+              value: _this2.state.reportName,
+              onChange: _this2.handleChange,
+              disabled: _this2.state.sending
+            })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+              type: "button",
+              onClick: _this2.handleClick,
+              disabled: _this2.isDisabled(),
+              className: "btn btn-primary"
+            }, gettext('Pin to program page')));
+
+          case _this2.SENDING:
+            return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+              className: "btn btn-outline-primary",
+              disabled: true
+            }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("img", {
+              src: "/static/img/ajax-loader.gif"
+            }), "\xA0", gettext('Sending'));
+        }
+      }());
     }
   }]);
 
   return PinPopover;
-}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component), _temp)) || _class);
-var PinButton =
-/*#__PURE__*/
-function (_React$Component2) {
-  _inherits(PinButton, _React$Component2);
-
-  function PinButton(props) {
-    var _this2;
-
-    _classCallCheck(this, PinButton);
-
-    _this2 = _possibleConstructorReturn(this, _getPrototypeOf(PinButton).call(this, props));
-    _this2.state = {
-      open: false
-    };
-    return _this2;
-  }
-
-  _createClass(PinButton, [{
-    key: "handleClick",
-    value: function handleClick(e) {
-      this.setState({
-        open: !this.state.open
-      });
-    }
-  }, {
-    key: "handleClose",
-    value: function handleClose(e) {
-      this.setState({
-        open: false
-      });
-    }
-  }, {
-    key: "render",
-    value: function render() {
-      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
-        href: "#",
-        className: "btn btn-sm btn-secondary",
-        ref: "target",
-        onClick: this.handleClick.bind(this)
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
-        className: "fas fa-thumbtack"
-      }),
-      /* # Translators: a button that lets a user "pin" (verb) a report to their home page */
-      gettext('Pin')), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_simple_popover__WEBPACK_IMPORTED_MODULE_2___default.a, {
-        placement: "bottom",
-        style: {
-          width: 'auto'
-        },
-        target: this.refs.target,
-        show: this.state.open,
-        onHide: this.handleClose.bind(this)
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(PinPopover, null)));
-    }
-  }]);
-
-  return PinButton;
 }(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component);
-var ExcelPopover = (_dec2 = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inject"])('filterStore', 'routeStore'), _dec2(_class3 = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(_class3 = (_temp2 =
-/*#__PURE__*/
-function (_React$Component3) {
-  _inherits(ExcelPopover, _React$Component3);
 
-  function ExcelPopover() {
+var PinButton = (_dec = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["inject"])('filterStore', 'routeStore'), _dec(_class = (_temp =
+/*#__PURE__*/
+function (_BootstrapPopoverButt) {
+  _inherits(PinButton, _BootstrapPopoverButt);
+
+  function PinButton() {
     var _getPrototypeOf2;
 
     var _this3;
 
-    _classCallCheck(this, ExcelPopover);
+    _classCallCheck(this, PinButton);
 
     for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
       args[_key] = arguments[_key];
     }
 
-    _this3 = _possibleConstructorReturn(this, (_getPrototypeOf2 = _getPrototypeOf(ExcelPopover)).call.apply(_getPrototypeOf2, [this].concat(args)));
+    _this3 = _possibleConstructorReturn(this, (_getPrototypeOf2 = _getPrototypeOf(PinButton)).call.apply(_getPrototypeOf2, [this].concat(args)));
+    _this3.popoverName = 'pin';
 
-    _this3.getCurrent = function () {
-      if (_this3.props.routeStore.excelUrl) {
-        //window.location=this.props.routeStore.excelUrl;
-        window.open(_this3.props.routeStore.excelUrl, '_blank');
-      }
-    };
-
-    _this3.getAll = function () {
-      if (_this3.props.routeStore.fullExcelUrl) {
-        //window.location=this.props.routeStore.fullExcelUrl
-        window.open(_this3.props.routeStore.fullExcelUrl, '_blank');
-      }
+    _this3.getPopoverContent = function () {
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(PinPopover, {
+        filterStore: _this3.props.filterStore,
+        routeStore: _this3.props.routeStore,
+        updatePosition: function updatePosition() {
+          $(_this3.refs.target).popover('update');
+        }
+      });
     };
 
     return _this3;
   }
 
+  _createClass(PinButton, [{
+    key: "render",
+    value: function render() {
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+        href: "#",
+        className: "btn btn-sm btn-secondary",
+        ref: "target"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+        className: "fas fa-thumbtack"
+      }),
+      /* # Translators: a button that lets a user "pin" (verb) a report to their home page */
+      gettext('Pin')));
+    }
+  }]);
+
+  return PinButton;
+}(_components_helpPopover__WEBPACK_IMPORTED_MODULE_3__["BootstrapPopoverButton"]), _temp)) || _class);
+
+var ExcelPopover = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])(_class3 = (_temp2 =
+/*#__PURE__*/
+function (_React$Component2) {
+  _inherits(ExcelPopover, _React$Component2);
+
+  function ExcelPopover() {
+    var _getPrototypeOf3;
+
+    var _this4;
+
+    _classCallCheck(this, ExcelPopover);
+
+    for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+      args[_key2] = arguments[_key2];
+    }
+
+    _this4 = _possibleConstructorReturn(this, (_getPrototypeOf3 = _getPrototypeOf(ExcelPopover)).call.apply(_getPrototypeOf3, [this].concat(args)));
+
+    _this4.getCurrent = function () {
+      if (_this4.props.routeStore.excelUrl) {
+        window.open(_this4.props.routeStore.excelUrl, '_blank');
+      }
+    };
+
+    _this4.getAll = function () {
+      if (_this4.props.routeStore.fullExcelUrl) {
+        window.open(_this4.props.routeStore.fullExcelUrl, '_blank');
+      }
+    };
+
+    return _this4;
+  }
+
   _createClass(ExcelPopover, [{
     key: "render",
     value: function render() {
-      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: ""
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         type: "button",
         className: "btn btn-primary btn-block",
         onClick: this.getCurrent
@@ -1342,70 +1494,94 @@ function (_React$Component3) {
   }]);
 
   return ExcelPopover;
-}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component), _temp2)) || _class3) || _class3);
-var ExcelButton = (_dec3 = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inject"])('filterStore', 'routeStore'), _dec3(_class5 = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(_class5 = (_temp3 =
+}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component), _temp2)) || _class3;
+
+var ExcelPopoverButton = (_dec2 = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["inject"])('filterStore', 'routeStore'), _dec2(_class5 = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])(_class5 = (_temp3 =
 /*#__PURE__*/
-function (_React$Component4) {
-  _inherits(ExcelButton, _React$Component4);
+function (_BootstrapPopoverButt2) {
+  _inherits(ExcelPopoverButton, _BootstrapPopoverButt2);
 
-  function ExcelButton(props) {
-    var _this4;
+  function ExcelPopoverButton() {
+    var _getPrototypeOf4;
 
-    _classCallCheck(this, ExcelButton);
+    var _this5;
 
-    _this4 = _possibleConstructorReturn(this, _getPrototypeOf(ExcelButton).call(this, props));
+    _classCallCheck(this, ExcelPopoverButton);
 
-    _this4.handleClick = function () {
-      if (_this4.props.filterStore.isTVA) {
-        _this4.setState({
-          open: !_this4.state.open
-        });
-      } else if (_this4.props.routeStore.excelUrl) {
-        //window.location=this.props.routeStore.excelUrl;
-        window.open(_this4.props.routeStore.excelUrl, '_blank');
-      }
+    for (var _len3 = arguments.length, args = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+      args[_key3] = arguments[_key3];
+    }
+
+    _this5 = _possibleConstructorReturn(this, (_getPrototypeOf4 = _getPrototypeOf(ExcelPopoverButton)).call.apply(_getPrototypeOf4, [this].concat(args)));
+    _this5.popoverName = 'excel';
+
+    _this5.getPopoverContent = function () {
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ExcelPopover, {
+        filterStore: _this5.props.filterStore,
+        routeStore: _this5.props.routeStore
+      });
     };
 
-    _this4.state = {
-      open: false
-    };
-    return _this4;
+    return _this5;
   }
 
-  _createClass(ExcelButton, [{
-    key: "handleClose",
-    value: function handleClose(e) {
-      this.setState({
-        open: false
-      });
-    }
-  }, {
+  _createClass(ExcelPopoverButton, [{
     key: "render",
     value: function render() {
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         type: "button",
         className: "btn btn-sm btn-secondary",
-        ref: "target",
-        onClick: this.handleClick.bind(this)
+        ref: "target"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
         className: "fas fa-download"
-      }), " Excel"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_simple_popover__WEBPACK_IMPORTED_MODULE_2___default.a, {
-        placement: "bottom",
-        containerStyle: {
-          paddingRight: '10px'
-        },
-        style: {
-          width: 'auto'
-        },
-        target: this.refs.target,
-        show: this.state.open,
-        onHide: this.handleClose.bind(this)
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ExcelPopover, null)));
+      }), " Excel"));
+    }
+  }]);
+
+  return ExcelPopoverButton;
+}(_components_helpPopover__WEBPACK_IMPORTED_MODULE_3__["BootstrapPopoverButton"]), _temp3)) || _class5) || _class5);
+var ExcelButton = (_dec3 = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["inject"])('routeStore'), _dec3(_class7 = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])(_class7 = (_temp4 =
+/*#__PURE__*/
+function (_React$Component3) {
+  _inherits(ExcelButton, _React$Component3);
+
+  function ExcelButton() {
+    var _getPrototypeOf5;
+
+    var _this6;
+
+    _classCallCheck(this, ExcelButton);
+
+    for (var _len4 = arguments.length, args = new Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+      args[_key4] = arguments[_key4];
+    }
+
+    _this6 = _possibleConstructorReturn(this, (_getPrototypeOf5 = _getPrototypeOf(ExcelButton)).call.apply(_getPrototypeOf5, [this].concat(args)));
+
+    _this6.handleClick = function () {
+      if (_this6.props.routeStore.excelUrl) {
+        window.open(_this6.props.routeStore.excelUrl, '_blank');
+      }
+    };
+
+    return _this6;
+  }
+
+  _createClass(ExcelButton, [{
+    key: "render",
+    value: function render() {
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+        type: "button",
+        className: "btn btn-sm btn-secondary",
+        onClick: this.handleClick
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+        className: "fas fa-download"
+      }), " Excel"));
     }
   }]);
 
   return ExcelButton;
-}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component), _temp3)) || _class5) || _class5);
+}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component), _temp4)) || _class7) || _class7);
 
 /***/ }),
 
@@ -2051,6 +2227,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return FilterStore; });
 /* harmony import */ var mobx__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! mobx */ "2vnA");
 /* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../constants */ "v38i");
+/* harmony import */ var _general_utilities__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../general_utilities */ "WtQ/");
 var _class, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _temp;
 
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
@@ -2076,44 +2253,15 @@ function _initializerWarningHelper(descriptor, context) { throw new Error('Decor
 
 
 
+
 var _gettext = typeof gettext !== 'undefined' ? gettext : function (s) {
   return s;
 };
 
-function flattenArray(arr) {
-  var depth = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
+var _getPeriodLabels = Object(_constants__WEBPACK_IMPORTED_MODULE_1__["getPeriodLabels"])(),
+    targetperiodLabels = _getPeriodLabels.targetperiodLabels,
+    timeperiodLabels = _getPeriodLabels.timeperiodLabels;
 
-  if (depth == 5) {
-    return arr;
-  }
-
-  var flattened = [];
-  arr.forEach(function (item) {
-    if (Array.isArray(item)) {
-      flattened = flattened.concat(flattenArray(item, depth + 1));
-    } else {
-      flattened.push(item);
-    }
-  });
-  return flattened;
-}
-
-var targetperiodLabels = {
-  1: _gettext("Life of Program (LoP) only"),
-  3: _gettext("Annual"),
-  2: _gettext("Midline and endline"),
-  5: _gettext("Tri-annual"),
-  4: _gettext("Semi-annual"),
-  7: _gettext("Monthly"),
-  6: _gettext("Quarterly")
-};
-var timeperiodLabels = {
-  3: _gettext("Years"),
-  5: _gettext("Tri-annual periods"),
-  4: _gettext("Semi-annual periods"),
-  7: _gettext("Months"),
-  6: _gettext("Quarters")
-};
 var FilterStore = (_class = (_temp =
 /*#__PURE__*/
 function () {
@@ -2172,6 +2320,10 @@ function () {
 
   _createClass(FilterStore, [{
     key: "getLoadedProgram",
+
+    /* Returns a promise to be completed after programStore loads the program from the API call
+     * promise will immediately complete if the program is already loaded
+     */
     value: function getLoadedProgram() {
       if (this.reportType && this.program && this.frequencyId) {
         return this.programStore.getLoadedProgram(this.reportType, this.programId, this.frequencyId);
@@ -2181,6 +2333,14 @@ function () {
     }
   }, {
     key: "_reportParamsUpdated",
+
+    /* Action to take (as a reaction) when report type, program id, or frequencyid change
+     * contains logic for:
+     *  - updating the program in the programstore (including api call if necessary)
+     *  - making sure the new frequency is valid (and if not replacing with one that is)
+     *  - updating start and end periods to make sense in the new frequency
+     *  - clearing indicator filters
+     */
     value: function _reportParamsUpdated(_ref) {
       var _this2 = this;
 
@@ -2193,7 +2353,7 @@ function () {
         _this2.frequencyId = _this2.frequencyId || null;
 
         if (!_this2._validFrequency(frequencyId)) {
-          _this2.frequencyId = _this2.program.frequencies[0];
+          _this2.frequencyId = _this2.isTVA ? _this2.program.frequencies[0] : _constants__WEBPACK_IMPORTED_MODULE_1__["TIME_AWARE_FREQUENCIES"][0];
         }
 
         _this2.startPeriod = _this2.startPeriod || 0;
@@ -2204,6 +2364,8 @@ function () {
         }
       });
     }
+    /* Whether the start and end period selectors are enabled */
+
   }, {
     key: "setStartPeriodFromDate",
     value: function setStartPeriodFromDate(dateObj) {
@@ -2226,14 +2388,15 @@ function () {
 
       return null;
     }
+    /* whether the program is using old-style (non-satsuma) levels */
+
   }, {
     key: "_getPeriodOptions",
     value: function _getPeriodOptions(periodFilter) {
-      var _this3 = this;
-
       if (!this.frequencyId || !_constants__WEBPACK_IMPORTED_MODULE_1__["TIME_AWARE_FREQUENCIES"].includes(this.frequencyId)) {
         return [_constants__WEBPACK_IMPORTED_MODULE_1__["BLANK_OPTION"]];
       } else if (this.frequencyId == 3) {
+        // years don't have year-based opt-groups:
         return this.periods.filter(periodFilter).map(function (period) {
           return {
             label: period.display,
@@ -2241,20 +2404,23 @@ function () {
           };
         });
       } else {
+        var periods = this.periods.filter(periodFilter); // all non-annual time-aware frequencies are opt-grouped by year:
+
         var years = Array.from(new Set(this.periods.filter(periodFilter).map(function (period) {
           return period.year;
         }))).sort();
         return years.map(function (year) {
+          var options = periods.filter(function (period) {
+            return period.year === year;
+          }).map(function (period) {
+            return {
+              label: period.display,
+              value: period.index
+            };
+          });
           return {
             label: year,
-            options: _this3.periods.filter(periodFilter).filter(function (period) {
-              return period.year === year;
-            }).map(function (period) {
-              return {
-                label: period.display,
-                value: period.index
-              };
-            })
+            options: options
           };
         });
       }
@@ -2262,7 +2428,7 @@ function () {
   }, {
     key: "filterIndicators",
     value: function filterIndicators(indicatorSet) {
-      var _this4 = this;
+      var _this3 = this;
 
       var skip = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
       var indicators = indicatorSet.sort(function (a, b) {
@@ -2271,20 +2437,20 @@ function () {
 
       if (this.reportType === _constants__WEBPACK_IMPORTED_MODULE_1__["TVA"]) {
         indicators = indicators.filter(function (indicator) {
-          return indicator.frequency == _this4.frequencyId;
+          return indicator.frequency == _this3.frequencyId;
         });
       }
 
       if (skip !== 'indicators' && this.indicators && this.indicators.length > 0) {
         indicators = indicators.filter(function (indicator) {
-          return _this4.indicators.includes(indicator.pk);
+          return _this3.indicators.includes(indicator.pk);
         });
       }
 
       if (skip !== 'types' && this.types && this.types.length > 0) {
         indicators = indicators.filter(function (indicator) {
           return indicator.typePks.length > 0 && indicator.typePks.filter(function (pk) {
-            return _this4.types.includes(pk);
+            return _this3.types.includes(pk);
           }).length > 0;
         });
       }
@@ -2292,30 +2458,30 @@ function () {
       if (skip !== 'sites' && this.sites && this.sites.length > 0) {
         indicators = indicators.filter(function (indicator) {
           return indicator.sitePks.length > 0 && indicator.sitePks.filter(function (pk) {
-            return _this4.sites.includes(pk);
+            return _this3.sites.includes(pk);
           }).length > 0;
         });
       }
 
       if (skip !== 'sectors' && this.sectors && this.sectors.length > 0) {
         indicators = indicators.filter(function (indicator) {
-          return indicator.sectorPk && _this4.sectors.includes(indicator.sectorPk);
+          return indicator.sectorPk && _this3.sectors.includes(indicator.sectorPk);
         });
       }
 
       if (skip !== 'levels' && this.levels && this.levels.length > 0) {
         if (this.groupByDisabled) {
           indicators = indicators.filter(function (indicator) {
-            return indicator.level && _this4.levels.includes(indicator.levelpk);
+            return indicator.level && _this3.levels.includes(indicator.levelpk);
           });
         } else {
           indicators = indicators.filter(function (indicator) {
-            return indicator.level && (_this4.levels.includes(indicator.level.pk) || _this4.levels.includes(indicator.level._level2parent));
+            return indicator.level && (_this3.levels.includes(indicator.level.pk) || _this3.levels.includes(indicator.level._level2parent));
           });
         }
       } else if (skip !== 'levels' && this.tiers && this.tiers.length > 0) {
         indicators = indicators.filter(function (indicator) {
-          return indicator.level && indicator.level.tierPk && _this4.tiers.includes(indicator.level.tierPk);
+          return indicator.level && indicator.level.tierPk && _this3.tiers.includes(indicator.level.tierPk);
         });
       }
 
@@ -2382,7 +2548,9 @@ function () {
   }, {
     key: "reportType",
     set: function set(reportType) {
-      if ([_constants__WEBPACK_IMPORTED_MODULE_1__["TVA"], _constants__WEBPACK_IMPORTED_MODULE_1__["TIMEPERIODS"]].includes(reportType)) {
+      reportType = parseInt(reportType);
+
+      if (reportType && [_constants__WEBPACK_IMPORTED_MODULE_1__["TVA"], _constants__WEBPACK_IMPORTED_MODULE_1__["TIMEPERIODS"]].includes(reportType)) {
         this._reportType = reportType;
       } else {
         this._reportType = null;
@@ -2396,6 +2564,11 @@ function () {
     get: function get() {
       return this.reportType === _constants__WEBPACK_IMPORTED_MODULE_1__["TVA"];
     }
+    /* returns a function which will check program IDs for validity given the report type:
+     * - for timeperiods: does the program exist and have indicators
+     * - for tva: does the program exist and have indicators in TVA frequencies
+     */
+
   }, {
     key: "_validProgramId",
     get: function get() {
@@ -2422,20 +2595,18 @@ function () {
 
       return null;
     }
+    /* Whether the frequency selector is disabled */
+
   }, {
     key: "frequencyDisabled",
     get: function get() {
       return !(this.program !== null);
     }
-  }, {
-    key: "programIsLoaded",
-    get: function get() {
-      if (this.frequencyId) {
-        return this.program.isLoaded(this.reportType, this.frequencyId);
-      }
+    /* Internally checks if frequency is valid selection before saving
+     *  - must be time-aware for Timeperiods report
+     *  - must be a valid frequency for the program for TVA report
+     */
 
-      return false;
-    }
   }, {
     key: "frequencyId",
     set: function set(frequencyId) {
@@ -2453,11 +2624,24 @@ function () {
       return null;
     }
   }, {
+    key: "programIsLoaded",
+    get: function get() {
+      if (this.frequencyId) {
+        return this.program.isLoaded(this.reportType, this.frequencyId);
+      }
+
+      return false;
+    }
+  }, {
     key: "periodsDisabled",
     get: function get() {
       var ret = !_constants__WEBPACK_IMPORTED_MODULE_1__["TIME_AWARE_FREQUENCIES"].includes(this.frequencyId);
       return ret;
     }
+    /* Returns all periods for the given program and frequency
+     *   Note this returns a PeriodRange (see ./programStore.js for details)
+     */
+
   }, {
     key: "periods",
     get: function get() {
@@ -2467,6 +2651,8 @@ function () {
 
       return null;
     }
+    /* Returns the last period for the current program/frequency (for setting end) */
+
   }, {
     key: "lastPeriod",
     get: function get() {
@@ -2476,12 +2662,16 @@ function () {
 
       return null;
     }
+    /* "Current" here means most recently completed (for calculating most recent x periods) */
+
   }, {
     key: "currentPeriod",
     get: function get() {
       if (this.frequencyId) {
         return this.program.currentPeriod(this.frequencyId);
       }
+
+      return null;
     }
   }, {
     key: "startPeriod",
@@ -2541,6 +2731,17 @@ function () {
 
       return false;
     }
+    /* Added so that the most recent display can bypass show-all logic and display a value */
+
+  }, {
+    key: "_mostRecentValue",
+    get: function get() {
+      if (this.currentPeriod && this.endPeriod === this.currentPeriod.index) {
+        return this.currentPeriod.index - this.startPeriod + 1;
+      }
+
+      return false;
+    }
   }, {
     key: "oldLevels",
     get: function get() {
@@ -2574,45 +2775,50 @@ function () {
     get: function get() {
       return this.program.resultChainFilterLabel;
     }
-  }, {
-    key: "reportLoaded",
-    get: function get() {
-      if (this.frequencyId) {
-        return this.program.isLoaded(this.reportType, this.frequencyId);
-      }
+    /* whether the lower-half filters (which filter visible indicators) are enabled
+     * Logic: they are enabled when the program is fully loaded for this frequency
+     */
 
-      return null;
-    }
   }, {
     key: "filtersDisabled",
     get: function get() {
-      return !this.reportLoaded;
+      return !this.programIsLoaded;
     }
+    /* Levels = old-style levels (assigned pk manually in views_reports.py)
+     * or new style levels (specific rf level items, i.e. Output 1.1) by pk
+     */
+
   }, {
     key: "levels",
     set: function set(levels) {
-      if (!this.filtersDisabled) {
-        this._levels = levels;
-        this._tiers = null;
+      if (!this.filtersDisabled && Object(_general_utilities__WEBPACK_IMPORTED_MODULE_2__["ensureNumericArray"])(levels)) {
+        this._levels = Object(_general_utilities__WEBPACK_IMPORTED_MODULE_2__["ensureNumericArray"])(levels);
+        this._tiers = [];
+      } else {
+        this._levels = [];
       }
     },
     get: function get() {
-      if (this._levels && this._levels.length > 0 && !this.filtersDisabled) {
+      if (!this.filtersDisabled && this._levels && this._levels.length > 0) {
         return this._levels.filter(this.program.validLevel);
       }
 
       return [];
     }
+    /* Tiers: only for new style levels, the leveltier (i.e. Outcome) */
+
   }, {
     key: "tiers",
     set: function set(tiers) {
-      if (!this.filtersDisabled && !this.groupByDisabled) {
-        this._tiers = tiers;
-        this._levels = null;
+      if (!this.filtersDisabled && !this.groupByDisabled && Object(_general_utilities__WEBPACK_IMPORTED_MODULE_2__["ensureNumericArray"])(tiers)) {
+        this._tiers = Object(_general_utilities__WEBPACK_IMPORTED_MODULE_2__["ensureNumericArray"])(tiers);
+        this._levels = [];
+      } else {
+        this._tiers = [];
       }
     },
     get: function get() {
-      if (this._tiers && this._tiers.length > 0 && !this.groupByDisabled) {
+      if (!this.filtersDisabled && this._tiers && this._tiers.length > 0 && !this.groupByDisabled) {
         return this._tiers.filter(this.program.validTier);
       }
 
@@ -2621,26 +2827,32 @@ function () {
   }, {
     key: "sites",
     set: function set(sites) {
-      if (!this.filtersDisabled) {
-        this._sites = sites;
+      if (!this.filtersDisabled && Object(_general_utilities__WEBPACK_IMPORTED_MODULE_2__["ensureNumericArray"])(sites)) {
+        this._sites = Object(_general_utilities__WEBPACK_IMPORTED_MODULE_2__["ensureNumericArray"])(sites);
+      } else {
+        this._sites = [];
       }
     },
     get: function get() {
-      if (this._sites && this._sites.length > 0 && !this.filtersDisabled) {
+      if (!this.filtersDisabled && this._sites && this._sites.length > 0) {
         return this._sites.filter(this.program.validSite);
       }
 
       return [];
     }
+    /* "Types" as in Indicator Types (i.e. Custom/donor) */
+
   }, {
     key: "types",
     set: function set(types) {
-      if (!this.filtersDisabled) {
-        this._types = types;
+      if (!this.filtersDisabled && Object(_general_utilities__WEBPACK_IMPORTED_MODULE_2__["ensureNumericArray"])(types)) {
+        this._types = Object(_general_utilities__WEBPACK_IMPORTED_MODULE_2__["ensureNumericArray"])(types);
+      } else {
+        this._types = [];
       }
     },
     get: function get() {
-      if (this._types && this._types.length > 0 && !this.filtersDisabled) {
+      if (!this.filtersDisabled && this._types && this._types.length > 0) {
         return this._types.filter(this.program.validType);
       }
 
@@ -2649,31 +2861,39 @@ function () {
   }, {
     key: "sectors",
     set: function set(sectors) {
-      if (!this.filtersDisabled) {
-        this._sectors = sectors;
+      if (!this.filtersDisabled && Object(_general_utilities__WEBPACK_IMPORTED_MODULE_2__["ensureNumericArray"])(sectors)) {
+        this._sectors = Object(_general_utilities__WEBPACK_IMPORTED_MODULE_2__["ensureNumericArray"])(sectors);
+      } else {
+        this._sectors = [];
       }
     },
     get: function get() {
-      if (this._sectors && this._sectors.length > 0 && !this.filtersDisabled) {
+      if (!this.filtersDisabled && this._sectors && this._sectors.length > 0) {
         return this._sectors.filter(this.program.validSector);
       }
 
       return [];
     }
+    /* setting indicator PKs for filtering ( show only those indicators) */
+
   }, {
     key: "indicators",
     set: function set(indicators) {
-      if (!this.filtersDisabled) {
-        this._indicators = indicators;
+      if (!this.filtersDisabled && Object(_general_utilities__WEBPACK_IMPORTED_MODULE_2__["ensureNumericArray"])(indicators)) {
+        this._indicators = Object(_general_utilities__WEBPACK_IMPORTED_MODULE_2__["ensureNumericArray"])(indicators);
+      } else {
+        this._indicators = [];
       }
     },
     get: function get() {
-      if (this._indicators && this._indicators.length > 0 && !this.filtersDisabled) {
+      if (!this.filtersDisabled && this._indicators && this._indicators.length > 0) {
         return this._indicators.filter(this.program.validIndicator);
       }
 
       return [];
     }
+    /** OPTION providers for select widgets: ******/
+
   }, {
     key: "programOptions",
     get: function get() {
@@ -2739,6 +2959,8 @@ function () {
         return true;
       });
     }
+    /* Label for the date section under the title of the report */
+
   }, {
     key: "startPeriodLabel",
     get: function get() {
@@ -2748,7 +2970,7 @@ function () {
         }).startDisplay;
       }
 
-      if (this.frequencyId === 1) {
+      if (this.frequencyId === 1 || this.frequencyId === 2) {
         return this.program.reportingStart;
       }
 
@@ -2757,14 +2979,16 @@ function () {
   }, {
     key: "endOptions",
     get: function get() {
-      var _this5 = this;
+      var _this4 = this;
 
       var periodFilter = function periodFilter(period) {
-        return period.index >= _this5.startPeriod;
+        return period.index >= _this4.startPeriod;
       };
 
       return this._getPeriodOptions(periodFilter);
     }
+    /* Label for the date section under the title of the report */
+
   }, {
     key: "endPeriodLabel",
     get: function get() {
@@ -2774,7 +2998,7 @@ function () {
         }).endDisplay;
       }
 
-      if (this.frequencyId === 1) {
+      if (this.frequencyId === 1 || this.frequencyId === 2) {
         return this.program.reportingEnd;
       }
 
@@ -2784,6 +3008,7 @@ function () {
     key: "levelOptions",
     get: function get() {
       if (!this.filtersDisabled && this.groupByDisabled) {
+        // old-style (non-RF) levels:
         var availableLevels = this.levels.concat(this.filterIndicators(this.program.indicators, 'levels').map(function (indicator) {
           return indicator.level ? indicator.level.pk : null;
         }));
@@ -2799,6 +3024,7 @@ function () {
           };
         });
       } else if (!this.filtersDisabled) {
+        // new style levels and leveltiers:
         var availableTiers = this.tiers.concat(this.filterIndicators(this.program.indicators, 'levels').map(function (indicator) {
           return indicator.level ? indicator.level.tierPk : null;
         }));
@@ -2806,7 +3032,7 @@ function () {
           return availableTiers.includes(tier.pk);
         });
 
-        var _availableLevels = flattenArray(this.levels.concat(this.filterIndicators(this.program.indicators, 'levels').map(function (indicator) {
+        var _availableLevels = Object(_general_utilities__WEBPACK_IMPORTED_MODULE_2__["flattenArray"])(this.levels.concat(this.filterIndicators(this.program.indicators, 'levels').map(function (indicator) {
           return indicator.level ? [indicator.level.pk, indicator.level._level2parent] : [];
         })));
 
@@ -2853,11 +3079,11 @@ function () {
   }, {
     key: "levelsSelected",
     get: function get() {
-      var _this6 = this;
+      var _this5 = this;
 
       if (this.levels && this.levels.length > 0) {
         return this.program.levels.filter(function (level) {
-          return _this6.levels.includes(level.pk);
+          return _this5.levels.includes(level.pk);
         }).map(function (level) {
           return {
             value: level.pk,
@@ -2872,11 +3098,11 @@ function () {
   }, {
     key: "tiersSelected",
     get: function get() {
-      var _this7 = this;
+      var _this6 = this;
 
       if (this.tiers && this.tiers.length > 0) {
         return this.program.tiers.filter(function (tier) {
-          return _this7.tiers.includes(tier.pk);
+          return _this6.tiers.includes(tier.pk);
         }).map(function (tier) {
           return {
             value: tier.pk,
@@ -2892,7 +3118,7 @@ function () {
     key: "typeOptions",
     get: function get() {
       if (!this.filtersDisabled) {
-        var availableTypes = flattenArray(this.types.concat(this.filterIndicators(this.program.indicators, 'types').map(function (indicator) {
+        var availableTypes = Object(_general_utilities__WEBPACK_IMPORTED_MODULE_2__["flattenArray"])(this.types.concat(this.filterIndicators(this.program.indicators, 'types').map(function (indicator) {
           return indicator.typePks;
         })));
         return this.program.types.filter(function (iType) {
@@ -2910,11 +3136,11 @@ function () {
   }, {
     key: "typesSelected",
     get: function get() {
-      var _this8 = this;
+      var _this7 = this;
 
       if (this.types && this.types.length > 0) {
         return this.typeOptions.filter(function (typeOpt) {
-          return _this8.types.includes(typeOpt.value);
+          return _this7.types.includes(typeOpt.value);
         });
       }
 
@@ -2942,11 +3168,11 @@ function () {
   }, {
     key: "sectorsSelected",
     get: function get() {
-      var _this9 = this;
+      var _this8 = this;
 
       if (this.sectors && this.sectors.length > 0) {
         return this.sectorOptions.filter(function (sector) {
-          return _this9.sectors.includes(sector.value);
+          return _this8.sectors.includes(sector.value);
         });
       }
 
@@ -2956,7 +3182,7 @@ function () {
     key: "siteOptions",
     get: function get() {
       if (!this.filtersDisabled) {
-        var availableSites = this.sites.concat(flattenArray(this.filterIndicators(this.program.indicators, 'sites').map(function (indicator) {
+        var availableSites = this.sites.concat(Object(_general_utilities__WEBPACK_IMPORTED_MODULE_2__["flattenArray"])(this.filterIndicators(this.program.indicators, 'sites').map(function (indicator) {
           return indicator.sitePks;
         })));
         return this.program.sites.filter(function (site) {
@@ -2974,11 +3200,11 @@ function () {
   }, {
     key: "sitesSelected",
     get: function get() {
-      var _this10 = this;
+      var _this9 = this;
 
       if (this.sites && this.sites.length > 0) {
         return this.siteOptions.filter(function (site) {
-          return _this10.sites.includes(site.value);
+          return _this9.sites.includes(site.value);
         });
       }
 
@@ -2987,7 +3213,7 @@ function () {
   }, {
     key: "indicatorOptions",
     get: function get() {
-      var _this11 = this;
+      var _this10 = this;
 
       if (!this.filtersDisabled) {
         if (this.groupByDisabled) {
@@ -3001,7 +3227,7 @@ function () {
           return this.filterLevels('indicators').map(function (level) {
             return {
               label: "".concat(level.tier.name, " ").concat(level.sort),
-              options: _this11.filterIndicators(level.indicators, 'indicators').map(function (indicator) {
+              options: _this10.filterIndicators(level.indicators, 'indicators').map(function (indicator) {
                 return {
                   value: indicator.pk,
                   label: "".concat(indicator.number, " ").concat(indicator.name)
@@ -3029,14 +3255,14 @@ function () {
   }, {
     key: "indicatorsSelected",
     get: function get() {
-      var _this12 = this;
+      var _this11 = this;
 
       if (this.indicators && this.indicators.length > 0) {
-        var indicatorOptions = this.groupByDisabled ? this.indicatorOptions : flattenArray(this.indicatorOptions.map(function (optgroup) {
+        var indicatorOptions = this.groupByDisabled ? this.indicatorOptions : Object(_general_utilities__WEBPACK_IMPORTED_MODULE_2__["flattenArray"])(this.indicatorOptions.map(function (optgroup) {
           return optgroup.options;
         }));
         return indicatorOptions.filter(function (indicator) {
-          return _this12.indicators.includes(indicator.value);
+          return _this11.indicators.includes(indicator.value);
         });
       }
 
@@ -3044,17 +3270,10 @@ function () {
     }
   }, {
     key: "noFilters",
+
+    /* whether this is in an unfiltered state */
     get: function get() {
       return (!this.indicators || this.indicators.length == 0) && (!this.types || this.types.length == 0) && (!this.levels || this.levels.length == 0) && (!this.tiers || this.tiers.length == 0) && (!this.sectors || this.sectors.length == 0) && (!this.sites || this.sites.length == 0);
-    }
-  }, {
-    key: "pinData",
-    get: function get() {
-      if (this.frequencyId) {
-        return this.router.pinData;
-      }
-
-      return false;
     }
   }, {
     key: "programPageUrl",
@@ -3162,23 +3381,23 @@ function () {
   initializer: function initializer() {
     return [];
   }
-}), _applyDecoratedDescriptor(_class.prototype, "reportType", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "reportType"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "isTVA", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "isTVA"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "_validProgramId", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "_validProgramId"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "programId", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "programId"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "program", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "program"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "frequencyDisabled", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "frequencyDisabled"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "programIsLoaded", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "programIsLoaded"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "frequencyId", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "frequencyId"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "_reportParamsUpdated", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "_reportParamsUpdated"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "periodsDisabled", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "periodsDisabled"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "periods", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "periods"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "lastPeriod", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "lastPeriod"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "currentPeriod", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "currentPeriod"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "startPeriod", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "startPeriod"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "endPeriod", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "endPeriod"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "showAll", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "showAll"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "mostRecent", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "mostRecent"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "oldLevels", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "oldLevels"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "groupByDisabled", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "groupByDisabled"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "groupBy", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "groupBy"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "resultChainFilterLabel", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "resultChainFilterLabel"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "reportLoaded", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "reportLoaded"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "filtersDisabled", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "filtersDisabled"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "levels", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "levels"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "tiers", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "tiers"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "sites", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "sites"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "types", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "types"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "sectors", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "sectors"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "indicators", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "indicators"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "programOptions", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "programOptions"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "selectedProgramOption", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "selectedProgramOption"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "frequencyOptions", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "frequencyOptions"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "selectedFrequencyOption", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "selectedFrequencyOption"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "startOptions", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "startOptions"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "startPeriodLabel", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "startPeriodLabel"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "endOptions", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "endOptions"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "endPeriodLabel", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "endPeriodLabel"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "levelOptions", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "levelOptions"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "levelsSelected", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "levelsSelected"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "tiersSelected", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "tiersSelected"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "typeOptions", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "typeOptions"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "typesSelected", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "typesSelected"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "sectorOptions", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "sectorOptions"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "sectorsSelected", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "sectorsSelected"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "siteOptions", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "siteOptions"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "sitesSelected", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "sitesSelected"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "indicatorOptions", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "indicatorOptions"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "indicatorsSelected", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "indicatorsSelected"), _class.prototype), _descriptor13 = _applyDecoratedDescriptor(_class.prototype, "clearFilters", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
+}), _applyDecoratedDescriptor(_class.prototype, "reportType", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "reportType"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "isTVA", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "isTVA"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "_validProgramId", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "_validProgramId"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "programId", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "programId"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "program", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "program"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "frequencyDisabled", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "frequencyDisabled"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "frequencyId", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "frequencyId"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "programIsLoaded", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "programIsLoaded"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "_reportParamsUpdated", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "_reportParamsUpdated"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "periodsDisabled", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "periodsDisabled"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "periods", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "periods"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "lastPeriod", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "lastPeriod"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "currentPeriod", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "currentPeriod"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "startPeriod", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "startPeriod"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "endPeriod", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "endPeriod"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "showAll", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "showAll"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "mostRecent", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "mostRecent"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "_mostRecentValue", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "_mostRecentValue"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "oldLevels", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "oldLevels"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "groupByDisabled", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "groupByDisabled"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "groupBy", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "groupBy"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "resultChainFilterLabel", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "resultChainFilterLabel"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "filtersDisabled", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "filtersDisabled"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "levels", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "levels"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "tiers", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "tiers"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "sites", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "sites"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "types", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "types"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "sectors", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "sectors"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "indicators", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "indicators"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "programOptions", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "programOptions"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "selectedProgramOption", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "selectedProgramOption"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "frequencyOptions", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "frequencyOptions"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "selectedFrequencyOption", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "selectedFrequencyOption"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "startOptions", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "startOptions"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "startPeriodLabel", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "startPeriodLabel"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "endOptions", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "endOptions"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "endPeriodLabel", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "endPeriodLabel"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "levelOptions", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "levelOptions"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "levelsSelected", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "levelsSelected"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "tiersSelected", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "tiersSelected"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "typeOptions", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "typeOptions"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "typesSelected", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "typesSelected"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "sectorOptions", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "sectorOptions"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "sectorsSelected", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "sectorsSelected"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "siteOptions", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "siteOptions"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "sitesSelected", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "sitesSelected"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "indicatorOptions", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "indicatorOptions"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "indicatorsSelected", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "indicatorsSelected"), _class.prototype), _descriptor13 = _applyDecoratedDescriptor(_class.prototype, "clearFilters", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
-    var _this13 = this;
+    var _this12 = this;
 
     return function () {
-      _this13.sectors = [];
-      _this13.types = [];
-      _this13.sites = [];
-      _this13.indicators = [];
-      _this13.levels = [];
-      _this13.tiers = [];
+      _this12.sectors = [];
+      _this12.types = [];
+      _this12.sites = [];
+      _this12.indicators = [];
+      _this12.levels = [];
+      _this12.tiers = [];
     };
   }
-}), _applyDecoratedDescriptor(_class.prototype, "noFilters", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "noFilters"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "pinData", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "pinData"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "programPageUrl", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "programPageUrl"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "filteredIndicators", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "filteredIndicators"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "filteredLevels", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "filteredLevels"), _class.prototype)), _class);
+}), _applyDecoratedDescriptor(_class.prototype, "noFilters", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "noFilters"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "programPageUrl", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "programPageUrl"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "filteredIndicators", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "filteredIndicators"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "filteredLevels", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "filteredLevels"), _class.prototype)), _class);
 
 
 /***/ }),
@@ -3387,6 +3606,63 @@ var IPTTFilterForm = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inject"])('
 
 /***/ }),
 
+/***/ "WtQ/":
+/*!*********************************!*\
+  !*** ./js/general_utilities.js ***!
+  \*********************************/
+/*! exports provided: flattenArray, ensureNumericArray */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "flattenArray", function() { return flattenArray; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ensureNumericArray", function() { return ensureNumericArray; });
+function flattenArray(arr) {
+  var depth = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
+
+  if (depth == 5) {
+    return arr;
+  }
+
+  var flattened = [];
+  arr.forEach(function (item) {
+    if (Array.isArray(item)) {
+      flattened = flattened.concat(flattenArray(item, depth + 1));
+    } else {
+      flattened.push(item);
+    }
+  });
+  return flattened;
+}
+
+function ensureNumericArray(value) {
+  if (!Array.isArray(value)) {
+    value = parseInt(value);
+
+    if (value && !isNaN(value)) {
+      return [value];
+    }
+
+    return false;
+  }
+
+  var arr = value.map(function (x) {
+    return parseInt(x);
+  }).filter(function (x) {
+    return !isNaN(x);
+  });
+
+  if (arr && Array.isArray(arr) && arr.length > 0) {
+    return arr;
+  }
+
+  return false;
+}
+
+
+
+/***/ }),
+
 /***/ "XGqG":
 /*!****************************************!*\
   !*** ./js/pages/iptt_report/router.js ***!
@@ -3453,8 +3729,6 @@ function () {
         base: '/indicators'
       }));
 
-      _this.router.subscribe(_this.updateRoute);
-
       _this.router.start();
 
       var _this$router$getState = _this.router.getState(),
@@ -3482,59 +3756,46 @@ function () {
       });
     };
 
-    this.updateRoute = function (_ref3) {//this.reportType = name == 'iptt.tva' ? TVA : (name == 'iptt.timeperiods' ? TIMEPERIODS : null);
-      //console.log("route name", name);
-      //console.log("route params", params);
-      //console.log("updating route from", previousRoute, " to ", route);
-      //console.log("router state", this.router.getState());
-
-      var previousRoute = _ref3.previousRoute,
-          _ref3$route = _ref3.route,
-          name = _ref3$route.name,
-          params = _ref3$route.params,
-          route = _objectWithoutProperties(_ref3$route, ["name", "params"]);
-    };
-
     this.processParams = function () {
-      var _ref4 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-          _ref4$name = _ref4.name,
-          name = _ref4$name === void 0 ? null : _ref4$name,
-          _ref4$programId = _ref4.programId,
-          programId = _ref4$programId === void 0 ? null : _ref4$programId,
-          _ref4$frequency = _ref4.frequency,
-          frequency = _ref4$frequency === void 0 ? null : _ref4$frequency,
-          _ref4$start = _ref4.start,
-          start = _ref4$start === void 0 ? null : _ref4$start,
-          _ref4$end = _ref4.end,
-          end = _ref4$end === void 0 ? null : _ref4$end,
-          _ref4$timeperiods = _ref4.timeperiods,
-          timeperiods = _ref4$timeperiods === void 0 ? null : _ref4$timeperiods,
-          _ref4$targetperiods = _ref4.targetperiods,
-          targetperiods = _ref4$targetperiods === void 0 ? null : _ref4$targetperiods,
-          _ref4$timeframe = _ref4.timeframe,
-          timeframe = _ref4$timeframe === void 0 ? null : _ref4$timeframe,
-          _ref4$numrecentcount = _ref4.numrecentcount,
-          numrecentcount = _ref4$numrecentcount === void 0 ? null : _ref4$numrecentcount,
-          _ref4$numrecentperiod = _ref4.numrecentperiods,
-          numrecentperiods = _ref4$numrecentperiod === void 0 ? null : _ref4$numrecentperiod,
-          _ref4$start_period = _ref4.start_period,
-          start_period = _ref4$start_period === void 0 ? null : _ref4$start_period,
-          _ref4$end_period = _ref4.end_period,
-          end_period = _ref4$end_period === void 0 ? null : _ref4$end_period,
-          _ref4$groupby = _ref4.groupby,
-          groupby = _ref4$groupby === void 0 ? null : _ref4$groupby,
-          _ref4$levels = _ref4.levels,
-          levels = _ref4$levels === void 0 ? null : _ref4$levels,
-          _ref4$tiers = _ref4.tiers,
-          tiers = _ref4$tiers === void 0 ? null : _ref4$tiers,
-          _ref4$sites = _ref4.sites,
-          sites = _ref4$sites === void 0 ? null : _ref4$sites,
-          _ref4$sectors = _ref4.sectors,
-          sectors = _ref4$sectors === void 0 ? null : _ref4$sectors,
-          _ref4$types = _ref4.types,
-          types = _ref4$types === void 0 ? null : _ref4$types,
-          _ref4$indicators = _ref4.indicators,
-          indicators = _ref4$indicators === void 0 ? null : _ref4$indicators;
+      var _ref3 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+          _ref3$name = _ref3.name,
+          name = _ref3$name === void 0 ? null : _ref3$name,
+          _ref3$programId = _ref3.programId,
+          programId = _ref3$programId === void 0 ? null : _ref3$programId,
+          _ref3$frequency = _ref3.frequency,
+          frequency = _ref3$frequency === void 0 ? null : _ref3$frequency,
+          _ref3$start = _ref3.start,
+          start = _ref3$start === void 0 ? null : _ref3$start,
+          _ref3$end = _ref3.end,
+          end = _ref3$end === void 0 ? null : _ref3$end,
+          _ref3$timeperiods = _ref3.timeperiods,
+          timeperiods = _ref3$timeperiods === void 0 ? null : _ref3$timeperiods,
+          _ref3$targetperiods = _ref3.targetperiods,
+          targetperiods = _ref3$targetperiods === void 0 ? null : _ref3$targetperiods,
+          _ref3$timeframe = _ref3.timeframe,
+          timeframe = _ref3$timeframe === void 0 ? null : _ref3$timeframe,
+          _ref3$numrecentcount = _ref3.numrecentcount,
+          numrecentcount = _ref3$numrecentcount === void 0 ? null : _ref3$numrecentcount,
+          _ref3$numrecentperiod = _ref3.numrecentperiods,
+          numrecentperiods = _ref3$numrecentperiod === void 0 ? null : _ref3$numrecentperiod,
+          _ref3$start_period = _ref3.start_period,
+          start_period = _ref3$start_period === void 0 ? null : _ref3$start_period,
+          _ref3$end_period = _ref3.end_period,
+          end_period = _ref3$end_period === void 0 ? null : _ref3$end_period,
+          _ref3$groupby = _ref3.groupby,
+          groupby = _ref3$groupby === void 0 ? null : _ref3$groupby,
+          _ref3$levels = _ref3.levels,
+          levels = _ref3$levels === void 0 ? null : _ref3$levels,
+          _ref3$tiers = _ref3.tiers,
+          tiers = _ref3$tiers === void 0 ? null : _ref3$tiers,
+          _ref3$sites = _ref3.sites,
+          sites = _ref3$sites === void 0 ? null : _ref3$sites,
+          _ref3$sectors = _ref3.sectors,
+          sectors = _ref3$sectors === void 0 ? null : _ref3$sectors,
+          _ref3$types = _ref3.types,
+          types = _ref3$types === void 0 ? null : _ref3$types,
+          _ref3$indicators = _ref3.indicators,
+          indicators = _ref3$indicators === void 0 ? null : _ref3$indicators;
 
       if (_this.filterStore === null) {
         throw "data not loaded";
@@ -3714,7 +3975,9 @@ function () {
       return {
         program: programId,
         report_type: reportType,
-        query_string: Object.keys(params).map(function (k) {
+        query_string: Object.keys(params).filter(function (k) {
+          return params[k] && (!Array.isArray(params[k]) || params[k].length > 0);
+        }).map(function (k) {
           return "".concat(k, "=").concat(params[k]);
         }).join('&')
       };
@@ -3928,7 +4191,7 @@ var IPTTHeader = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inject"])('filt
     className: "subheader__actions"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "btn-row"
-  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_buttons__WEBPACK_IMPORTED_MODULE_2__["PinButton"], null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_buttons__WEBPACK_IMPORTED_MODULE_2__["ExcelButton"], null))));
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_buttons__WEBPACK_IMPORTED_MODULE_2__["PinButton"], null), filterStore.isTVA ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_buttons__WEBPACK_IMPORTED_MODULE_2__["ExcelPopoverButton"], null) : react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_buttons__WEBPACK_IMPORTED_MODULE_2__["ExcelButton"], null))));
 }));
 /* harmony default export */ __webpack_exports__["default"] = (IPTTHeader);
 
@@ -4088,7 +4351,7 @@ function () {
 /*!*************************!*\
   !*** ./js/constants.js ***!
   \*************************/
-/*! exports provided: BLANK_OPTION, BLANK_LABEL, TVA, TIMEPERIODS, TIME_AWARE_FREQUENCIES, GROUP_BY_CHAIN, GROUP_BY_LEVEL */
+/*! exports provided: BLANK_OPTION, BLANK_LABEL, TVA, TIMEPERIODS, TIME_AWARE_FREQUENCIES, GROUP_BY_CHAIN, GROUP_BY_LEVEL, getPeriodLabels */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4100,6 +4363,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TIME_AWARE_FREQUENCIES", function() { return TIME_AWARE_FREQUENCIES; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "GROUP_BY_CHAIN", function() { return GROUP_BY_CHAIN; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "GROUP_BY_LEVEL", function() { return GROUP_BY_LEVEL; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getPeriodLabels", function() { return getPeriodLabels; });
 /**
  * IPTT Constants:
  */
@@ -4114,6 +4378,33 @@ var TIME_AWARE_FREQUENCIES = [3, 4, 5, 6, 7];
 
 var GROUP_BY_CHAIN = 1;
 var GROUP_BY_LEVEL = 2;
+
+
+var _gettext = typeof gettext !== 'undefined' ? gettext : function (s) {
+  return s;
+};
+
+function getPeriodLabels() {
+  return {
+    targetperiodLabels: {
+      1: _gettext("Life of Program (LoP) only"),
+      3: _gettext("Annual"),
+      2: _gettext("Midline and endline"),
+      5: _gettext("Tri-annual"),
+      4: _gettext("Semi-annual"),
+      7: _gettext("Monthly"),
+      6: _gettext("Quarterly")
+    },
+    timeperiodLabels: {
+      3: _gettext("Years"),
+      5: _gettext("Tri-annual periods"),
+      4: _gettext("Semi-annual periods"),
+      7: _gettext("Months"),
+      6: _gettext("Quarters")
+    }
+  };
+}
+
 
 
 /***/ }),
@@ -4136,7 +4427,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "q1tI");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! mobx-react */ "okNM");
-/* harmony import */ var _components_selectWidgets__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../components/selectWidgets */ "Ez0T");
+/* harmony import */ var mobx__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! mobx */ "2vnA");
+/* harmony import */ var _components_selectWidgets__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../../components/selectWidgets */ "Ez0T");
 var _dec, _class, _temp;
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -4160,6 +4452,7 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 
 
+
 /**  false && <Selectors.PeriodSelect />}
                 { false && <Selectors.TimeFrameRadio />}
                 { false && <Selectors.StartDateSelect />}
@@ -4174,7 +4467,7 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 var ProgramSelect = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inject"])('filterStore')(Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function (_ref) {
   var filterStore = _ref.filterStore;
-  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_selectWidgets__WEBPACK_IMPORTED_MODULE_2__["SingleReactSelect"], {
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_selectWidgets__WEBPACK_IMPORTED_MODULE_3__["SingleReactSelect"], {
     label: gettext('Program'),
     options: filterStore.programOptions,
     value: filterStore.selectedProgramOption,
@@ -4190,7 +4483,7 @@ var ProgramSelect = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inject"])('f
 
 var FrequencySelect = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inject"])('filterStore')(Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function (_ref2) {
   var filterStore = _ref2.filterStore;
-  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_selectWidgets__WEBPACK_IMPORTED_MODULE_2__["SingleReactSelect"], {
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_selectWidgets__WEBPACK_IMPORTED_MODULE_3__["SingleReactSelect"], {
     label: filterStore.isTVA ? gettext('Target periods') : gettext('Time periods'),
     options: filterStore.frequencyOptions,
     value: filterStore.selectedFrequencyOption,
@@ -4217,6 +4510,14 @@ function (_React$Component) {
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(TimeframeRadio).call(this, props));
 
+    _this.setShowAll = function () {
+      _this.setState({
+        latch: false
+      });
+
+      _this.props.filterStore.showAll = true;
+    };
+
     _this.checkMostRecent = function () {
       _this.mostRecentInputRef.current.focus();
     };
@@ -4230,12 +4531,24 @@ function (_React$Component) {
     _this.handleBlur = function (e) {
       if (!_this.state.revert && _this.state.mostRecentValue !== '') {
         _this.props.filterStore.mostRecent = _this.state.mostRecentValue;
-      }
 
-      _this.setState({
-        focus: false,
-        revert: false
-      });
+        _this.setState({
+          focus: false,
+          revert: false,
+          mostRecentValue: _this.props.filterStore._mostRecentValue,
+          latch: _this.props.filterStore.showAll !== false
+        }, function () {
+          if (_this.state.latch) {
+            Object(mobx__WEBPACK_IMPORTED_MODULE_2__["when"])(function () {
+              return !_this.props.filterStore.showAll || _this.props.filterStore.mostRecent;
+            }, function () {
+              _this.setState({
+                latch: false
+              });
+            });
+          }
+        });
+      }
     };
 
     _this.handleKeyDown = function (e) {
@@ -4253,27 +4566,21 @@ function (_React$Component) {
     _this.handleFocus = function (e) {
       _this.setState({
         focus: true,
-        mostRecentValue: _this.props.filterStore.mostRecent || ''
+        mostRecentValue: _this.props.filterStore._mostRecentValue || ''
       });
     };
 
     _this.mostRecentInputRef = react__WEBPACK_IMPORTED_MODULE_0___default.a.createRef();
     _this.state = {
       focus: false,
-      mostRecentValue: '',
-      revert: false
+      mostRecentValue: props.filterStore.mostRecent || '',
+      revert: false,
+      latch: false
     };
     return _this;
   }
 
   _createClass(TimeframeRadio, [{
-    key: "componentDidMount",
-    value: function componentDidMount() {
-      this.setState({
-        mostRecentValue: this.props.filterStore.mostRecent || ''
-      });
-    }
-  }, {
     key: "render",
     value: function render() {
       var _this2 = this;
@@ -4288,11 +4595,9 @@ function (_React$Component) {
         className: "form-check-input"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         type: "radio",
-        checked: !this.state.focus && this.props.filterStore.showAll,
+        checked: !this.state.latch && !this.state.focus && this.props.filterStore.showAll,
         disabled: this.props.filterStore.periodsDisabled,
-        onChange: function onChange() {
-          _this2.props.filterStore.showAll = true;
-        }
+        onChange: this.setShowAll
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
         onClick: function onClick() {
           _this2.props.filterStore.showAll = true;
@@ -4308,7 +4613,7 @@ function (_React$Component) {
         className: "form-check-input"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         type: "radio",
-        checked: this.state.focus || this.props.filterStore.mostRecent,
+        checked: this.state.latch || this.state.focus || this.props.filterStore.mostRecent,
         disabled: this.props.filterStore.periodsDisabled,
         onChange: this.checkMostRecent
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
@@ -4333,11 +4638,11 @@ function (_React$Component) {
   }, {
     key: "mostRecentValue",
     get: function get() {
-      if (this.state.focus) {
+      if (this.state.focus || this.state.latch) {
         return this.state.mostRecentValue;
+      } else {
+        return this.props.filterStore.mostRecent;
       }
-
-      return this.props.filterStore.mostRecent;
     }
   }]);
 
@@ -4350,7 +4655,7 @@ function (_React$Component) {
 
 var StartDateSelect = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inject"])('filterStore')(Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function (_ref3) {
   var filterStore = _ref3.filterStore;
-  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_selectWidgets__WEBPACK_IMPORTED_MODULE_2__["DateSelect"], {
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_selectWidgets__WEBPACK_IMPORTED_MODULE_3__["DateSelect"], {
     label:
     /* # Translators: menu for selecting the start date for a report */
     gettext('Start'),
@@ -4369,7 +4674,7 @@ var StartDateSelect = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inject"])(
 
 var EndDateSelect = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inject"])('filterStore')(Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function (_ref4) {
   var filterStore = _ref4.filterStore;
-  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_selectWidgets__WEBPACK_IMPORTED_MODULE_2__["DateSelect"], {
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_selectWidgets__WEBPACK_IMPORTED_MODULE_3__["DateSelect"], {
     label:
     /* # Translators: menu for selecting the end date for a report */
     gettext('End'),
@@ -4398,7 +4703,7 @@ var GroupingSelect = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inject"])('
   /* # Translators: refers to grouping the report by the level of the indicator */
   gettext('by Level'))];
   ;
-  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_selectWidgets__WEBPACK_IMPORTED_MODULE_2__["SingleSelect"], {
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_selectWidgets__WEBPACK_IMPORTED_MODULE_3__["SingleSelect"], {
     label:
     /* # Translators: menu for selecting how rows are grouped in a report */
     gettext('Group indicators'),
@@ -4462,4 +4767,4 @@ function () {
 /***/ })
 
 },[["mYfJ","runtime","vendors"]]]);
-//# sourceMappingURL=iptt_report-ab8523104b9649fad1e4.js.map
+//# sourceMappingURL=iptt_report-754b007aa39bce3d32a5.js.map

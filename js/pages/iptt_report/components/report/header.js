@@ -1,6 +1,6 @@
 import React from 'react';
 import { observer, inject } from 'mobx-react';
-import { PinButton, ExcelButton } from './buttons';
+import { PinButton, ExcelButton, ExcelPopoverButton } from './buttons';
 
 
 const IPTTHeader = inject('filterStore')(
@@ -17,7 +17,7 @@ const IPTTHeader = inject('filterStore')(
                     <div className="subheader__actions">
                         <div className="btn-row">
                             <PinButton />
-                            <ExcelButton />
+                            {filterStore.isTVA ? <ExcelPopoverButton /> : <ExcelButton />}
                         </div>
                     </div>
                 </div>
