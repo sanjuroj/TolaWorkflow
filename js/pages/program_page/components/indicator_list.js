@@ -256,7 +256,7 @@ class IndicatorListTable extends React.Component {
                                onClick={(e) => this.onIndicatorUpdateClick(e, indicator.id)}><i
                                 className="fas fa-cog"/></a>
                         </td>
-                        {this.props.oldStyleLevels &&<td>{indicator.level ? indicator.level.name : indicator.old_level}</td>}
+                        { this.props.oldStyleLevels && <td>{ indicator.old_level }</td> }
                         <td>{indicator.unit_of_measure}</td>
                         <td className="text-right">{ numberCellFunc(indicator.baseline) }</td>
                         <td className="text-right">{ numberCellFunc(indicator.lop_target_active) }</td>
