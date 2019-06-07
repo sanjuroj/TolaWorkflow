@@ -1,4 +1,4 @@
-import { observable, computed } from 'mobx';
+import { observable, computed, action } from 'mobx';
 import { TVA, TIMEPERIODS, TIME_AWARE_FREQUENCIES } from '../../../constants';
 
 const _gettext = (typeof gettext !== 'undefined') ?  gettext : (s) => s;
@@ -14,6 +14,7 @@ class Indicator {
     cumulative = null;
     unitType = null;
     baseline = null;
+    baseline_na = null;
     typePks = [];
     sitePks = [];
     sectorPk = null;
@@ -36,6 +37,7 @@ class Indicator {
         this.cumulative = indicatorJSON.cumulative;
         this.unitType = indicatorJSON.unitType;
         this.baseline = indicatorJSON.baseline;
+        this.baseline_na = indicatorJSON.baseline_na;
         this.typePks = indicatorJSON.indicatorTypes.map(indicatorType => parseInt(indicatorType.pk));
         this.sitePks = indicatorJSON.sites.map(site => parseInt(site.pk));
         this.sectorPk = (indicatorJSON.sector && indicatorJSON.sector.pk && parseInt(indicatorJSON.sector.pk));
@@ -348,7 +350,7 @@ class Program {
         return {};
     }
     
-    loadReportData = ( reportJSON ) => {
+    updateProgramData = ( reportJSON ) => {
         this.addLevels(reportJSON.levels);
         if (reportJSON.indicators && Array.isArray(reportJSON.indicators)) {
             reportJSON.indicators.forEach(indicatorJSON => {
@@ -384,6 +386,15 @@ class Program {
                         }
                     });
                 }
+            });
+        }
+    }
+    
+    loadReportData = ( reportJSON ) => {
+        this.updateProgramData(reportJSON);
+        if (reportJSON.indicators && Array.isArray(reportJSON.indicators)) {
+           reportJSON.indicators.forEach(indicatorJSON => {
+                let indicatorPk = parseInt(indicatorJSON.pk);
                 if (this._indicators[indicatorPk] && this._indicators[indicatorPk].pk === indicatorPk) {
                     this._indicators[indicatorPk].loadReportData(indicatorJSON.reportData);
                 } else {
@@ -393,6 +404,17 @@ class Program {
         }
         this.initialized[parseInt(reportJSON.reportType)].push(parseInt(reportJSON.reportFrequency));
         this.calls[parseInt(reportJSON.reportType)][parseInt(reportJSON.reportFrequency)] = false;
+    }
+    
+    loadIndicatorData = ( reportJSON ) => {
+        this.updateProgramData(reportJSON)
+        if (reportJSON.indicator) {
+            let indicatorPk = parseInt(reportJSON.indicator.pk);
+            if (this._indicators[indicatorPk]) {
+                delete this._indicators[indicatorPk];
+            }
+            this._indicators[indicatorPk] = new Indicator(reportJSON.indicator, this);
+        }
     }
     
     validFrequency = ( frequency ) => {
@@ -588,5 +610,25 @@ export default class ProgramStore {
         return programA.name > programB.name ? 1
                     : programB.name < programA.name ? -1
                         : 0;
+    }
+    
+    @action
+    updateIndicator = ( reportType, programId, frequencyId, indicatorId ) => {
+        let program = this.getProgram(programId) || null;
+        if (program) {
+            let call = this.api.callForIndicatorData( reportType, programId, frequencyId, indicatorId )
+                        .then(program.loadIndicatorData);
+            return call;
+        }
+    }
+    
+    @action
+    removeIndicator = ( programId, indicatorId ) => {
+        let program = this.getProgram(programId) || null;
+        if (program && program._indicators[indicatorId]) {
+            delete program._indicators[indicatorId];
+            return true;
+        }
+        return false;
     }
 }

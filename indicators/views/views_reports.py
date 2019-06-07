@@ -219,6 +219,7 @@ def indicators_to_iptt(indicator_qs, frequency, tva, results_framework, program_
             'cumulative': ugettext('Cumulative') if indicator.is_cumulative else ugettext('Non-cumulative'),
             'unitType': indicator.get_unit_of_measure_type,
             'baseline': indicator.baseline,
+            'baseline_na': indicator.baseline_na,
             'lopTarget': indicator.lop_target_real,
             'lopActual': indicator.lop_actual,
             'lopMet': indicator.lop_percent_met,
@@ -300,9 +301,15 @@ class IPTTReportData(LoginRequiredMixin, View):
     def get_context_data(self, request):
         program_id = request.GET.get('programId')
         indicator_qs, level_data, self.results_framework = get_iptt_program(program_id, self.frequency, self.tva)
+        if self.update:
+            indicator_qs = indicator_qs.filter(pk=self.indicator_id)
         reportData = indicators_to_iptt(
             indicator_qs, self.frequency, self.tva, self.results_framework, program_id
         )
+        if self.update and reportData['indicators']:
+            updateIndicator = reportData['indicators'][0]
+            if updateIndicator['pk'] == self.indicator_id:
+                reportData['indicator'] = updateIndicator
         reportData['levels'] = level_data
         return reportData
 
@@ -310,6 +317,11 @@ class IPTTReportData(LoginRequiredMixin, View):
     def get(self, request):
         self.tva = request.GET.get('reportType') == '1'
         self.frequency = int(request.GET.get('frequency'))
+        if request.GET.get('updateIndicator') == '1':
+            self.indicator_id = int(request.GET.get('indicatorId'))
+            self.update = True
+        else:
+            self.update = False            
         reportData = self.get_context_data(request)
         return JsonResponse(reportData)
 

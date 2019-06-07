@@ -85,6 +85,7 @@ class IndicatorSerializer(serializers.ModelSerializer):
             'unit_of_measure',
             'unit_of_measure_type',
             'baseline',
+            'baseline_na',
             'lop_target_active',
             'key_performance_indicator',
             'just_created',

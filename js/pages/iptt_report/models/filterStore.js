@@ -796,4 +796,20 @@ export default class FilterStore {
         }
         return levels;
     }
+    
+    @action
+    indicatorUpdate = (ev, {programId, indicatorId, ...params}) => {
+        if (programId && programId == this.programId) {
+            this.programStore.updateIndicator(
+                this.reportType, programId, this.frequencyId, indicatorId
+            );
+        }
+    }
+    
+    @action
+    indicatorDelete = (ev, {programId, indicatorId, ...params}) => {
+        if (programId && programId == this.programId) {
+            this.programStore.removeIndicator(programId, indicatorId);
+        }
+    }
 }

@@ -16,5 +16,16 @@ export default class ReportAPI {
         };
         return $.get(this.url, params);
     }
+    
+    callForIndicatorData(reportType, programId, frequency, indicatorId) {
+        let params = {
+            programId: programId,
+            reportType: reportType,
+            frequency: frequency,
+            indicatorId: indicatorId,
+            updateIndicator: '1'
+        }
+        return $.get(this.url, params);
+    }
 
 }
