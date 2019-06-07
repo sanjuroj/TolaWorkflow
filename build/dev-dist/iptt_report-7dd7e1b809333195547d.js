@@ -268,7 +268,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return ProgramStore; });
 /* harmony import */ var mobx__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! mobx */ "2vnA");
 /* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../constants */ "v38i");
-var _class, _temp, _class3, _class4, _temp2, _class6, _temp3, _class8, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _descriptor16, _descriptor17, _temp4, _class10, _descriptor18, _temp5;
+var _class, _temp, _class3, _class4, _temp2, _class6, _temp3, _class8, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _descriptor16, _descriptor17, _temp4, _class10, _descriptor18, _descriptor19, _descriptor20, _temp5;
 
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
 
@@ -329,6 +329,7 @@ function () {
     this.cumulative = null;
     this.unitType = null;
     this.baseline = null;
+    this.baseline_na = null;
     this.typePks = [];
     this.sitePks = [];
     this.sectorPk = null;
@@ -346,6 +347,7 @@ function () {
     this.cumulative = indicatorJSON.cumulative;
     this.unitType = indicatorJSON.unitType;
     this.baseline = indicatorJSON.baseline;
+    this.baseline_na = indicatorJSON.baseline_na;
     this.typePks = indicatorJSON.indicatorTypes.map(function (indicatorType) {
       return parseInt(indicatorType.pk);
     });
@@ -769,7 +771,7 @@ function () {
       return {};
     };
 
-    this.loadReportData = function (reportJSON) {
+    this.updateProgramData = function (reportJSON) {
       _this7.addLevels(reportJSON.levels);
 
       if (reportJSON.indicators && Array.isArray(reportJSON.indicators)) {
@@ -812,6 +814,16 @@ function () {
               }
             });
           }
+        });
+      }
+    };
+
+    this.loadReportData = function (reportJSON) {
+      _this7.updateProgramData(reportJSON);
+
+      if (reportJSON.indicators && Array.isArray(reportJSON.indicators)) {
+        reportJSON.indicators.forEach(function (indicatorJSON) {
+          var indicatorPk = parseInt(indicatorJSON.pk);
 
           if (_this7._indicators[indicatorPk] && _this7._indicators[indicatorPk].pk === indicatorPk) {
             _this7._indicators[indicatorPk].loadReportData(indicatorJSON.reportData);
@@ -824,6 +836,20 @@ function () {
       _this7.initialized[parseInt(reportJSON.reportType)].push(parseInt(reportJSON.reportFrequency));
 
       _this7.calls[parseInt(reportJSON.reportType)][parseInt(reportJSON.reportFrequency)] = false;
+    };
+
+    this.loadIndicatorData = function (reportJSON) {
+      _this7.updateProgramData(reportJSON);
+
+      if (reportJSON.indicator) {
+        var indicatorPk = parseInt(reportJSON.indicator.pk);
+
+        if (_this7._indicators[indicatorPk]) {
+          delete _this7._indicators[indicatorPk];
+        }
+
+        _this7._indicators[indicatorPk] = new Indicator(reportJSON.indicator, _this7);
+      }
     };
 
     this.validFrequency = function (frequency) {
@@ -1193,6 +1219,10 @@ function () {
       return programA.name > programB.name ? 1 : programB.name < programA.name ? -1 : 0;
     };
 
+    _initializerDefineProperty(this, "updateIndicator", _descriptor19, this);
+
+    _initializerDefineProperty(this, "removeIndicator", _descriptor20, this);
+
     this.api = api;
     this.addPrograms(contextData.programs);
 
@@ -1224,7 +1254,42 @@ function () {
   initializer: function initializer() {
     return {};
   }
-}), _applyDecoratedDescriptor(_class10.prototype, "programs", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class10.prototype, "programs"), _class10.prototype)), _class10);
+}), _applyDecoratedDescriptor(_class10.prototype, "programs", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class10.prototype, "programs"), _class10.prototype), _descriptor19 = _applyDecoratedDescriptor(_class10.prototype, "updateIndicator", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    var _this9 = this;
+
+    return function (reportType, programId, frequencyId, indicatorId) {
+      var program = _this9.getProgram(programId) || null;
+
+      if (program) {
+        var call = _this9.api.callForIndicatorData(reportType, programId, frequencyId, indicatorId).then(program.loadIndicatorData);
+
+        return call;
+      }
+    };
+  }
+}), _descriptor20 = _applyDecoratedDescriptor(_class10.prototype, "removeIndicator", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    var _this10 = this;
+
+    return function (programId, indicatorId) {
+      var program = _this10.getProgram(programId) || null;
+
+      if (program && program._indicators[indicatorId]) {
+        delete program._indicators[indicatorId];
+        return true;
+      }
+
+      return false;
+    };
+  }
+})), _class10);
 
 
 /***/ }),
@@ -1611,7 +1676,11 @@ function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) r
 
 
 function ipttRound(value, percent) {
-  if (value && !isNaN(parseFloat(value))) {
+  if (value == gettext('N/A')) {
+    return value;
+  }
+
+  if (value !== '' && !isNaN(parseFloat(value))) {
     if (!Number.isInteger(value)) {
       value = Number.parseFloat(value).toFixed(2);
       value = value.endsWith('00') ? parseInt(value) : value.endsWith('0') ? value.slice(0, -1) : value;
@@ -1625,8 +1694,9 @@ function ipttRound(value, percent) {
   return null;
 }
 
-var IndicatorEditModalCell = function IndicatorEditModalCell(_ref) {
-  var indicator = _ref.indicator;
+var IndicatorEditModalCell = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inject"])('filterStore')(function (_ref) {
+  var filterStore = _ref.filterStore,
+      indicator = _ref.indicator;
 
   var loadModal = function loadModal(e) {
     e.preventDefault();
@@ -1634,7 +1704,9 @@ var IndicatorEditModalCell = function IndicatorEditModalCell(_ref) {
     $("#indicator_modal_content").empty();
     $("#modalmessages").empty();
     $("#indicator_modal_content").load(url);
-    $("#indicator_modal_div").modal('show');
+    $("#indicator_modal_div").modal('show').on('success.tola.save', filterStore.indicatorUpdate).on('deleted.tola.save', filterStore.indicatorDelete).one('hidden.bs.modal', function (ev) {
+      $(ev.target).off('.tola.save');
+    });
   };
 
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
@@ -1646,7 +1718,7 @@ var IndicatorEditModalCell = function IndicatorEditModalCell(_ref) {
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
     className: "fas fa-cog"
   })));
-};
+});
 
 var IndicatorResultModalCell = function IndicatorResultModalCell(_ref2) {
   var indicator = _ref2.indicator;
@@ -1676,7 +1748,7 @@ var IndicatorCell = function IndicatorCell(_ref3) {
       resultCell = _ref3.resultCell,
       props = _objectWithoutProperties(_ref3, ["value", "resultCell"]);
 
-  var displayValue = value || _constants__WEBPACK_IMPORTED_MODULE_2__["BLANK_TABLE_CELL"];
+  var displayValue = value || value === 0 ? value : _constants__WEBPACK_IMPORTED_MODULE_2__["BLANK_TABLE_CELL"];
 
   if (resultCell && resultCell === true) {
     return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", props, displayValue);
@@ -1764,14 +1836,17 @@ var IndicatorRow = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inject"])('re
   }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(IndicatorCell, {
     value: indicator.unitOfMeasure
   }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(IndicatorCell, {
-    value: indicator.directionOfChange,
+    value: indicator.directionOfChange || gettext('N/A'),
     align: "center"
   }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(IndicatorCell, {
-    value: indicator.cumulative
+    value: indicator.cumulative || gettext('N/A')
   }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(IndicatorCell, {
     value: indicator.unitType,
     align: "center"
-  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ValueCell, {
+  }), indicator.baseline_na ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(IndicatorCell, {
+    value: gettext('N/A'),
+    align: "right"
+  }) : react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ValueCell, {
     value: indicator.baseline
   }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ValueCell, {
     value: indicator.lopTarget
@@ -2230,7 +2305,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var mobx__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! mobx */ "2vnA");
 /* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../constants */ "v38i");
 /* harmony import */ var _general_utilities__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../general_utilities */ "WtQ/");
-var _class, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _temp;
+var _class, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _temp;
+
+function _objectWithoutProperties(source, excluded) { if (source == null) return {}; var target = _objectWithoutPropertiesLoose(source, excluded); var key, i; if (Object.getOwnPropertySymbols) { var sourceSymbolKeys = Object.getOwnPropertySymbols(source); for (i = 0; i < sourceSymbolKeys.length; i++) { key = sourceSymbolKeys[i]; if (excluded.indexOf(key) >= 0) continue; if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue; target[key] = source[key]; } } return target; }
+
+function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
 
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
 
@@ -2311,6 +2390,10 @@ function () {
     };
 
     _initializerDefineProperty(this, "clearFilters", _descriptor13, this);
+
+    _initializerDefineProperty(this, "indicatorUpdate", _descriptor14, this);
+
+    _initializerDefineProperty(this, "indicatorDelete", _descriptor15, this);
 
     this.programStore = programStore;
     var reportChange = Object(mobx__WEBPACK_IMPORTED_MODULE_0__["reaction"])(function () {
@@ -3399,7 +3482,41 @@ function () {
       _this12.tiers = [];
     };
   }
-}), _applyDecoratedDescriptor(_class.prototype, "noFilters", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "noFilters"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "programPageUrl", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "programPageUrl"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "filteredIndicators", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "filteredIndicators"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "filteredLevels", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "filteredLevels"), _class.prototype)), _class);
+}), _applyDecoratedDescriptor(_class.prototype, "noFilters", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "noFilters"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "programPageUrl", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "programPageUrl"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "filteredIndicators", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "filteredIndicators"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "filteredLevels", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "filteredLevels"), _class.prototype), _descriptor14 = _applyDecoratedDescriptor(_class.prototype, "indicatorUpdate", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    var _this13 = this;
+
+    return function (ev, _ref4) {
+      var programId = _ref4.programId,
+          indicatorId = _ref4.indicatorId,
+          params = _objectWithoutProperties(_ref4, ["programId", "indicatorId"]);
+
+      if (programId && programId == _this13.programId) {
+        _this13.programStore.updateIndicator(_this13.reportType, programId, _this13.frequencyId, indicatorId);
+      }
+    };
+  }
+}), _descriptor15 = _applyDecoratedDescriptor(_class.prototype, "indicatorDelete", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    var _this14 = this;
+
+    return function (ev, _ref5) {
+      var programId = _ref5.programId,
+          indicatorId = _ref5.indicatorId,
+          params = _objectWithoutProperties(_ref5, ["programId", "indicatorId"]);
+
+      if (programId && programId == _this14.programId) {
+        _this14.programStore.removeIndicator(programId, indicatorId);
+      }
+    };
+  }
+})), _class);
 
 
 /***/ }),
@@ -4762,6 +4879,18 @@ function () {
       };
       return $.get(this.url, params);
     }
+  }, {
+    key: "callForIndicatorData",
+    value: function callForIndicatorData(reportType, programId, frequency, indicatorId) {
+      var params = {
+        programId: programId,
+        reportType: reportType,
+        frequency: frequency,
+        indicatorId: indicatorId,
+        updateIndicator: '1'
+      };
+      return $.get(this.url, params);
+    }
   }]);
 
   return ReportAPI;
@@ -4772,4 +4901,4 @@ function () {
 /***/ })
 
 },[["mYfJ","runtime","vendors"]]]);
-//# sourceMappingURL=iptt_report-af3e7099cd1203923d12.js.map
+//# sourceMappingURL=iptt_report-7dd7e1b809333195547d.js.map
