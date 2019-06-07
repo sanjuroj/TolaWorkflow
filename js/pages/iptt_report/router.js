@@ -244,7 +244,8 @@ export default class ipttRouter {
         if (this.filterStore.isTVA && this.filterStore.programId) {
             return this.router.buildUrl('ipttAPI.ipttExcel', {
                                             programId: this.filterStore.programId,
-                                            fullTVA: true
+                                            fullTVA: true,
+                                            groupby: this.filterStore.groupBy
                                         });
         }
         return false;

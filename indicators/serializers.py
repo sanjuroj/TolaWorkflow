@@ -116,6 +116,8 @@ class ProgramSerializer(serializers.ModelSerializer):
 
 
 class ExcelRendererBase(object):
+    """Set of utility functions for rendering a serialized IPTT into an Excel export"""
+
     BLANK_CELL = u'–'
     TITLE_START_COLUMN = 3 # 2 rows currently hidden at start, title starts at column C
     TITLE_FONT = openpyxl.styles.Font(size=18)
@@ -166,6 +168,7 @@ class ExcelRendererBase(object):
             ]
         headers += [
             ugettext('Unit of measure'),
+            # Translators: this is short for "Direction of Change" as in + or -
             ugettext('Change'),
             # Translators: 'C' as in Cumulative and 'NC' as in Non Cumulative
             ugettext('C / NC'),
@@ -370,71 +373,6 @@ class ExcelRendererBase(object):
         self.wb.save(response)
         return response
 
-
-class FullReportExcelRenderer(ExcelRendererBase):
-
-    def __init__(self, serializer):
-        super(FullReportExcelRenderer, self).__init__(serializer)
-        for frequency in self.NAME_MAP:
-            if serializer.indicators[frequency]:
-                sheet = self.add_sheet(self.NAME_MAP[frequency])
-                self.frequency = frequency
-                serializer.frequency = frequency
-                self.add_headers(sheet)
-                self.add_data(sheet)
-                self.set_column_widths(sheet)
-        sheet = self.add_sheet('Change Log')
-        program = Program.objects.get(pk=self.serializer.program_data['pk'])
-        get_audit_log_workbook(sheet, program)
-
-    def get_indicators(self):
-        return self.serializer.indicators.get(self.frequency)
-
-    @property
-    def all_periods(self):
-        return self.serializer.all_periods_for_frequency
-
-    def add_data(self, sheet):
-        if self.serializer.level_rows and self.serializer.level_rows.get(self.frequency):
-            self.add_level_row_data(sheet)
-        else:
-            self.add_indicator_row_data(sheet)
-
-    def add_indicator_row_data(self, sheet):
-        row_offset = 5
-        for indicator in self.serializer.indicators.get(self.frequency):
-            self.add_indicator_row(row_offset, sheet, indicator)
-            row_offset += 1
-
-
-class OneSheetExcelRenderer(ExcelRendererBase):
-
-    def __init__(self, serializer):
-        super(OneSheetExcelRenderer, self).__init__(serializer)
-        sheet = self.add_sheet(self.NAME_MAP[serializer.frequency])
-        self.add_headers(sheet)
-        self.add_data(sheet)
-        self.set_column_widths(sheet)
-
-    def get_indicators(self):
-        return self.serializer.indicators
-
-    @property
-    def all_periods(self):
-        return self.serializer.all_periods_for_frequency
-
-    @property
-    def column_count(self):
-        return len(self.header_columns) + sum(
-            [3 if period.tva else 1 for period in self.all_periods]
-            )
-
-    def add_data(self, sheet):
-        if self.serializer.level_rows:
-            self.add_level_row_data(sheet)
-        else:
-            self.add_indicator_row_data(sheet)
-
     def add_level_row_data(self, sheet):
         row_offset = 5
         for level_row in self.serializer.level_rows:
@@ -454,12 +392,65 @@ class OneSheetExcelRenderer(ExcelRendererBase):
                 self.add_indicator_row(row_offset, sheet, indicator)
                 row_offset += 1
 
-
     def add_indicator_row_data(self, sheet):
         row_offset = 5
         for indicator in self.serializer.indicators:
             self.add_indicator_row(row_offset, sheet, indicator)
             row_offset += 1
+
+    def add_data(self, sheet):
+        if self.serializer.level_rows:
+            self.add_level_row_data(sheet)
+        else:
+            self.add_indicator_row_data(sheet)
+
+    @property
+    def column_count(self):
+        return len(self.header_columns) + sum(
+            [3 if period.tva else 1 for period in self.all_periods]
+            )
+
+
+class FullReportExcelRenderer(ExcelRendererBase):
+
+    def __init__(self, serializer):
+        super(FullReportExcelRenderer, self).__init__(serializer)
+        for frequency in self.NAME_MAP:
+            serializer.frequency = frequency
+            if serializer.indicators:
+                sheet = self.add_sheet(self.NAME_MAP[frequency])
+                self.frequency = frequency
+                self.add_headers(sheet)
+                self.add_data(sheet)
+                self.set_column_widths(sheet)
+        sheet = self.add_sheet('Change Log')
+        program = Program.objects.get(pk=self.serializer.program_data['pk'])
+        get_audit_log_workbook(sheet, program)
+
+    def get_indicators(self):
+        return self.serializer.indicators
+
+    @property
+    def all_periods(self):
+        return self.serializer.all_periods_for_frequency
+
+
+
+class OneSheetExcelRenderer(ExcelRendererBase):
+
+    def __init__(self, serializer):
+        super(OneSheetExcelRenderer, self).__init__(serializer)
+        sheet = self.add_sheet(self.NAME_MAP[serializer.frequency])
+        self.add_headers(sheet)
+        self.add_data(sheet)
+        self.set_column_widths(sheet)
+
+    def get_indicators(self):
+        return self.serializer.indicators
+
+    @property
+    def all_periods(self):
+        return self.serializer.all_periods_for_frequency
 
 
 class Period:
@@ -515,6 +506,7 @@ class Period:
             return self.period['name']
         return self.period['label']
 
+
 class IPTTFullReportMixin:
     indicator_qs = IPTTIndicator.tva
     period_column_count = 3
@@ -525,6 +517,7 @@ class IPTTFullReportMixin:
         return ugettext('IPTT TvA full program report')
 
     def annotate_indicators(self, indicators):
+        self._all_indicators = indicators
         indicators_by_frequency = {}
         for frequency in self.frequencies:
             frequency_indicators = indicators.filter(target_frequency=frequency)
@@ -534,6 +527,25 @@ class IPTTFullReportMixin:
                 self.program_data['reporting_period_end']
             )
         return indicators_by_frequency
+
+
+    @property
+    def indicators(self):
+        return self._indicators.get(self.frequency, [])
+
+    @property
+    def blank_level_row(self):
+        return [
+            indicator for indicator in self.indicators.filter(
+                level__isnull=True).with_logframe_sorting()
+            ]
+
+    @property
+    def level_rows(self):
+        if not self.program_data['using_results_framework']:
+            return False
+        return self._level_rows.get(self.frequency, [])
+
 
     def get_period(self, frequency, period_dict):
         return Period(frequency, period_dict, tva=True)
@@ -557,14 +569,14 @@ class IPTTFullReportMixin:
         for frequency in self.frequencies:
             level_rows[frequency] = []
             for level in sorted_levels:
-                level_row = {
+                level_rows[frequency].append({
                     'level': level,
                     'indicators': [
-                        indicator for indicator in self.indicators.get(frequency).filter(level=level)
+                        indicator for indicator in self._indicators.get(frequency).filter(level=level)
                         ]
-                }
-                if level_row['indicators']:
-                    level_rows[frequency].append(level_row)
+                })
+        return level_rows
+
 
 class IPTTTVAMixin:
     indicator_qs = IPTTIndicator.tva
@@ -725,19 +737,6 @@ class IPTTExcelFullReportMixin(IPTTExcelMixin):
     def load_indicators(self):
         return self.indicator_qs.filter(program_id=self.program_data['pk'])
 
-    @property
-    def blank_level_row(self):
-        return [
-            indicator for indicator in self.indicators[self.frequency].filter(
-                level__isnull=True).with_logframe_sorting()
-            ]
-
-    @property
-    def level_rows(self):
-        if not self.program_data['using_results_framework'] or \
-        len(self.blank_level_row) == len(self.indicators[self.frequency]):
-            return False
-        return self._level_rows
 
 
 class IPTTSingleExcelMixin(IPTTExcelMixin):
@@ -801,7 +800,7 @@ class IPTTSerializer(object):
             kwargs.update({'request': request})
             kwargs.update({'report_title': ugettext('Indicator Performance Tracking Report')})
             return object.__new__(type(
-                'IPTTReportSerializer', tuple([IPTTSerializer] + cls.REPORT_TYPES[report_type]), kwargs
+                'IPTTReportSerializer', tuple(cls.REPORT_TYPES[report_type] + [IPTTSerializer]), kwargs
                 ))
 
     def __init__(self, *args, **kwargs):
@@ -812,7 +811,7 @@ class IPTTSerializer(object):
             'reporting_period_end',
             'using_results_framework'
             ).get(pk=self.request.get('programId'))
-        self.indicators = self.annotate_indicators(self.load_indicators())
+        self._indicators = self.annotate_indicators(self.load_indicators())
         if self.program_data['using_results_framework']:
             self._level_rows = self.get_rf_levels()
         if not self.full_report:
@@ -826,3 +825,7 @@ class IPTTSerializer(object):
     @property
     def level_column(self):
         return not self.program_data['using_results_framework']
+
+    @property
+    def indicators(self):
+        return self._indicators
