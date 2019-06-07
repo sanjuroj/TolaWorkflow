@@ -583,16 +583,16 @@ window.create_no_rationale_changeset_notice = ({
 }
 
 
-const createPnotifyAlert = (paramObj) => {
+const createPnotifyAlert = (passedInConfig) => {
     let config = {
-        message_text: "Update successful.",
-        preamble: "",
-        context: null,
-        firstpos1: 0,
-        firstpos2: 0,
-        type: "notice",
+        textTrusted: true,
+        icon: false,
+        width: '350px',
+        hide: true,
+        delay: 2000,
+        type: 'alert',
     };
-    Object.assign(config, paramObj);
+    Object.assign(config, passedInConfig);
 
     let faClass = "fa-exclamation-triangle";
     if (config.type == "success"){
@@ -621,41 +621,21 @@ const createPnotifyAlert = (paramObj) => {
         </div>
     `;
 
-    PNotify.alert({
-        text: $(`<div><form action="" method="post" class="form container">${inner}</form></div>`).html(),
-        textTrusted: true,
-        icon: false,
-        width: '350px',
-        hide: false,
-        type: config.type,
-        addClass: 'program-page__rationale-form',
-        stack: {
-            'overlayClose': true,
-            'dir1': 'right',
-            'dir2': 'up',
-            'firstpos1': config.firstpos1,
-            'firstpos2': config.firstpos2,
-            'context': config.context
-        },
-    });
+    config.text = $(`<div><form action="" method="post" class="form container">${inner}</form></div>`).html();
+    PNotify.alert(config);
+};
 
-}
+window.success_notice = (userConfig) =>{
+    let config = {
+        message_text: "Update successful.",
+        preamble: "",
+        animation: "fade",
+        type: "success",
+    }
+    Object.assign(config, userConfig);
 
-window.success_notice = ({
-    message_text = "Update successful.",
-    context = null,
-    preamble = "",
-    animation = "fade",
-    type = "success"
-} = {}) => {
-    return createPnotifyAlert({
-        message_text: message_text,
-        type: type,
-        context: context,
-        showCloser: true,
-        animation: animation,
-        });
-}
+    createPnotifyAlert(config);
+};
 
 
 /*

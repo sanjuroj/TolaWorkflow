@@ -584,16 +584,16 @@ window.create_no_rationale_changeset_notice = function () {
   });
 };
 
-var createPnotifyAlert = function createPnotifyAlert(paramObj) {
+var createPnotifyAlert = function createPnotifyAlert(passedInConfig) {
   var config = {
-    message_text: "Update successful.",
-    preamble: "",
-    context: null,
-    firstpos1: 0,
-    firstpos2: 0,
-    type: "notice"
+    textTrusted: true,
+    icon: false,
+    width: '350px',
+    hide: true,
+    delay: 2000,
+    type: 'alert'
   };
-  Object.assign(config, paramObj);
+  Object.assign(config, passedInConfig);
   var faClass = "fa-exclamation-triangle";
 
   if (config.type == "success") {
@@ -601,45 +601,19 @@ var createPnotifyAlert = function createPnotifyAlert(paramObj) {
   }
 
   var inner = "\n        <div class=\"row\">\n            <div class=\"col\">\n                <h2><i class=\"fas ".concat(faClass, "\"></i> ").concat(gettext("Success!"), "</h2>\n            </div>\n        </div>\n        <div class=\"row\">\n            <div class=\"col\">\n                <span class='text-success'>\n                    ").concat(config.preamble, "\n                </span>\n            </div>\n        </div>\n        <div class=\"row\">\n            <div class=\"col\">\n                <span>\n                    ").concat(config.message_text, "\n                </span>\n            </div>\n        </div>\n    ");
-  PNotify.alert({
-    text: $("<div><form action=\"\" method=\"post\" class=\"form container\">".concat(inner, "</form></div>")).html(),
-    textTrusted: true,
-    icon: false,
-    width: '350px',
-    hide: false,
-    type: config.type,
-    addClass: 'program-page__rationale-form',
-    stack: {
-      'overlayClose': true,
-      'dir1': 'right',
-      'dir2': 'up',
-      'firstpos1': config.firstpos1,
-      'firstpos2': config.firstpos2,
-      'context': config.context
-    }
-  });
+  config.text = $("<div><form action=\"\" method=\"post\" class=\"form container\">".concat(inner, "</form></div>")).html();
+  PNotify.alert(config);
 };
 
-window.success_notice = function () {
-  var _ref5 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-      _ref5$message_text = _ref5.message_text,
-      message_text = _ref5$message_text === void 0 ? "Update successful." : _ref5$message_text,
-      _ref5$context = _ref5.context,
-      context = _ref5$context === void 0 ? null : _ref5$context,
-      _ref5$preamble = _ref5.preamble,
-      preamble = _ref5$preamble === void 0 ? "" : _ref5$preamble,
-      _ref5$animation = _ref5.animation,
-      animation = _ref5$animation === void 0 ? "fade" : _ref5$animation,
-      _ref5$type = _ref5.type,
-      type = _ref5$type === void 0 ? "success" : _ref5$type;
-
-  return createPnotifyAlert({
-    message_text: message_text,
-    type: type,
-    context: context,
-    showCloser: true,
-    animation: animation
-  });
+window.success_notice = function (userConfig) {
+  var config = {
+    message_text: "Update successful.",
+    preamble: "",
+    animation: "fade",
+    type: "success"
+  };
+  Object.assign(config, userConfig);
+  createPnotifyAlert(config);
 };
 /*
  * Take a jquery element and scroll the to the bottom of said element
@@ -661,4 +635,4 @@ window.scrollToBottom = scrollToBottom;
 /***/ })
 
 },[["YqHn","runtime","vendors"]]]);
-//# sourceMappingURL=base-3093433f0fd09fefd92b.js.map
+//# sourceMappingURL=base-3fe94183e8fff881d909.js.map

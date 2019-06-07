@@ -54,7 +54,7 @@ class Picker extends React.Component {
 
         return (
               <div className={classes}>
-                  <div class="form-group">
+                  <div className="form-group">
                     <label>{gettext('Results framework template')}</label>&nbsp;<small>{helpIcon}</small>
                     <Select
                         options={options}
