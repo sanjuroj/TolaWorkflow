@@ -75,12 +75,14 @@ export class LevelCardCollapsed extends React.Component {
         }
 
         // Get indicator ids linked to the descendants of this level, add the indicator ids identified
-        // above, and create a hyperlink for a filtered IPTT.
-        let descendantIndicatorIds = this.props.levelProps.descendantIndicatorIds;
-        descendantIndicatorIds = descendantIndicatorIds.concat(sameLevelIndicatorIds);
-        if (descendantIndicatorIds.length > 0) {
-            const linkText = `All indicators linked to ${this.props.levelProps.tierName} ${this.props.levelProps.ontologyLabel} and sub-levels`;
-            allIndicatorLinks.push(`<a href=${this.buildIPTTUrl(descendantIndicatorIds)}>${linkText}</a>`);
+        // above, and create a hyperlink for a filtered IPTT.  Only do this if the level has sublevels.
+        if (this.props.levelProps.tierName != this.props.rootStore.levelStore.chosenTierSet.slice(-1)[0]) {
+            let descendantIndicatorIds = this.props.levelProps.descendantIndicatorIds;
+            descendantIndicatorIds = descendantIndicatorIds.concat(sameLevelIndicatorIds);
+            if (descendantIndicatorIds.length > 0) {
+                const linkText = `All indicators linked to ${this.props.levelProps.tierName} ${this.props.levelProps.ontologyLabel} and sub-levels`;
+                allIndicatorLinks.unshift(`<a href=${this.buildIPTTUrl(descendantIndicatorIds)}>${linkText}</a>`);
+            }
         }
 
         // Create IPTT hyperlinks for each individual indicator linked to this level.
@@ -90,7 +92,7 @@ export class LevelCardCollapsed extends React.Component {
         allIndicatorLinks = allIndicatorLinks.concat(individualLinks);
 
 
-        allIndicatorLinks = `<ul class="nav flex-column">${allIndicatorLinks.join("<br>")}</ul>`;
+        let indicatorMarkup = `<ul class="nav flex-column">${allIndicatorLinks.join("<br>")}</ul>`;
         const iCount = this.props.levelProps.indicators.length;
         /* # Translators: This is a count of indicators associated with another object */
         const indicatorCountText = interpolate(ngettext("%s indicator", "%s indicators", iCount), [iCount]);
@@ -142,7 +144,8 @@ export class LevelCardCollapsed extends React.Component {
                             data-placement="bottom"
                             data-html="true"
                             title="Track indicator performance"
-                            data-content={allIndicatorLinks}>
+                            data-content={indicatorMarkup}
+                            disabled={allIndicatorLinks.length == 0}>
                             {indicatorCountText}
                         </button>
                     </div>

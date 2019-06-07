@@ -117,7 +117,7 @@ function (_React$Component) {
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: classes
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        class: "form-group"
+        className: "form-group"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", null, gettext('Results framework template')), "\xA0", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("small", null, helpIcon), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_3__["default"], {
         options: options,
         value: selectedOption,
@@ -485,16 +485,18 @@ function (_React$Component2) {
         var linkText = "All indicators linked to ".concat(this.props.levelProps.tierName, " ").concat(this.props.levelProps.ontologyLabel);
         allIndicatorLinks.push("<a href=".concat(this.buildIPTTUrl(sameLevelIndicatorIds), ">").concat(linkText, "</a>"));
       } // Get indicator ids linked to the descendants of this level, add the indicator ids identified
-      // above, and create a hyperlink for a filtered IPTT.
+      // above, and create a hyperlink for a filtered IPTT.  Only do this if the level has sublevels.
 
 
-      var descendantIndicatorIds = this.props.levelProps.descendantIndicatorIds;
-      descendantIndicatorIds = descendantIndicatorIds.concat(sameLevelIndicatorIds);
+      if (this.props.levelProps.tierName != this.props.rootStore.levelStore.chosenTierSet.slice(-1)[0]) {
+        var descendantIndicatorIds = this.props.levelProps.descendantIndicatorIds;
+        descendantIndicatorIds = descendantIndicatorIds.concat(sameLevelIndicatorIds);
 
-      if (descendantIndicatorIds.length > 0) {
-        var _linkText = "All indicators linked to ".concat(this.props.levelProps.tierName, " ").concat(this.props.levelProps.ontologyLabel, " and sub-levels");
+        if (descendantIndicatorIds.length > 0) {
+          var _linkText = "All indicators linked to ".concat(this.props.levelProps.tierName, " ").concat(this.props.levelProps.ontologyLabel, " and sub-levels");
 
-        allIndicatorLinks.push("<a href=".concat(this.buildIPTTUrl(descendantIndicatorIds), ">").concat(_linkText, "</a>"));
+          allIndicatorLinks.unshift("<a href=".concat(this.buildIPTTUrl(descendantIndicatorIds), ">").concat(_linkText, "</a>"));
+        }
       } // Create IPTT hyperlinks for each individual indicator linked to this level.
 
 
@@ -502,7 +504,7 @@ function (_React$Component2) {
         return "<li class=\"nav-item\"><a href=".concat(_this2.buildIPTTUrl([indicator.id]), ">").concat(indicator.name, "</a></li>");
       });
       allIndicatorLinks = allIndicatorLinks.concat(individualLinks);
-      allIndicatorLinks = "<ul class=\"nav flex-column\">".concat(allIndicatorLinks.join("<br>"), "</ul>");
+      var indicatorMarkup = "<ul class=\"nav flex-column\">".concat(allIndicatorLinks.join("<br>"), "</ul>");
       var iCount = this.props.levelProps.indicators.length;
       /* # Translators: This is a count of indicators associated with another object */
 
@@ -562,7 +564,8 @@ function (_React$Component2) {
         "data-placement": "bottom",
         "data-html": "true",
         title: "Track indicator performance",
-        "data-content": allIndicatorLinks
+        "data-content": indicatorMarkup,
+        disabled: allIndicatorLinks.length == 0
       }, indicatorCountText))));
     }
   }]);
@@ -1108,8 +1111,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "LevelStore", function() { return LevelStore; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UIStore", function() { return UIStore; });
 /* harmony import */ var mobx__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! mobx */ "2vnA");
-/* harmony import */ var _level_utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../level_utils */ "IzLX");
-/* harmony import */ var _api_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../api.js */ "XoI5");
+/* harmony import */ var _api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../api.js */ "XoI5");
 var _class, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _temp, _class3, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _temp2;
 
 function _initializerDefineProperty(target, property, descriptor, context) { if (!descriptor) return; Object.defineProperty(target, property, { enumerable: descriptor.enumerable, configurable: descriptor.configurable, writable: descriptor.writable, value: descriptor.initializer ? descriptor.initializer.call(context) : void 0 }); }
@@ -1123,7 +1125,6 @@ function _applyDecoratedDescriptor(target, property, decorators, descriptor, con
 function _initializerWarningHelper(descriptor, context) { throw new Error('Decorating class property failed. Please ensure that ' + 'proposal-class-properties is enabled and set to use loose mode. ' + 'To use proposal-class-properties in spec mode with decorators, wait for ' + 'the next major version of decorators in stage 2.'); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 
 
 
@@ -1168,14 +1169,14 @@ function () {
         program_id: _this.program_id,
         tiers: _this.chosenTierSet
       };
-      _api_js__WEBPACK_IMPORTED_MODULE_2__["api"].post("/save_leveltiers/", tier_data).then(function (response) {}).catch(function (error) {
+      _api_js__WEBPACK_IMPORTED_MODULE_1__["api"].post("/save_leveltiers/", tier_data).then(function (response) {}).catch(function (error) {
         return console.log('error', error);
       });
     };
 
     this.deleteLevelFromDB = function (levelId) {
       var level_label = "".concat(_this.levelProperties[levelId]['tierName'], " ").concat(_this.levelProperties[levelId]['ontologyLabel']);
-      _api_js__WEBPACK_IMPORTED_MODULE_2__["api"].delete("/level/".concat(levelId)).then(function (response) {
+      _api_js__WEBPACK_IMPORTED_MODULE_1__["api"].delete("/level/".concat(levelId)).then(function (response) {
         _this.levels.replace(response.data);
 
         _this.rootStore.uiStore.removeExpandedCard(levelId);
@@ -1189,7 +1190,13 @@ function () {
 
         success_notice({
           message_text: gettext("".concat(level_label, " was successfully deleted.")),
-          context: "rf-page"
+          addClass: 'program-page__rationale-form',
+          stack: {
+            dir1: 'up',
+            dir2: 'right',
+            firstpos1: 20,
+            firstpos2: 20
+          }
         });
       }).catch(function (error) {
         return console.log('error', error);
@@ -1215,7 +1222,7 @@ function () {
         }
 
         delete levelToSave.id;
-        _api_js__WEBPACK_IMPORTED_MODULE_2__["api"].post("/insert_new_level/", levelToSave).then(function (response) {
+        _api_js__WEBPACK_IMPORTED_MODULE_1__["api"].post("/insert_new_level/", levelToSave).then(function (response) {
           Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
             _this.levels.replace(response.data['all_data']);
           });
@@ -1232,7 +1239,7 @@ function () {
           return console.log('error', error);
         });
       } else {
-        _api_js__WEBPACK_IMPORTED_MODULE_2__["api"].put("/level/".concat(levelId, "/"), levelToSave).then(function (response) {
+        _api_js__WEBPACK_IMPORTED_MODULE_1__["api"].put("/level/".concat(levelId, "/"), levelToSave).then(function (response) {
           Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
             Object.assign(targetLevel, response.data);
           });
@@ -1252,7 +1259,7 @@ function () {
 
     this.saveReorderedIndicatorsToDB = function (indicators) {
       console.log('ind in reorder', indicators);
-      _api_js__WEBPACK_IMPORTED_MODULE_2__["api"].post("/reorder_indicators/", indicators).then(function (response) {}).catch(function (error) {
+      _api_js__WEBPACK_IMPORTED_MODULE_1__["api"].post("/reorder_indicators/", indicators).then(function (response) {}).catch(function (error) {
         console.log("There was an error:", error);
       });
     };
@@ -1732,26 +1739,6 @@ function uniqueId() {
 
 /***/ }),
 
-/***/ "IzLX":
-/*!***************************!*\
-  !*** ./js/level_utils.js ***!
-  \***************************/
-/*! exports provided: trimOntology */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "trimOntology", function() { return trimOntology; });
-// Returns a trimmed level ontology for display purposes
-function trimOntology(ontologyStr) {
-  var ontologyArray = ontologyStr.split(".");
-  return ontologyArray.slice(1).filter(function (i) {
-    return i > 0;
-  }).join(".");
-}
-
-/***/ }),
-
 /***/ "QTZG":
 /*!*********************************************!*\
   !*** ./js/pages/results_framework/index.js ***!
@@ -2006,4 +1993,4 @@ function (_React$Component2) {
 /***/ })
 
 },[["QTZG","runtime","vendors"]]]);
-//# sourceMappingURL=results_framework-08e4db3944d558d1efc1.js.map
+//# sourceMappingURL=results_framework-13e4943f3a2d327e9cb5.js.map

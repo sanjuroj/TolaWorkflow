@@ -302,8 +302,13 @@ a:hover {
 }
 .indicator_results_toggle {
     display: block;
-    text-indent: -15px;
-    margin-left: 15px;
+    font-weight: normal;
+    margin-bottom: 0 !important;
+    margin-left: 22.5px;
+    margin-right: 0 !important;
+    margin-top: 0 !important;
+    padding: 0 !important;
+    text-indent: -22.5px;
 }
 
 // conditional styling to hide modal titles in nonmodal contexts.

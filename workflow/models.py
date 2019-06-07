@@ -233,11 +233,17 @@ class TolaUser(models.Model):
             return 'high'
 
         program = Program.objects.get(id=program_id)
+        access_level = None
+
+        for p_country in program.country.all():
+            if p_country in self.countries.all():
+                access_level = 'low'
+
         try:
-            access = ProgramAccess.objects.filter(tolauser=self, program=program)
-            return access[0].role
-        except:
-            return None
+            access_level = ProgramAccess.objects.get(tolauser=self, program=program).role
+        except Exception as e:
+            print e
+        return access_level
 
     @property
     def has_admin_management_access(self):

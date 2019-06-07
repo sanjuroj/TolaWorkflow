@@ -100,7 +100,7 @@ class IndicatorFilter extends React.Component{
             eventBus.emit('nav-select-indicator-to-filter', selectedIndicatorId);
         }
     };
-    
+
     onGroupingSelection = (selected) => {
         this.props.uiStore.setGroupBy(selected.value);
     }
@@ -120,34 +120,38 @@ class IndicatorFilter extends React.Component{
         if (selectedIndicatorId) {
             selectedValue = indicatorSelectOptions.find(i => i.value === selectedIndicatorId);
         }
-        
+
         const indicatorGroupingOptions = this.props.uiStore.groupByOptions;
         const groupingValue = this.props.uiStore.selectedGroupByOption;
-        return <nav className="list__filters list__filters--inline-label" id="id_div_indicators">
-            <label className="filters__label">
-                {gettext("Find an indicator:")}
-            </label>
-            <div className="filters__control">
-                <Select
-                    options={indicatorSelectOptions}
-                    value={selectedValue}
-                    isClearable={false}
-                    placeholder={gettext('None')}
-                    onChange={this.onSelection}
-                />
+        return <nav className="list__filters list__filters--block-label" id="id_div_indicators">
+            <div class="form-group">
+                <label className="">
+                    {gettext("Find an indicator:")}
+                </label>
+                <div className="">
+                    <Select
+                        options={indicatorSelectOptions}
+                        value={selectedValue}
+                        isClearable={false}
+                        placeholder={gettext('None')}
+                        onChange={this.onSelection}
+                    />
+                </div>
             </div>
             {!this.props.rootStore.oldStyleLevels &&
             <React.Fragment>
-                <label className="filters__label">
-                    {gettext("Group indicators:")}
-                </label>
-                <div className="filters__control">
-                    <Select
-                           options={indicatorGroupingOptions}
-                           value={groupingValue}
-                           isClearable={false}
-                           onChange={this.onGroupingSelection}
-                    />
+                <div class="form-group">
+                    <label className="">
+                        {gettext("Group indicators:")}
+                    </label>
+                    <div className="">
+                        <Select
+                               options={indicatorGroupingOptions}
+                               value={groupingValue}
+                               isClearable={false}
+                               onChange={this.onGroupingSelection}
+                        />
+                    </div>
                 </div>
             </React.Fragment>}
         </nav>;
@@ -228,7 +232,7 @@ class IndicatorListTable extends React.Component {
                     })}>
                         <td>
                             <a href="#"
-                               className="indicator_results_toggle"
+                               className="indicator_results_toggle btn btn-link text-left"
                                onClick={(e) => this.onIndicatorResultsToggleClick(e, indicator.id)}
                             >
                                 <FontAwesomeIcon icon={resultsExist ? 'caret-down' : 'caret-right'} />
@@ -291,7 +295,7 @@ export const IndicatorList = observer(function (props) {
 
     // apply gas gauge filter
     let filteredIndicators = indicatorStore.filterIndicators(currentIndicatorFilter);
-    
+
     filteredIndicators = indicatorStore.sortIndicators(
         props.rootStore.oldStyleLevels, sortByChain, filteredIndicators);
 
