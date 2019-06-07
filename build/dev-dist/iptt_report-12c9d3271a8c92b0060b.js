@@ -4005,7 +4005,8 @@ function () {
       if (this.filterStore.isTVA && this.filterStore.programId) {
         return this.router.buildUrl('ipttAPI.ipttExcel', {
           programId: this.filterStore.programId,
-          fullTVA: true
+          fullTVA: true,
+          groupby: this.filterStore.groupBy
         });
       }
 
@@ -4767,4 +4768,4 @@ function () {
 /***/ })
 
 },[["mYfJ","runtime","vendors"]]]);
-//# sourceMappingURL=iptt_report-754b007aa39bce3d32a5.js.map
+//# sourceMappingURL=iptt_report-12c9d3271a8c92b0060b.js.map
