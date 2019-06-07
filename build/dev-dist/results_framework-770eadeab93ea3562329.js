@@ -358,7 +358,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @fortawesome/react-fontawesome */ "IP2g");
 /* harmony import */ var _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @fortawesome/free-solid-svg-icons */ "wHSu");
 /* harmony import */ var _components_selectWidgets__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../../components/selectWidgets */ "Ez0T");
-/* harmony import */ var _components_helpPopover__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../../components/helpPopover */ "4L+s");
+/* harmony import */ var react_sortable_hoc__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! react-sortable-hoc */ "0zu5");
+/* harmony import */ var react_sortable_hoc__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(react_sortable_hoc__WEBPACK_IMPORTED_MODULE_8__);
+/* harmony import */ var _components_helpPopover__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../../components/helpPopover */ "4L+s");
 var _dec, _class, _temp, _dec2, _class3, _temp2, _dec3, _class5;
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -388,7 +390,8 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 
 
-_fortawesome_fontawesome_svg_core__WEBPACK_IMPORTED_MODULE_4__["library"].add(_fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faCaretDown"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faCaretRight"]);
+
+_fortawesome_fontawesome_svg_core__WEBPACK_IMPORTED_MODULE_4__["library"].add(_fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faCaretDown"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faCaretRight"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faArrowsAlt"]);
 var LevelTitle =
 /*#__PURE__*/
 function (_React$Component) {
@@ -497,11 +500,12 @@ function (_React$Component2) {
 
           allIndicatorLinks.unshift("<a href=".concat(this.buildIPTTUrl(descendantIndicatorIds), ">").concat(_linkText, "</a>"));
         }
-      } // Create IPTT hyperlinks for each individual indicator linked to this level.
+      } // Create IPTT hyperlinks for each individual indicator linked to this level
 
 
-      var individualLinks = this.props.levelProps.indicators.map(function (indicator) {
-        return "<li class=\"nav-item\"><a href=".concat(_this2.buildIPTTUrl([indicator.id]), ">").concat(indicator.name, "</a></li>");
+      var individualLinks = this.props.levelProps.indicators.map(function (indicator, index) {
+        var ontologyLabel = _this2.props.levelProps.ontologyLabel + String.fromCharCode(97 + index) + ": ";
+        return "<li class=\"nav-item\"><a href=".concat(_this2.buildIPTTUrl([indicator.id]), ">").concat(ontologyLabel).concat(indicator.name, "</a></li>");
       });
       allIndicatorLinks = allIndicatorLinks.concat(individualLinks);
       var indicatorMarkup = "<ul class=\"nav flex-column\">".concat(allIndicatorLinks.join("<br>"), "</ul>");
@@ -552,11 +556,7 @@ function (_React$Component2) {
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
         className: "fas fa-edit"
       }), gettext("Edit"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "actions__bottom",
-        style: {
-          display: "flex",
-          justifyContent: "flex-end"
-        }
+        className: "actions__bottom"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         className: "btn btn-sm btn-link no-bold",
         "data-toggle": "popover",
@@ -584,9 +584,20 @@ function (_React$Component3) {
 
     _this3 = _possibleConstructorReturn(this, _getPrototypeOf(LevelCardExpanded).call(this, props));
 
+    _this3.onDragEnd = function (_ref) {
+      var oldIndex = _ref.oldIndex,
+          newIndex = _ref.newIndex;
+      var indicatorId = _this3.indicators[oldIndex].id;
+      var fakeChangeObj = {
+        value: newIndex + 1,
+        name: newIndex + 1
+      };
+
+      _this3.updateIndicatorOrder(fakeChangeObj, indicatorId);
+    };
+
     _this3.updateIndicatorOrder = function (changeObj, indicatorId) {
       _this3.indicatorWasReordered = true;
-      console.log('updated val', changeObj, indicatorId);
       var oldIndex = _this3.indicators.find(function (i) {
         return i.id == indicatorId;
       }).level_order - 1;
@@ -686,7 +697,8 @@ function (_React$Component3) {
         level: this.props.level,
         tierName: this.props.levelProps.tierName,
         indicators: this.indicators,
-        changeFunc: this.updateIndicatorOrder
+        changeFunc: this.updateIndicatorOrder,
+        dragEndFunc: this.onDragEnd
       }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ButtonBar, {
         level: this.props.level,
         levelProps: this.props.levelProps,
@@ -840,11 +852,8 @@ function (_React$Component6) {
       });
       var indicatorMarkup = [];
       this.props.indicators.forEach(function (indicator) {
-        console.log('levelorder in loop', indicator.id, indicator.level_order); // let options = this.props.indicators.map( (entry, index) => <option value={index+1}>{index+1}</option>);
-
-        indicatorMarkup.push(react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
-          key: indicator.id
-        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_selectWidgets__WEBPACK_IMPORTED_MODULE_7__["SingleReactSelect"], {
+        // let options = this.props.indicators.map( (entry, index) => <option value={index+1}>{index+1}</option>);
+        indicatorMarkup.push(react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_selectWidgets__WEBPACK_IMPORTED_MODULE_7__["SingleReactSelect"], {
           update: function update(value) {
             return _this5.props.changeFunc(value, indicator.id);
           },
@@ -869,7 +878,7 @@ function (_React$Component6) {
 
       if (this.props.indicators.length > 0) {
         order = "Order";
-        helpLink = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_helpPopover__WEBPACK_IMPORTED_MODULE_8__["default"], {
+        helpLink = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_helpPopover__WEBPACK_IMPORTED_MODULE_9__["default"], {
           content: "To remove an indicator: Click \u201CSettings\u201D, where you can reassign the indicator to a different level or delete it.",
           placement: "bottom"
         });
@@ -881,7 +890,18 @@ function (_React$Component6) {
           backgroundColor: "white",
           padding: "1em"
         }
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", null, "Indicators Linked to this ", this.props.tierName, order, helpLink), indicatorMarkup, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, "Indicators Linked to this ", this.props.tierName, order, helpLink), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(SortableContainer, {
+        onSortEnd: this.props.dragEndFunc,
+        useDragHandle: true,
+        lockAxis: "y",
+        lockToContainerEdges: true
+      }, indicatorMarkup.map(function (value, index) {
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(SortableItem, {
+          key: "item-".concat(index),
+          index: index,
+          value: value
+        });
+      }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
         href: "#",
         role: "button",
         className: "btn btn-link btn-add"
@@ -893,6 +913,20 @@ function (_React$Component6) {
 
   return IndicatorList;
 }(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component);
+
+var SortableItem = Object(react_sortable_hoc__WEBPACK_IMPORTED_MODULE_8__["sortableElement"])(function (_ref2) {
+  var value = _ref2.value;
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(DragHandle, null), value);
+});
+var SortableContainer = Object(react_sortable_hoc__WEBPACK_IMPORTED_MODULE_8__["sortableContainer"])(function (_ref3) {
+  var children = _ref3.children;
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("ul", null, children);
+});
+var DragHandle = Object(react_sortable_hoc__WEBPACK_IMPORTED_MODULE_8__["sortableHandle"])(function () {
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_5__["FontAwesomeIcon"], {
+    icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faArrowsAlt"]
+  }));
+});
 
 /***/ }),
 
@@ -1183,10 +1217,8 @@ function () {
 
         if (_this.levels.length == 0) {
           _this.createFirstLevel();
-        }
+        } // Translators: Notification to user that the deletion command that they issued was successful
 
-        var context = document.getElementById('alerts2');
-        console.log('contextis', context); // Translators: Notification to user that the deletion command that they issued was successful
 
         success_notice({
           message_text: gettext("".concat(level_label, " was successfully deleted.")),
@@ -1258,7 +1290,6 @@ function () {
     };
 
     this.saveReorderedIndicatorsToDB = function (indicators) {
-      console.log('ind in reorder', indicators);
       _api_js__WEBPACK_IMPORTED_MODULE_1__["api"].post("/reorder_indicators/", indicators).then(function (response) {}).catch(function (error) {
         console.log("There was an error:", error);
       });
@@ -1316,11 +1347,9 @@ function () {
     };
 
     this.getDescendantIndicatorIds = function (childLevelIds) {
-      // console.log('childidsss', childIds)
       var childLevels = _this.levels.filter(function (l) {
         return childLevelIds.includes(l.id);
-      }); // console.log('before loop', toJS(childLevels))
-
+      });
 
       var newIndicatorIds = [];
       childLevels.forEach(function (childLevel) {
@@ -1337,8 +1366,7 @@ function () {
         });
 
         newIndicatorIds = newIndicatorIds.concat(_this.getDescendantIndicatorIds(grandChildIds, newIndicatorIds));
-      }); // console.log('after loop', priorIds)
-
+      });
       return newIndicatorIds;
     };
 
@@ -1993,4 +2021,4 @@ function (_React$Component2) {
 /***/ })
 
 },[["QTZG","runtime","vendors"]]]);
-//# sourceMappingURL=results_framework-13e4943f3a2d327e9cb5.js.map
+//# sourceMappingURL=results_framework-770eadeab93ea3562329.js.map
