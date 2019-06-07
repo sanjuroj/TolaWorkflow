@@ -208,14 +208,17 @@ var LevelTierPicker = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inject"])(
 /*!**************************************!*\
   !*** ./js/components/helpPopover.js ***!
   \**************************************/
-/*! exports provided: default */
+/*! exports provided: default, BootstrapPopoverButton */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return HelpPopover; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BootstrapPopoverButton", function() { return BootstrapPopoverButton; });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "q1tI");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-dom */ "i8i4");
+/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react_dom__WEBPACK_IMPORTED_MODULE_1__);
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -233,6 +236,7 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
 
 
 
@@ -272,6 +276,63 @@ function (_React$Component) {
 }(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component);
 
 
+var BootstrapPopoverButton =
+/*#__PURE__*/
+function (_React$Component2) {
+  _inherits(BootstrapPopoverButton, _React$Component2);
+
+  function BootstrapPopoverButton() {
+    var _getPrototypeOf2;
+
+    var _this2;
+
+    _classCallCheck(this, BootstrapPopoverButton);
+
+    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    _this2 = _possibleConstructorReturn(this, (_getPrototypeOf2 = _getPrototypeOf(BootstrapPopoverButton)).call.apply(_getPrototypeOf2, [this].concat(args)));
+    _this2.popoverName = 'base';
+
+    _this2.componentDidMount = function () {
+      // make a cancelable (class method) function so clicking out of the popover will close it:
+      _this2.bodyClickHandler = function (ev) {
+        if ($("#".concat(_this2.popoverName, "_popover_content")).parent().find($(ev.target)).length == 0) {
+          $(_this2.refs.target).popover('hide');
+        }
+      };
+
+      var popoverOpenHandler = function popoverOpenHandler() {
+        // first make it so any click outside of the popover will hide it:
+        $('body').on('click', _this2.bodyClickHandler); // update position (it's had content loaded):
+
+        $(_this2.refs.target).popover('update') //when it hides destroy the body clickhandler:
+        .on('hide.bs.popover', function () {
+          $('body').off('click', _this2.bodyClickHandler);
+        });
+      };
+
+      var shownFn = function shownFn(ev) {
+        react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render(_this2.getPopoverContent(), document.querySelector("#".concat(_this2.popoverName, "_popover_content")), popoverOpenHandler);
+      };
+
+      $(_this2.refs.target).popover({
+        content: "<div id=\"".concat(_this2.popoverName, "_popover_content\"></div>"),
+        html: true,
+        placement: 'bottom'
+      }).on('shown.bs.popover', shownFn);
+    };
+
+    _this2.getPopoverContent = function () {
+      throw new Error('not implemented');
+    };
+
+    return _this2;
+  }
+
+  return BootstrapPopoverButton;
+}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component);
 
 /***/ }),
 
@@ -1945,4 +2006,4 @@ function (_React$Component2) {
 /***/ })
 
 },[["QTZG","runtime","vendors"]]]);
-//# sourceMappingURL=results_framework-9da5bb1d18f73baaf586.js.map
+//# sourceMappingURL=results_framework-08e4db3944d558d1efc1.js.map
