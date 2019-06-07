@@ -329,6 +329,28 @@ function (_React$Component3) {
         var resultsStr = resultsMap.get(indicator.id);
         var targetPeriodLastEndDate = indicator.target_period_last_end_date ? new Date(indicator.target_period_last_end_date) : null; // ^^^ Because calling Date() on null returns the current date, and we actually need null!
 
+        var displayFunc = parseInt(indicator.unit_of_measure_type) == 2 ? function (val) {
+          return val ? "".concat(val, "%") : '';
+        } : function (val) {
+          return val ? "".concat(val) : '';
+        };
+
+        var numberCellFunc = function numberCellFunc(val) {
+          if (val == '' || isNaN(parseFloat(val))) {
+            return '';
+          }
+
+          val = parseFloat(val).toFixed(2);
+
+          if (val.slice(-2) == "00") {
+            return displayFunc(val.slice(0, -3));
+          } else if (val.slice(-1) == "0") {
+            return displayFunc(val.slice(0, -1));
+          }
+
+          return displayFunc(val);
+        };
+
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, {
           key: indicator.id
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
@@ -364,11 +386,11 @@ function (_React$Component3) {
           }
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
           className: "fas fa-cog"
-        }))), _this4.props.oldStyleLevels && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, indicator.level ? indicator.level.name : indicator.old_level), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, indicator.unit_of_measure), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
+        }))), _this4.props.oldStyleLevels && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, indicator.old_level), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, indicator.unit_of_measure), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
           className: "text-right"
-        }, indicator.baseline_display), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
+        }, numberCellFunc(indicator.baseline)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
           className: "text-right"
-        }, indicator.lop_target_display)), resultsExist && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
+        }, numberCellFunc(indicator.lop_target_active))), resultsExist && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
           className: "indicators-list__row indicators-list__indicator-body"
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
           colSpan: "6",
@@ -1615,4 +1637,4 @@ var ProgramMetrics = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])
 /***/ })
 
 },[["aJgA","runtime","vendors"]]]);
-//# sourceMappingURL=program_page-58754799a2938800c768.js.map
+//# sourceMappingURL=program_page-6e9df074cb2f4761c938.js.map

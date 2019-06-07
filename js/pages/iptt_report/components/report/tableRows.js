@@ -1,5 +1,6 @@
 import React from 'react';
 import { inject, observer } from 'mobx-react';
+import {BLANK_TABLE_CELL} from '../../../../constants';
 
 function ipttRound(value, percent) {
     if (value && !isNaN(parseFloat(value))) {
@@ -55,7 +56,7 @@ const IndicatorResultModalCell = ({ indicator }) => {
 }
 
 const IndicatorCell = ({ value, resultCell, ...props }) => {
-    const displayValue = value || '–';
+    const displayValue = value || BLANK_TABLE_CELL;
     if (resultCell && resultCell === true) {
         return <td { ...props }>{ displayValue }</td>;
     }
@@ -107,7 +108,7 @@ const IndicatorRow = inject('reportStore')(
         }
         return (
             <tr>
-                <IndicatorCell value={ indicator.number || '—' } align="center" />
+                <IndicatorCell value={ indicator.number } align="center" />
                 <IndicatorResultModalCell indicator={ indicator } />
                 <IndicatorEditModalCell indicator={ indicator } />
                 { levelCol && <IndicatorCell value={ indicator.levelName } /> }

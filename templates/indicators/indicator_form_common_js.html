@@ -595,6 +595,20 @@
     function getIsCumulative() {
         return $("input[name='is_cumulative']:checked").val() === "2";
     }
+    
+    function cleanFloat(value) {
+        if (isNaN(parseFloat(value))) {
+            return value;
+        }
+        value = parseFloat(value).toFixed(2);
+        if (value.slice(-2) === "00") {
+            return value.slice(0, -3);
+        }
+        else if (value.slice(-1) === "0") {
+            return value.slice(0, -1);
+        }
+        return value;
+    }
 
     /*
     Calculates the sum and count of all targets
@@ -616,7 +630,8 @@
         let sum = validValues.reduce((total, n) => total + n)
 
         // the last value is the target when cumulative
-        return getIsCumulative() ? validValues[validValues.length - 1] : sum;
+        let value = getIsCumulative() ? validValues[validValues.length - 1] : sum;
+        return cleanFloat(value);
     }
 
     /*
@@ -646,6 +661,7 @@
     #periodic-targets-tablediv
     */
     $("#indicator_modal_content").on("blur", "#periodic_targets_table input[data-periodictarget]", function (e) {
+        validatePeriodicTargets();
         updateLopTargetDisplay();
     });
 
@@ -756,6 +772,7 @@
             if ($(this).attr('id').substr(0, 2) == "pt" ) {
                 let val = $(this).val();
                 if (val && $.isNumeric(val) && val >= 0) {
+                    $(this).val(cleanFloat(val));
                     $(this).removeClass('is-invalid');
                 } else {
                     $(this).addClass('is-invalid');

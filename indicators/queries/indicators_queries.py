@@ -30,6 +30,7 @@ class MetricsIndicatorQuerySet(SafeDeleteQueryset, IndicatorSortingQSMixin):
             # 'targets' because program_months is a prerequisite for measuring all_targets_defined
             qs = qs.annotate(program_months=indicator_get_program_months_annotation())
         if 'targets' in annotations:
+            qs = qs.annotate(lop_target_calculated=utils.indicator_lop_target_calculated_annotation())
             # sets all_targets_defined to True/False based on business rules
             qs = qs.annotate(defined_targets=models.Count('periodictargets'))
             defined_targets_filter = indicator_get_defined_targets_filter()
@@ -94,6 +95,12 @@ class MetricsIndicator(Indicator):
             return self.data_count
         return self.result_set.count()
 
+    @property
+    def lop_target_active(self):
+        if hasattr(self, 'lop_target_calculated'):
+            return self.lop_target_calculated
+        return self.lop_target
+
 
 class ResultsIndicatorQuerySet(SafeDeleteQueryset):
     def annotated(self):
@@ -132,10 +139,9 @@ class ResultsIndicator(Indicator):
 
     @property
     def lop_target_active(self):
-        """currently points at lop_target field, but this alias will let us move to lop_target_calculated
-           when we deprecate the lop_target field"""
-        return self.lop_target_calculated
-        
+        if hasattr(self, 'lop_target_calculated'):
+            return self.lop_target_calculated
+        return self.lop_target
 
     @property
     def annotated_targets(self):

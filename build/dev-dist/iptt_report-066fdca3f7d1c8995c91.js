@@ -1599,11 +1599,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "q1tI");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! mobx-react */ "okNM");
+/* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../constants */ "v38i");
 function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 
 function _objectWithoutProperties(source, excluded) { if (source == null) return {}; var target = _objectWithoutPropertiesLoose(source, excluded); var key, i; if (Object.getOwnPropertySymbols) { var sourceSymbolKeys = Object.getOwnPropertySymbols(source); for (i = 0; i < sourceSymbolKeys.length; i++) { key = sourceSymbolKeys[i]; if (excluded.indexOf(key) >= 0) continue; if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue; target[key] = source[key]; } } return target; }
 
 function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
+
 
 
 
@@ -1674,7 +1676,7 @@ var IndicatorCell = function IndicatorCell(_ref3) {
       resultCell = _ref3.resultCell,
       props = _objectWithoutProperties(_ref3, ["value", "resultCell"]);
 
-  var displayValue = value || '–';
+  var displayValue = value || _constants__WEBPACK_IMPORTED_MODULE_2__["BLANK_TABLE_CELL"];
 
   if (resultCell && resultCell === true) {
     return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", props, displayValue);
@@ -1751,7 +1753,7 @@ var IndicatorRow = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inject"])('re
   }
 
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(IndicatorCell, {
-    value: indicator.number || '—',
+    value: indicator.number,
     align: "center"
   }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(IndicatorResultModalCell, {
     indicator: indicator
@@ -4005,7 +4007,8 @@ function () {
       if (this.filterStore.isTVA && this.filterStore.programId) {
         return this.router.buildUrl('ipttAPI.ipttExcel', {
           programId: this.filterStore.programId,
-          fullTVA: true
+          fullTVA: true,
+          groupby: this.filterStore.groupBy
         });
       }
 
@@ -4351,13 +4354,14 @@ function () {
 /*!*************************!*\
   !*** ./js/constants.js ***!
   \*************************/
-/*! exports provided: BLANK_OPTION, BLANK_LABEL, TVA, TIMEPERIODS, TIME_AWARE_FREQUENCIES, GROUP_BY_CHAIN, GROUP_BY_LEVEL, getPeriodLabels */
+/*! exports provided: BLANK_OPTION, BLANK_LABEL, BLANK_TABLE_CELL, TVA, TIMEPERIODS, TIME_AWARE_FREQUENCIES, GROUP_BY_CHAIN, GROUP_BY_LEVEL, getPeriodLabels */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BLANK_OPTION", function() { return BLANK_OPTION; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BLANK_LABEL", function() { return BLANK_LABEL; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BLANK_TABLE_CELL", function() { return BLANK_TABLE_CELL; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TVA", function() { return TVA; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TIMEPERIODS", function() { return TIMEPERIODS; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TIME_AWARE_FREQUENCIES", function() { return TIME_AWARE_FREQUENCIES; });
@@ -4372,6 +4376,7 @@ var BLANK_OPTION = {
   value: null,
   label: BLANK_LABEL
 };
+var BLANK_TABLE_CELL = '—';
 var TVA = 1;
 var TIMEPERIODS = 2;
 var TIME_AWARE_FREQUENCIES = [3, 4, 5, 6, 7];
@@ -4767,4 +4772,4 @@ function () {
 /***/ })
 
 },[["mYfJ","runtime","vendors"]]]);
-//# sourceMappingURL=iptt_report-754b007aa39bce3d32a5.js.map
+//# sourceMappingURL=iptt_report-066fdca3f7d1c8995c91.js.map
