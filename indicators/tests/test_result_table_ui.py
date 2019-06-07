@@ -3,11 +3,19 @@
 Test result table view for common regressions
 """
 import datetime
+from mock import patch
 
 from django import test
 from django.urls import reverse_lazy
 
-from factories import ProgramFactory, IndicatorFactory, ResultFactory, PeriodicTargetFactory, UserFactory, TolaUserFactory
+from factories import (
+    ProgramFactory,
+    IndicatorFactory,
+    ResultFactory,
+    PeriodicTargetFactory,
+    UserFactory,
+    TolaUserFactory
+)
 from indicators.models import Indicator
 
 
@@ -50,7 +58,8 @@ class TestResultUnassignedUIDateFallsOutsideProgramPeriod(test.TestCase):
         self.tola_user = TolaUserFactory(user=self.user)
         self.client.login(username='tester', password='password')
 
-    def test_result_table_html(self):
+    @patch('webpack_loader.loader.WebpackLoader.get_bundle')
+    def test_result_table_html(self, webpack_mock):
         url = reverse_lazy('result_view', args=[self.indicator.id,])
         response = self.client.get(url)
         # result is displayed
@@ -59,7 +68,7 @@ class TestResultUnassignedUIDateFallsOutsideProgramPeriod(test.TestCase):
             'Jan 1, 2017',
         )
         # only 1 expected now as no longer displaying the value for unassigned indicators
-        self.assertContains(response, '42', count=1)
+        self.assertContains(response, '42', count=1, msg_prefix=response.content.decode('utf-8'))
         # expected warning message
         self.assertContains(
             response,
@@ -106,7 +115,8 @@ class TestResultUnassignedUITargetsMidlineEndline(test.TestCase):
         self.tola_user = TolaUserFactory(user=self.user)
         self.client.login(username='tester', password='password')
 
-    def test_result_table_html(self):
+    @patch('webpack_loader.loader.WebpackLoader.get_bundle')
+    def test_result_table_html(self, webpack_mock):
         url = reverse_lazy('result_view', args=[self.indicator.id,])
         response = self.client.get(url)
         # result is displayed
@@ -114,7 +124,7 @@ class TestResultUnassignedUITargetsMidlineEndline(test.TestCase):
             response,
             'Jan 1, 2017',
         )
-        self.assertContains(response, '42', count=1)
+        self.assertContains(response, '42', count=1, msg_prefix=response.content.decode('utf-8'))
         # expected warning message
         self.assertContains(
             response,
@@ -153,7 +163,8 @@ class TestResultUnassignedUITargetsNotSetup(test.TestCase):
         self.tola_user = TolaUserFactory(user=self.user)
         self.client.login(username='tester', password='password')
 
-    def test_result_table_html(self):
+    @patch('webpack_loader.loader.WebpackLoader.get_bundle')
+    def test_result_table_html(self, webpack_mock):
         url = reverse_lazy('result_view', args=[self.indicator.id,])
         response = self.client.get(url)
         # result is displayed
@@ -161,7 +172,7 @@ class TestResultUnassignedUITargetsNotSetup(test.TestCase):
             response,
             'Jan 1, 2017',
         )
-        self.assertContains(response, '42', count=1)
+        self.assertContains(response, '42', count=1, msg_prefix=response.content.decode('utf-8'))
         # expected warning message
         self.assertContains(
             response,
