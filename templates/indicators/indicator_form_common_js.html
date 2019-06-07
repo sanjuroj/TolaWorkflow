@@ -189,11 +189,9 @@
         let row = $(e.currentTarget).closest('tr');
         let numResultsLinkedToEventTarget = parseInt(row.data('collected-count'));
 
-        // if no other targets have changed, we'll update the snapshot so we don't double-prompt for rationale
-        const updateSnapshot = !(
-            JSON.stringify(getFormPeriodicTargets(row)) == initialTrackedFieldsFormState.periodic_targets &&
-            initialTrackedFieldsFormState.target_frequency == getTrackedFieldsObject().target_frequency
-            );
+        // if no other periodic target values have changed, update the snapshot to reflect new server state
+        // there's a missed edge case here if the PT being deleted also had a value change, but meh
+        const updateSnapshot = ! hasTargetsChanged();
 
          /* If target is new, delete means just remove row,
          * If target is saved, delete means call to delete
@@ -209,7 +207,9 @@
                     .done((data) => {
                         if (data.status === "success") {
                             row.remove();
-                            if (updateSnapshot) updateTargetSnapshot();
+                            if (updateSnapshot) {
+                                updatePTsAndLopTargetOnSnapshot();
+                            }
                             updateIfLastEvent();
                             updateLopTargetDisplay();
                         }
@@ -967,45 +967,43 @@
 
     // Returns an array of objects of periodic target form values
     // can be called with a row to exclude from the list (to check if _other_ targets have changed)
-    function getFormPeriodicTargets(excluded_row=null) {
+    function getFormPeriodicTargets() {
         let periodic_targets = [];
 
         // Collect all existing periodic_targets into an array.
         $('#periodic_targets_table tbody tr.periodic-target').each(function () {
             let $this = $(this);
-            if (excluded_row === null || excluded_row[0] !== $this[0]) {
-                let eventNameElement = $($this.find('input[type=text]'));
-                let targetValueSelector = $($this.find('input[type=number]'));
-    
-                let pt_id;
-                let pt_name;
-                try {
-                    pt_id = parseInt(targetValueSelector.attr('id').split('-')[1]);
-                    if (!$.isNumeric(pt_id)) {
-                        pt_id = 0;
-                    }
-                } catch (err) {
+            let eventNameElement = $($this.find('input[type=text]'));
+            let targetValueSelector = $($this.find('input[type=number]'));
+
+            let pt_id;
+            let pt_name;
+            try {
+                pt_id = parseInt(targetValueSelector.attr('id').split('-')[1]);
+                if (!$.isNumeric(pt_id)) {
                     pt_id = 0;
                 }
-    
-                if (eventNameElement.length > 0) {
-                    pt_name = eventNameElement.val();
-                } else {
-                    pt_name = targetValueSelector.attr('name');
-                }
-    
-                let pt_value = targetValueSelector.val();
-                let start_date = targetValueSelector.data("startDate");
-                let end_date = targetValueSelector.data("endDate");
-    
-                periodic_targets.push({
-                    'id': pt_id,
-                    'period': pt_name,
-                    'target': pt_value,
-                    'start_date': start_date,
-                    'end_date': end_date
-                });
+            } catch (err) {
+                pt_id = 0;
             }
+
+            if (eventNameElement.length > 0) {
+                pt_name = eventNameElement.val();
+            } else {
+                pt_name = targetValueSelector.attr('name');
+            }
+
+            let pt_value = targetValueSelector.val();
+            let start_date = targetValueSelector.data("startDate");
+            let end_date = targetValueSelector.data("endDate");
+
+            periodic_targets.push({
+                'id': pt_id,
+                'period': pt_name,
+                'target': pt_value,
+                'start_date': start_date,
+                'end_date': end_date
+            });
         });
 
         return periodic_targets;
@@ -1038,8 +1036,7 @@
         if (formObj['lop_target'] === undefined) {
             formObj['lop_target'] = computeLopTarget();
         } else {
-            // str -> float conversion needed when pulling from form for later comparisions
-            formObj['lop_target'] = parseFloat(formObj['lop_target']);
+            formObj['lop_target'] = formObj['lop_target'];
         }
 
         let periodic_targets = getFormPeriodicTargets();
@@ -1072,15 +1069,15 @@
         // side calculated LoP target. The snapshot reflects the client value
         // by default, but may need to reflect the DB value to prompt for rationale
         if (useDBLopTarget) {
-            // snapshot returns lop target as string, since it's pulled from the form
-            initialTrackedFieldsFormState['lop_target'] = initialLopTarget();
+            initialTrackedFieldsFormState['lop_target'] = cleanFloat(initialLopTarget());
         }
     }
-        
-    // update just the targets portion of the form object:
-    function updateTargetSnapshot() {
-        let periodic_targets = getFormPeriodicTargets();
-        initialTrackedFieldsFormState.periodic_targets = JSON.stringify(periodic_targets);
+
+    // update targets and indicator LoP target of the initial form snapshot
+    function updatePTsAndLopTargetOnSnapshot() {
+        let formObj = getIndicatorFormAsObject();
+        initialTrackedFieldsFormState.periodic_targets = formObj.periodic_targets;
+        initialTrackedFieldsFormState.lop_target = formObj.lop_target;
     }
 
     // have any tracked fields changed in the form?
@@ -1098,7 +1095,7 @@
         let prevTargetFieldsState = initialTrackedFieldsFormState.periodic_targets;
         let currTargetFieldsState = currTrackedFieldsFormState.periodic_targets;
 
-        // LoP has not values, so look at changes in the target type itself
+        // LoP has no values, so look at changes in the target type itself
         let prevTargetType = initialTrackedFieldsFormState.target_frequency;
         let currTargetType = currTrackedFieldsFormState.target_frequency;
 
