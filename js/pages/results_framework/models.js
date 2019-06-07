@@ -194,8 +194,8 @@ export class LevelStore {
                     stack: {
                         dir1: 'up',
                         dir2: 'right',
-                        firstpos1: 0,
-                        firstpas2: 0,
+                        firstpos1: 20,
+                        firstpos2: 20,
                     }
                 })
             })
