@@ -126,7 +126,7 @@ def get_audit_log_workbook(ws, program):
 
         xl_row = [
             Cell(ws, value=row.date),
-            Cell(ws, value=row.indicator.number if row.indicator else _('N/A')),
+            Cell(ws, value=row.indicator.number_display if row.indicator else _('N/A')),
             Cell(ws, value=row.indicator.name if row.indicator else _('N/A')),
             Cell(ws, value=row.user.name),
             Cell(ws, value=row.organization.name),
@@ -278,7 +278,7 @@ class ProgramAuditLogIndicatorSerializer(ModelSerializer):
     class Meta:
         model = Indicator
         fields = (
-            'number',
+            'number_display',
             'name'
         )
 
