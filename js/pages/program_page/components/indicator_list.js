@@ -206,7 +206,21 @@ class IndicatorListTable extends React.Component {
                 const resultsStr = resultsMap.get(indicator.id);
                 const targetPeriodLastEndDate = indicator.target_period_last_end_date ? new Date(indicator.target_period_last_end_date) : null;
                 // ^^^ Because calling Date() on null returns the current date, and we actually need null!
-
+                const displayFunc = (parseInt(indicator.unit_of_measure_type) == 2) ?
+                        (val) => val ? `${val}%` : '' :
+                        (val) => val ? `${val}` : '';
+                const numberCellFunc = (val) => {
+                    if (val == '' || isNaN(parseFloat(val))) {
+                        return '';
+                    }
+                    val = parseFloat(val).toFixed(2);
+                    if (val.slice(-2) == "00") {
+                        return displayFunc(val.slice(0, -3));
+                    } else if (val.slice(-1) == "0") {
+                        return displayFunc(val.slice(0, -1));
+                    }
+                    return displayFunc(val);
+                }
                 return <React.Fragment key={indicator.id}>
                     <tr className={classNames("indicators-list__row", "indicators-list__indicator-header", {
                         "is-highlighted": indicator.just_created,
@@ -244,8 +258,8 @@ class IndicatorListTable extends React.Component {
                         </td>
                         {this.props.oldStyleLevels &&<td>{indicator.level ? indicator.level.name : indicator.old_level}</td>}
                         <td>{indicator.unit_of_measure}</td>
-                        <td className="text-right">{indicator.baseline_display}</td>
-                        <td className="text-right">{indicator.lop_target_display}</td>
+                        <td className="text-right">{ numberCellFunc(indicator.baseline) }</td>
+                        <td className="text-right">{ numberCellFunc(indicator.lop_target_active) }</td>
                     </tr>
 
                     {resultsExist &&

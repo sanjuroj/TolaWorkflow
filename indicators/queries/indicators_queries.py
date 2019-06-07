@@ -142,7 +142,6 @@ class ResultsIndicator(Indicator):
         if hasattr(self, 'lop_target_calculated'):
             return self.lop_target_calculated
         return self.lop_target
-        
 
     @property
     def annotated_targets(self):
