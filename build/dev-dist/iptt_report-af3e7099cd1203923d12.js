@@ -1360,7 +1360,7 @@ function (_React$Component) {
             return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
               className: "form-group"
             }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
-              className: "text-uppercase"
+              className: ""
             },
             /* # Translators: a field where users can name their newly created report */
             gettext('Report name')), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
@@ -1373,12 +1373,12 @@ function (_React$Component) {
               type: "button",
               onClick: _this2.handleClick,
               disabled: _this2.isDisabled(),
-              className: "btn btn-primary"
+              className: "btn btn-primary btn-block"
             }, gettext('Pin to program page')));
 
           case _this2.SENDING:
             return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-              className: "btn btn-outline-primary",
+              className: "btn btn-primary",
               disabled: true
             }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("img", {
               src: "/static/img/ajax-loader.gif"
@@ -4772,4 +4772,4 @@ function () {
 /***/ })
 
 },[["mYfJ","runtime","vendors"]]]);
-//# sourceMappingURL=iptt_report-066fdca3f7d1c8995c91.js.map
+//# sourceMappingURL=iptt_report-af3e7099cd1203923d12.js.map
