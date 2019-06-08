@@ -234,7 +234,7 @@ function (_React$Component2) {
         className: "list__filters list__filters--block-label",
         id: "id_div_indicators"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        class: "form-group"
+        className: "form-group"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
         className: ""
       }, gettext("Find an indicator:")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -246,7 +246,7 @@ function (_React$Component2) {
         placeholder: gettext('None'),
         onChange: this.onSelection
       }))), !this.props.rootStore.oldStyleLevels && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        class: "form-group"
+        className: "form-group"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
         className: ""
       }, gettext("Group indicators:")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -563,6 +563,7 @@ function () {
     this.updateIndicator = this.updateIndicator.bind(this);
     this.removeIndicator = this.removeIndicator.bind(this);
     this.filterIndicators = this.filterIndicators.bind(this);
+    this.addIndicators = this.addIndicators.bind(this);
   }
 
   _createClass(IndicatorStore, [{
@@ -575,6 +576,23 @@ function () {
       if (i > -1) {
         this.indicators[i] = indicator;
       }
+    }
+  }, {
+    key: "addIndicators",
+    value: function addIndicators(indicatorJSON) {
+      var _this = this;
+
+      indicatorJSON.forEach(function (indicator) {
+        var i = _this.indicators.findIndex(function (e) {
+          return e.id === indicator.id;
+        });
+
+        if (i > -1) {
+          _this.indicators[i] = indicator;
+        } else {
+          _this.indicators.push(indicator);
+        }
+      });
     }
   }, {
     key: "removeIndicator",
@@ -753,7 +771,7 @@ function () {
   initializer: function initializer() {
     return [];
   }
-}), _applyDecoratedDescriptor(_class.prototype, "updateIndicator", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "updateIndicator"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "removeIndicator", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "removeIndicator"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "getIndicatorsNeedingTargets", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "getIndicatorsNeedingTargets"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "getIndicatorsNeedingResults", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "getIndicatorsNeedingResults"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "getIndicatorsNeedingEvidence", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "getIndicatorsNeedingEvidence"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "getIndicatorsNotReporting", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "getIndicatorsNotReporting"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "getIndicatorsAboveTarget", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "getIndicatorsAboveTarget"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "getIndicatorsBelowTarget", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "getIndicatorsBelowTarget"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "getIndicatorsOnTarget", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "getIndicatorsOnTarget"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "getIndicatorsReporting", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "getIndicatorsReporting"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "sortIndicators", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "sortIndicators"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "getTotalResultsCount", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "getTotalResultsCount"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "getTotalResultsWithEvidenceCount", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "getTotalResultsWithEvidenceCount"), _class.prototype)), _class);
+}), _applyDecoratedDescriptor(_class.prototype, "updateIndicator", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "updateIndicator"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "addIndicators", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "addIndicators"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "removeIndicator", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "removeIndicator"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "getIndicatorsNeedingTargets", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "getIndicatorsNeedingTargets"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "getIndicatorsNeedingResults", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "getIndicatorsNeedingResults"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "getIndicatorsNeedingEvidence", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "getIndicatorsNeedingEvidence"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "getIndicatorsNotReporting", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "getIndicatorsNotReporting"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "getIndicatorsAboveTarget", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "getIndicatorsAboveTarget"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "getIndicatorsBelowTarget", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "getIndicatorsBelowTarget"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "getIndicatorsOnTarget", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "getIndicatorsOnTarget"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "getIndicatorsReporting", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "getIndicatorsReporting"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "getTotalResultsCount", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "getTotalResultsCount"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "getTotalResultsWithEvidenceCount", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "getTotalResultsWithEvidenceCount"), _class.prototype)), _class);
 var ProgramPageStore = (_class3 = (_temp2 =
 /*#__PURE__*/
 function () {
@@ -955,6 +973,9 @@ _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].on('delete-indicator-results',
 
 _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].on('reload-indicator', function (indicatorId) {
   $.get("/indicators/api/indicator/".concat(indicatorId), rootStore.indicatorStore.updateIndicator);
+});
+_eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].on('load-new-indicator', function (programId) {
+  $.get("/indicators/api/indicator/new/".concat(programId), rootStore.indicatorStore.addIndicators);
 }); // remove an indicator from the list
 
 _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].on('indicator-deleted', rootStore.indicatorStore.removeIndicator); // close all expanded indicators in the table
@@ -1033,15 +1054,19 @@ $("#indicator-list-react-component").on("click", ".indicator-link[data-tab]", fu
 $('#indicator_modal_div').on('hide.bs.modal', function (e) {
   var form = $(this).find('form');
   var form_action = form.attr('action').split('/');
-  var indicator_id = parseInt(form_action[form_action.length - 2]); // if this form has just successfully deleted this indicator, don't update it, remove it
+  var item_id = parseInt(form_action[form_action.length - 2]);
 
-  if (form.attr('deleted') === 'true') {
-    _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].emit('indicator-deleted', indicator_id);
+  if (form_action[form_action.length - 3] == 'indicator_create') {
+    var program_id = item_id;
+    _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].emit('load-new-indicator', item_id);
+  } else if (form.attr('deleted') === 'true') {
+    // if this form has just successfully deleted this indicator, don't update it, remove it
+    _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].emit('indicator-deleted', item_id);
   } else {
-    _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].emit('reload-indicator', indicator_id);
+    _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].emit('reload-indicator', item_id);
 
-    if (rootStore.resultsMap.has(indicator_id)) {
-      _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].emit('load-indicator-results', indicator_id);
+    if (rootStore.resultsMap.has(item_id)) {
+      _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].emit('load-indicator-results', item_id);
     }
   }
 }); // When "add results" modal is closed, the targets data needs refreshing
@@ -1641,4 +1666,4 @@ var ProgramMetrics = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])
 /***/ })
 
 },[["aJgA","runtime","vendors"]]]);
-//# sourceMappingURL=program_page-032fd02486b93027f9a8.js.map
+//# sourceMappingURL=program_page-b6873d3c9375df82b422.js.map
