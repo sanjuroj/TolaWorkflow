@@ -165,10 +165,13 @@ export class LevelCardExpanded extends React.Component {
         super(props);
         this.submitType = "saveOnly";
         this.indicatorWasReordered = false;
+        this.origData = JSON.stringify([props.level.name, props.level.assumptions, props.levelProps.indicators]);
         extendObservable(this, {
             name: props.level.name,
             assumptions: props.level.assumptions,
             indicators: props.levelProps.indicators.sort((a, b) => a.level_order - b.level_order),
+            get dataHasChanged () {
+                return JSON.stringify([this.name, this.assumptions, this.indicators]) != this.origData}
         });
     }
 
@@ -216,7 +219,17 @@ export class LevelCardExpanded extends React.Component {
     };
 
     cancelEdit = () => {
-        this.props.rootStore.levelStore.cancelEdit(this.props.level.id)
+        if (this.dataHasChanged) {
+            create_no_rationale_changeset_notice({
+            /* # Translators:  This is a confirmation prompt that is triggered by clicking on a cancel button.  */
+            message_text: `Are you sure you want to continue?`,
+            preamble: `Changes to this ${this.props.levelProps.tierName} will not be saved`,
+            on_submit: () => this.props.rootStore.levelStore.cancelEdit(this.props.level.id)});
+        }
+        else{
+            this.props.rootStore.levelStore.cancelEdit(this.props.level.id)
+        }
+
     };
 
     onFormChange = (event) => {
