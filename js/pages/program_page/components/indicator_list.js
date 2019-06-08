@@ -124,7 +124,7 @@ class IndicatorFilter extends React.Component{
         const indicatorGroupingOptions = this.props.uiStore.groupByOptions;
         const groupingValue = this.props.uiStore.selectedGroupByOption;
         return <nav className="list__filters list__filters--block-label" id="id_div_indicators">
-            <div class="form-group">
+            <div className="form-group">
                 <label className="">
                     {gettext("Find an indicator:")}
                 </label>
@@ -140,7 +140,7 @@ class IndicatorFilter extends React.Component{
             </div>
             {!this.props.rootStore.oldStyleLevels &&
             <React.Fragment>
-                <div class="form-group">
+                <div className="form-group">
                     <label className="">
                         {gettext("Group indicators:")}
                     </label>

@@ -63,14 +63,15 @@ class IndicatorForm(forms.ModelForm):
         widget=forms.RadioSelect(),
     )
     old_level = forms.ChoiceField(
-        choices=[(name, name) for (pk, name) in Indicator.OLD_LEVELS]
+        choices=[('', '------')] + [(name, name) for (pk, name) in Indicator.OLD_LEVELS],
+        initial=None
     )
 
     rationale = forms.CharField(required=False)
 
     class Meta:
         model = Indicator
-        exclude = ['create_date', 'edit_date', 'program', 'level_order']
+        exclude = ['create_date', 'edit_date', 'level_order', 'program']
         widgets = {
             'definition': forms.Textarea(attrs={'rows': 4}),
             'justification': forms.Textarea(attrs={'rows': 4}),
@@ -95,18 +96,32 @@ class IndicatorForm(forms.ModelForm):
 
         super(IndicatorForm, self).__init__(*args, **kwargs)
 
+
+        self.fields['level'].queryset = Level.objects.filter(program_id=self.programval)
+        self.fields['level'].label = _('Result level')
+        self.fields['number'].label = _('Display number')
+        self.fields['number'].help_text = _(
+            "This number is displayed in place of the indicator number automatically " +
+            "generated through the results framework.  An admin can turn on auto-numbering " +
+            "in program settings"
+        )
+        if self.programval.auto_number_indicators:
+            self.fields.pop('number')
         if self.programval.using_results_framework:
             self.fields.pop('old_level')
             self.fields['level'].required = True
-            self.fields['level'].queryset = Level.objects.filter(program_id=self.programval)
         else:
-            self.fields.pop('level')
-            self.fields['old_level']
+            self.fields['old_level'].required = True
+            self.fields['old_level'].label = _('Old indicator level')
+            self.fields['old_level'].help_text = _(
+                "Indicators are currently grouped by an older version of indicator levels. " +
+                "To group indicators according to the results framework, an admin will need " +
+                "to adjust program settings."
+            )
 
         if not self.request.has_write_access:
             for name, field in self.fields.items():
                 field.disabled = True
-
         countries = getCountry(self.request.user)
         self.fields['disaggregation'].queryset = DisaggregationType.objects\
             .filter(country__in=countries, standard=False)
@@ -115,7 +130,7 @@ class IndicatorForm(forms.ModelForm):
         self.fields['strategic_objectives'].queryset = StrategicObjective.objects.filter(country__in=countries)
         self.fields['approved_by'].queryset = TolaUser.objects.filter(country__in=countries).distinct()
         self.fields['approval_submitted_by'].queryset = TolaUser.objects.filter(country__in=countries).distinct()
-        self.fields['name'].label = _('Indicator Name')
+        self.fields['name'].label = _('Indicator')
         self.fields['name'].required = True
         self.fields['name'].widget = forms.Textarea(attrs={'rows': 3})
         self.fields['unit_of_measure'].required = True

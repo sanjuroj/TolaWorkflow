@@ -744,15 +744,12 @@
     }
 
     function validateForEmptyField(fieldName) {
-        /* on the IPTT edit form there are multiple "id_level" fields (one for
-         * filter form, one for edit form) so in case of id_level validation
-         * this ensures we get the one on the edit form
-         */
-        var field;
-        if (fieldName == "id_level") {
-            field = $('#performanceTab #id_level');
-        } else {
-            field = $("#" + fieldName);
+        var field = $("#" + fieldName);
+        if (fieldName == 'id_level') {
+            if (!$('label[for="id_level"]').hasClass('label--required')) {
+                // id_level is not required in some cases (have not switched to RF)
+                return true;
+            }
         }
         if ((fieldName == "id_level" || fieldName == "id_old_level") && field.length == 0) {
             //skip nonexistant fields
@@ -870,13 +867,19 @@
           $("#div_id_name").addClass("mb-3");
           $("#div_id_name").removeClass("marginbottom-225");
         }
+        
+        /* validate fields from the Performance tab */
+        if (validateForEmptyField("id_level") === false) {
+            validationsSummaryTab = false;
+        }
 
         if (validationsSummaryTab === false) {
             validation_msgs['summary'] = '{% trans "Please complete all required fields in the Summary tab."|escapejs %}';
         }
 
-        /* validate fields from the Performance tab */
-        if (validateForEmptyField("id_level") === false) {
+        
+        
+        if (validateForEmptyField("id_old_level") === false) {
             validationsPerformanceTab = false;
         }
 

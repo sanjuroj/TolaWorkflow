@@ -22,6 +22,7 @@ export class IndicatorStore {
         this.updateIndicator = this.updateIndicator.bind(this);
         this.removeIndicator = this.removeIndicator.bind(this);
         this.filterIndicators = this.filterIndicators.bind(this);
+        this.addIndicators = this.addIndicators.bind(this);
     }
 
     @action
@@ -30,6 +31,18 @@ export class IndicatorStore {
         if (i > -1) {
             this.indicators[i] = indicator;
         }
+    }
+    
+    @action
+    addIndicators(indicatorJSON) {
+        indicatorJSON.forEach( indicator => {
+            let i = this.indicators.findIndex(e => e.id === indicator.id);
+            if (i > -1) {
+                this.indicators[i] = indicator;
+            } else {
+                this.indicators.push(indicator);
+            }
+        });
     }
     
     @action
@@ -77,7 +90,6 @@ export class IndicatorStore {
         return this.indicators.filter(i => i.reporting === true);
     }
     
-    @action
     sortIndicators(oldStyleLevels, sortByChain, indicators) {
         if (oldStyleLevels) {
             return indicators;

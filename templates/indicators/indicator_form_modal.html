@@ -17,8 +17,10 @@
         {% if indicator %}
             <h2>
             {% trans "indicator" as ind %}
-            {% if indicator.level %}
-                {{ indicator.level.name }} {{ ind }} {{ indicator.level.ontology }}
+            {% if program.using_results_framework and indicator.level.leveltier %}
+                {{ indicator.level.leveltier.name }} {{ ind }} {{ indicator.level.display_ontology }}{{ indicator.level_order_display }}:
+            {% elif not program.using_results_framework %}
+                {{ indicator.old_level }} {{ ind }}:
             {% endif %}
             </h2>
         {% else %}
@@ -98,12 +100,29 @@
                             <small class="form-text text-muted">{{ form.name.help_text }}</small>
                             <span id="validation_id_name" class="has-error"></span>
                         </div>
+                        {% if form.number %}
+                            <div class="form-group" id="div_id_number">
+                                <label for="id_number" class="">{{ form.number.label }}
+                                    <a href="#" tabIndex="0" data-trigger="focus" data-toggle="popover" data-placement="bottom" data-content="{{ form.number.help_text }}">
+                                        <i class="far fa-question-circle"></i>
+                                    </a>
+                                </label>
+                                {% render_field form.number class+="form-control" %}
+                                <span id="validation_id_number" class="has-error"></span>
+                            </div>
+                        {% endif %}
 
                         <div class="form-group" id="div_id_sector">
                             <label for="id_sector" class="">{{ form.sector.label }} </label>
                             {% render_field form.sector class+="form-control" %}
                             <small class="form-text text-muted">{{ form.sector.help_text }}</small>
                             <span id="validation_id_sector" class="has-error"></span>
+                        </div>
+                        <div class="form-group" id="div_id_level">
+                            <label for="id_level" class="{% if form.level.field.required %}label--required{% endif %}">{{ form.level.label }}</label>
+                            {% render_field form.level class+="form-control" %}
+                            <small class="form-text text-muted">{{ form.level.help_text }}</small>
+                            <span id="validation_id_level" class="has-error"></span>
                         </div>
 
                         <div class="form-group" id="div_id_objectives">
@@ -135,26 +154,17 @@
 
                 <div role="tabpanel" class="tab-pane" id="performanceTab" name="Performance tab">
                     <fieldset>
-                        {% if form.level %}
-                        <div class="form-group" id="div_id_level">
-                            <label for="id_level" class="label--required">{{ form.level.label }}</label>
-                            {% render_field form.level class+="form-control" %}
-                            <small class="form-text text-muted">{{ form.level.help_text }}</small>
-                            <span id="validation_id_level" class="has-error"></span>
-                        </div>
-                        {% else %}
-                            <div class="form-group" id="div_id_old_level">
-                            <label for="id_old_level" class="label--required">{{ form.old_level.label }}</label>
+                        {% if form.old_level %}
+                        <div class="form-group" id="div_id_old_level">
+                            <label for="id_old_level" class="label--required">{{ form.old_level.label }}
+                             <a href="#" tabIndex="0" data-trigger="focus" data-toggle="popover" data-placement="bottom" data-content="{{ form.old_level.help_text }}">
+                                <i class="far fa-question-circle"></i>
+                                </a>
+                            </label>
                             {% render_field form.old_level class+="form-control" %}
-                            <small class="form-text text-muted">{{ form.old_level.help_text }}</small>
                             <span id="validation_id_old_level" class="has-error"></span>
-                        {% endif %}
-                        <div class="form-group" id="div_id_number">
-                            <label for="id_number" class="">{{ form.number.label }} </label>
-                            {% render_field form.number class+="form-control" %}
-                            <small class="form-text text-muted">{{ form.number.help_text }}</small>
-                            <span id="validation_id_number" class="has-error"></span>
                         </div>
+                        {% endif %}
 
                         <div class="form-group" id="div_id_source">
                             <label for="id_source" class="">{{ form.source.label }} </label>
@@ -481,7 +491,7 @@
             const target_periods_section_offset = $(window).scrollTop() - $("#id_div_periodic_tables_placeholder").position().top;
             $("#indicator_modal_div").animate({scrollTop: target_periods_section_offset}, 'slow');
         }
-
+        $('#indicator_modal_div [data-toggle="popover"]').popover();
         // initial state of target frequency box if form is already populated
         disable_target_frequency_field();
 
