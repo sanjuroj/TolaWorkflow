@@ -29,6 +29,8 @@ export default class FilterStore {
     @observable _sectors = [];
     @observable _types = [];
     @observable _indicators = [];
+    _oldShowAll = null;
+    _oldMostRecent = null;
 
     constructor(programStore) {
         this.programStore = programStore;
@@ -66,6 +68,7 @@ export default class FilterStore {
     set programId(programId) {
         programId = parseInt(programId);
         if (this._validProgramId(programId)) {
+            this.updateTransitionParams()
             this._programId = programId;
         }
     }
@@ -104,6 +107,7 @@ export default class FilterStore {
     set frequencyId(frequencyId) {
         frequencyId = parseInt(frequencyId);
         if (this._validFrequency(frequencyId)) {
+            this.updateTransitionParams()
             this._frequencyId = frequencyId;
         }
     }
@@ -135,6 +139,24 @@ export default class FilterStore {
         return false;
     }
     
+    updateTransitionParams() {
+        this._oldShowAll = this.showAll;
+        this._oldMostRecent = this.mostRecent;
+    }
+    
+    clearTransitionParams() {
+        this._oldShowAll = null;
+        this._oldMostRecent = null;
+    }
+    
+    get oldShowAll() {
+        return this._oldShowAll;
+    }
+    
+    get oldMostRecent() {
+        return this._oldMostRecent;
+    }
+    
     
     /* Action to take (as a reaction) when report type, program id, or frequencyid change
      * contains logic for:
@@ -144,16 +166,25 @@ export default class FilterStore {
      *  - clearing indicator filters
      */
     @action _reportParamsUpdated([reportType, programId, frequencyId]) {
+        const showAll = this.oldShowAll;
+        const mostRecent = this.oldMostRecent;
         this.programStore.loadProgram(reportType, programId, frequencyId)
             .then(() => {
+                this.clearTransitionParams();
                 this.frequencyId = this.frequencyId || null;
                 if (!this._validFrequency(frequencyId)) {
                     this.frequencyId = this.isTVA ?
                         this.program.frequencies[0] :
                         TIME_AWARE_FREQUENCIES[0];
                 }
-                this.startPeriod = this.startPeriod || 0;
-                this.endPeriod = this.endPeriod || this.lastPeriod.index;
+                if (showAll) {
+                    this.showAll = true;
+                } else if (mostRecent) {
+                    this.mostRecent = mostRecent;
+                } else {
+                    this.startPeriod = this.startPeriod || 0;
+                    this.endPeriod = this.endPeriod || this.lastPeriod.index;
+                }
                 if (this.reportType === TVA && this.indicators && this.indicators.length > 0) {
                     this.indicators = [];
                 }
@@ -795,5 +826,21 @@ export default class FilterStore {
             }
         }
         return levels;
+    }
+    
+    @action
+    indicatorUpdate = (ev, {programId, indicatorId, ...params}) => {
+        if (programId && programId == this.programId) {
+            this.programStore.updateIndicator(
+                this.reportType, programId, this.frequencyId, indicatorId
+            );
+        }
+    }
+    
+    @action
+    indicatorDelete = (ev, {programId, indicatorId, ...params}) => {
+        if (programId && programId == this.programId) {
+            this.programStore.removeIndicator(programId, indicatorId);
+        }
     }
 }

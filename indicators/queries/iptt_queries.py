@@ -108,11 +108,11 @@ class TimeperiodsIPTTQueryset(IPTTIndicatorQueryset):
 
 class TVAManager(models.Manager):
     def get_queryset(self):
-        return TVAIPTTQueryset(self.model, using=self._db).with_logframe_sorting().with_annotations()
+        return TVAIPTTQueryset(self.model, using=self._db).filter(deleted__isnull=True).with_logframe_sorting().with_annotations()
 
 class TimeperiodsManager(models.Manager):
     def get_queryset(self):
-        return TimeperiodsIPTTQueryset(self.model, using=self._db).with_logframe_sorting().with_annotations()
+        return TimeperiodsIPTTQueryset(self.model, using=self._db).filter(deleted__isnull=True).with_logframe_sorting().with_annotations()
 
 class IPTTIndicator(Indicator):
     SEPARATOR = '/' # this is used by CSV output as a default joiner for multiple values
