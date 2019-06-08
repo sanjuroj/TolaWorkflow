@@ -392,7 +392,7 @@ function (_React$Component3) {
           className: "fas fa-cog"
         }))), _this4.props.oldStyleLevels && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, indicator.old_level), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, indicator.unit_of_measure), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
           className: "text-right"
-        }, numberCellFunc(indicator.baseline)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
+        }, indicator.baseline_na ? gettext('N/A') : numberCellFunc(indicator.baseline)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
           className: "text-right"
         }, numberCellFunc(indicator.lop_target_active))), resultsExist && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
           className: "indicators-list__row indicators-list__indicator-body"
@@ -1641,4 +1641,4 @@ var ProgramMetrics = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])
 /***/ })
 
 },[["aJgA","runtime","vendors"]]]);
-//# sourceMappingURL=program_page-8d1c39d908893547e502.js.map
+//# sourceMappingURL=program_page-032fd02486b93027f9a8.js.map
