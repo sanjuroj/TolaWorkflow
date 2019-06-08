@@ -62,6 +62,9 @@ class IndicatorForm(forms.ModelForm):
         choices=Indicator.UNIT_OF_MEASURE_TYPES,
         widget=forms.RadioSelect(),
     )
+    old_level = forms.ChoiceField(
+        choices=[(name, name) for (pk, name) in Indicator.OLD_LEVELS]
+    )
 
     rationale = forms.CharField(required=False)
 
@@ -92,6 +95,14 @@ class IndicatorForm(forms.ModelForm):
 
         super(IndicatorForm, self).__init__(*args, **kwargs)
 
+        if self.programval.using_results_framework:
+            self.fields.pop('old_level')
+            self.fields['level'].required = True
+            self.fields['level'].queryset = Level.objects.filter(program_id=self.programval)
+        else:
+            self.fields.pop('level')
+            self.fields['old_level']
+
         if not self.request.has_write_access:
             for name, field in self.fields.items():
                 field.disabled = True
@@ -105,7 +116,6 @@ class IndicatorForm(forms.ModelForm):
         self.fields['approved_by'].queryset = TolaUser.objects.filter(country__in=countries).distinct()
         self.fields['approval_submitted_by'].queryset = TolaUser.objects.filter(country__in=countries).distinct()
         self.fields['name'].label = _('Indicator Name')
-        self.fields['level'].required = True
         self.fields['name'].required = True
         self.fields['name'].widget = forms.Textarea(attrs={'rows': 3})
         self.fields['unit_of_measure'].required = True

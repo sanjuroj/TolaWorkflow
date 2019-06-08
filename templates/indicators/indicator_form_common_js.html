@@ -754,6 +754,10 @@
         } else {
             field = $("#" + fieldName);
         }
+        if ((fieldName == "id_level" || fieldName == "id_old_level") && field.length == 0) {
+            //skip nonexistant fields
+            return true;
+        }
         if ($.isEmptyObject(field.val())) {
             $(field).addClass('is-invalid');
             $("#validation_" + fieldName).text("{% trans 'Please complete this field.'|escapejs %}");

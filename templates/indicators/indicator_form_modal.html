@@ -135,14 +135,20 @@
 
                 <div role="tabpanel" class="tab-pane" id="performanceTab" name="Performance tab">
                     <fieldset>
-
+                        {% if form.level %}
                         <div class="form-group" id="div_id_level">
                             <label for="id_level" class="label--required">{{ form.level.label }}</label>
                             {% render_field form.level class+="form-control" %}
                             <small class="form-text text-muted">{{ form.level.help_text }}</small>
                             <span id="validation_id_level" class="has-error"></span>
                         </div>
-
+                        {% else %}
+                            <div class="form-group" id="div_id_old_level">
+                            <label for="id_old_level" class="label--required">{{ form.old_level.label }}</label>
+                            {% render_field form.old_level class+="form-control" %}
+                            <small class="form-text text-muted">{{ form.old_level.help_text }}</small>
+                            <span id="validation_id_old_level" class="has-error"></span>
+                        {% endif %}
                         <div class="form-group" id="div_id_number">
                             <label for="id_number" class="">{{ form.number.label }} </label>
                             {% render_field form.number class+="form-control" %}
