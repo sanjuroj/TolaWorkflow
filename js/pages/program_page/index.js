@@ -56,6 +56,10 @@ eventBus.on('reload-indicator', indicatorId => {
     $.get(`/indicators/api/indicator/${indicatorId}`, rootStore.indicatorStore.updateIndicator);
 });
 
+eventBus.on('load-new-indicator', programId => {
+    $.get(`/indicators/api/indicator/new/${programId}`, rootStore.indicatorStore.addIndicators);
+})
+
 // remove an indicator from the list
 eventBus.on('indicator-deleted', rootStore.indicatorStore.removeIndicator);
 
@@ -145,15 +149,19 @@ $("#indicator-list-react-component").on("click", ".indicator-link[data-tab]", fu
 $('#indicator_modal_div').on('hide.bs.modal', function (e) {
     let form = $(this).find('form');
     let form_action = form.attr('action').split('/');
-    let indicator_id = parseInt(form_action[form_action.length -2]);
+    let item_id = parseInt(form_action[form_action.length -2]);
+    if (form_action[form_action.length-3] == 'indicator_create') {
+        let program_id = item_id;
+        eventBus.emit('load-new-indicator', item_id);
+    } else if (form.attr('deleted') === 'true') {
     // if this form has just successfully deleted this indicator, don't update it, remove it
-    if (form.attr('deleted') === 'true') {
-        eventBus.emit('indicator-deleted', indicator_id);
+    
+        eventBus.emit('indicator-deleted', item_id);
     } else {
-        eventBus.emit('reload-indicator', indicator_id);
+        eventBus.emit('reload-indicator', item_id);
         
-        if (rootStore.resultsMap.has(indicator_id)) {
-            eventBus.emit('load-indicator-results', indicator_id);
+        if (rootStore.resultsMap.has(item_id)) {
+            eventBus.emit('load-indicator-results', item_id);
         }
     }
 });
