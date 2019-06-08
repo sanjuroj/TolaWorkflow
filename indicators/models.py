@@ -124,7 +124,7 @@ class Objective(models.Model):
 
 
 class Level(models.Model):
-    name = models.CharField(_("Name"), max_length=500, blank=True)
+    name = models.CharField(_("Name"), max_length=500)
     assumptions = models.CharField(_("Assumptions"), max_length=500, blank=True, null=True)
     parent = models.ForeignKey('self', blank=True, null=True, on_delete=models.CASCADE, related_name='child_levels')
     program = models.ForeignKey(Program, blank=True, null=True, on_delete=models.CASCADE, related_name='levels')

@@ -628,7 +628,18 @@ function (_React$Component3) {
     };
 
     _this3.cancelEdit = function () {
-      _this3.props.rootStore.levelStore.cancelEdit(_this3.props.level.id);
+      if (_this3.dataHasChanged) {
+        create_no_rationale_changeset_notice({
+          /* # Translators:  This is a confirmation prompt that is triggered by clicking on a cancel button.  */
+          message_text: "Are you sure you want to continue?",
+          preamble: "Changes to this ".concat(_this3.props.levelProps.tierName, " will not be saved"),
+          on_submit: function on_submit() {
+            return _this3.props.rootStore.levelStore.cancelEdit(_this3.props.level.id);
+          }
+        });
+      } else {
+        _this3.props.rootStore.levelStore.cancelEdit(_this3.props.level.id);
+      }
     };
 
     _this3.onFormChange = function (event) {
@@ -638,12 +649,18 @@ function (_React$Component3) {
 
     _this3.submitType = "saveOnly";
     _this3.indicatorWasReordered = false;
+    _this3.origData = JSON.stringify([props.level.name, props.level.assumptions, props.levelProps.indicators]);
     Object(mobx__WEBPACK_IMPORTED_MODULE_3__["extendObservable"])(_assertThisInitialized(_assertThisInitialized(_this3)), {
       name: props.level.name,
       assumptions: props.level.assumptions,
       indicators: props.levelProps.indicators.sort(function (a, b) {
         return a.level_order - b.level_order;
-      })
+      }),
+
+      get dataHasChanged() {
+        return JSON.stringify([this.name, this.assumptions, this.indicators]) != this.origData;
+      }
+
     });
     return _this3;
   }
@@ -2021,4 +2038,4 @@ function (_React$Component2) {
 /***/ })
 
 },[["QTZG","runtime","vendors"]]]);
-//# sourceMappingURL=results_framework-770eadeab93ea3562329.js.map
+//# sourceMappingURL=results_framework-847d7c00b16e1f63363c.js.map
