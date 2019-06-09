@@ -369,11 +369,16 @@ class IndicatorList extends React.Component {
                     <SingleReactSelect
                         update={(value) => this.props.changeFunc(value, indicator.id)}
                         selectId={"ind"+indicator.id}
-                        labelClasses="col-form-label"
+                        labelClasses=" "
+                        formRowClasses="sortable-list__item__label"
+                        selectClasses="sortable-list__item__select"
                         value={{value: indicator.level_order, label: indicator.level_order}}
                         label={indicator.name}
-                        options={options}/>
-                    <a href="#" className="indicator-link"><i className="fas fa-cog"></i> Settings</a>
+                        options={options}
+                    />
+                    <div className="sortable-list__item__actions">
+                        <a href="#" className="indicator-link"><i className="fas fa-cog"></i> Settings</a>
+                    </div>
                 </React.Fragment>
             )
         });
@@ -390,37 +395,35 @@ class IndicatorList extends React.Component {
         }
 
         return(
-            <ul id="level-card--indicator-links" style={{backgroundColor: "white", padding: "1em"}}>
-                <div>
-                    Indicators Linked to this {this.props.tierName}
-                    {order}
-                    {helpLink}
+            <div className="level-card--indicator-links">
+                <div className="indicator-links__header">
+                    <h4>Indicators linked to this {this.props.tierName}</h4>
+                    <div>{helpLink}</div>
                 </div>
-                <div>
+                <div className="sortable-list-group">
+                    <div className="sortable-list-header">
+                        {order}
+                    </div>
                     <SortableContainer onSortEnd={this.props.dragEndFunc} useDragHandle lockAxis="y" lockToContainerEdges>
                         {indicatorMarkup.map((value, index) => (
                             <SortableItem key={`item-${index}`} index={index} value={value} />
                         ))}
-                      </SortableContainer>
+                    </SortableContainer>
+                    <div class="sortable-list-actions">
+                        <a href="#" role="button" className="btn btn-link btn-add">
+                            <i className="fas fa-plus-circle"></i>Add Indicator
+                        </a>
+                    </div>
                 </div>
-                <div>
-                    <a href="#" role="button" className="btn btn-link btn-add">
-                    <img className="fas fa-plus-circle"></img>
-                    <span>Add Indicator</span>
-                    </a>
-                </div>
-            </ul>
+            </div>
         )
     }
 }
 
-const SortableItem = sortableElement(({value}) => <li><DragHandle/>{value}</li>);
+const SortableItem = sortableElement(({value}) => <li className="sortable-list__item"><DragHandle/>{value}</li>);
 
 const SortableContainer = sortableContainer(({children}) => {
-    return <ul>{children}</ul>;
+    return <ul className="sortable-list">{children}</ul>;
 });
 
-const DragHandle = sortableHandle(() => <span><FontAwesomeIcon icon={faArrowsAlt} /></span>);
-
-
-
+const DragHandle = sortableHandle(() => <div class="sortable-list__item__drag-handle"><FontAwesomeIcon icon={faArrowsAlt} /></div>);
