@@ -402,7 +402,9 @@ class IndicatorList extends React.Component {
                 </div>
                 <div className="sortable-list-group">
                     <div className="sortable-list-header">
-                        {order}
+                        <div className="sortable-list-header__label">
+                            {order}
+                        </div>
                     </div>
                     <SortableContainer onSortEnd={this.props.dragEndFunc} useDragHandle lockAxis="y" lockToContainerEdges>
                         {indicatorMarkup.map((value, index) => (
