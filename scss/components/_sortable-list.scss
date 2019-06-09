@@ -27,6 +27,9 @@
     margin-bottom: $grid-gutter-width/8;
     padding: $grid-gutter-width/8 $grid-gutter-width/4;
 }
+.sortable-list-header--empty {
+    color: $text-muted;
+}
 .sortable-list-header__drag-handle {
     opacity: 0;
     @include _drag-handle-wrapper();
@@ -46,6 +49,7 @@
     // contains sortable-list__item s
     // unstyled list
     list-style: none;
+    margin-bottom: 0;
     padding-left: 0;
 }
 .sortable-list__item {
@@ -57,7 +61,7 @@
     padding: $grid-gutter-width/8 $grid-gutter-width/4;
 }
 .sortable-list__item__drag-handle {
-    color: $gray-700;
+    color: $text-muted;
     @include _drag-handle-wrapper();
 }
 .sortable-list__item__label {

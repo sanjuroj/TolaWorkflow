@@ -401,16 +401,22 @@ class IndicatorList extends React.Component {
                     <div>{helpLink}</div>
                 </div>
                 <div className="sortable-list-group">
-                    <div className="sortable-list-header">
-                        { /* TODO: this header is super janky. See _sortable-list.scss for future proofing with css subgrid */ }
-                        <div className="sortable-list-header__drag-handle"><FontAwesomeIcon icon={faArrowsAlt} /></div>
-                        <div className="sortable-list-header__label">
-                            {order}
+                    { this.props.indicators.length > 0 ?
+                        <div className="sortable-list-header">
+                            { /* TODO: this header is super janky. See _sortable-list.scss for future proofing with css subgrid */ }
+                            <div className="sortable-list-header__drag-handle"><FontAwesomeIcon icon={faArrowsAlt} /></div>
+                            <div className="sortable-list-header__label">
+                                {order}
+                            </div>
+                            <div className="sortable-list-header__actions">
+                                <i className="fas fa-cog"></i> { gettext("Settings") }
+                            </div>
                         </div>
-                        <div className="sortable-list-header__actions">
-                            <i className="fas fa-cog"></i> { gettext("Settings") }
+                    :
+                        <div className="sortable-list-header--empty">
+                            { gettext("No indicators") }
                         </div>
-                    </div>
+                    }
                     <SortableContainer onSortEnd={this.props.dragEndFunc} useDragHandle lockAxis="y" lockToContainerEdges>
                         {indicatorMarkup.map((value, index) => (
                             <SortableItem key={`item-${index}`} index={index} value={value} />
