@@ -402,8 +402,13 @@ class IndicatorList extends React.Component {
                 </div>
                 <div className="sortable-list-group">
                     <div className="sortable-list-header">
+                        { /* TODO: this header is super janky. See _sortable-list.scss for future proofing with css subgrid */ }
+                        <div className="sortable-list-header__drag-handle"><FontAwesomeIcon icon={faArrowsAlt} /></div>
                         <div className="sortable-list-header__label">
                             {order}
+                        </div>
+                        <div className="sortable-list-header__actions">
+                            <i className="fas fa-cog"></i> { gettext("Settings") }
                         </div>
                     </div>
                     <SortableContainer onSortEnd={this.props.dragEndFunc} useDragHandle lockAxis="y" lockToContainerEdges>
@@ -413,7 +418,7 @@ class IndicatorList extends React.Component {
                     </SortableContainer>
                     <div class="sortable-list-actions">
                         <a href="#" role="button" className="btn btn-link btn-add">
-                            <i className="fas fa-plus-circle"></i>Add Indicator
+                            <i className="fas fa-plus-circle"></i>{ gettext("Add Indicator") }
                         </a>
                     </div>
                 </div>
