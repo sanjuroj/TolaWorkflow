@@ -6,7 +6,8 @@
      *
      * These values are single instance and not re-created on each
      * form load. As such, they need to be reset when the form is reset
-     * */
+     *
+     */
 
     let validation_msgs = {};
     let initialTrackedFieldsFormState;
@@ -63,7 +64,7 @@
     }
 
     // Open the modal with a create form (as opposed to an update form)
-    // form isn't laoded yet, so programId must come from somewhere else
+    // form isn't loaded yet, so programId must come from somewhere else
     function openCreateIndicatorFormModal(programId) {
         let url = `/indicators/indicator_create/${programId}/`;
 
@@ -97,6 +98,7 @@
 
     $("#indicator_modal_div").on('hide.bs.modal', function(e) {
 
+        // Prompt user if closing a create form without saving
         if (isCreateForm() && ! allowModalToClose) {
             // prevent the modal from actually closing
             e.preventDefault();
@@ -403,7 +405,7 @@
         updateLopTargetDisplay();
     }
 
-    // remove the periodic targest from from form UI and reset target frequency
+    // remove the periodic targets from from form UI and reset target frequency
     function clearPeriodicTargetsForm() {
         $("#id_div_periodic_tables_placeholder").empty();
         enable_target_frequecy_field();
