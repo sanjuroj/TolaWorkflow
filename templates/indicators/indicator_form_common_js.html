@@ -199,8 +199,8 @@
                  if (data.status == "success") {
                     showSuccessNotifiction(data.msg);
 
-                    $('#indicator_modal_div').trigger('deleted.tola.indicator.save', saveEventParams())
-                        .find('form').attr('deleted', true);
+                    $('#indicator_modal_div').trigger('deleted.tola.indicator.save', saveEventParams());
+
                     closeIndicatorFormModal();
                  } else {
                      createAlert("danger", data.msg, true, "#modalmessages");
