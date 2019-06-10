@@ -30,6 +30,8 @@ export class IndicatorStore {
         let i = this.indicators.findIndex(e => e.id === indicator.id);
         if (i > -1) {
             this.indicators[i] = indicator;
+        } else {
+            this.indicators.push(indicator);
         }
     }
     

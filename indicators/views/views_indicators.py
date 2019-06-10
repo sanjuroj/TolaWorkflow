@@ -305,7 +305,10 @@ class IndicatorCreate(IndicatorFormMixin, CreateView):
             'N/A'
         )
 
-        return JsonResponse({'success': True})
+        return JsonResponse({
+            'success': True,
+            'id': indicator.id,
+        })
 
 
 class IndicatorUpdate(IndicatorFormMixin, UpdateView):

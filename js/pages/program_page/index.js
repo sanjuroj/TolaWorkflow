@@ -147,7 +147,7 @@ $("#indicator-list-react-component").on("click", ".indicator-link[data-tab]", fu
 
 // when indicator creation modal form completes a save
 $('#indicator_modal_div').on('created.tola.indicator.save', (e, params) => {
-    eventBus.emit('load-new-indicator', params.programId);
+    eventBus.emit('reload-indicator', params.indicatorId);
 });
 
 // when indicator update modal form completes a save or change to periodic targets
