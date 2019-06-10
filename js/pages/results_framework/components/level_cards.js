@@ -6,6 +6,7 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCaretRight, faCaretDown, faArrowsAlt } from '@fortawesome/free-solid-svg-icons'
 import { SingleReactSelect } from "../../../components/selectWidgets";
+import { AddIndicatorButton } from '../../../components/indicatorModalComponents';
 import {sortableContainer, sortableElement, sortableHandle} from 'react-sortable-hoc';
 import HelpPopover from "../../../components/helpPopover";
 
@@ -422,10 +423,10 @@ class IndicatorList extends React.Component {
                             <SortableItem key={`item-${index}`} index={index} value={value} />
                         ))}
                     </SortableContainer>
-                    <div class="sortable-list-actions">
-                        <a href="#" role="button" className="btn btn-link btn-add">
-                            <i className="fas fa-plus-circle"></i>{ gettext("Add Indicator") }
-                        </a>
+                    <div className="sortable-list-actions">
+                        <AddIndicatorButton readonly={ false }
+                                            programId={ this.props.rootStore.levelStore.program_id }
+                                            levelId={ this.props.level.id } />
                     </div>
                 </div>
             </div>
