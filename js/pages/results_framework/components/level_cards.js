@@ -425,7 +425,7 @@ class IndicatorList extends React.Component {
                         ))}
                     </SortableContainer>
                     <div className="sortable-list-actions">
-                        <AddIndicatorButton readonly={ false }
+                        <AddIndicatorButton readonly={ !this.props.level.id || this.props.level.id == 'new' }
                                             programId={ this.props.rootStore.levelStore.program_id }
                                             levelId={ this.props.level.id } />
                     </div>
