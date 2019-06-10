@@ -349,6 +349,7 @@ class LevelButton extends React.Component {
     }
 }
 
+@inject('rootStore')
 class IndicatorList extends React.Component {
 
     componentDidMount() {
@@ -440,4 +441,4 @@ const SortableContainer = sortableContainer(({children}) => {
     return <ul className="sortable-list">{children}</ul>;
 });
 
-const DragHandle = sortableHandle(() => <div class="sortable-list__item__drag-handle"><FontAwesomeIcon icon={faArrowsAlt} /></div>);
+const DragHandle = sortableHandle(() => <div className="sortable-list__item__drag-handle"><FontAwesomeIcon icon={faArrowsAlt} /></div>);

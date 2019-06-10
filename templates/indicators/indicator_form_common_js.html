@@ -30,8 +30,12 @@
 
     // Open the modal with a create form (as opposed to an update form)
     // form isn't laoded yet, so programId must come from somewhere else
-    function openCreateIndicatorFormModal(programId) {
+    function openCreateIndicatorFormModal({programId, levelId = null}) {
         let url = `/indicators/indicator_create/${programId}/`;
+        // in cases (such as rf builder) where the levelID is prepopulated, add as get parameter to request:
+        if (levelId !== null) {
+            url += `?levelId=${levelId}`;
+        }
 
         $("#indicator_modal_content").empty();
         $("#modalmessages").empty();
