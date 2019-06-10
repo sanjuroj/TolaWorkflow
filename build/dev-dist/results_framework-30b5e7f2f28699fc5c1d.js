@@ -875,19 +875,23 @@ function (_React$Component6) {
             return _this5.props.changeFunc(value, indicator.id);
           },
           selectId: "ind" + indicator.id,
-          labelClasses: "col-form-label",
+          labelClasses: " ",
+          formRowClasses: "sortable-list__item__label",
+          selectClasses: "sortable-list__item__select",
           value: {
             value: indicator.level_order,
             label: indicator.level_order
           },
           label: indicator.name,
           options: options
-        }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+        }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+          className: "sortable-list__item__actions"
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
           href: "#",
           className: "indicator-link"
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
           className: "fas fa-cog"
-        }), " Settings")));
+        }), " Settings"))));
       }); // Conditionally set the other elements that are only visible when there are indicators
 
       var order = null;
@@ -901,13 +905,27 @@ function (_React$Component6) {
         });
       }
 
-      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("ul", {
-        id: "level-card--indicator-links",
-        style: {
-          backgroundColor: "white",
-          padding: "1em"
-        }
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, "Indicators Linked to this ", this.props.tierName, order, helpLink), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(SortableContainer, {
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "level-card--indicator-links"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "indicator-links__header"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", null, "Indicators linked to this ", this.props.tierName), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, helpLink)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "sortable-list-group"
+      }, this.props.indicators.length > 0 ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "sortable-list-header"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "sortable-list-header__drag-handle"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_5__["FontAwesomeIcon"], {
+        icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faArrowsAlt"]
+      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "sortable-list-header__label"
+      }, order), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "sortable-list-header__actions"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+        className: "fas fa-cog"
+      }), " ", gettext("Settings"))) : react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "sortable-list-header--empty"
+      }, gettext("No indicators")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(SortableContainer, {
         onSortEnd: this.props.dragEndFunc,
         useDragHandle: true,
         lockAxis: "y",
@@ -918,13 +936,15 @@ function (_React$Component6) {
           index: index,
           value: value
         });
-      }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        class: "sortable-list-actions"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
         href: "#",
         role: "button",
         className: "btn btn-link btn-add"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("img", {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
         className: "fas fa-plus-circle"
-      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, "Add Indicator"))));
+      }), gettext("Add Indicator")))));
     }
   }]);
 
@@ -933,14 +953,20 @@ function (_React$Component6) {
 
 var SortableItem = Object(react_sortable_hoc__WEBPACK_IMPORTED_MODULE_8__["sortableElement"])(function (_ref2) {
   var value = _ref2.value;
-  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(DragHandle, null), value);
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
+    className: "sortable-list__item"
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(DragHandle, null), value);
 });
 var SortableContainer = Object(react_sortable_hoc__WEBPACK_IMPORTED_MODULE_8__["sortableContainer"])(function (_ref3) {
   var children = _ref3.children;
-  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("ul", null, children);
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("ul", {
+    className: "sortable-list"
+  }, children);
 });
 var DragHandle = Object(react_sortable_hoc__WEBPACK_IMPORTED_MODULE_8__["sortableHandle"])(function () {
-  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_5__["FontAwesomeIcon"], {
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    class: "sortable-list__item__drag-handle"
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_5__["FontAwesomeIcon"], {
     icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faArrowsAlt"]
   }));
 });
@@ -979,8 +1005,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 var SingleReactSelect = function SingleReactSelect(props) {
   var selectId = Object(_formUtils__WEBPACK_IMPORTED_MODULE_3__["uniqueId"])('react-select');
   var labelClasses = props.labelClasses || "col-form-label text-uppercase";
+  var formRowClasses = props.formRowClasses || "form-row mb-3";
+  var selectClasses = props.selectClasses || "tola-react-select";
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "form-row mb-3"
+    className: formRowClasses
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
     htmlFor: selectId,
     className: labelClasses
@@ -988,7 +1016,7 @@ var SingleReactSelect = function SingleReactSelect(props) {
     onChange: props.update,
     value: props.value,
     id: selectId,
-    className: "tola-react-select",
+    className: selectClasses,
     disabled: props.disabled,
     options: props.options
   }));
@@ -2038,4 +2066,4 @@ function (_React$Component2) {
 /***/ })
 
 },[["QTZG","runtime","vendors"]]]);
-//# sourceMappingURL=results_framework-847d7c00b16e1f63363c.js.map
+//# sourceMappingURL=results_framework-30b5e7f2f28699fc5c1d.js.map

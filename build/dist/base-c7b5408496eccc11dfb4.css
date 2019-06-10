@@ -9770,6 +9770,14 @@ input[type=radio]:disabled {
   display: flex;
   flex-direction: column; }
 
+.level-card--indicator-links {
+  background: #fff;
+  padding: 15px; }
+
+.indicator-links__header {
+  display: flex;
+  justify-content: space-between; }
+
 .level-title--collapsed {
   display: inline;
   font-size: inherit;
@@ -9799,6 +9807,71 @@ input[type=radio]:disabled {
 
 .level-button + .level-button {
   margin-left: 7.5px; }
+
+.sortable-list-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 3.75px;
+  padding: 3.75px 7.5px; }
+
+.sortable-list-header--empty {
+  color: #71757b; }
+
+.sortable-list-header__drag-handle {
+  opacity: 0;
+  flex-basis: 0;
+  flex-grow: 0;
+  flex-shrink: 1;
+  padding-right: 1em; }
+
+.sortable-list-header__label {
+  padding-right: 4em;
+  text-align: right;
+  flex-basis: 100%;
+  flex-grow: 1;
+  flex-shrink: 1; }
+
+.sortable-list-header__actions {
+  opacity: 0;
+  white-space: nowrap; }
+
+.sortable-list {
+  list-style: none;
+  margin-bottom: 0;
+  padding-left: 0; }
+
+.sortable-list__item {
+  align-items: center;
+  background: #f5f5f5;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 3.75px;
+  padding: 3.75px 7.5px; }
+
+.sortable-list__item__drag-handle {
+  color: #71757b;
+  flex-basis: 0;
+  flex-grow: 0;
+  flex-shrink: 1;
+  padding-right: 1em; }
+
+.sortable-list__item__label {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  padding-right: 1em;
+  flex-basis: 100%;
+  flex-grow: 1;
+  flex-shrink: 1; }
+  .sortable-list__item__label label {
+    margin-bottom: 0;
+    margin-right: 1em; }
+
+.sortable-list__item__actions {
+  white-space: nowrap; }
+
+.sortable-list__item__select {
+  width: 90px; }
 
 /* Local custom CSS and overloads for non-BS libraries */
 .help-block {

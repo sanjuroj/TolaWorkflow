@@ -7,21 +7,23 @@ import { uniqueId } from '../formUtils';
 export const SingleReactSelect = ( props ) => {
     let selectId = uniqueId('react-select');
     let labelClasses = props.labelClasses || "col-form-label text-uppercase";
+    let formRowClasses = props.formRowClasses || "form-row mb-3";
+    let selectClasses = props.selectClasses || "tola-react-select";
     return (
-        <div className="form-row mb-3">
+        <div className={ formRowClasses }>
             <label
                 htmlFor={ selectId }
-                className={labelClasses}>
+                className={ labelClasses }>
                     { props.label }
             </label>
             <Select
                 onChange={ props.update }
                 value={ props.value }
                 id={ selectId }
-                className="tola-react-select"
+                className={ selectClasses }
                 disabled={ props.disabled }
                 options={ props.options }
-                />
+            />
         </div>
     );
 }
@@ -48,7 +50,7 @@ export const DateSelect = ( props ) => {
                         return <option value={ option.value } key={ index }>{ option.label }</option>;
                     }
                 );
-                
+
     return (
         <div className="form-row mb-3">
             <label
@@ -64,7 +66,7 @@ export const DateSelect = ( props ) => {
                 disabled = { props.disabled }>
                 { formattedOptions }
             </select>
-        </div>  
+        </div>
     );
 }
 
