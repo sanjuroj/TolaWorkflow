@@ -56,10 +56,6 @@ eventBus.on('reload-indicator', indicatorId => {
     $.get(`/indicators/api/indicator/${indicatorId}`, rootStore.indicatorStore.updateIndicator);
 });
 
-eventBus.on('load-new-indicator', programId => {
-    $.get(`/indicators/api/indicator/new/${programId}`, rootStore.indicatorStore.addIndicators);
-})
-
 // remove an indicator from the list
 eventBus.on('indicator-deleted', rootStore.indicatorStore.removeIndicator);
 

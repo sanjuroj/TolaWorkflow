@@ -22,7 +22,6 @@ export class IndicatorStore {
         this.updateIndicator = this.updateIndicator.bind(this);
         this.removeIndicator = this.removeIndicator.bind(this);
         this.filterIndicators = this.filterIndicators.bind(this);
-        this.addIndicators = this.addIndicators.bind(this);
     }
 
     @action
@@ -34,19 +33,7 @@ export class IndicatorStore {
             this.indicators.push(indicator);
         }
     }
-    
-    @action
-    addIndicators(indicatorJSON) {
-        indicatorJSON.forEach( indicator => {
-            let i = this.indicators.findIndex(e => e.id === indicator.id);
-            if (i > -1) {
-                this.indicators[i] = indicator;
-            } else {
-                this.indicators.push(indicator);
-            }
-        });
-    }
-    
+
     @action
     removeIndicator(indicatorId) {
         this.indicators = this.indicators.filter(e => e.id != indicatorId);

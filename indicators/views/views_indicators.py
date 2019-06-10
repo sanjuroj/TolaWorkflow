@@ -1239,24 +1239,3 @@ def api_indicator_view(request, indicator, program):
         .annotate(target_period_last_end_date=Max('periodictargets__end_date')).get(pk=indicator.pk)
 
     return JsonResponse(IndicatorSerializer(indicator).data)
-
-@login_required
-@has_program_read_access
-def api_new_indicator_view(request, program):
-    """
-    API call for viewing an indicator for the program page
-    """
-    program = ProgramWithMetrics.program_page.get(pk=program)
-    program.indicator_filters = {}
-
-    freshness_threshold = timezone.now() - timedelta(minutes=5)
-
-    indicators = program.annotated_indicators.filter(
-        program_id=program,
-        create_date__gte=freshness_threshold
-    ).annotate(
-        target_period_last_end_date=Max('periodictargets__end_date')
-    )
-
-    return JsonResponse(IndicatorSerializer(indicators, many=True).data, safe=False)
-
