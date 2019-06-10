@@ -3,7 +3,10 @@ import { inject, observer } from 'mobx-react';
 import {BLANK_TABLE_CELL} from '../../../../constants';
 
 function ipttRound(value, percent) {
-    if (value && !isNaN(parseFloat(value))) {
+    if (value == gettext('N/A')) {
+        return value;
+    }
+    if (value !== '' && !isNaN(parseFloat(value))) {
         if (!Number.isInteger(value)) {
             value = Number.parseFloat(value).toFixed(2);
             value = value.endsWith('00') ? parseInt(value) : value.endsWith('0') ? value.slice(0, -1) : value;
@@ -15,25 +18,31 @@ function ipttRound(value, percent) {
     return null;
 }
 
-const IndicatorEditModalCell = ({ indicator }) => {
-    const loadModal = (e) => {
-        e.preventDefault();
-        let url = `/indicators/indicator_update/${indicator.pk}/?modal=true`;
-        $("#indicator_modal_content").empty();
-        $("#modalmessages").empty();
-  
-        $("#indicator_modal_content").load(url);
-        $("#indicator_modal_div").modal('show');
+const IndicatorEditModalCell = inject('filterStore')(
+    ({ filterStore, indicator }) => {
+        const loadModal = (e) => {
+            e.preventDefault();
+            let url = `/indicators/indicator_update/${indicator.pk}/?modal=true`;
+            $("#indicator_modal_content").empty();
+            $("#modalmessages").empty();
+            $("#indicator_modal_content").load(url);
+            $("#indicator_modal_div").modal('show')
+                .on('success.tola.save', filterStore.indicatorUpdate)
+                .on('deleted.tola.save', filterStore.indicatorDelete)
+                .one('hidden.bs.modal', (ev) => {
+                    $(ev.target).off('.tola.save');
+                });
+        }
+        return (
+            <td className="td-no-side-borders">
+                <button type="button" className="btn btn-link p-1 float-right"
+                        onClick={ loadModal }>
+                    <i className="fas fa-cog"></i>
+                </button>
+            </td>
+        );
     }
-    return (
-        <td className="td-no-side-borders">
-            <button type="button" className="btn btn-link p-1 float-right"
-                    onClick={ loadModal }>
-                <i className="fas fa-cog"></i>
-            </button>
-        </td>
     );
-}
 
 const IndicatorResultModalCell = ({ indicator }) => {
     const loadModal = (e) => {
@@ -56,7 +65,7 @@ const IndicatorResultModalCell = ({ indicator }) => {
 }
 
 const IndicatorCell = ({ value, resultCell, ...props }) => {
-    const displayValue = value || BLANK_TABLE_CELL;
+    const displayValue = (value || value === 0) ? value : BLANK_TABLE_CELL;
     if (resultCell && resultCell === true) {
         return <td { ...props }>{ displayValue }</td>;
     }
@@ -64,6 +73,7 @@ const IndicatorCell = ({ value, resultCell, ...props }) => {
         <td className="td-no-side-borders" { ...props }>{ displayValue }</td>
     );
 }
+
 
 const PercentCell = ({ value, ...props }) => {
     value = ipttRound(value, true);
@@ -106,6 +116,9 @@ const IndicatorRow = inject('reportStore')(
             ValueCell = NumberCell;
             PeriodCell = reportStore.isTVA ? TVAResultsGroup : NumberCell;
         }
+        let cumulative = indicator.cumulative === null ? null
+                : indicator.cumulative ? gettext('Cumulative')
+                            : gettext('Non-cumulative');
         return (
             <tr>
                 <IndicatorCell value={ indicator.number } align="center" />
@@ -113,10 +126,10 @@ const IndicatorRow = inject('reportStore')(
                 <IndicatorEditModalCell indicator={ indicator } />
                 { levelCol && <IndicatorCell value={ indicator.levelName } /> }
                 <IndicatorCell value={ indicator.unitOfMeasure } />
-                <IndicatorCell value={ indicator.directionOfChange } align="center" />
-                <IndicatorCell value={ indicator.cumulative } />
+                <IndicatorCell value={ indicator.directionOfChange || gettext('N/A') } align="center" />
+                <IndicatorCell value={ cumulative || gettext('N/A') } />
                 <IndicatorCell value={ indicator.unitType } align="center" />
-                <ValueCell value={ indicator.baseline } />
+                { indicator.baseline_na ? <IndicatorCell value={ gettext('N/A') } align="right"/> : <ValueCell value={ indicator.baseline } /> }
                 <ValueCell value={ indicator.lopTarget } />
                 <ValueCell value={ indicator.lopActual } />
                 <PercentCell value={ indicator.lopMet } />

@@ -4,13 +4,14 @@ import { observer, inject } from "mobx-react"
 import { toJS, extendObservable } from 'mobx';
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCaretDown, faCaretRight } from '@fortawesome/free-solid-svg-icons'
+import { faCaretRight, faCaretDown, faArrowsAlt } from '@fortawesome/free-solid-svg-icons'
 import { SingleReactSelect } from "../../../components/selectWidgets";
+import {sortableContainer, sortableElement, sortableHandle} from 'react-sortable-hoc';
 import HelpPopover from "../../../components/helpPopover";
 
 
 
-library.add(faCaretDown, faCaretRight);
+library.add(faCaretDown, faCaretRight, faArrowsAlt);
 
 export class LevelTitle extends React.Component {
 
@@ -85,9 +86,10 @@ export class LevelCardCollapsed extends React.Component {
             }
         }
 
-        // Create IPTT hyperlinks for each individual indicator linked to this level.
-        let individualLinks = this.props.levelProps.indicators.map( indicator => {
-            return `<li class="nav-item"><a href=${this.buildIPTTUrl([indicator.id])}>${indicator.name}</a></li>`;
+        // Create IPTT hyperlinks for each individual indicator linked to this level
+        let individualLinks = this.props.levelProps.indicators.map( (indicator, index) => {
+            const ontologyLabel = this.props.levelProps.ontologyLabel + String.fromCharCode(97+index) + ": ";
+            return `<li class="nav-item"><a href=${this.buildIPTTUrl([indicator.id])}>${ontologyLabel}${indicator.name}</a></li>`;
         });
         allIndicatorLinks = allIndicatorLinks.concat(individualLinks);
 
@@ -136,7 +138,7 @@ export class LevelCardCollapsed extends React.Component {
                             </button>
                         }
                     </div>
-                    <div className="actions__bottom" style={{display: "flex", justifyContent: "flex-end"}}>
+                    <div className="actions__bottom">
                         <button
                             className="btn btn-sm btn-link no-bold"
                             data-toggle="popover"
@@ -163,16 +165,25 @@ export class LevelCardExpanded extends React.Component {
         super(props);
         this.submitType = "saveOnly";
         this.indicatorWasReordered = false;
+        this.origData = JSON.stringify([props.level.name, props.level.assumptions, props.levelProps.indicators]);
         extendObservable(this, {
             name: props.level.name,
             assumptions: props.level.assumptions,
             indicators: props.levelProps.indicators.sort((a, b) => a.level_order - b.level_order),
+            get dataHasChanged () {
+                return JSON.stringify([this.name, this.assumptions, this.indicators]) != this.origData}
         });
     }
 
+    onDragEnd = ({oldIndex, newIndex}) => {
+        const indicatorId = this.indicators[oldIndex].id;
+        const fakeChangeObj = {value: newIndex + 1, name: newIndex + 1};
+        this.updateIndicatorOrder(fakeChangeObj, indicatorId)
+    };
+
+
     updateIndicatorOrder = (changeObj, indicatorId) => {
         this.indicatorWasReordered = true;
-        console.log('updated val', changeObj, indicatorId);
         let oldIndex = this.indicators.find( i => i.id == indicatorId).level_order - 1;
         let newIndex = changeObj.value - 1;
         let tempIndicators = this.indicators.slice();
@@ -208,7 +219,17 @@ export class LevelCardExpanded extends React.Component {
     };
 
     cancelEdit = () => {
-        this.props.rootStore.levelStore.cancelEdit(this.props.level.id)
+        if (this.dataHasChanged) {
+            create_no_rationale_changeset_notice({
+            /* # Translators:  This is a confirmation prompt that is triggered by clicking on a cancel button.  */
+            message_text: `Are you sure you want to continue?`,
+            preamble: `Changes to this ${this.props.levelProps.tierName} will not be saved`,
+            on_submit: () => this.props.rootStore.levelStore.cancelEdit(this.props.level.id)});
+        }
+        else{
+            this.props.rootStore.levelStore.cancelEdit(this.props.level.id)
+        }
+
     };
 
     onFormChange = (event) => {
@@ -256,7 +277,8 @@ export class LevelCardExpanded extends React.Component {
                         level={this.props.level}
                         tierName={this.props.levelProps.tierName}
                         indicators={this.indicators}
-                        changeFunc={this.updateIndicatorOrder} />
+                        changeFunc={this.updateIndicatorOrder}
+                        dragEndFunc={this.onDragEnd}/>
 
                     <ButtonBar
                         level={this.props.level}
@@ -327,24 +349,23 @@ class LevelButton extends React.Component {
 }
 
 class IndicatorList extends React.Component {
+
     componentDidMount() {
         // Enable popovers after update (they break otherwise)
         $('*[data-toggle="popover"]').popover({
             html: true
         });
     }
-    render() {
 
+    render() {
         // Create the list of indicators and the dropdowns for setting the indicator order
         let options = this.props.indicators.map( (entry, index) => {return {value: index+1, label: index+1}});
 
         let indicatorMarkup = [];
         this.props.indicators.forEach( (indicator) => {
-            console.log('levelorder in loop', indicator.id, indicator.level_order);
             // let options = this.props.indicators.map( (entry, index) => <option value={index+1}>{index+1}</option>);
             indicatorMarkup.push(
-                <li key={indicator.id}>
-
+                <React.Fragment>
                     <SingleReactSelect
                         update={(value) => this.props.changeFunc(value, indicator.id)}
                         selectId={"ind"+indicator.id}
@@ -352,10 +373,8 @@ class IndicatorList extends React.Component {
                         value={{value: indicator.level_order, label: indicator.level_order}}
                         label={indicator.name}
                         options={options}/>
-
                     <a href="#" className="indicator-link"><i className="fas fa-cog"></i> Settings</a>
-
-                </li>
+                </React.Fragment>
             )
         });
 
@@ -372,24 +391,36 @@ class IndicatorList extends React.Component {
 
         return(
             <ul id="level-card--indicator-links" style={{backgroundColor: "white", padding: "1em"}}>
-                <li>
+                <div>
                     Indicators Linked to this {this.props.tierName}
                     {order}
                     {helpLink}
-                </li>
-                {indicatorMarkup}
-                <li>
+                </div>
+                <div>
+                    <SortableContainer onSortEnd={this.props.dragEndFunc} useDragHandle lockAxis="y" lockToContainerEdges>
+                        {indicatorMarkup.map((value, index) => (
+                            <SortableItem key={`item-${index}`} index={index} value={value} />
+                        ))}
+                      </SortableContainer>
+                </div>
+                <div>
                     <a href="#" role="button" className="btn btn-link btn-add">
                     <img className="fas fa-plus-circle"></img>
                     <span>Add Indicator</span>
                     </a>
-                </li>
+                </div>
             </ul>
         )
     }
 }
 
+const SortableItem = sortableElement(({value}) => <li><DragHandle/>{value}</li>);
 
+const SortableContainer = sortableContainer(({children}) => {
+    return <ul>{children}</ul>;
+});
+
+const DragHandle = sortableHandle(() => <span><FontAwesomeIcon icon={faArrowsAlt} /></span>);
 
 
 

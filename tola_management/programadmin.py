@@ -77,11 +77,11 @@ def get_audit_log_workbook(ws, program):
     ]
     
     title = Cell(ws, value=_("Change log"))
-    title.font = Font(bold=True, size=18)
+    title.font = Font(size=18)
     ws.append([title,])
     ws.merge_cells(start_row=1, end_row=1, start_column=1, end_column=len(header))
     subtitle = Cell(ws, value=program.name)
-    subtitle.font = Font(bold=True, size=18)
+    subtitle.font = Font(size=18)
     ws.append([subtitle,])
     ws.merge_cells(start_row=2, end_row=2, start_column=1, end_column=len(header))
     
@@ -435,7 +435,8 @@ class ProgramAdminViewSet(viewsets.ModelViewSet):
     def export_audit_log(self, request, pk=None):
         program = Program.objects.get(pk=pk)
         workbook = Workbook()
-        ws = workbook.active
+        workbook.remove(workbook.active)
+        ws = workbook.create_sheet(_('Change log'))
         get_audit_log_workbook(ws, program)
         response = HttpResponse(content_type='application/ms-excel')
         filename = u'{} Audit Log {}.xlsx'.format(program.name, timezone.now().strftime('%b %d, %Y'))

@@ -268,7 +268,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return ProgramStore; });
 /* harmony import */ var mobx__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! mobx */ "2vnA");
 /* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../constants */ "v38i");
-var _class, _temp, _class3, _class4, _temp2, _class6, _temp3, _class8, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _descriptor16, _descriptor17, _temp4, _class10, _descriptor18, _temp5;
+var _class, _temp, _class3, _class4, _temp2, _class6, _temp3, _class8, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _descriptor16, _descriptor17, _temp4, _class10, _descriptor18, _descriptor19, _descriptor20, _temp5;
 
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
 
@@ -326,9 +326,10 @@ function () {
     this.name = null;
     this.unitOfMeasure = null;
     this.directionOfChange = null;
-    this.cumulative = null;
+    this.is_cumulative = null;
     this.unitType = null;
     this.baseline = null;
+    this.baseline_na = null;
     this.typePks = [];
     this.sitePks = [];
     this.sectorPk = null;
@@ -343,9 +344,10 @@ function () {
     this.name = indicatorJSON.name;
     this.unitOfMeasure = indicatorJSON.unitOfMeasure;
     this.directionOfChange = indicatorJSON.directionOfChange;
-    this.cumulative = indicatorJSON.cumulative;
+    this.is_cumulative = indicatorJSON.is_cumulative;
     this.unitType = indicatorJSON.unitType;
     this.baseline = indicatorJSON.baseline;
+    this.baseline_na = this.baseline === null ? true : indicatorJSON.baseline_na;
     this.typePks = indicatorJSON.indicatorTypes.map(function (indicatorType) {
       return parseInt(indicatorType.pk);
     });
@@ -397,6 +399,11 @@ function () {
     key: "levelName",
     get: function get() {
       return this.level ? this.level.name : null;
+    }
+  }, {
+    key: "cumulative",
+    get: function get() {
+      return this.is_cumulative;
     }
   }]);
 
@@ -769,7 +776,7 @@ function () {
       return {};
     };
 
-    this.loadReportData = function (reportJSON) {
+    this.updateProgramData = function (reportJSON) {
       _this7.addLevels(reportJSON.levels);
 
       if (reportJSON.indicators && Array.isArray(reportJSON.indicators)) {
@@ -812,6 +819,16 @@ function () {
               }
             });
           }
+        });
+      }
+    };
+
+    this.loadReportData = function (reportJSON) {
+      _this7.updateProgramData(reportJSON);
+
+      if (reportJSON.indicators && Array.isArray(reportJSON.indicators)) {
+        reportJSON.indicators.forEach(function (indicatorJSON) {
+          var indicatorPk = parseInt(indicatorJSON.pk);
 
           if (_this7._indicators[indicatorPk] && _this7._indicators[indicatorPk].pk === indicatorPk) {
             _this7._indicators[indicatorPk].loadReportData(indicatorJSON.reportData);
@@ -824,6 +841,23 @@ function () {
       _this7.initialized[parseInt(reportJSON.reportType)].push(parseInt(reportJSON.reportFrequency));
 
       _this7.calls[parseInt(reportJSON.reportType)][parseInt(reportJSON.reportFrequency)] = false;
+    };
+
+    this.loadIndicatorData = function (reportJSON) {
+      _this7.updateProgramData(reportJSON);
+
+      if (reportJSON.indicator) {
+        var indicatorPk = parseInt(reportJSON.indicator.pk);
+
+        if (_this7._indicators[indicatorPk]) {
+          delete _this7._indicators[indicatorPk];
+        }
+
+        _this7._indicators[indicatorPk] = new Indicator(reportJSON.indicator, _this7);
+        return Promise.resolve(indicatorPk);
+      } else {
+        return Promise.reject(_constants__WEBPACK_IMPORTED_MODULE_1__["STATUS_CODES"].NO_INDICATOR_IN_UPDATE);
+      }
     };
 
     this.validFrequency = function (frequency) {
@@ -1193,6 +1227,10 @@ function () {
       return programA.name > programB.name ? 1 : programB.name < programA.name ? -1 : 0;
     };
 
+    _initializerDefineProperty(this, "updateIndicator", _descriptor19, this);
+
+    _initializerDefineProperty(this, "removeIndicator", _descriptor20, this);
+
     this.api = api;
     this.addPrograms(contextData.programs);
 
@@ -1224,7 +1262,44 @@ function () {
   initializer: function initializer() {
     return {};
   }
-}), _applyDecoratedDescriptor(_class10.prototype, "programs", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class10.prototype, "programs"), _class10.prototype)), _class10);
+}), _applyDecoratedDescriptor(_class10.prototype, "programs", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class10.prototype, "programs"), _class10.prototype), _descriptor19 = _applyDecoratedDescriptor(_class10.prototype, "updateIndicator", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    var _this9 = this;
+
+    return function (reportType, programId, frequencyId, indicatorId) {
+      var program = _this9.getProgram(programId) || null;
+
+      if (program) {
+        var call = _this9.api.callForIndicatorData(reportType, programId, frequencyId, indicatorId).then(program.loadIndicatorData).then(function (pk) {//do something with the pk here?  It updated!
+        }, function (code) {//do something with the failure here?
+        });
+
+        return call;
+      }
+    };
+  }
+}), _descriptor20 = _applyDecoratedDescriptor(_class10.prototype, "removeIndicator", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    var _this10 = this;
+
+    return function (programId, indicatorId) {
+      var program = _this10.getProgram(programId) || null;
+
+      if (program && program._indicators[indicatorId]) {
+        delete program._indicators[indicatorId];
+        return true;
+      }
+
+      return false;
+    };
+  }
+})), _class10);
 
 
 /***/ }),
@@ -1611,7 +1686,11 @@ function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) r
 
 
 function ipttRound(value, percent) {
-  if (value && !isNaN(parseFloat(value))) {
+  if (value == gettext('N/A')) {
+    return value;
+  }
+
+  if (value !== '' && !isNaN(parseFloat(value))) {
     if (!Number.isInteger(value)) {
       value = Number.parseFloat(value).toFixed(2);
       value = value.endsWith('00') ? parseInt(value) : value.endsWith('0') ? value.slice(0, -1) : value;
@@ -1625,8 +1704,9 @@ function ipttRound(value, percent) {
   return null;
 }
 
-var IndicatorEditModalCell = function IndicatorEditModalCell(_ref) {
-  var indicator = _ref.indicator;
+var IndicatorEditModalCell = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inject"])('filterStore')(function (_ref) {
+  var filterStore = _ref.filterStore,
+      indicator = _ref.indicator;
 
   var loadModal = function loadModal(e) {
     e.preventDefault();
@@ -1634,7 +1714,9 @@ var IndicatorEditModalCell = function IndicatorEditModalCell(_ref) {
     $("#indicator_modal_content").empty();
     $("#modalmessages").empty();
     $("#indicator_modal_content").load(url);
-    $("#indicator_modal_div").modal('show');
+    $("#indicator_modal_div").modal('show').on('success.tola.save', filterStore.indicatorUpdate).on('deleted.tola.save', filterStore.indicatorDelete).one('hidden.bs.modal', function (ev) {
+      $(ev.target).off('.tola.save');
+    });
   };
 
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
@@ -1646,7 +1728,7 @@ var IndicatorEditModalCell = function IndicatorEditModalCell(_ref) {
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
     className: "fas fa-cog"
   })));
-};
+});
 
 var IndicatorResultModalCell = function IndicatorResultModalCell(_ref2) {
   var indicator = _ref2.indicator;
@@ -1676,7 +1758,7 @@ var IndicatorCell = function IndicatorCell(_ref3) {
       resultCell = _ref3.resultCell,
       props = _objectWithoutProperties(_ref3, ["value", "resultCell"]);
 
-  var displayValue = value || _constants__WEBPACK_IMPORTED_MODULE_2__["BLANK_TABLE_CELL"];
+  var displayValue = value || value === 0 ? value : _constants__WEBPACK_IMPORTED_MODULE_2__["BLANK_TABLE_CELL"];
 
   if (resultCell && resultCell === true) {
     return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", props, displayValue);
@@ -1752,6 +1834,7 @@ var IndicatorRow = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inject"])('re
     PeriodCell = reportStore.isTVA ? TVAResultsGroup : NumberCell;
   }
 
+  var cumulative = indicator.cumulative === null ? null : indicator.cumulative ? gettext('Cumulative') : gettext('Non-cumulative');
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(IndicatorCell, {
     value: indicator.number,
     align: "center"
@@ -1764,14 +1847,17 @@ var IndicatorRow = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inject"])('re
   }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(IndicatorCell, {
     value: indicator.unitOfMeasure
   }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(IndicatorCell, {
-    value: indicator.directionOfChange,
+    value: indicator.directionOfChange || gettext('N/A'),
     align: "center"
   }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(IndicatorCell, {
-    value: indicator.cumulative
+    value: cumulative || gettext('N/A')
   }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(IndicatorCell, {
     value: indicator.unitType,
     align: "center"
-  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ValueCell, {
+  }), indicator.baseline_na ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(IndicatorCell, {
+    value: gettext('N/A'),
+    align: "right"
+  }) : react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ValueCell, {
     value: indicator.baseline
   }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ValueCell, {
     value: indicator.lopTarget
@@ -2230,7 +2316,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var mobx__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! mobx */ "2vnA");
 /* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../constants */ "v38i");
 /* harmony import */ var _general_utilities__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../general_utilities */ "WtQ/");
-var _class, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _temp;
+var _class, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _temp;
+
+function _objectWithoutProperties(source, excluded) { if (source == null) return {}; var target = _objectWithoutPropertiesLoose(source, excluded); var key, i; if (Object.getOwnPropertySymbols) { var sourceSymbolKeys = Object.getOwnPropertySymbols(source); for (i = 0; i < sourceSymbolKeys.length; i++) { key = sourceSymbolKeys[i]; if (excluded.indexOf(key) >= 0) continue; if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue; target[key] = source[key]; } } return target; }
+
+function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
 
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
 
@@ -2298,6 +2388,9 @@ function () {
 
     _initializerDefineProperty(this, "_indicators", _descriptor12, this);
 
+    this._oldShowAll = null;
+    this._oldMostRecent = null;
+
     this._validFrequency = function (frequencyId) {
       if (frequencyId && _this.program) {
         if (_this.isTVA) {
@@ -2311,6 +2404,10 @@ function () {
     };
 
     _initializerDefineProperty(this, "clearFilters", _descriptor13, this);
+
+    _initializerDefineProperty(this, "indicatorUpdate", _descriptor14, this);
+
+    _initializerDefineProperty(this, "indicatorDelete", _descriptor15, this);
 
     this.programStore = programStore;
     var reportChange = Object(mobx__WEBPACK_IMPORTED_MODULE_0__["reaction"])(function () {
@@ -2334,6 +2431,18 @@ function () {
       }
     }
   }, {
+    key: "updateTransitionParams",
+    value: function updateTransitionParams() {
+      this._oldShowAll = this.showAll;
+      this._oldMostRecent = this.mostRecent;
+    }
+  }, {
+    key: "clearTransitionParams",
+    value: function clearTransitionParams() {
+      this._oldShowAll = null;
+      this._oldMostRecent = null;
+    }
+  }, {
     key: "_reportParamsUpdated",
 
     /* Action to take (as a reaction) when report type, program id, or frequencyid change
@@ -2351,15 +2460,25 @@ function () {
           programId = _ref2[1],
           frequencyId = _ref2[2];
 
+      var showAll = this.oldShowAll;
+      var mostRecent = this.oldMostRecent;
       this.programStore.loadProgram(reportType, programId, frequencyId).then(function () {
+        _this2.clearTransitionParams();
+
         _this2.frequencyId = _this2.frequencyId || null;
 
         if (!_this2._validFrequency(frequencyId)) {
           _this2.frequencyId = _this2.isTVA ? _this2.program.frequencies[0] : _constants__WEBPACK_IMPORTED_MODULE_1__["TIME_AWARE_FREQUENCIES"][0];
         }
 
-        _this2.startPeriod = _this2.startPeriod || 0;
-        _this2.endPeriod = _this2.endPeriod || _this2.lastPeriod.index;
+        if (showAll) {
+          _this2.showAll = true;
+        } else if (mostRecent) {
+          _this2.mostRecent = mostRecent;
+        } else {
+          _this2.startPeriod = _this2.startPeriod || 0;
+          _this2.endPeriod = _this2.endPeriod || _this2.lastPeriod.index;
+        }
 
         if (_this2.reportType === _constants__WEBPACK_IMPORTED_MODULE_1__["TVA"] && _this2.indicators && _this2.indicators.length > 0) {
           _this2.indicators = [];
@@ -2582,6 +2701,7 @@ function () {
       programId = parseInt(programId);
 
       if (this._validProgramId(programId)) {
+        this.updateTransitionParams();
         this._programId = programId;
       }
     },
@@ -2615,6 +2735,7 @@ function () {
       frequencyId = parseInt(frequencyId);
 
       if (this._validFrequency(frequencyId)) {
+        this.updateTransitionParams();
         this._frequencyId = frequencyId;
       }
     },
@@ -2633,6 +2754,16 @@ function () {
       }
 
       return false;
+    }
+  }, {
+    key: "oldShowAll",
+    get: function get() {
+      return this._oldShowAll;
+    }
+  }, {
+    key: "oldMostRecent",
+    get: function get() {
+      return this._oldMostRecent;
     }
   }, {
     key: "periodsDisabled",
@@ -3399,7 +3530,41 @@ function () {
       _this12.tiers = [];
     };
   }
-}), _applyDecoratedDescriptor(_class.prototype, "noFilters", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "noFilters"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "programPageUrl", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "programPageUrl"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "filteredIndicators", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "filteredIndicators"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "filteredLevels", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "filteredLevels"), _class.prototype)), _class);
+}), _applyDecoratedDescriptor(_class.prototype, "noFilters", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "noFilters"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "programPageUrl", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "programPageUrl"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "filteredIndicators", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "filteredIndicators"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "filteredLevels", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "filteredLevels"), _class.prototype), _descriptor14 = _applyDecoratedDescriptor(_class.prototype, "indicatorUpdate", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    var _this13 = this;
+
+    return function (ev, _ref4) {
+      var programId = _ref4.programId,
+          indicatorId = _ref4.indicatorId,
+          params = _objectWithoutProperties(_ref4, ["programId", "indicatorId"]);
+
+      if (programId && programId == _this13.programId) {
+        _this13.programStore.updateIndicator(_this13.reportType, programId, _this13.frequencyId, indicatorId);
+      }
+    };
+  }
+}), _descriptor15 = _applyDecoratedDescriptor(_class.prototype, "indicatorDelete", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    var _this14 = this;
+
+    return function (ev, _ref5) {
+      var programId = _ref5.programId,
+          indicatorId = _ref5.indicatorId,
+          params = _objectWithoutProperties(_ref5, ["programId", "indicatorId"]);
+
+      if (programId && programId == _this14.programId) {
+        _this14.programStore.removeIndicator(programId, indicatorId);
+      }
+    };
+  }
+})), _class);
 
 
 /***/ }),
@@ -4354,7 +4519,7 @@ function () {
 /*!*************************!*\
   !*** ./js/constants.js ***!
   \*************************/
-/*! exports provided: BLANK_OPTION, BLANK_LABEL, BLANK_TABLE_CELL, TVA, TIMEPERIODS, TIME_AWARE_FREQUENCIES, GROUP_BY_CHAIN, GROUP_BY_LEVEL, getPeriodLabels */
+/*! exports provided: BLANK_OPTION, BLANK_LABEL, BLANK_TABLE_CELL, TVA, TIMEPERIODS, TIME_AWARE_FREQUENCIES, GROUP_BY_CHAIN, GROUP_BY_LEVEL, getPeriodLabels, STATUS_CODES */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4368,6 +4533,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "GROUP_BY_CHAIN", function() { return GROUP_BY_CHAIN; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "GROUP_BY_LEVEL", function() { return GROUP_BY_LEVEL; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getPeriodLabels", function() { return getPeriodLabels; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "STATUS_CODES", function() { return STATUS_CODES; });
 /**
  * IPTT Constants:
  */
@@ -4411,6 +4577,9 @@ function getPeriodLabels() {
 }
 
 
+var STATUS_CODES = {
+  NO_INDICATOR_IN_UPDATE: 1
+};
 
 /***/ }),
 
@@ -4517,7 +4686,9 @@ function (_React$Component) {
 
     _this.setShowAll = function () {
       _this.setState({
-        latch: false
+        latch: false,
+        focus: false,
+        revert: false
       });
 
       _this.props.filterStore.showAll = true;
@@ -4545,7 +4716,7 @@ function (_React$Component) {
         }, function () {
           if (_this.state.latch) {
             Object(mobx__WEBPACK_IMPORTED_MODULE_2__["when"])(function () {
-              return !_this.props.filterStore.showAll || _this.props.filterStore.mostRecent;
+              return !_this.props.filterStore.showAll || !_this.props.filterStore.mostRecent;
             }, function () {
               _this.setState({
                 latch: false
@@ -4569,10 +4740,17 @@ function (_React$Component) {
     };
 
     _this.handleFocus = function (e) {
-      _this.setState({
+      var newState = {
         focus: true,
         mostRecentValue: _this.props.filterStore._mostRecentValue || ''
-      });
+      };
+      ;
+
+      if (!_this.mostRecentValue) {
+        newState.mostRecentValue = '';
+      }
+
+      _this.setState(newState);
     };
 
     _this.mostRecentInputRef = react__WEBPACK_IMPORTED_MODULE_0___default.a.createRef();
@@ -4588,8 +4766,6 @@ function (_React$Component) {
   _createClass(TimeframeRadio, [{
     key: "render",
     value: function render() {
-      var _this2 = this;
-
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-row mb-3"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -4604,9 +4780,7 @@ function (_React$Component) {
         disabled: this.props.filterStore.periodsDisabled,
         onChange: this.setShowAll
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
-        onClick: function onClick() {
-          _this2.props.filterStore.showAll = true;
-        },
+        onClick: this.setShowAll,
         className: "form-check-label"
       },
       /* # Translators: option to show all periods for the report */
@@ -4646,7 +4820,7 @@ function (_React$Component) {
       if (this.state.focus || this.state.latch) {
         return this.state.mostRecentValue;
       } else {
-        return this.props.filterStore.mostRecent;
+        return this.props.filterStore.mostRecent || '';
       }
     }
   }]);
@@ -4762,6 +4936,18 @@ function () {
       };
       return $.get(this.url, params);
     }
+  }, {
+    key: "callForIndicatorData",
+    value: function callForIndicatorData(reportType, programId, frequency, indicatorId) {
+      var params = {
+        programId: programId,
+        reportType: reportType,
+        frequency: frequency,
+        indicatorId: indicatorId,
+        updateIndicator: '1'
+      };
+      return $.get(this.url, params);
+    }
   }]);
 
   return ReportAPI;
@@ -4772,4 +4958,4 @@ function () {
 /***/ })
 
 },[["mYfJ","runtime","vendors"]]]);
-//# sourceMappingURL=iptt_report-af3e7099cd1203923d12.js.map
+//# sourceMappingURL=iptt_report-a4388c248081d26e4566.js.map
