@@ -238,7 +238,7 @@ export class LevelCardExpanded extends React.Component {
         event.preventDefault();
         this[event.target.name] = event.target.value;
         if (!this.name) {
-            const target = $("#level-name");
+            const target = $(`#level-name-${this.props.level.id}`);
             target.addClass("is-invalid");
             /* # Translators: This is a validation message given to the user when the user-editable name field has been deleted or omitted. */
             let feedbackText = `Please provide a name for this ${this.props.levelProps.tierName}`;
@@ -268,7 +268,7 @@ export class LevelCardExpanded extends React.Component {
                     <div className="form-group">
                         <textarea
                             className="form-control"
-                            id="level-name"
+                            id={`level-name-${this.props.level.id}`}
                             name="name"
                             value={this.name || ""}
                             autoComplete="off"
