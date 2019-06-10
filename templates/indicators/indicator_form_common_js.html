@@ -39,6 +39,29 @@
         'target_frequency',
     ]);
 
+    function showSuccessNotifiction(message) {
+        PNotify.success({
+            title: "{% trans 'Success' %}",
+            text: message,
+            type: 'success',
+            width: '350px',
+            minHeight: '150px',
+            stack: {
+                'dir1': 'right',
+                'dir2': 'up',
+                'firstpos1': 0,
+                'firstpos2': 0
+            },
+            modules: {
+                Buttons: {
+                    closer: true,
+                    closerHover: false,
+                    sticker: false
+                }
+            }
+        });
+    }
+
     // Open the modal with a create form (as opposed to an update form)
     // form isn't laoded yet, so programId must come from somewhere else
     function openCreateIndicatorFormModal(programId) {
@@ -97,6 +120,9 @@
     $("#indicator_modal_div").on('created.tola.indicator.save', function() {
         // remember such that the user can close the modal without a prompt
         allowModalToClose = true;
+
+        // TODO: interpolate message to match ticket #1279 correctly
+        showSuccessNotifiction('Indicator was saved');
     });
 
 
@@ -171,26 +197,8 @@
             $.post(url, {rationale: rationale})
              .done(function(data, textStatus, jqXHR){
                  if (data.status == "success") {
-                    var success = PNotify.success({
-                        title: "{% trans 'Success' %}",
-                        text: data.msg,
-                        type: 'success',
-                        width: '350px',
-                        minHeight: '150px',
-                        stack: {
-                            'dir1': 'right',
-                            'dir2': 'up',
-                            'firstpos1': 0,
-                            'firstpos2': 0
-                            },
-                        modules: {
-                            Buttons: {
-                                closer: true,
-                                closerHover: false,
-                                sticker: false
-                            }
-                        }
-                        });
+                    showSuccessNotifiction(data.msg);
+
                     $('#indicator_modal_div').trigger('deleted.tola.indicator.save', saveEventParams())
                         .find('form').attr('deleted', true);
                     closeIndicatorFormModal();
