@@ -45,11 +45,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! mobx-react */ "okNM");
 /* harmony import */ var _eventbus__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../eventbus */ "qtBC");
-/* harmony import */ var _fortawesome_fontawesome_svg_core__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @fortawesome/fontawesome-svg-core */ "7O5W");
-/* harmony import */ var _fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @fortawesome/react-fontawesome */ "IP2g");
-/* harmony import */ var _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @fortawesome/free-solid-svg-icons */ "wHSu");
-/* harmony import */ var _models__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../models */ "YVM2");
-/* harmony import */ var react_select__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! react-select */ "y2Vs");
+/* harmony import */ var _components_indicatorModalComponents__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../components/indicatorModalComponents */ "hzyr");
+/* harmony import */ var _fortawesome_fontawesome_svg_core__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @fortawesome/fontawesome-svg-core */ "7O5W");
+/* harmony import */ var _fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @fortawesome/react-fontawesome */ "IP2g");
+/* harmony import */ var _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @fortawesome/free-solid-svg-icons */ "wHSu");
+/* harmony import */ var _models__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../models */ "YVM2");
+/* harmony import */ var react_select__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! react-select */ "y2Vs");
 var _class, _class2, _temp, _class4;
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -79,38 +80,39 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 
 
-_fortawesome_fontawesome_svg_core__WEBPACK_IMPORTED_MODULE_4__["library"].add(_fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faCaretDown"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faCaretRight"]);
+
+_fortawesome_fontawesome_svg_core__WEBPACK_IMPORTED_MODULE_5__["library"].add(_fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_7__["faCaretDown"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_7__["faCaretRight"]);
 
 function getStatusIndicatorString(filterType, indicatorCount) {
   var fmts;
 
   switch (filterType) {
-    case _models__WEBPACK_IMPORTED_MODULE_7__["IndicatorFilterType"].missingTarget:
+    case _models__WEBPACK_IMPORTED_MODULE_8__["IndicatorFilterType"].missingTarget:
       // # Translators: The number of indicators that do not have targets defined on them
       fmts = ngettext("%s indicator has missing targets", "%s indicators have missing targets", indicatorCount);
       return interpolate(fmts, [indicatorCount]);
 
-    case _models__WEBPACK_IMPORTED_MODULE_7__["IndicatorFilterType"].missingResults:
+    case _models__WEBPACK_IMPORTED_MODULE_8__["IndicatorFilterType"].missingResults:
       // # Translators: The number of indicators that no one has entered in any results for
       fmts = ngettext("%s indicator has missing results", "%s indicators have missing results", indicatorCount);
       return interpolate(fmts, [indicatorCount]);
 
-    case _models__WEBPACK_IMPORTED_MODULE_7__["IndicatorFilterType"].missingEvidence:
+    case _models__WEBPACK_IMPORTED_MODULE_8__["IndicatorFilterType"].missingEvidence:
       // # Translators: The number of indicators that contain results that are not backed up with evidence
       fmts = ngettext("%s indicator has missing evidence", "%s indicators have missing evidence", indicatorCount);
       return interpolate(fmts, [indicatorCount]);
 
-    case _models__WEBPACK_IMPORTED_MODULE_7__["IndicatorFilterType"].aboveTarget:
+    case _models__WEBPACK_IMPORTED_MODULE_8__["IndicatorFilterType"].aboveTarget:
       // # Translators: shows what number of indicators are a certain percentage above target. Example: 3 indicators are >15% above target
       fmts = ngettext("%s indicator is >15% above target", "%s indicators are >15% above target", indicatorCount);
       return interpolate(fmts, [indicatorCount]);
 
-    case _models__WEBPACK_IMPORTED_MODULE_7__["IndicatorFilterType"].belowTarget:
+    case _models__WEBPACK_IMPORTED_MODULE_8__["IndicatorFilterType"].belowTarget:
       // # Translators: shows what number of indicators are a certain percentage below target. Example: 3 indicators are >15% below target
       fmts = ngettext("%s indicator is >15% below target", "%s indicators are >15% below target", indicatorCount);
       return interpolate(fmts, [indicatorCount]);
 
-    case _models__WEBPACK_IMPORTED_MODULE_7__["IndicatorFilterType"].onTarget:
+    case _models__WEBPACK_IMPORTED_MODULE_8__["IndicatorFilterType"].onTarget:
       // # Translators: shows what number of indicators are within a set range of target. Example: 3 indicators are on track
       fmts = ngettext("%s indicator is on track", "%s indicators are on track", indicatorCount);
       return interpolate(fmts, [indicatorCount]);
@@ -161,15 +163,10 @@ function (_React$Component) {
         href: "#",
         id: "show-all-indicators",
         onClick: this.onShowAllClick
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("small", null, gettext('Show all')))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, !readonly && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
-        role: "button",
-        className: "btn-link btn-add",
-        onClick: function onClick(e) {
-          return openCreateIndicatorFormModal(programId);
-        }
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
-        className: "fas fa-plus-circle"
-      }), " ", gettext("Add indicator"))));
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("small", null, gettext('Show all')))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_indicatorModalComponents__WEBPACK_IMPORTED_MODULE_4__["AddIndicatorButton"], {
+        readonly: readonly,
+        programId: programId
+      })));
     }
   }]);
 
@@ -239,7 +236,7 @@ function (_React$Component2) {
         className: ""
       }, gettext("Find an indicator:")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: ""
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_8__["default"], {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_9__["default"], {
         options: indicatorSelectOptions,
         value: selectedValue,
         isClearable: false,
@@ -251,7 +248,7 @@ function (_React$Component2) {
         className: ""
       }, gettext("Group indicators:")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: ""
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_8__["default"], {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_9__["default"], {
         options: indicatorGroupingOptions,
         value: groupingValue,
         isClearable: false,
@@ -368,7 +365,7 @@ function (_React$Component3) {
           onClick: function onClick(e) {
             return _this4.onIndicatorResultsToggleClick(e, indicator.id);
           }
-        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_5__["FontAwesomeIcon"], {
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_6__["FontAwesomeIcon"], {
           icon: resultsExist ? 'caret-down' : 'caret-right'
         }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, indicator.number_display ? indicator.number_display + ':' : indicator.number), "\xA0", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
           className: "indicator_name"
@@ -1185,6 +1182,47 @@ $(function () {
 
 /***/ }),
 
+/***/ "hzyr":
+/*!***************************************************!*\
+  !*** ./js/components/indicatorModalComponents.js ***!
+  \***************************************************/
+/*! exports provided: AddIndicatorButton */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AddIndicatorButton", function() { return AddIndicatorButton; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "q1tI");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! mobx-react */ "okNM");
+function _objectWithoutProperties(source, excluded) { if (source == null) return {}; var target = _objectWithoutPropertiesLoose(source, excluded); var key, i; if (Object.getOwnPropertySymbols) { var sourceSymbolKeys = Object.getOwnPropertySymbols(source); for (i = 0; i < sourceSymbolKeys.length; i++) { key = sourceSymbolKeys[i]; if (excluded.indexOf(key) >= 0) continue; if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue; target[key] = source[key]; } } return target; }
+
+function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
+
+
+
+var AddIndicatorButton = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function (_ref) {
+  var readonly = _ref.readonly,
+      params = _objectWithoutProperties(_ref, ["readonly"]);
+
+  if (readonly) {
+    // do we want to show a message of some kind to folks for whom this button is disabled or just hide it?
+    return '';
+  }
+
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+    role: "button",
+    className: "btn-link btn-add",
+    onClick: function onClick(e) {
+      return openCreateIndicatorFormModal(params);
+    }
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+    className: "fas fa-plus-circle"
+  }), " ", gettext("Add indicator"));
+});
+
+/***/ }),
+
 /***/ "qtBC":
 /*!************************!*\
   !*** ./js/eventbus.js ***!
@@ -1666,4 +1704,4 @@ var ProgramMetrics = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])
 /***/ })
 
 },[["aJgA","runtime","vendors"]]]);
-//# sourceMappingURL=program_page-b6873d3c9375df82b422.js.map
+//# sourceMappingURL=program_page-9cd7a58b9e9d93980c33.js.map

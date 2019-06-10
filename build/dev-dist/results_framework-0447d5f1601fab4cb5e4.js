@@ -358,10 +358,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @fortawesome/react-fontawesome */ "IP2g");
 /* harmony import */ var _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @fortawesome/free-solid-svg-icons */ "wHSu");
 /* harmony import */ var _components_selectWidgets__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../../components/selectWidgets */ "Ez0T");
-/* harmony import */ var react_sortable_hoc__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! react-sortable-hoc */ "0zu5");
-/* harmony import */ var react_sortable_hoc__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(react_sortable_hoc__WEBPACK_IMPORTED_MODULE_8__);
-/* harmony import */ var _components_helpPopover__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../../components/helpPopover */ "4L+s");
-var _dec, _class, _temp, _dec2, _class3, _temp2, _dec3, _class5;
+/* harmony import */ var _components_indicatorModalComponents__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../../components/indicatorModalComponents */ "hzyr");
+/* harmony import */ var react_sortable_hoc__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! react-sortable-hoc */ "0zu5");
+/* harmony import */ var react_sortable_hoc__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(react_sortable_hoc__WEBPACK_IMPORTED_MODULE_9__);
+/* harmony import */ var _components_helpPopover__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../../components/helpPopover */ "4L+s");
+var _dec, _class, _temp, _dec2, _class3, _temp2, _dec3, _class5, _dec4, _class6;
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
@@ -380,6 +381,7 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
 
 
 
@@ -836,7 +838,7 @@ function (_React$Component5) {
   return LevelButton;
 }(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component);
 
-var IndicatorList =
+var IndicatorList = (_dec4 = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["inject"])('rootStore'), _dec4(_class6 =
 /*#__PURE__*/
 function (_React$Component6) {
   _inherits(IndicatorList, _React$Component6);
@@ -899,7 +901,7 @@ function (_React$Component6) {
 
       if (this.props.indicators.length > 0) {
         order = "Order";
-        helpLink = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_helpPopover__WEBPACK_IMPORTED_MODULE_9__["default"], {
+        helpLink = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_helpPopover__WEBPACK_IMPORTED_MODULE_10__["default"], {
           content: "To remove an indicator: Click \u201CSettings\u201D, where you can reassign the indicator to a different level or delete it.",
           placement: "bottom"
         });
@@ -937,35 +939,32 @@ function (_React$Component6) {
           value: value
         });
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        class: "sortable-list-actions"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
-        href: "#",
-        role: "button",
-        className: "btn btn-link btn-add"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
-        className: "fas fa-plus-circle"
-      }), gettext("Add Indicator")))));
+        className: "sortable-list-actions"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_indicatorModalComponents__WEBPACK_IMPORTED_MODULE_8__["AddIndicatorButton"], {
+        readonly: !this.props.level.id || this.props.level.id == 'new',
+        programId: this.props.rootStore.levelStore.program_id,
+        levelId: this.props.level.id
+      }))));
     }
   }]);
 
   return IndicatorList;
-}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component);
-
-var SortableItem = Object(react_sortable_hoc__WEBPACK_IMPORTED_MODULE_8__["sortableElement"])(function (_ref2) {
+}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component)) || _class6);
+var SortableItem = Object(react_sortable_hoc__WEBPACK_IMPORTED_MODULE_9__["sortableElement"])(function (_ref2) {
   var value = _ref2.value;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
     className: "sortable-list__item"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(DragHandle, null), value);
 });
-var SortableContainer = Object(react_sortable_hoc__WEBPACK_IMPORTED_MODULE_8__["sortableContainer"])(function (_ref3) {
+var SortableContainer = Object(react_sortable_hoc__WEBPACK_IMPORTED_MODULE_9__["sortableContainer"])(function (_ref3) {
   var children = _ref3.children;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("ul", {
     className: "sortable-list"
   }, children);
 });
-var DragHandle = Object(react_sortable_hoc__WEBPACK_IMPORTED_MODULE_8__["sortableHandle"])(function () {
+var DragHandle = Object(react_sortable_hoc__WEBPACK_IMPORTED_MODULE_9__["sortableHandle"])(function () {
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    class: "sortable-list__item__drag-handle"
+    className: "sortable-list__item__drag-handle"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_5__["FontAwesomeIcon"], {
     icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faArrowsAlt"]
   }));
@@ -1886,6 +1885,47 @@ var api = axios__WEBPACK_IMPORTED_MODULE_0___default.a.create({
 
 /***/ }),
 
+/***/ "hzyr":
+/*!***************************************************!*\
+  !*** ./js/components/indicatorModalComponents.js ***!
+  \***************************************************/
+/*! exports provided: AddIndicatorButton */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AddIndicatorButton", function() { return AddIndicatorButton; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "q1tI");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! mobx-react */ "okNM");
+function _objectWithoutProperties(source, excluded) { if (source == null) return {}; var target = _objectWithoutPropertiesLoose(source, excluded); var key, i; if (Object.getOwnPropertySymbols) { var sourceSymbolKeys = Object.getOwnPropertySymbols(source); for (i = 0; i < sourceSymbolKeys.length; i++) { key = sourceSymbolKeys[i]; if (excluded.indexOf(key) >= 0) continue; if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue; target[key] = source[key]; } } return target; }
+
+function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
+
+
+
+var AddIndicatorButton = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function (_ref) {
+  var readonly = _ref.readonly,
+      params = _objectWithoutProperties(_ref, ["readonly"]);
+
+  if (readonly) {
+    // do we want to show a message of some kind to folks for whom this button is disabled or just hide it?
+    return '';
+  }
+
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+    role: "button",
+    className: "btn-link btn-add",
+    onClick: function onClick(e) {
+      return openCreateIndicatorFormModal(params);
+    }
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+    className: "fas fa-plus-circle"
+  }), " ", gettext("Add indicator"));
+});
+
+/***/ }),
+
 /***/ "qtBC":
 /*!************************!*\
   !*** ./js/eventbus.js ***!
@@ -2066,4 +2106,4 @@ function (_React$Component2) {
 /***/ })
 
 },[["QTZG","runtime","vendors"]]]);
-//# sourceMappingURL=results_framework-30b5e7f2f28699fc5c1d.js.map
+//# sourceMappingURL=results_framework-0447d5f1601fab4cb5e4.js.map
