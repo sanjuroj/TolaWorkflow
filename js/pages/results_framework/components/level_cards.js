@@ -176,6 +176,7 @@ export class LevelCardExpanded extends React.Component {
     }
 
     onDragEnd = ({oldIndex, newIndex}) => {
+        this.indicatorWasReordered = true;
         const indicatorId = this.indicators[oldIndex].id;
         const fakeChangeObj = {value: newIndex + 1, name: newIndex + 1};
         this.updateIndicatorOrder(fakeChangeObj, indicatorId)
@@ -184,11 +185,11 @@ export class LevelCardExpanded extends React.Component {
 
     updateIndicatorOrder = (changeObj, indicatorId) => {
         this.indicatorWasReordered = true;
-        let oldIndex = this.indicators.find( i => i.id == indicatorId).level_order - 1;
+        let oldIndex = this.indicators.find( i => i.id == indicatorId).level_order;
         let newIndex = changeObj.value - 1;
         let tempIndicators = this.indicators.slice();
         tempIndicators.splice(newIndex, 0, tempIndicators.splice(oldIndex, 1)[0]);
-        tempIndicators.forEach( (indicator, index) => indicator.level_order = index + 1);
+        tempIndicators.forEach( (indicator, index) => indicator.level_order = index);
         this.indicators.replace(tempIndicators);
     }
 
@@ -235,6 +236,12 @@ export class LevelCardExpanded extends React.Component {
     onFormChange = (event) => {
         event.preventDefault();
         this[event.target.name] = event.target.value;
+        if (!this.name) {
+            $("#level-name").addClass("is-invalid")
+        }
+        else{
+            $("#level-name").removeClass("is-invalid")
+        }
     };
 
     render(){
@@ -277,6 +284,7 @@ export class LevelCardExpanded extends React.Component {
                         level={this.props.level}
                         tierName={this.props.levelProps.tierName}
                         indicators={this.indicators}
+                        disabled={!this.name}
                         changeFunc={this.updateIndicatorOrder}
                         dragEndFunc={this.onDragEnd}/>
 
@@ -358,13 +366,13 @@ class IndicatorList extends React.Component {
     }
 
     render() {
+
         // Create the list of indicators and the dropdowns for setting the indicator order
         let options = this.props.indicators.map( (entry, index) => {return {value: index+1, label: index+1}});
 
-        let indicatorMarkup = [];
-        this.props.indicators.forEach( (indicator) => {
+        let indicatorMarkup = this.props.indicators.map ( (indicator) => {
             // let options = this.props.indicators.map( (entry, index) => <option value={index+1}>{index+1}</option>);
-            indicatorMarkup.push(
+            return (
                 <React.Fragment>
                     <SingleReactSelect
                         update={(value) => this.props.changeFunc(value, indicator.id)}
@@ -372,12 +380,14 @@ class IndicatorList extends React.Component {
                         labelClasses=" "
                         formRowClasses="sortable-list__item__label"
                         selectClasses="sortable-list__item__select"
-                        value={{value: indicator.level_order, label: indicator.level_order}}
+                        value={{value: indicator.level_order, label: indicator.level_order + 1}}
                         label={indicator.name}
                         options={options}
+                        disabled={this.props.disabled}
                     />
                     <div className="sortable-list__item__actions">
-                        <a href="#" className="indicator-link"><i className="fas fa-cog"></i> Settings</a>
+                        { /* # Translators: A label for a button that allows the user to modify the settings of an object */}
+                        <a href="#" className="indicator-link"><i className="fas fa-cog"></i> {gettext("Settings")}</a>
                     </div>
                 </React.Fragment>
             )
@@ -386,18 +396,20 @@ class IndicatorList extends React.Component {
         // Conditionally set the other elements that are only visible when there are indicators
         let order = null;
         let helpLink = null;
+        /* # Translators: Popover for help link, tell user how to diassociate an Indicator from the Level they are currently editing. */
+        const popOverContent=gettext('To remove an indicator: Click “Settings”, where you can reassign the indicator to a different level or delete it.');
         if (this.props.indicators.length > 0) {
             order = "Order";
             helpLink =
                 <HelpPopover
-                    content='To remove an indicator: Click “Settings”, where you can reassign the indicator to a different level or delete it.'
+                    content={popOverContent}
                     placement="bottom"/>
         }
-
         return(
-            <div className="level-card--indicator-links">
+            <div className={`level-card--indicator-links ${this.props.disabled ? "disabled" : null}`}>
                 <div className="indicator-links__header">
-                    <h4>Indicators linked to this {this.props.tierName}</h4>
+                    { /* # Translators: Title for a section that lists the Indicators associated with whatever this.props.tiername is. */}
+                    <h4>{gettext(`Indicators linked to this ${this.props.tierName}`)}</h4>
                     <div>{helpLink}</div>
                 </div>
                 <div className="sortable-list-group">
@@ -419,10 +431,10 @@ class IndicatorList extends React.Component {
                     }
                     <SortableContainer onSortEnd={this.props.dragEndFunc} useDragHandle lockAxis="y" lockToContainerEdges>
                         {indicatorMarkup.map((value, index) => (
-                            <SortableItem key={`item-${index}`} index={index} value={value} />
+                            <SortableItem key={`item-${index}`} index={index} value={value} disabled={this.props.disabled} />
                         ))}
                     </SortableContainer>
-                    <div class="sortable-list-actions">
+                    <div className="sortable-list-actions">
                         <a href="#" role="button" className="btn btn-link btn-add">
                             <i className="fas fa-plus-circle"></i>{ gettext("Add Indicator") }
                         </a>
@@ -439,4 +451,4 @@ const SortableContainer = sortableContainer(({children}) => {
     return <ul className="sortable-list">{children}</ul>;
 });
 
-const DragHandle = sortableHandle(() => <div class="sortable-list__item__drag-handle"><FontAwesomeIcon icon={faArrowsAlt} /></div>);
+const DragHandle = sortableHandle(() => <div className="sortable-list__item__drag-handle"><FontAwesomeIcon icon={faArrowsAlt} /></div>);

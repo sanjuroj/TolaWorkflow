@@ -21,7 +21,7 @@ export const SingleReactSelect = ( props ) => {
                 value={ props.value }
                 id={ selectId }
                 className={ selectClasses }
-                disabled={ props.disabled }
+                isDisabled={ props.disabled }
                 options={ props.options }
             />
         </div>

@@ -138,6 +138,9 @@
     background: $white;
     padding: $grid-gutter-width/2;
 }
+.level-card--indicator-links.disabled{
+    opacity: 0.5;
+}
 .indicator-links__header {
     display: flex;
     justify-content: space-between;
