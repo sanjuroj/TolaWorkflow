@@ -515,7 +515,7 @@
         updateLopTargetDisplay();
 
         //Use BS multiselect widget where needed
-        var multiselectOptions = {
+        let multiselectOptions = {
             includeSelectAllOption: true,
             enableFiltering: true,
             enableCaseInsensitiveFiltering: true,
@@ -537,6 +537,8 @@
         // used for tracking if changes were made to the form
         // see indicator_form_common_js.html for def
         recordTrackedFieldsSnapshot(true);
+
+        allowModalToClose = false;
     });
 
 </script>

@@ -1,8 +1,16 @@
 {% load i18n %}
 
 <script>
+    /*
+     * Global state for indicator form
+     *
+     * These values are single instance and not re-created on each
+     * form load. As such, they need to be reset when the form is reset
+     * */
+
     let validation_msgs = {};
     let initialTrackedFieldsFormState;
+    let allowModalToClose = false;  // Can the create modal be closed without prompting the user?
 
     const DELETE_ALL_TARGETS_MESSAGE = "{% trans 'Any results assigned to these targets will need to be reassigned. For future reference, please provide a reason for deleting these targets.' %}"
     const DELETE_INDICATOR_MESSAGE = "{% trans 'All details about this indicator and results recorded to the indicator will be permanently removed. For future reference, please provide a reason for deleting this indicator.' %}"
@@ -13,7 +21,10 @@
     const DELETE_TARGETS_NO_RATIONALE = "{% trans 'Are you sure you want to remove all targets?' %}"
     const DELETE_TARGET_NO_RATIONALE = "{% trans 'Are you sure you want to remove this target?' %}"
     const DELETE_TARGET_MESSAGE = "{% trans 'For future reference, please provide a reason for deleting this target.' %}"
-    
+
+    const CLOSE_BEFORE_SAVING_WARNING_PREAMBLE = "{% trans 'This indicator is missing required details and cannot be saved.' %}";
+    const CLOSE_BEFORE_SAVING_WARNING_MESSAGE = "{% trans 'Are you sure you want to continue?' %}";
+
     // Indicator fields tracked in the admin changelog, which require prompting for a rationale if modified
     let TRACKED_FIELDS = new Set([
         'name',
@@ -63,11 +74,29 @@
 
     $("#indicator_modal_div").on('hide.bs.modal', function(e) {
 
-        if (isCreateForm()) {
-            console.log(e)
+        if (isCreateForm() && ! allowModalToClose) {
+            // prevent the modal from actually closing
             e.preventDefault();
+
+            // prompt the user if they actually want to close
+            window.create_no_rationale_changeset_notice({
+                preamble: CLOSE_BEFORE_SAVING_WARNING_PREAMBLE,
+                message_text: CLOSE_BEFORE_SAVING_WARNING_MESSAGE,
+                context: document.getElementById('indicator_update_form'),
+                on_submit: () => {
+                    allowModalToClose = true;
+                    closeIndicatorFormModal();
+                }
+            });
+
+            scrollToIndicatorFormBottom();
         }
 
+    });
+
+    $("#indicator_modal_div").on('created.tola.indicator.save', function() {
+        // remember such that the user can close the modal without a prompt
+        allowModalToClose = true;
     });
 
 
@@ -162,7 +191,7 @@
                             }
                         }
                         });
-                    $('#indicator_modal_div').trigger('deleted.tola.save', saveEventParams())
+                    $('#indicator_modal_div').trigger('deleted.tola.indicator.save', saveEventParams())
                         .find('form').attr('deleted', true);
                     closeIndicatorFormModal();
                  } else {
@@ -204,7 +233,7 @@
                 $.post(url, {rationale: rationale})
                     .done((data) => {
                         if (data.status === "success") {
-                            $('#indicator_modal_div').trigger('success.tola.save', saveEventParams());
+                            $('#indicator_modal_div').trigger('updated.tola.indicator.save', saveEventParams());
                             row.remove();
                             if (updateSnapshot) {
                                 updatePTsAndLopTargetOnSnapshot();
@@ -253,7 +282,7 @@
                        clearPeriodicTargetsForm).done(
                             (data) => {
                             if (data.status === "success") {
-                                $('#indicator_modal_div').trigger('success.tola.save', saveEventParams());
+                                $('#indicator_modal_div').trigger('updated.tola.indicator.save', saveEventParams());
                             }
                         });
             };
@@ -318,7 +347,7 @@
             return;
         }
 
-        submitForm().done(() => {
+        submitFormCreate().done(() => {
             closeIndicatorFormModal();
         });
     });
@@ -330,7 +359,7 @@
             return;
         }
 
-        submitForm().done(() => {
+        submitFormCreate().done(() => {
             reloadCreateIndicatorForm();
         });
     });
@@ -425,6 +454,7 @@
     });
 
     // submits form - returns a jQuery deferred obj to attached callbacks onto
+    // only has code shared by both CREATE and UPDATE
     function submitForm(rationale = '') {
         // clear any success/failure messages
         let alertElement = "#modalmessages";
@@ -455,14 +485,23 @@
             url: form_url,
             data: formArr,
         }).done(function(data, textStatus, jqXHR) {
-            $('#indicator_modal_div').trigger('success.tola.save', saveEventParams());
             insertPeriodicTargetForm(data["content"]);
         });
     }
 
-    // Submit the the UPDATE form
+    // Submit the CREATE form
+    function submitFormCreate() {
+        return submitForm().done((data) => {
+            $('#indicator_modal_div').trigger('created.tola.indicator.save', saveEventParams());
+        });
+    }
+
+    // Submit the UPDATE form
     function submitFormUpdate(rationale = '') {
-        submitForm(rationale).done((data) => {
+        return submitForm(rationale).done((data) => {
+            $('#indicator_modal_div').trigger('updated.tola.indicator.save', saveEventParams());
+
+            // Show success message on form
             let alertElement = "#modalmessages";
             $(alertElement).html('');
             createAlert("success", "{% trans 'Success, form data saved.'|escapejs %}", true, alertElement);
