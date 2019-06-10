@@ -223,8 +223,9 @@ export class LevelCardExpanded extends React.Component {
         if (this.dataHasChanged) {
             create_no_rationale_changeset_notice({
             /* # Translators:  This is a confirmation prompt that is triggered by clicking on a cancel button.  */
-            message_text: `Are you sure you want to continue?`,
-            preamble: `Changes to this ${this.props.levelProps.tierName} will not be saved`,
+            message_text: gettext("Are you sure you want to continue?"),
+            /* # Translators:  This is a warning provided to the user when they try to cancel the editing of something they have already modified.  */
+            preamble: gettext(`Changes to this ${this.props.levelProps.tierName} will not be saved`),
             on_submit: () => this.props.rootStore.levelStore.cancelEdit(this.props.level.id)});
         }
         else{
@@ -237,10 +238,15 @@ export class LevelCardExpanded extends React.Component {
         event.preventDefault();
         this[event.target.name] = event.target.value;
         if (!this.name) {
-            $("#level-name").addClass("is-invalid")
+            const target = $("#level-name");
+            target.addClass("is-invalid");
+            /* # Translators: This is a validation message given to the user when the user-editable name field has been deleted or omitted. */
+            let feedbackText = `Please provide a name for this ${this.props.levelProps.tierName}`;
+            target.after(`<p id=name-feedback-${this.props.level.id} class="invalid-feedback">${feedbackText}</p>`);
         }
         else{
-            $("#level-name").removeClass("is-invalid")
+            $("#level-name").removeClass("is-invalid");
+            $(`#name-feedback-${this.props.level.id}`).remove();
         }
     };
 
