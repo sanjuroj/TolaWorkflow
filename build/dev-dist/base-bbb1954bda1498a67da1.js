@@ -353,8 +353,6 @@ window.target_with_results_text = target_with_results_text;
 
 var create_changeset_notice = function create_changeset_notice() {
   var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-      _ref$message_text = _ref.message_text,
-      message_text = _ref$message_text === void 0 ? DEFAULT_NONDESTRUCTIVE_MESSAGE : _ref$message_text,
       _ref$on_submit = _ref.on_submit,
       on_submit = _ref$on_submit === void 0 ? function () {} : _ref$on_submit,
       _ref$on_cancel = _ref.on_cancel,
@@ -467,8 +465,6 @@ window.create_destructive_changeset_notice = function () {
       on_submit = _ref2$on_submit === void 0 ? function () {} : _ref2$on_submit,
       _ref2$on_cancel = _ref2.on_cancel,
       on_cancel = _ref2$on_cancel === void 0 ? function () {} : _ref2$on_cancel,
-      _ref2$is_indicator = _ref2.is_indicator,
-      is_indicator = _ref2$is_indicator === void 0 ? false : _ref2$is_indicator,
       _ref2$confirm_text = _ref2.confirm_text,
       confirm_text = _ref2$confirm_text === void 0 ? gettext('Ok') : _ref2$confirm_text,
       _ref2$cancel_text = _ref2.cancel_text,
@@ -495,7 +491,6 @@ window.create_destructive_changeset_notice = function () {
     message_text: message_text,
     on_submit: on_submit,
     on_cancel: on_cancel,
-    is_indicator: is_indicator,
     confirm_text: confirm_text,
     cancel_text: cancel_text,
     type: 'error',
@@ -513,8 +508,6 @@ window.create_nondestructive_changeset_notice = function () {
       on_submit = _ref3$on_submit === void 0 ? function () {} : _ref3$on_submit,
       _ref3$on_cancel = _ref3.on_cancel,
       on_cancel = _ref3$on_cancel === void 0 ? function () {} : _ref3$on_cancel,
-      _ref3$is_indicator = _ref3.is_indicator,
-      is_indicator = _ref3$is_indicator === void 0 ? false : _ref3$is_indicator,
       _ref3$confirm_text = _ref3.confirm_text,
       confirm_text = _ref3$confirm_text === void 0 ? gettext('Ok') : _ref3$confirm_text,
       _ref3$cancel_text = _ref3.cancel_text,
@@ -531,7 +524,6 @@ window.create_nondestructive_changeset_notice = function () {
     message_text: message_text,
     on_submit: on_submit,
     on_cancel: on_cancel,
-    is_indicator: is_indicator,
     confirm_text: confirm_text,
     cancel_text: cancel_text,
     type: 'notice',
@@ -548,8 +540,6 @@ window.create_no_rationale_changeset_notice = function () {
       on_submit = _ref4$on_submit === void 0 ? function () {} : _ref4$on_submit,
       _ref4$on_cancel = _ref4.on_cancel,
       on_cancel = _ref4$on_cancel === void 0 ? function () {} : _ref4$on_cancel,
-      _ref4$is_indicator = _ref4.is_indicator,
-      is_indicator = _ref4$is_indicator === void 0 ? false : _ref4$is_indicator,
       _ref4$confirm_text = _ref4.confirm_text,
       confirm_text = _ref4$confirm_text === void 0 ? gettext('Ok') : _ref4$confirm_text,
       _ref4$cancel_text = _ref4.cancel_text,
@@ -573,7 +563,6 @@ window.create_no_rationale_changeset_notice = function () {
     message_text: message_text,
     on_submit: on_submit,
     on_cancel: on_cancel,
-    is_indicator: is_indicator,
     confirm_text: confirm_text,
     cancel_text: cancel_text,
     type: 'error',
@@ -635,4 +624,4 @@ window.scrollToBottom = scrollToBottom;
 /***/ })
 
 },[["YqHn","runtime","vendors"]]]);
-//# sourceMappingURL=base-0ba6dbb48e6036e0b1d2.js.map
+//# sourceMappingURL=base-bbb1954bda1498a67da1.js.map

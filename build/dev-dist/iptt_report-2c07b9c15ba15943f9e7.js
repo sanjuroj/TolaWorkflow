@@ -1719,7 +1719,7 @@ var IndicatorEditModalCell = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inj
     $("#indicator_modal_content").empty();
     $("#modalmessages").empty();
     $("#indicator_modal_content").load(url);
-    $("#indicator_modal_div").modal('show').on('success.tola.save', filterStore.indicatorUpdate).on('deleted.tola.save', filterStore.indicatorDelete).one('hidden.bs.modal', function (ev) {
+    $("#indicator_modal_div").modal('show').on('updated.tola.indicator.save', filterStore.indicatorUpdate).on('deleted.tola.indicator.save', filterStore.indicatorDelete).one('hidden.bs.modal', function (ev) {
       $(ev.target).off('.tola.save');
     });
   };
@@ -4982,4 +4982,4 @@ function () {
 /***/ })
 
 },[["mYfJ","runtime","vendors"]]]);
-//# sourceMappingURL=iptt_report-7358a01017db9bfed63a.js.map
+//# sourceMappingURL=iptt_report-2c07b9c15ba15943f9e7.js.map

@@ -663,7 +663,7 @@ function (_React$Component3) {
         var feedbackText = "Please provide a name for this ".concat(_this3.props.levelProps.tierName);
         target.after("<p id=name-feedback-".concat(_this3.props.level.id, " class=\"invalid-feedback\">").concat(feedbackText, "</p>"));
       } else {
-        $("#level-name").removeClass("is-invalid");
+        $("#level-name-".concat(_this3.props.level.id)).removeClass("is-invalid");
         $("#name-feedback-".concat(_this3.props.level.id)).remove();
       }
 
@@ -711,7 +711,6 @@ function (_React$Component3) {
         classes: "level-title--expanded"
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("form", {
         className: "level-card--expanded__form",
-        id: "level-card-form-".concat(this.props.level.id),
         onSubmit: this.saveLevel
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group"
@@ -967,7 +966,7 @@ function (_React$Component6) {
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "sortable-list-actions"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_indicatorModalComponents__WEBPACK_IMPORTED_MODULE_8__["AddIndicatorButton"], {
-        readonly: !this.props.level.id || this.props.level.id == 'new',
+        readonly: !this.props.level.id || this.props.level.id == 'new' || this.props.disabled,
         programId: this.props.rootStore.levelStore.program_id,
         levelId: this.props.level.id
       }))));
@@ -1356,6 +1355,8 @@ function () {
           console.log("There was an error:", error);
         });
       }
+
+      _this.rootStore.uiStore.activeCardNeedsConfirm = false;
     };
 
     this.saveReorderedIndicatorsToDB = function (indicators) {
@@ -1629,8 +1630,13 @@ function () {
 
       _this4.rootStore.uiStore.activeCard = "new";
 
-      _this4.levels.push(newLevel); // TODO: change focus to new level, since it could be very far from the one that triggered the create
+      _this4.levels.push(newLevel);
 
+      setTimeout(function () {
+        $("#level-card-new")[0].scrollIntoView({
+          behavior: "smooth"
+        });
+      }, 100);
     };
   }
 }), _descriptor7 = _applyDecoratedDescriptor(_class.prototype, "createNewLevelFromParent", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
@@ -1742,7 +1748,8 @@ function () {
         }
 
       return null;
-    }
+    } // TODO: Make sure old editing data is not preserved when an edit is cancelled
+
   }]);
 
   return UIStore;
@@ -1769,6 +1776,9 @@ function () {
 
     return function (levelId) {
       if (_this7.activeCardNeedsConfirm) {
+        $("#level-card-".concat(_this7.activeCard))[0].scrollIntoView({
+          behavior: "smooth"
+        });
         var oldTierName = _this7.rootStore.levelStore.levelProperties[_this7.activeCard].tierName;
         $(".edit-button").prop("disabled", true);
         create_no_rationale_changeset_notice({
@@ -1796,7 +1806,13 @@ function () {
 
     return function (levelId) {
       $(".edit-button").prop("disabled", false);
-      _this8.activeCard = levelId;
+      _this8.activeCard = levelId; // Need to use set timeout to ensure that scrolling loses the race with components reacting to the new position of the open card.
+
+      setTimeout(function () {
+        $("#level-card-".concat(levelId))[0].scrollIntoView({
+          behavior: "smooth"
+        });
+      }, 100);
       _this8.activeCardNeedsConfirm = false;
     };
   }
@@ -1963,14 +1979,9 @@ var AddIndicatorButton = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observe
   var readonly = _ref.readonly,
       params = _objectWithoutProperties(_ref, ["readonly"]);
 
-  if (readonly) {
-    // do we want to show a message of some kind to folks for whom this button is disabled or just hide it?
-    return '';
-  }
-
-  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
-    role: "button",
-    className: "btn-link btn-add",
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+    disabled: readonly,
+    className: "btn btn-link btn-add",
     onClick: function onClick(e) {
       return openCreateIndicatorFormModal(params);
     }
@@ -2161,4 +2172,4 @@ function (_React$Component2) {
 /***/ })
 
 },[["QTZG","runtime","vendors"]]]);
-//# sourceMappingURL=results_framework-cbc31e3da3b54983ab0a.js.map
+//# sourceMappingURL=results_framework-be42c3195e448098bc30.js.map
