@@ -216,12 +216,28 @@ export default class ipttRouter {
         let {programId, ...params} = this.routeParams;
         let reportType = this.reportType === TVA ? 'targetperiods'
                 : this.reportType === TIMEPERIODS ? 'timeperiods' : null;
+        let queryString = [];
+        Object.keys(params).forEach(
+            k => {
+                if (params[k]) {
+                    if (!Array.isArray(params[k])) {
+                        queryString.push([k, params[k]]);
+                    } else if (params[k].length == 1) {
+                        queryString.push([k, params[k][0]]);
+                    } else {
+                        params[k].forEach(
+                            v => {
+                                queryString.push([k, v]);
+                            }
+                        )
+                    }
+                }
+            }
+        );
         return {
             program: programId,
             report_type: reportType,
-            query_string: Object.keys(params)
-                .filter(k => (params[k] && (!Array.isArray(params[k]) || params[k].length > 0)))
-                .map(k => `${k}=${params[k]}`).join('&')
+            query_string: queryString.map(([k, v]) => `${k}=${v}`).join('&')
         };
     }
     
