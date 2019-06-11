@@ -247,7 +247,7 @@ export class LevelCardExpanded extends React.Component {
             target.after(`<p id=name-feedback-${this.props.level.id} class="invalid-feedback">${feedbackText}</p>`);
         }
         else{
-            $("#level-name").removeClass("is-invalid");
+            $(`#level-name-${this.props.level.id}`).removeClass("is-invalid");
             $(`#name-feedback-${this.props.level.id}`).remove();
         }
         this.props.rootStore.uiStore.activeCardNeedsConfirm = this.dataHasChanged;
