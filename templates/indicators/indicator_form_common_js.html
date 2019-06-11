@@ -123,11 +123,6 @@
 
     });
 
-    $("#indicator_modal_div").on('created.tola.indicator.save', function() {
-        // remember such that the user can close the modal without a prompt
-        allowModalToClose = true;
-    });
-
 
     // auto scroll either a modal or the whole page to the top
     function scrollToTop() {
@@ -505,6 +500,9 @@
                 indicatorId: data.id
             });
 
+            // remember such that the user can close the modal without a prompt
+            allowModalToClose = true;
+
             // success msg
             {# Translators: success message when an indicator was created, ex. "Indicator 2a was saved and linked to Outcome 2.2" #}
             let msg = "{% trans 'Indicator %s was saved and linked to %s' %}";
@@ -524,6 +522,10 @@
             $(alertElement).html('');
             createAlert("success", "{% trans 'Success, form data saved.'|escapejs %}", true, alertElement);
             scrollToTop();
+
+            // update the header
+            $('#id_title').text(data.title_str);
+            $('#id_subtitle').text(data.subtitle_str);
 
             // this is our new base state
             recordTrackedFieldsSnapshot();

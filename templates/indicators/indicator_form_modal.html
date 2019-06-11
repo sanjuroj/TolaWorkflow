@@ -15,10 +15,10 @@
     <div id="indicator_modal_header" style="width:100%" class="modal-title">
 
         {% if indicator %}
-            <h2>
+            <h2 id="id_title">
             {% trans "indicator" as ind %}
             {% if program.using_results_framework and indicator.level.leveltier %}
-                {{ indicator.level.leveltier.name }} {{ ind }} {{ indicator.level.display_ontology }}{{ indicator.level_order_display }}
+                {{ title_str }}
             {% elif not program.using_results_framework %}
                 {{ indicator.old_level }} {{ ind }}:
             {% endif %}
@@ -30,8 +30,8 @@
         <span id="modalmessages" width="100%"></span>
 
         {% if indicator %}
-        <h3 class="no-bold">
-            {{ indicator.name|truncatechars:300 }}
+        <h3 id="id_subtitle" class="no-bold">
+            {{ subtitle_str }}
         </h3>
         {% endif %}
     </div>
