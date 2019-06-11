@@ -358,10 +358,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @fortawesome/react-fontawesome */ "IP2g");
 /* harmony import */ var _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @fortawesome/free-solid-svg-icons */ "wHSu");
 /* harmony import */ var _components_selectWidgets__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../../components/selectWidgets */ "Ez0T");
-/* harmony import */ var react_sortable_hoc__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! react-sortable-hoc */ "0zu5");
-/* harmony import */ var react_sortable_hoc__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(react_sortable_hoc__WEBPACK_IMPORTED_MODULE_8__);
-/* harmony import */ var _components_helpPopover__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../../components/helpPopover */ "4L+s");
-var _dec, _class, _temp, _dec2, _class3, _temp2, _dec3, _class5;
+/* harmony import */ var _components_indicatorModalComponents__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../../components/indicatorModalComponents */ "hzyr");
+/* harmony import */ var react_sortable_hoc__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! react-sortable-hoc */ "0zu5");
+/* harmony import */ var react_sortable_hoc__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(react_sortable_hoc__WEBPACK_IMPORTED_MODULE_9__);
+/* harmony import */ var _components_helpPopover__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../../components/helpPopover */ "4L+s");
+var _dec, _class, _temp, _dec2, _class3, _temp2, _dec3, _class5, _dec4, _class6;
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
@@ -380,6 +381,7 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
 
 
 
@@ -444,7 +446,7 @@ function (_React$Component2) {
     };
 
     _this.editLevel = function () {
-      _this.props.rootStore.uiStore.editCard(_this.props.level.id);
+      _this.props.rootStore.uiStore.addExpandedCard(_this.props.level.id);
     };
 
     _this.buildIPTTUrl = function (indicator_ids) {
@@ -529,7 +531,7 @@ function (_React$Component2) {
 
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "level-card level-card--collapsed",
-        id: "level-card-".concat(this.props.level.id)
+        id: this.props.level.id
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: expando ? "level-card__toggle" : "",
         onClick: function onClick(e) {
@@ -551,7 +553,7 @@ function (_React$Component2) {
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
         className: "fas fa-trash-alt"
       }), gettext("Delete")), this.props.levelProps.canEdit && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
-        className: "btn btn-sm btn-link btn-text edit-button",
+        className: "btn btn-sm btn-link btn-text",
         onClick: this.editLevel
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
         className: "fas fa-edit"
@@ -587,7 +589,6 @@ function (_React$Component3) {
     _this3.onDragEnd = function (_ref) {
       var oldIndex = _ref.oldIndex,
           newIndex = _ref.newIndex;
-      _this3.indicatorWasReordered = true;
       var indicatorId = _this3.indicators[oldIndex].id;
       var fakeChangeObj = {
         value: newIndex + 1,
@@ -599,23 +600,19 @@ function (_React$Component3) {
 
     _this3.updateIndicatorOrder = function (changeObj, indicatorId) {
       _this3.indicatorWasReordered = true;
-
       var oldIndex = _this3.indicators.find(function (i) {
         return i.id == indicatorId;
-      }).level_order;
-
+      }).level_order - 1;
       var newIndex = changeObj.value - 1;
 
       var tempIndicators = _this3.indicators.slice();
 
       tempIndicators.splice(newIndex, 0, tempIndicators.splice(oldIndex, 1)[0]);
       tempIndicators.forEach(function (indicator, index) {
-        return indicator.level_order = index;
+        return indicator.level_order = index + 1;
       });
 
       _this3.indicators.replace(tempIndicators);
-
-      _this3.props.rootStore.uiStore.activeCardNeedsConfirm = _this3.dataHasChanged;
     };
 
     _this3.updateSubmitType = function (newType) {
@@ -636,10 +633,8 @@ function (_React$Component3) {
       if (_this3.dataHasChanged) {
         create_no_rationale_changeset_notice({
           /* # Translators:  This is a confirmation prompt that is triggered by clicking on a cancel button.  */
-          message_text: gettext("Are you sure you want to continue?"),
-
-          /* # Translators:  This is a warning provided to the user when they try to cancel the editing of something they have already modified.  */
-          preamble: gettext("Changes to this ".concat(_this3.props.levelProps.tierName, " will not be saved")),
+          message_text: "Are you sure you want to continue?",
+          preamble: "Changes to this ".concat(_this3.props.levelProps.tierName, " will not be saved"),
           on_submit: function on_submit() {
             return _this3.props.rootStore.levelStore.cancelEdit(_this3.props.level.id);
           }
@@ -652,20 +647,6 @@ function (_React$Component3) {
     _this3.onFormChange = function (event) {
       event.preventDefault();
       _this3[event.target.name] = event.target.value;
-
-      if (!_this3.name) {
-        var target = $("#level-name-".concat(_this3.props.level.id));
-        target.addClass("is-invalid");
-        /* # Translators: This is a validation message given to the user when the user-editable name field has been deleted or omitted. */
-
-        var feedbackText = "Please provide a name for this ".concat(_this3.props.levelProps.tierName);
-        target.after("<p id=name-feedback-".concat(_this3.props.level.id, " class=\"invalid-feedback\">").concat(feedbackText, "</p>"));
-      } else {
-        $("#level-name").removeClass("is-invalid");
-        $("#name-feedback-".concat(_this3.props.level.id)).remove();
-      }
-
-      _this3.props.rootStore.uiStore.activeCardNeedsConfirm = _this3.dataHasChanged;
     };
 
     _this3.submitType = "saveOnly";
@@ -702,20 +683,19 @@ function (_React$Component3) {
       var tempIndicators = Object(mobx__WEBPACK_IMPORTED_MODULE_3__["toJS"])(this.indicators);
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "level-card level-card--expanded",
-        id: "level-card-".concat(this.props.level.id)
+        id: this.props.level.id
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(LevelTitle, {
         tierName: this.props.levelProps.tierName,
         ontologyLabel: this.props.levelProps.ontologyLabel,
         classes: "level-title--expanded"
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("form", {
         className: "level-card--expanded__form",
-        id: "level-card-form-".concat(this.props.level.id),
         onSubmit: this.saveLevel
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("textarea", {
         className: "form-control",
-        id: "level-name-".concat(this.props.level.id),
+        id: "level-name",
         name: "name",
         value: this.name || "",
         autoComplete: "off",
@@ -736,12 +716,12 @@ function (_React$Component3) {
         level: this.props.level,
         tierName: this.props.levelProps.tierName,
         indicators: this.indicators,
-        disabled: !this.name,
         changeFunc: this.updateIndicatorOrder,
         dragEndFunc: this.onDragEnd
       }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ButtonBar, {
         level: this.props.level,
         levelProps: this.props.levelProps,
+        isActive: this.props.rootStore.uiStore.expandedCards[0] == this.props.level.id,
         submitFunc: this.updateSubmitType,
         cancelFunc: this.cancelEdit,
         nameVal: this.name,
@@ -766,7 +746,7 @@ function (_React$Component4) {
   _createClass(ButtonBar, [{
     key: "render",
     value: function render() {
-      var disabledText = this.props.nameVal ? "" : "disabled"; // Build the button text with the right sibling level name, then build the button.
+      var disabledText = this.props.isActive && this.props.nameVal ? "" : "disabled"; // Build the button text with the right sibling level name, then build the button.
 
       var addAnotherButton = null;
 
@@ -858,7 +838,7 @@ function (_React$Component5) {
   return LevelButton;
 }(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component);
 
-var IndicatorList =
+var IndicatorList = (_dec4 = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["inject"])('rootStore'), _dec4(_class6 =
 /*#__PURE__*/
 function (_React$Component6) {
   _inherits(IndicatorList, _React$Component6);
@@ -889,9 +869,10 @@ function (_React$Component6) {
           label: index + 1
         };
       });
-      var indicatorMarkup = this.props.indicators.map(function (indicator) {
+      var indicatorMarkup = [];
+      this.props.indicators.forEach(function (indicator) {
         // let options = this.props.indicators.map( (entry, index) => <option value={index+1}>{index+1}</option>);
-        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_selectWidgets__WEBPACK_IMPORTED_MODULE_7__["SingleReactSelect"], {
+        indicatorMarkup.push(react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_selectWidgets__WEBPACK_IMPORTED_MODULE_7__["SingleReactSelect"], {
           update: function update(value) {
             return _this5.props.changeFunc(value, indicator.id);
           },
@@ -901,11 +882,10 @@ function (_React$Component6) {
           selectClasses: "sortable-list__item__select",
           value: {
             value: indicator.level_order,
-            label: indicator.level_order + 1
+            label: indicator.level_order
           },
           label: indicator.name,
-          options: options,
-          disabled: _this5.props.disabled
+          options: options
         }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
           className: "sortable-list__item__actions"
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
@@ -913,28 +893,25 @@ function (_React$Component6) {
           className: "indicator-link"
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
           className: "fas fa-cog"
-        }), " ", gettext("Settings"))));
+        }), " Settings"))));
       }); // Conditionally set the other elements that are only visible when there are indicators
 
       var order = null;
       var helpLink = null;
-      /* # Translators: Popover for help link, tell user how to diassociate an Indicator from the Level they are currently editing. */
-
-      var popOverContent = gettext('To remove an indicator: Click “Settings”, where you can reassign the indicator to a different level or delete it.');
 
       if (this.props.indicators.length > 0) {
         order = "Order";
-        helpLink = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_helpPopover__WEBPACK_IMPORTED_MODULE_9__["default"], {
-          content: popOverContent,
+        helpLink = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_helpPopover__WEBPACK_IMPORTED_MODULE_10__["default"], {
+          content: "To remove an indicator: Click \u201CSettings\u201D, where you can reassign the indicator to a different level or delete it.",
           placement: "bottom"
         });
       }
 
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "level-card--indicator-links ".concat(this.props.disabled ? "disabled" : null)
+        className: "level-card--indicator-links"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "indicator-links__header"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", null, gettext("Indicators linked to this ".concat(this.props.tierName))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, helpLink)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", null, "Indicators linked to this ", this.props.tierName), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, helpLink)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "sortable-list-group"
       }, this.props.indicators.length > 0 ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "sortable-list-header"
@@ -959,37 +936,33 @@ function (_React$Component6) {
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(SortableItem, {
           key: "item-".concat(index),
           index: index,
-          value: value,
-          disabled: _this5.props.disabled
+          value: value
         });
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "sortable-list-actions"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
-        href: "#",
-        role: "button",
-        className: "btn btn-link btn-add"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
-        className: "fas fa-plus-circle"
-      }), gettext("Add Indicator")))));
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_indicatorModalComponents__WEBPACK_IMPORTED_MODULE_8__["AddIndicatorButton"], {
+        readonly: !this.props.level.id || this.props.level.id == 'new',
+        programId: this.props.rootStore.levelStore.program_id,
+        levelId: this.props.level.id
+      }))));
     }
   }]);
 
   return IndicatorList;
-}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component);
-
-var SortableItem = Object(react_sortable_hoc__WEBPACK_IMPORTED_MODULE_8__["sortableElement"])(function (_ref2) {
+}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component)) || _class6);
+var SortableItem = Object(react_sortable_hoc__WEBPACK_IMPORTED_MODULE_9__["sortableElement"])(function (_ref2) {
   var value = _ref2.value;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
     className: "sortable-list__item"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(DragHandle, null), value);
 });
-var SortableContainer = Object(react_sortable_hoc__WEBPACK_IMPORTED_MODULE_8__["sortableContainer"])(function (_ref3) {
+var SortableContainer = Object(react_sortable_hoc__WEBPACK_IMPORTED_MODULE_9__["sortableContainer"])(function (_ref3) {
   var children = _ref3.children;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("ul", {
     className: "sortable-list"
   }, children);
 });
-var DragHandle = Object(react_sortable_hoc__WEBPACK_IMPORTED_MODULE_8__["sortableHandle"])(function () {
+var DragHandle = Object(react_sortable_hoc__WEBPACK_IMPORTED_MODULE_9__["sortableHandle"])(function () {
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "sortable-list__item__drag-handle"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_5__["FontAwesomeIcon"], {
@@ -1043,7 +1016,7 @@ var SingleReactSelect = function SingleReactSelect(props) {
     value: props.value,
     id: selectId,
     className: selectClasses,
-    isDisabled: props.disabled,
+    disabled: props.disabled,
     options: props.options
   }));
 };
@@ -1217,7 +1190,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UIStore", function() { return UIStore; });
 /* harmony import */ var mobx__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! mobx */ "2vnA");
 /* harmony import */ var _api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../api.js */ "XoI5");
-var _class, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _temp, _class3, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _temp2;
+var _class, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _temp, _class3, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _temp2;
 
 function _initializerDefineProperty(target, property, descriptor, context) { if (!descriptor) return; Object.defineProperty(target, property, { enumerable: descriptor.enumerable, configurable: descriptor.configurable, writable: descriptor.writable, value: descriptor.initializer ? descriptor.initializer.call(context) : void 0 }); }
 
@@ -1284,7 +1257,7 @@ function () {
       _api_js__WEBPACK_IMPORTED_MODULE_1__["api"].delete("/level/".concat(levelId)).then(function (response) {
         _this.levels.replace(response.data);
 
-        _this.rootStore.uiStore.activeCard = null;
+        _this.rootStore.uiStore.removeExpandedCard(levelId);
 
         if (_this.levels.length == 0) {
           _this.createFirstLevel();
@@ -1330,7 +1303,8 @@ function () {
             _this.levels.replace(response.data['all_data']);
           });
           var newId = response.data["new_level"]["id"];
-          _this.rootStore.uiStore.activeCard = null;
+
+          _this.rootStore.uiStore.removeExpandedCard(levelId);
 
           if (submitType == "saveAndAddSibling") {
             _this.createNewLevelFromSibling(newId);
@@ -1345,7 +1319,8 @@ function () {
           Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
             Object.assign(targetLevel, response.data);
           });
-          _this.rootStore.uiStore.activeCard = null;
+
+          _this.rootStore.uiStore.removeExpandedCard(levelId);
 
           if (submitType == "saveAndAddSibling") {
             _this.createNewLevelFromSibling(levelId);
@@ -1598,7 +1573,7 @@ function () {
         }));
       }
 
-      _this3.rootStore.uiStore.removeActiveCard();
+      _this3.rootStore.uiStore.removeExpandedCard(levelId);
     };
   }
 }), _descriptor6 = _applyDecoratedDescriptor(_class.prototype, "createNewLevelFromSibling", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
@@ -1626,6 +1601,8 @@ function () {
       siblingsToReorder.forEach(function (sib) {
         return sib.customsort += 1;
       }); // add new Level to the various Store components
+
+      _this4.rootStore.uiStore.expandedCards.push("new");
 
       _this4.rootStore.uiStore.activeCard = "new";
 
@@ -1663,6 +1640,8 @@ function () {
         return sib.customsort += 1;
       }); // add new Level to the various Store components
 
+      _this5.rootStore.uiStore.expandedCards.push("new");
+
       _this5.rootStore.uiStore.activeCard = "new";
 
       _this5.levels.push(newLevel);
@@ -1691,7 +1670,7 @@ function () {
 
       _this6.levels.push(newLevel);
 
-      _this6.rootStore.uiStore.activeCard = "new";
+      _this6.rootStore.uiStore.expandedCards.push("new");
     };
   }
 })), _class);
@@ -1701,29 +1680,20 @@ function () {
   function UIStore(rootStore) {
     _classCallCheck(this, UIStore);
 
-    _initializerDefineProperty(this, "activeCard", _descriptor9, this);
+    _initializerDefineProperty(this, "expandedCards", _descriptor9, this);
 
     _initializerDefineProperty(this, "hasVisibleChildren", _descriptor10, this);
 
-    this.activeCardNeedsConfirm = "";
+    _initializerDefineProperty(this, "addExpandedCard", _descriptor11, this);
 
-    _initializerDefineProperty(this, "editCard", _descriptor11, this);
+    _initializerDefineProperty(this, "removeExpandedCard", _descriptor12, this);
 
-    _initializerDefineProperty(this, "onLeaveConfirm", _descriptor12, this);
-
-    this.onLeaveCancel = function () {
-      $(".edit-button").prop("disabled", false);
-    };
-
-    _initializerDefineProperty(this, "removeActiveCard", _descriptor13, this);
-
-    _initializerDefineProperty(this, "updateVisibleChildren", _descriptor14, this);
+    _initializerDefineProperty(this, "updateVisibleChildren", _descriptor13, this);
 
     this.rootStore = rootStore;
     this.hasVisibleChildren = this.rootStore.levelStore.levels.map(function (l) {
       return l.id;
     });
-    this.activeCardNeedsConfirm = false;
   }
 
   _createClass(UIStore, [{
@@ -1746,12 +1716,12 @@ function () {
   }]);
 
   return UIStore;
-}(), _temp2), (_descriptor9 = _applyDecoratedDescriptor(_class3.prototype, "activeCard", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}(), _temp2), (_descriptor9 = _applyDecoratedDescriptor(_class3.prototype, "expandedCards", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
-    return null;
+    return [];
   }
 }), _descriptor10 = _applyDecoratedDescriptor(_class3.prototype, "hasVisibleChildren", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
@@ -1760,7 +1730,7 @@ function () {
   initializer: function initializer() {
     return [];
   }
-}), _applyDecoratedDescriptor(_class3.prototype, "tierLockStatus", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class3.prototype, "tierLockStatus"), _class3.prototype), _descriptor11 = _applyDecoratedDescriptor(_class3.prototype, "editCard", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
+}), _applyDecoratedDescriptor(_class3.prototype, "tierLockStatus", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class3.prototype, "tierLockStatus"), _class3.prototype), _descriptor11 = _applyDecoratedDescriptor(_class3.prototype, "addExpandedCard", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
   configurable: true,
   enumerable: true,
   writable: true,
@@ -1768,26 +1738,12 @@ function () {
     var _this7 = this;
 
     return function (levelId) {
-      if (_this7.activeCardNeedsConfirm) {
-        var oldTierName = _this7.rootStore.levelStore.levelProperties[_this7.activeCard].tierName;
-        $(".edit-button").prop("disabled", true);
-        create_no_rationale_changeset_notice({
-          /* # Translators:  This is a confirmation prompt that is triggered by clicking on a cancel button.  */
-          message_text: gettext("Are you sure you want to continue?"),
-
-          /* # Translators:  This is a warning provided to the user when they try to cancel the editing of something they have already modified.  */
-          preamble: gettext("Changes to this ".concat(oldTierName, " will not be saved")),
-          on_submit: function on_submit() {
-            return _this7.onLeaveConfirm(levelId);
-          },
-          on_cancel: _this7.onLeaveCancel
-        });
-      } else {
-        _this7.activeCard = levelId;
+      if (!_this7.expandedCards.includes(levelId)) {
+        _this7.expandedCards.push(levelId);
       }
     };
   }
-}), _descriptor12 = _applyDecoratedDescriptor(_class3.prototype, "onLeaveConfirm", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
+}), _descriptor12 = _applyDecoratedDescriptor(_class3.prototype, "removeExpandedCard", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
   configurable: true,
   enumerable: true,
   writable: true,
@@ -1795,48 +1751,37 @@ function () {
     var _this8 = this;
 
     return function (levelId) {
-      $(".edit-button").prop("disabled", false);
-      _this8.activeCard = levelId;
-      _this8.activeCardNeedsConfirm = false;
+      _this8.expandedCards = _this8.expandedCards.filter(function (level_id) {
+        return level_id != levelId;
+      });
     };
   }
-}), _descriptor13 = _applyDecoratedDescriptor(_class3.prototype, "removeActiveCard", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
+}), _descriptor13 = _applyDecoratedDescriptor(_class3.prototype, "updateVisibleChildren", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     var _this9 = this;
 
-    return function () {
-      _this9.activeCard = null;
-    };
-  }
-}), _descriptor14 = _applyDecoratedDescriptor(_class3.prototype, "updateVisibleChildren", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
-  configurable: true,
-  enumerable: true,
-  writable: true,
-  initializer: function initializer() {
-    var _this10 = this;
-
     return function (levelId) {
       var forceHide = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
       var forceShow = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
 
       // forceHide is to ensure that descendant levels are also made hidden, even if they are not actually visible.
-      if (_this10.hasVisibleChildren.indexOf(levelId) >= 0 || forceHide) {
-        _this10.hasVisibleChildren = _this10.hasVisibleChildren.filter(function (level_id) {
+      if (_this9.hasVisibleChildren.indexOf(levelId) >= 0 || forceHide) {
+        _this9.hasVisibleChildren = _this9.hasVisibleChildren.filter(function (level_id) {
           return level_id != levelId;
         });
 
-        var childLevels = _this10.rootStore.levelStore.levels.filter(function (l) {
+        var childLevels = _this9.rootStore.levelStore.levels.filter(function (l) {
           return l.parent == levelId;
         });
 
         childLevels.forEach(function (l) {
-          return _this10.updateVisibleChildren(l.id, true);
+          return _this9.updateVisibleChildren(l.id, true);
         });
       } else {
-        _this10.hasVisibleChildren.push(levelId);
+        _this9.hasVisibleChildren.push(levelId);
       }
     };
   }
@@ -1936,6 +1881,47 @@ var api = axios__WEBPACK_IMPORTED_MODULE_0___default.a.create({
   headers: {
     "X-CSRFToken": document.cookie.replace(/(?:(?:^|.*;\s*)csrftoken\s*\=\s*([^;]*).*$)|^.*$/, "$1")
   }
+});
+
+/***/ }),
+
+/***/ "hzyr":
+/*!***************************************************!*\
+  !*** ./js/components/indicatorModalComponents.js ***!
+  \***************************************************/
+/*! exports provided: AddIndicatorButton */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AddIndicatorButton", function() { return AddIndicatorButton; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "q1tI");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! mobx-react */ "okNM");
+function _objectWithoutProperties(source, excluded) { if (source == null) return {}; var target = _objectWithoutPropertiesLoose(source, excluded); var key, i; if (Object.getOwnPropertySymbols) { var sourceSymbolKeys = Object.getOwnPropertySymbols(source); for (i = 0; i < sourceSymbolKeys.length; i++) { key = sourceSymbolKeys[i]; if (excluded.indexOf(key) >= 0) continue; if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue; target[key] = source[key]; } } return target; }
+
+function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
+
+
+
+var AddIndicatorButton = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function (_ref) {
+  var readonly = _ref.readonly,
+      params = _objectWithoutProperties(_ref, ["readonly"]);
+
+  if (readonly) {
+    // do we want to show a message of some kind to folks for whom this button is disabled or just hide it?
+    return '';
+  }
+
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+    role: "button",
+    className: "btn-link btn-add",
+    onClick: function onClick(e) {
+      return openCreateIndicatorFormModal(params);
+    }
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+    className: "fas fa-plus-circle"
+  }), " ", gettext("Add indicator"));
 });
 
 /***/ }),
@@ -2040,7 +2026,7 @@ function (_React$Component) {
       return renderList.map(function (elem) {
         var card = '';
 
-        if (_this.props.rootStore.uiStore.activeCard == elem.id) {
+        if (_this.props.rootStore.uiStore.expandedCards.indexOf(elem.id) !== -1) {
           card = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_level_cards__WEBPACK_IMPORTED_MODULE_8__["LevelCardExpanded"], {
             level: elem,
             levelProps: _this.props.rootStore.levelStore.levelProperties[elem.id]
@@ -2120,4 +2106,4 @@ function (_React$Component2) {
 /***/ })
 
 },[["QTZG","runtime","vendors"]]]);
-//# sourceMappingURL=results_framework-c47774e0d1e38424a02e.js.map
+//# sourceMappingURL=results_framework-0447d5f1601fab4cb5e4.js.map

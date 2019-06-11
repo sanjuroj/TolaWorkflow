@@ -9752,9 +9752,6 @@ input[type=radio]:disabled {
   background: #fff;
   padding: 15px; }
 
-.level-card--indicator-links.disabled {
-  opacity: 0.5; }
-
 .indicator-links__header {
   display: flex;
   justify-content: space-between; }
@@ -10579,5 +10576,3 @@ a:hover {
 
 /* Unsorted custom selectors */
 
-
-/*# sourceMappingURL=base-9c306dbc79e61f1e51db.css.map*/

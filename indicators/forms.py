@@ -1,5 +1,4 @@
-from datetime import datetime, timedelta
-from functools import partial
+from datetime import timedelta
 
 from workflow.models import (
     Program, SiteProfile, Documentation, ProjectComplete, TolaUser, Sector
@@ -7,9 +6,9 @@ from workflow.models import (
 from tola.util import getCountry
 from indicators.models import (
     Indicator, PeriodicTarget, Result, Objective, StrategicObjective,
-    TolaTable, DisaggregationType, Level, IndicatorType,
-    PinnedReport)
-from indicators.widgets import DataAttributesSelect
+    DisaggregationType, Level, IndicatorType, PinnedReport
+)
+from indicators.widgets import DataAttributesSelect, DatePicker
 
 import dateparser
 
@@ -20,28 +19,6 @@ from django.forms.fields import DateField
 from django.utils.translation import ugettext_lazy as _
 from django.utils import formats, translation, timezone
 
-
-locale_format = formats.get_format('DATE_INPUT_FORMATS', lang=translation.get_language())[-1]
-
-class DatePicker(forms.DateInput):
-    """
-    Use in form to create a Jquery datepicker element
-    Usage:
-        self.fields['some_date_field'].widget = DatePicker.DateInput()
-    """
-    template_name = 'datepicker.html'
-    DateInput = partial(forms.DateInput, {'class': 'datepicker'})
-
-
-class LocaleDateField(DateField):
-    def to_python(self, value):
-        if value in self.empty_values:
-            return None
-        try:
-            return dateparser.parse(value).date()
-        except AttributeError:
-            raise ValidationError(
-                self.error_messages['invalid'], code='invalid')
 
 
 class PTFormInputsForm(forms.ModelForm):
@@ -93,24 +70,48 @@ class IndicatorForm(forms.ModelForm):
             kwargs['initial']['lop_target'] = lop_stripped
         self.request = kwargs.pop('request')
         self.programval = kwargs.pop('program')
+        self.prefilled_level = kwargs.pop('level') if 'level' in kwargs else False
 
         super(IndicatorForm, self).__init__(*args, **kwargs)
 
-
-        self.fields['level'].queryset = Level.objects.filter(program_id=self.programval)
-        self.fields['level'].label = _('Result level')
-        self.fields['number'].label = _('Display number')
-        self.fields['number'].help_text = _(
-            "This number is displayed in place of the indicator number automatically " +
-            "generated through the results framework.  An admin can turn on auto-numbering " +
-            "in program settings"
+        # program_display here is to display the program without interfering in the logic that
+        # assigns a program to an indicator (and doesn't update it) - but it looks like other fields
+        self.fields['program_display'] = forms.ChoiceField(
+            choices=[('', self.programval.name),],
+            required=False,
         )
-        if self.programval.auto_number_indicators:
+        self.fields['program_display'].disabled = True
+        self.fields['program_display'].label = _('Program')
+        # level is here the new "result level" (RF) level option (FK to model Level)
+        self.fields['level'].label = _('Result level')
+        self.fields['level'].label_from_instance = lambda obj: obj.display_name
+        # in cases where the user was sent here via CREATE from the RF BUILDER screen:
+        if self.prefilled_level:
+            # prefill level with only the level they clicked "add indicator" from:
+            self.fields['level'].queryset = Level.objects.filter(pk=self.prefilled_level)
+            self.fields['level'].initial = self.prefilled_level
+            # do not allow the user to update (it is being "added to" that level)
+            self.fields['level'].disabled = True
+        else:
+            # populate with all levels for the indicator's program:
+            self.fields['level'].queryset = Level.objects.filter(program_id=self.programval)
+        if not self.programval.using_results_framework or self.programval.auto_number_indicators:
+            # in this (the default) case, the number field is removed (values not updated):
             self.fields.pop('number')
+        else:
+            # in this case the number field gets this special help text (added as a popover):
+            self.fields['number'].label = _('Display number')
+            self.fields['number'].help_text = _(
+                "This number is displayed in place of the indicator number automatically " +
+                "generated through the results framework.  An admin can turn on auto-numbering " +
+                "in program settings"
+            )
         if self.programval.using_results_framework:
+            # no need to update the old_level field if they are using the results framework:
             self.fields.pop('old_level')
             self.fields['level'].required = True
         else:
+            # pre-migration to RF, all fields remain unchanged in this regard (still required):
             self.fields['old_level'].required = True
             self.fields['old_level'].label = _('Old indicator level')
             self.fields['old_level'].help_text = _(
@@ -178,7 +179,8 @@ class ResultForm(forms.ModelForm):
         required=False
     )
     date_collected = forms.DateField(
-        widget=DatePicker.DateInput(format=locale_format),
+        widget=DatePicker.DateInput(
+            format=formats.get_format('DATE_INPUT_FORMATS', lang=translation.get_language())[-1]),
         # TODO: this field outputs dates in non-ISO formats in Spanish & French
         localize=True,
         required=True,

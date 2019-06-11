@@ -192,7 +192,7 @@ class Level(models.Model):
     def display_name(self):
         """ this returns the level's "name" as displayed on IPTT i.e. Goal: name or Output 1.1: Name"""
         return u'{tier}{ontology}: {name}'.format(
-            tier=self.leveltier.name,
+            tier=self.leveltier.name if self.leveltier else '',
             ontology=' {}'.format(self.display_ontology) if self.display_ontology else '',
             name=self.name
         )

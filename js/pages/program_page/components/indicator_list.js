@@ -2,6 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 import { observer } from "mobx-react"
 import eventBus from '../../../eventbus';
+import { AddIndicatorButton } from '../../../components/indicatorModalComponents';
 
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -80,11 +81,7 @@ class StatusHeader extends React.Component {
                 }
             </h3>
             <div>
-            {!readonly &&
-            <a role="button" className="btn-link btn-add" onClick={e => openCreateIndicatorFormModal(programId)}>
-                <i className="fas fa-plus-circle"/> {gettext("Add indicator")}
-            </a>
-            }
+                <AddIndicatorButton readonly={readonly} programId={programId} />
             </div>
         </div>
     }
