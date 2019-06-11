@@ -56,10 +56,6 @@ eventBus.on('reload-indicator', indicatorId => {
     $.get(`/indicators/api/indicator/${indicatorId}`, rootStore.indicatorStore.updateIndicator);
 });
 
-eventBus.on('load-new-indicator', programId => {
-    $.get(`/indicators/api/indicator/new/${programId}`, rootStore.indicatorStore.addIndicators);
-})
-
 // remove an indicator from the list
 eventBus.on('indicator-deleted', rootStore.indicatorStore.removeIndicator);
 
@@ -145,30 +141,30 @@ $("#indicator-list-react-component").on("click", ".indicator-link[data-tab]", fu
 
 });
 
-// when indicator update modal is closed, update targets
-$('#indicator_modal_div').on('hide.bs.modal', function (e) {
-    let form = $(this).find('form');
-    let form_action = form.attr('action').split('/');
-    let item_id = parseInt(form_action[form_action.length -2]);
-    if (form_action[form_action.length-3] == 'indicator_create') {
-        let program_id = item_id;
-        eventBus.emit('load-new-indicator', item_id);
-    } else if (form.attr('deleted') === 'true') {
-    // if this form has just successfully deleted this indicator, don't update it, remove it
-    
-        eventBus.emit('indicator-deleted', item_id);
-    } else {
-        eventBus.emit('reload-indicator', item_id);
-        
-        if (rootStore.resultsMap.has(item_id)) {
-            eventBus.emit('load-indicator-results', item_id);
-        }
+// when indicator creation modal form completes a save
+$('#indicator_modal_div').on('created.tola.indicator.save', (e, params) => {
+    eventBus.emit('reload-indicator', params.indicatorId);
+});
+
+// when indicator update modal form completes a save or change to periodic targets
+$('#indicator_modal_div').on('updated.tola.indicator.save', (e, params) => {
+    let indicatorId = params.indicatorId;
+
+    eventBus.emit('reload-indicator', indicatorId);
+
+    if (rootStore.resultsMap.has(indicatorId)) {
+        eventBus.emit('load-indicator-results', indicatorId);
     }
+});
+
+// when indicator is deleted from modal
+$('#indicator_modal_div').on('deleted.tola.indicator.save', (e, params) => {
+    eventBus.emit('indicator-deleted', params.indicatorId);
 });
 
 // When "add results" modal is closed, the targets data needs refreshing
 // the indicator itself also needs refreshing for the gas tank gauge
-$('#indicator_results_div').on('hide.bs.modal', function (e) {
+$('#indicator_results_div').on('hidden.bs.modal', function (e) {
     let recordchanged = $(this).find('form').data('recordchanged');
     if (recordchanged === true) {
         let indicator_id = $(this).find('form #id_indicator').val();

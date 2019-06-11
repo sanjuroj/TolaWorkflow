@@ -759,9 +759,10 @@ class IPTTSingleExcelMixin(IPTTExcelMixin):
             else:
                 filters['levels'] = self.request.getlist('levels')
         if self.request.getlist('tiers'):
+            tier_depths = [tier.tier_depth for tier in LevelTier.objects.filter(pk__in=self.request.getlist('tiers'))]
             filters['levels'] = [
                 level.pk for level in Level.objects.filter(program_id=self.program_data['pk'])
-                if str(level.get_level_depth()) in self.request.getlist('tiers')
+                if level.get_level_depth() in tier_depths
             ]
         if not filters:
             self.filters = False

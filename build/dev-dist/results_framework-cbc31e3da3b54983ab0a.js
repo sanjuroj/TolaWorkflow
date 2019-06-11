@@ -1108,6 +1108,7 @@ var GroupHeading = function GroupHeading(props) {
         margin: '3px 0px 0px 0px'
       }
     }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: "text-muted",
       style: {
         textTransform: 'uppercase',
         paddingLeft: '4px',
@@ -2160,4 +2161,4 @@ function (_React$Component2) {
 /***/ })
 
 },[["QTZG","runtime","vendors"]]]);
-//# sourceMappingURL=results_framework-451d4831ba503601761a.js.map
+//# sourceMappingURL=results_framework-cbc31e3da3b54983ab0a.js.map

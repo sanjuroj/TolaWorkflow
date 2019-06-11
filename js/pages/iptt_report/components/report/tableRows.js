@@ -27,8 +27,8 @@ const IndicatorEditModalCell = inject('filterStore')(
             $("#modalmessages").empty();
             $("#indicator_modal_content").load(url);
             $("#indicator_modal_div").modal('show')
-                .on('success.tola.save', filterStore.indicatorUpdate)
-                .on('deleted.tola.save', filterStore.indicatorDelete)
+                .on('updated.tola.indicator.save', filterStore.indicatorUpdate)
+                .on('deleted.tola.indicator.save', filterStore.indicatorDelete)
                 .one('hidden.bs.modal', (ev) => {
                     $(ev.target).off('.tola.save');
                 });

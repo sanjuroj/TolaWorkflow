@@ -15,7 +15,6 @@ from views_indicators import (
     DisaggregationPrint,
     IndicatorExport,
     api_indicator_view,
-    api_new_indicator_view,
     periodic_targets_form,
 )
 
