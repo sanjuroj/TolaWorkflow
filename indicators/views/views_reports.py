@@ -232,7 +232,7 @@ def indicators_to_iptt(indicator_qs, frequency, tva, results_framework, program_
             'frequency': indicator.target_frequency,
             'directionOfChange': indicator.get_direction_of_change,
             'unitOfMeasure': indicator.unit_of_measure,
-            'is_cumulative': indicator.is_cumulative,
+            'is_cumulative': indicator.is_cumulative if indicator.target_frequency != Indicator.LOP else None,
             'unitType': indicator.get_unit_of_measure_type,
             'baseline': indicator.baseline,
             'baseline_na': indicator.baseline_na,
