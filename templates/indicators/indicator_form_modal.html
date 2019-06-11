@@ -7,7 +7,7 @@
 <div id="numDataPoints" style="display: none;">{{ object.result_set.all.count }}</div>
 <div id="indicatorId" style="display:none;">{{ object.pk }}</div>
 <div id="programId" style="display:none;">{{ program.id }}</div>
-<div id="initialLopTarget" style="display:none;">{{ object.lop_target }}</div>
+<div id="initialLopTarget" style="display:none;">{{ object.lop_target|default_if_none:'' }}</div>
 
 {# This template gets shoved into #indicator_modal_div in indicator_list_modals.html #}
 
@@ -539,6 +539,7 @@
         $('#id_indicator_type').multiselect(multiselectOptions);
         $('#id_strategic_objectives').multiselect(multiselectOptions);
 
+        warnIfLopTargetDoesNotMatchComputed();
 
         // used for tracking if changes were made to the form
         // see indicator_form_common_js.html for def

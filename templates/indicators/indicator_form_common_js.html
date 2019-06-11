@@ -661,6 +661,11 @@
     function getIsCumulative() {
         return $("input[name='is_cumulative']:checked").val() === "2";
     }
+
+    // Is units of measure a percentage?
+    function getIsPercentage() {
+        return $("#id_unit_of_measure_type_1").is(":checked");
+    }
     
     function cleanFloat(value) {
         if (isNaN(parseFloat(value))) {
@@ -746,6 +751,51 @@
      * Form validation
      */
 
+    // does the periodic targets form exist in the modal?
+    // if not, assume no PTs have been created
+    function hasPeriodicTargetsForm() {
+        return $('#id_div_periodic_tables_placeholder').children().length > 0;
+    }
+
+
+    /*
+     * If the manually entered in LoP target of an indicator currently saved in the DB
+     * does not matched the computed LoP target, based on periodic target values
+     * then show a warning to the user
+     */
+    function warnIfLopTargetDoesNotMatchComputed() {
+        let dbTarget = initialLopTarget();
+        let calculatedTarget = computeLopTarget();
+        let msg;
+
+        // either create form - or very old indicator w/ no LoP set
+        if (dbTarget === undefined) return;
+
+        let percentStr = getIsPercentage() ? '%' : '';
+
+        // PTs exist, and are not of type LoP only
+        if (calculatedTarget != null) {
+            // DB value doesn't match PTs
+
+            // compare num to str here...
+            if (dbTarget == calculatedTarget) return;
+
+            {# Translators: warning to user that manually entered in value doesn't match computed value, %s is a number or percentage #}
+            msg = "{% trans 'Life of Program (LoP) targets are now automatically displayed. The current LoP target does not match what was manually entered in the past -- %s. You may need to update your target values.' %}";
+            msg = interpolate(msg, [dbTarget + percentStr]);
+        } else if (! hasPeriodicTargetsForm()) {
+            // DB value but no PTs
+            {# Translators: warning to user that manually entered in value doesn't match computed value, %s is a number or percentage #}
+            msg = "{% trans 'This program previously had a LoP target of %s. Life of Program (LoP) targets are now automatically displayed.' %}";
+            msg = interpolate(msg, [dbTarget + percentStr]);
+        } else {
+            // lop only - should always match DB value
+            return;
+        }
+
+        validation_msgs['lop_target_not_matching'] = msg;
+        showValidations('#modalmessages');
+    }
 
     function reset_baseline_errors(){
         $("#id_baseline").removeClass('is-invalid');
