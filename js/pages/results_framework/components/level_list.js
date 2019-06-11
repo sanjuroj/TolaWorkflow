@@ -27,7 +27,7 @@ class LevelList extends React.Component {
 
         return renderList.map((elem) => {
             let card = '';
-            if (this.props.rootStore.uiStore.expandedCards.indexOf(elem.id) !== -1) {
+            if (this.props.rootStore.uiStore.activeCard == elem.id) {
                 card =
                     <LevelCardExpanded
                         level={elem}

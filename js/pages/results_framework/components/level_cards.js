@@ -41,7 +41,7 @@ export class LevelCardCollapsed extends React.Component {
     };
 
     editLevel = () => {
-        this.props.rootStore.uiStore.addExpandedCard(this.props.level.id)
+        this.props.rootStore.uiStore.editCard(this.props.level.id)
     };
 
     componentDidMount() {
@@ -109,7 +109,7 @@ export class LevelCardCollapsed extends React.Component {
         }
 
         return (
-            <div className="level-card level-card--collapsed" id={this.props.level.id}>
+            <div className="level-card level-card--collapsed" id={`level-card-${this.props.level.id}`}>
                 <div
                     className={expando ? "level-card__toggle": ""}
                     onClick={(e) => this.props.rootStore.uiStore.updateVisibleChildren(this.props.level.id)}>
@@ -133,7 +133,7 @@ export class LevelCardCollapsed extends React.Component {
                             </button>
                         }
                         {this.props.levelProps.canEdit &&
-                            <button className="btn btn-sm btn-link btn-text" onClick={this.editLevel}>
+                            <button className="btn btn-sm btn-link btn-text edit-button" onClick={this.editLevel}>
                                 <i className="fas fa-edit"/>{gettext("Edit")}
                             </button>
                         }
@@ -191,6 +191,7 @@ export class LevelCardExpanded extends React.Component {
         tempIndicators.splice(newIndex, 0, tempIndicators.splice(oldIndex, 1)[0]);
         tempIndicators.forEach( (indicator, index) => indicator.level_order = index);
         this.indicators.replace(tempIndicators);
+        this.props.rootStore.uiStore.activeCardNeedsConfirm = this.dataHasChanged;
     }
 
     /*
@@ -248,6 +249,7 @@ export class LevelCardExpanded extends React.Component {
             $("#level-name").removeClass("is-invalid");
             $(`#name-feedback-${this.props.level.id}`).remove();
         }
+        this.props.rootStore.uiStore.activeCardNeedsConfirm = this.dataHasChanged;
     };
 
     render(){
@@ -255,7 +257,7 @@ export class LevelCardExpanded extends React.Component {
         // to IndicatorList will result in a non-reactive Indicator list form fields.
         const tempIndicators = toJS(this.indicators);
         return (
-            <div className="level-card level-card--expanded" id={this.props.level.id}>
+            <div className="level-card level-card--expanded" id={`level-card-${this.props.level.id}`}>
                 <div>
                     <LevelTitle
                         tierName={this.props.levelProps.tierName}
@@ -264,7 +266,7 @@ export class LevelCardExpanded extends React.Component {
                     />
 
                 </div>
-                <form className="level-card--expanded__form" onSubmit={this.saveLevel}>
+                <form className="level-card--expanded__form" id={`level-card-form-${this.props.level.id}`} onSubmit={this.saveLevel}>
                     <div className="form-group">
                         <textarea
                             className="form-control"
@@ -297,7 +299,6 @@ export class LevelCardExpanded extends React.Component {
                     <ButtonBar
                         level={this.props.level}
                         levelProps={this.props.levelProps}
-                        isActive={this.props.rootStore.uiStore.expandedCards[0] == this.props.level.id}
                         submitFunc={this.updateSubmitType}
                         cancelFunc={this.cancelEdit}
                         nameVal={this.name}
@@ -314,7 +315,7 @@ export class LevelCardExpanded extends React.Component {
 @inject('rootStore')
 class ButtonBar extends React.Component {
     render() {
-        let disabledText = this.props.isActive && this.props.nameVal ? "" : "disabled";
+        let disabledText = this.props.nameVal ? "" : "disabled";
 
         // Build the button text with the right sibling level name, then build the button.
         let addAnotherButton = null;
