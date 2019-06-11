@@ -18,7 +18,7 @@
             <h2>
             {% trans "indicator" as ind %}
             {% if program.using_results_framework and indicator.level.leveltier %}
-                {{ indicator.level.leveltier.name }} {{ ind }} {{ indicator.level.display_ontology }}{{ indicator.level_order_display }}:
+                {{ indicator.level.leveltier.name }} {{ ind }} {{ indicator.level.display_ontology }}{{ indicator.level_order_display }}
             {% elif not program.using_results_framework %}
                 {{ indicator.old_level }} {{ ind }}:
             {% endif %}
