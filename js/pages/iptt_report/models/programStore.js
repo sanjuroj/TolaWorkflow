@@ -141,7 +141,7 @@ class NewLevel extends Level {
     }
     
     get outcomeChainDisplay() {
-        return `${this.tier.name} ${this.sort} and sub-levels: ${this.name}`;
+        return `${this.tier.name} ${this.sortDisplay} and sub-levels: ${this.name}`;
     }
     
     get childLevels() {
@@ -150,6 +150,10 @@ class NewLevel extends Level {
     
     @computed get sort() {
         return this.sortOntology || this._sort;
+    }
+    
+    @computed get sortDisplay() {
+        return this._sort;
     }
 }
 
