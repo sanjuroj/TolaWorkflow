@@ -311,6 +311,8 @@ class IndicatorCreate(IndicatorFormMixin, CreateView):
         return JsonResponse({
             'success': True,
             'id': indicator.id,
+            'indicator_number': '{}{}'.format(indicator.level.display_ontology, indicator.level_order_display),
+            'result_level_display_ontology': '{} {}'.format(indicator.level.leveltier.name, indicator.level.display_ontology),
         })
 
 

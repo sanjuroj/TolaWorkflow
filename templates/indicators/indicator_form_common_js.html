@@ -126,9 +126,6 @@
     $("#indicator_modal_div").on('created.tola.indicator.save', function() {
         // remember such that the user can close the modal without a prompt
         allowModalToClose = true;
-
-        // TODO: interpolate message to match ticket #1279 correctly
-        showSuccessNotifiction('Indicator was saved');
     });
 
 
@@ -507,6 +504,13 @@
                 programId: programId(),
                 indicatorId: data.id
             });
+
+            // success msg
+            {# Translators: success message when an indicator was created, ex. "Indicator 2a was saved and linked to Outcome 2.2" #}
+            let msg = "{% trans 'Indicator %s was saved and linked to %s' %}";
+            console.log(data)
+            msg = interpolate(msg, [data.indicator_number, data.result_level_display_ontology])
+            showSuccessNotifiction(msg);
         });
     }
 
