@@ -111,7 +111,10 @@
                                 <span id="validation_id_number" class="has-error"></span>
                             </div>
                         {% endif %}
-
+                        <div class="form-group" id="div_id_name">
+                            <label for="id_program_display" class="label">{{ form.program_display.label }}</label>
+                            {% render_field form.program_display class+="form-control" %}
+                        </div>
                         <div class="form-group" id="div_id_sector">
                             <label for="id_sector" class="">{{ form.sector.label }} </label>
                             {% render_field form.sector class+="form-control" %}
@@ -124,6 +127,9 @@
                             <small class="form-text text-muted">{{ form.level.help_text }}</small>
                             <span id="validation_id_level" class="has-error"></span>
                         </div>
+                        {% if form.level.field.disabled %}
+                            <input type="hidden" name="level" value="{{ form.level.value }}" />
+                        {% endif %}
 
                         <div class="form-group" id="div_id_objectives">
                             <label for="id_objectives" class="">{{ form.objectives.label }} </label>

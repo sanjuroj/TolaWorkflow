@@ -1941,8 +1941,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 var SingleReactSelect = function SingleReactSelect(props) {
   var selectId = Object(_formUtils__WEBPACK_IMPORTED_MODULE_3__["uniqueId"])('react-select');
   var labelClasses = props.labelClasses || "col-form-label text-uppercase";
+  var formRowClasses = props.formRowClasses || "form-row mb-3";
+  var selectClasses = props.selectClasses || "tola-react-select";
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "form-row mb-3"
+    className: formRowClasses
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
     htmlFor: selectId,
     className: labelClasses
@@ -1950,8 +1952,8 @@ var SingleReactSelect = function SingleReactSelect(props) {
     onChange: props.update,
     value: props.value,
     id: selectId,
-    className: "tola-react-select",
-    disabled: props.disabled,
+    className: selectClasses,
+    isDisabled: props.disabled,
     options: props.options
   }));
 };
@@ -4958,4 +4960,4 @@ function () {
 /***/ })
 
 },[["mYfJ","runtime","vendors"]]]);
-//# sourceMappingURL=iptt_report-a4388c248081d26e4566.js.map
+//# sourceMappingURL=iptt_report-54cd436ae25d606a9997.js.map
