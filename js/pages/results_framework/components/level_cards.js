@@ -267,7 +267,7 @@ export class LevelCardExpanded extends React.Component {
                     />
 
                 </div>
-                <form className="level-card--expanded__form" id={`level-card-form-${this.props.level.id}`} onSubmit={this.saveLevel}>
+                <form className="level-card--expanded__form" onSubmit={this.saveLevel}>
                     <div className="form-group">
                         <textarea
                             className="form-control"
