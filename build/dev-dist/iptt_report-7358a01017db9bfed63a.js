@@ -493,7 +493,7 @@ function (_Level2) {
   }, {
     key: "outcomeChainDisplay",
     get: function get() {
-      return "".concat(this.tier.name, " ").concat(this.sort, " and sub-levels: ").concat(this.name);
+      return "".concat(this.tier.name, " ").concat(this.sortDisplay, " and sub-levels: ").concat(this.name);
     }
   }, {
     key: "childLevels",
@@ -509,10 +509,15 @@ function (_Level2) {
     get: function get() {
       return this.sortOntology || this._sort;
     }
+  }, {
+    key: "sortDisplay",
+    get: function get() {
+      return this._sort;
+    }
   }]);
 
   return NewLevel;
-}(Level), _temp2), (_applyDecoratedDescriptor(_class4.prototype, "sort", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class4.prototype, "sort"), _class4.prototype)), _class4);
+}(Level), _temp2), (_applyDecoratedDescriptor(_class4.prototype, "sort", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class4.prototype, "sort"), _class4.prototype), _applyDecoratedDescriptor(_class4.prototype, "sortDisplay", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class4.prototype, "sortDisplay"), _class4.prototype)), _class4);
 var Tier = (_class6 = (_temp3 =
 /*#__PURE__*/
 function () {
@@ -2019,6 +2024,7 @@ var GroupHeading = function GroupHeading(props) {
         margin: '3px 0px 0px 0px'
       }
     }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: "text-muted",
       style: {
         textTransform: 'uppercase',
         paddingLeft: '4px',
@@ -3361,7 +3367,7 @@ function () {
         } else {
           return this.filterLevels('indicators').map(function (level) {
             return {
-              label: "".concat(level.tier.name, " ").concat(level.sort),
+              label: "".concat(level.tier.name, " ").concat(level.sortDisplay),
               options: _this10.filterIndicators(level.indicators, 'indicators').map(function (indicator) {
                 return {
                   value: indicator.pk,
@@ -4141,13 +4147,29 @@ function () {
           params = _objectWithoutProperties(_this$routeParams, ["programId"]);
 
       var reportType = this.reportType === _constants__WEBPACK_IMPORTED_MODULE_3__["TVA"] ? 'targetperiods' : this.reportType === _constants__WEBPACK_IMPORTED_MODULE_3__["TIMEPERIODS"] ? 'timeperiods' : null;
+      var queryString = [];
+      Object.keys(params).forEach(function (k) {
+        if (params[k]) {
+          if (!Array.isArray(params[k])) {
+            queryString.push([k, params[k]]);
+          } else if (params[k].length == 1) {
+            queryString.push([k, params[k][0]]);
+          } else {
+            params[k].forEach(function (v) {
+              queryString.push([k, v]);
+            });
+          }
+        }
+      });
       return {
         program: programId,
         report_type: reportType,
-        query_string: Object.keys(params).filter(function (k) {
-          return params[k] && (!Array.isArray(params[k]) || params[k].length > 0);
-        }).map(function (k) {
-          return "".concat(k, "=").concat(params[k]);
+        query_string: queryString.map(function (_ref4) {
+          var _ref5 = _slicedToArray(_ref4, 2),
+              k = _ref5[0],
+              v = _ref5[1];
+
+          return "".concat(k, "=").concat(v);
         }).join('&')
       };
     }
@@ -4960,4 +4982,4 @@ function () {
 /***/ })
 
 },[["mYfJ","runtime","vendors"]]]);
-//# sourceMappingURL=iptt_report-54cd436ae25d606a9997.js.map
+//# sourceMappingURL=iptt_report-7358a01017db9bfed63a.js.map
