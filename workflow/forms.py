@@ -302,7 +302,7 @@ class ProjectAgreementForm(forms.ModelForm):
                                             {% for item in getQuantitative %}
                                                 {% ifchanged item.indicator.id %}
                                                     <tr>
-                                                        <td><a href="/indicators/indicator_update/{{ item.indicator_id }}">{{ item.indicator}}<a/></td>
+                                                        <td><a href="/program/{{ item.indicator.program_id }}/#/indicator/{{ item.indicator_id }}/" target="_blank">{{ item.indicator}}<a/></td>
                                                     </tr>
                                                 {% endifchanged %}
                                             {% endfor %}
@@ -936,7 +936,7 @@ class ProjectCompleteForm(forms.ModelForm):
                                         {% for item in getQuantitative %}
                                             {% ifchanged item.indicator.id %}
                                                 <tr>
-                                                    <td><a href="/indicators/indicator_update/{{ item.indicator_id }}">{{ item.indicator}}<a/></td>
+                                                    <td><a href="/program/{{ item.indicator.program_id }}/#/indicator/{{ item.indicator_id }}/" target="_blank">{{ item.indicator}}<a/></td>
                                                 </tr>
                                             {% endifchanged %}
                                         {% endfor %}
@@ -1190,7 +1190,7 @@ class ProjectCompleteSimpleForm(forms.ModelForm):
                                             {% for item in getQuantitative %}
                                                 {% ifchanged item.indicator.id %}
                                                     <tr>
-                                                        <td><a href="/indicators/indicator_update/{{ item.indicator_id }}">{{ item.indicator}}<a/></td>
+                                                        <td><a href="/program/{{ item.indicator.program_id }}/#/indicator/{{ item.indicator_id }}/" target="_blank">{{ item.indicator}}<a/></td>
                                                     </tr>
                                                 {% endifchanged %}
                                             {% endfor %}
