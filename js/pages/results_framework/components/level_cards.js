@@ -42,7 +42,7 @@ export class LevelCardCollapsed extends React.Component {
     };
 
     editLevel = () => {
-        this.props.rootStore.uiStore.addExpandedCard(this.props.level.id)
+        this.props.rootStore.uiStore.editCard(this.props.level.id)
     };
 
     componentDidMount() {
@@ -110,7 +110,7 @@ export class LevelCardCollapsed extends React.Component {
         }
 
         return (
-            <div className="level-card level-card--collapsed" id={this.props.level.id}>
+            <div className="level-card level-card--collapsed" id={`level-card-${this.props.level.id}`}>
                 <div
                     className={expando ? "level-card__toggle": ""}
                     onClick={(e) => this.props.rootStore.uiStore.updateVisibleChildren(this.props.level.id)}>
@@ -134,7 +134,7 @@ export class LevelCardCollapsed extends React.Component {
                             </button>
                         }
                         {this.props.levelProps.canEdit &&
-                            <button className="btn btn-sm btn-link btn-text" onClick={this.editLevel}>
+                            <button className="btn btn-sm btn-link btn-text edit-button" onClick={this.editLevel}>
                                 <i className="fas fa-edit"/>{gettext("Edit")}
                             </button>
                         }
@@ -177,6 +177,7 @@ export class LevelCardExpanded extends React.Component {
     }
 
     onDragEnd = ({oldIndex, newIndex}) => {
+        this.indicatorWasReordered = true;
         const indicatorId = this.indicators[oldIndex].id;
         const fakeChangeObj = {value: newIndex + 1, name: newIndex + 1};
         this.updateIndicatorOrder(fakeChangeObj, indicatorId)
@@ -185,12 +186,13 @@ export class LevelCardExpanded extends React.Component {
 
     updateIndicatorOrder = (changeObj, indicatorId) => {
         this.indicatorWasReordered = true;
-        let oldIndex = this.indicators.find( i => i.id == indicatorId).level_order - 1;
+        let oldIndex = this.indicators.find( i => i.id == indicatorId).level_order;
         let newIndex = changeObj.value - 1;
         let tempIndicators = this.indicators.slice();
         tempIndicators.splice(newIndex, 0, tempIndicators.splice(oldIndex, 1)[0]);
-        tempIndicators.forEach( (indicator, index) => indicator.level_order = index + 1);
+        tempIndicators.forEach( (indicator, index) => indicator.level_order = index);
         this.indicators.replace(tempIndicators);
+        this.props.rootStore.uiStore.activeCardNeedsConfirm = this.dataHasChanged;
     }
 
     /*
@@ -223,8 +225,9 @@ export class LevelCardExpanded extends React.Component {
         if (this.dataHasChanged) {
             create_no_rationale_changeset_notice({
             /* # Translators:  This is a confirmation prompt that is triggered by clicking on a cancel button.  */
-            message_text: `Are you sure you want to continue?`,
-            preamble: `Changes to this ${this.props.levelProps.tierName} will not be saved`,
+            message_text: gettext("Are you sure you want to continue?"),
+            /* # Translators:  This is a warning provided to the user when they try to cancel the editing of something they have already modified.  */
+            preamble: gettext(`Changes to this ${this.props.levelProps.tierName} will not be saved`),
             on_submit: () => this.props.rootStore.levelStore.cancelEdit(this.props.level.id)});
         }
         else{
@@ -236,6 +239,18 @@ export class LevelCardExpanded extends React.Component {
     onFormChange = (event) => {
         event.preventDefault();
         this[event.target.name] = event.target.value;
+        if (!this.name) {
+            const target = $(`#level-name-${this.props.level.id}`);
+            target.addClass("is-invalid");
+            /* # Translators: This is a validation message given to the user when the user-editable name field has been deleted or omitted. */
+            let feedbackText = `Please provide a name for this ${this.props.levelProps.tierName}`;
+            target.after(`<p id=name-feedback-${this.props.level.id} class="invalid-feedback">${feedbackText}</p>`);
+        }
+        else{
+            $("#level-name").removeClass("is-invalid");
+            $(`#name-feedback-${this.props.level.id}`).remove();
+        }
+        this.props.rootStore.uiStore.activeCardNeedsConfirm = this.dataHasChanged;
     };
 
     render(){
@@ -243,7 +258,7 @@ export class LevelCardExpanded extends React.Component {
         // to IndicatorList will result in a non-reactive Indicator list form fields.
         const tempIndicators = toJS(this.indicators);
         return (
-            <div className="level-card level-card--expanded" id={this.props.level.id}>
+            <div className="level-card level-card--expanded" id={`level-card-${this.props.level.id}`}>
                 <div>
                     <LevelTitle
                         tierName={this.props.levelProps.tierName}
@@ -252,11 +267,11 @@ export class LevelCardExpanded extends React.Component {
                     />
 
                 </div>
-                <form className="level-card--expanded__form" onSubmit={this.saveLevel}>
+                <form className="level-card--expanded__form" id={`level-card-form-${this.props.level.id}`} onSubmit={this.saveLevel}>
                     <div className="form-group">
                         <textarea
                             className="form-control"
-                            id="level-name"
+                            id={`level-name-${this.props.level.id}`}
                             name="name"
                             value={this.name || ""}
                             autoComplete="off"
@@ -278,13 +293,13 @@ export class LevelCardExpanded extends React.Component {
                         level={this.props.level}
                         tierName={this.props.levelProps.tierName}
                         indicators={this.indicators}
+                        disabled={!this.name}
                         changeFunc={this.updateIndicatorOrder}
                         dragEndFunc={this.onDragEnd}/>
 
                     <ButtonBar
                         level={this.props.level}
                         levelProps={this.props.levelProps}
-                        isActive={this.props.rootStore.uiStore.expandedCards[0] == this.props.level.id}
                         submitFunc={this.updateSubmitType}
                         cancelFunc={this.cancelEdit}
                         nameVal={this.name}
@@ -301,7 +316,7 @@ export class LevelCardExpanded extends React.Component {
 @inject('rootStore')
 class ButtonBar extends React.Component {
     render() {
-        let disabledText = this.props.isActive && this.props.nameVal ? "" : "disabled";
+        let disabledText = this.props.nameVal ? "" : "disabled";
 
         // Build the button text with the right sibling level name, then build the button.
         let addAnotherButton = null;
@@ -360,13 +375,13 @@ class IndicatorList extends React.Component {
     }
 
     render() {
+
         // Create the list of indicators and the dropdowns for setting the indicator order
         let options = this.props.indicators.map( (entry, index) => {return {value: index+1, label: index+1}});
 
-        let indicatorMarkup = [];
-        this.props.indicators.forEach( (indicator) => {
+        let indicatorMarkup = this.props.indicators.map ( (indicator) => {
             // let options = this.props.indicators.map( (entry, index) => <option value={index+1}>{index+1}</option>);
-            indicatorMarkup.push(
+            return (
                 <React.Fragment>
                     <SingleReactSelect
                         update={(value) => this.props.changeFunc(value, indicator.id)}
@@ -374,12 +389,14 @@ class IndicatorList extends React.Component {
                         labelClasses=" "
                         formRowClasses="sortable-list__item__label"
                         selectClasses="sortable-list__item__select"
-                        value={{value: indicator.level_order, label: indicator.level_order}}
+                        value={{value: indicator.level_order, label: indicator.level_order + 1}}
                         label={indicator.name}
                         options={options}
+                        disabled={this.props.disabled}
                     />
                     <div className="sortable-list__item__actions">
-                        <a href="#" className="indicator-link"><i className="fas fa-cog"></i> Settings</a>
+                        { /* # Translators: A label for a button that allows the user to modify the settings of an object */}
+                        <a href="#" className="indicator-link"><i className="fas fa-cog"></i> {gettext("Settings")}</a>
                     </div>
                 </React.Fragment>
             )
@@ -388,18 +405,20 @@ class IndicatorList extends React.Component {
         // Conditionally set the other elements that are only visible when there are indicators
         let order = null;
         let helpLink = null;
+        /* # Translators: Popover for help link, tell user how to diassociate an Indicator from the Level they are currently editing. */
+        const popOverContent=gettext('To remove an indicator: Click “Settings”, where you can reassign the indicator to a different level or delete it.');
         if (this.props.indicators.length > 0) {
             order = "Order";
             helpLink =
                 <HelpPopover
-                    content='To remove an indicator: Click “Settings”, where you can reassign the indicator to a different level or delete it.'
+                    content={popOverContent}
                     placement="bottom"/>
         }
-
         return(
-            <div className="level-card--indicator-links">
+            <div className={`level-card--indicator-links ${this.props.disabled ? "disabled" : null}`}>
                 <div className="indicator-links__header">
-                    <h4>Indicators linked to this {this.props.tierName}</h4>
+                    { /* # Translators: Title for a section that lists the Indicators associated with whatever this.props.tiername is. */}
+                    <h4>{gettext(`Indicators linked to this ${this.props.tierName}`)}</h4>
                     <div>{helpLink}</div>
                 </div>
                 <div className="sortable-list-group">
@@ -421,7 +440,7 @@ class IndicatorList extends React.Component {
                     }
                     <SortableContainer onSortEnd={this.props.dragEndFunc} useDragHandle lockAxis="y" lockToContainerEdges>
                         {indicatorMarkup.map((value, index) => (
-                            <SortableItem key={`item-${index}`} index={index} value={value} />
+                            <SortableItem key={`item-${index}`} index={index} value={value} disabled={this.props.disabled} />
                         ))}
                     </SortableContainer>
                     <div className="sortable-list-actions">

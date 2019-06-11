@@ -100,7 +100,7 @@ export class LevelStore {
             // Now remove the new card
             this.levels.replace(this.levels.filter((element) => element.id != "new"));
         }
-        this.rootStore.uiStore.removeExpandedCard(levelId)
+        this.rootStore.uiStore.removeActiveCard()
 
     };
 
@@ -120,7 +120,6 @@ export class LevelStore {
         });
         siblingsToReorder.forEach( sib => sib.customsort+=1);
         // add new Level to the various Store components
-        this.rootStore.uiStore.expandedCards.push("new");
         this.rootStore.uiStore.activeCard = "new";
         this.levels.push(newLevel);
         // TODO: change focus to new level, since it could be very far from the one that triggered the create
@@ -145,7 +144,6 @@ export class LevelStore {
 
         siblingsToReorder.forEach( sib => sib.customsort+=1);
         // add new Level to the various Store components
-        this.rootStore.uiStore.expandedCards.push("new");
         this.rootStore.uiStore.activeCard = "new";
         this.levels.push(newLevel);
         this.rootStore.uiStore.hasVisibleChildren.push(newLevel.parent)
@@ -165,8 +163,8 @@ export class LevelStore {
             parent: "root"
         };
         this.levels.push(newLevel);
-        this.rootStore.uiStore.expandedCards.push("new")
-    }
+        this.rootStore.uiStore.activeCard = "new";
+    };
 
     saveLevelTiersToDB = () => {
         const tier_data = {program_id: this.program_id, tiers: this.chosenTierSet};
@@ -181,7 +179,7 @@ export class LevelStore {
         api.delete(`/level/${levelId}`)
             .then(response => {
                 this.levels.replace(response.data);
-                this.rootStore.uiStore.removeExpandedCard(levelId);
+                this.rootStore.uiStore.activeCard = null;
                 if (this.levels.length == 0){
                     this.createFirstLevel()
                 }
@@ -222,7 +220,7 @@ export class LevelStore {
                         this.levels.replace(response.data['all_data'])
                     });
                     const newId = response.data["new_level"]["id"];
-                    this.rootStore.uiStore.removeExpandedCard(levelId);
+                    this.rootStore.uiStore.activeCard = null;
                     if (submitType == "saveAndAddSibling"){
                         this.createNewLevelFromSibling(newId);
                     }
@@ -238,7 +236,7 @@ export class LevelStore {
                     runInAction( () => {
                         Object.assign(targetLevel, response.data);
                     });
-                    this.rootStore.uiStore.removeExpandedCard(levelId);
+                    this.rootStore.uiStore.activeCard = null;
                     if (submitType == "saveAndAddSibling"){
                         this.createNewLevelFromSibling(levelId);
                     }
@@ -318,12 +316,15 @@ export class LevelStore {
 
 
 export class UIStore {
-    @observable expandedCards = [];
+
+    @observable activeCard = null;
     @observable hasVisibleChildren = [];
+    activeCardNeedsConfirm = "";
 
     constructor (rootStore) {
         this.rootStore = rootStore;
         this.hasVisibleChildren = this.rootStore.levelStore.levels.map(l => l.id)
+        this.activeCardNeedsConfirm = false;
     }
 
     @computed get tierLockStatus () {
@@ -341,15 +342,38 @@ export class UIStore {
     }
 
     @action
-    addExpandedCard = (levelId) => {
-        if (!this.expandedCards.includes(levelId)) {
-            this.expandedCards.push(levelId);
+    editCard = (levelId) => {
+        if (this.activeCardNeedsConfirm) {
+            const oldTierName = this.rootStore.levelStore.levelProperties[this.activeCard].tierName;
+            $(".edit-button").prop("disabled", true);
+            create_no_rationale_changeset_notice({
+                /* # Translators:  This is a confirmation prompt that is triggered by clicking on a cancel button.  */
+                message_text: gettext("Are you sure you want to continue?"),
+                /* # Translators:  This is a warning provided to the user when they try to cancel the editing of something they have already modified.  */
+                preamble: gettext(`Changes to this ${oldTierName} will not be saved`),
+                on_submit: () => this.onLeaveConfirm(levelId),
+                on_cancel: this.onLeaveCancel,
+            })
         }
-    }
+        else {
+            this.activeCard = levelId;
+        }
+    };
 
     @action
-    removeExpandedCard = (levelId) => {
-        this.expandedCards = this.expandedCards.filter( level_id => level_id != levelId );
+    onLeaveConfirm = (levelId) => {
+        $(".edit-button").prop("disabled", false);
+        this.activeCard = levelId;
+        this.activeCardNeedsConfirm = false;
+    };
+
+    onLeaveCancel = () => {
+        $(".edit-button").prop("disabled", false);
+    };
+
+    @action
+    removeActiveCard = () => {
+        this.activeCard = null;
     };
 
     @action

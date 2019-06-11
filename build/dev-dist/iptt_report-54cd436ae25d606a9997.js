@@ -1953,7 +1953,7 @@ var SingleReactSelect = function SingleReactSelect(props) {
     value: props.value,
     id: selectId,
     className: selectClasses,
-    disabled: props.disabled,
+    isDisabled: props.disabled,
     options: props.options
   }));
 };
@@ -4960,4 +4960,4 @@ function () {
 /***/ })
 
 },[["mYfJ","runtime","vendors"]]]);
-//# sourceMappingURL=iptt_report-9f89400e92c950bbcf31.js.map
+//# sourceMappingURL=iptt_report-54cd436ae25d606a9997.js.map
