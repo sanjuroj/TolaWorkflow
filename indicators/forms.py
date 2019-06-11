@@ -93,12 +93,23 @@ class IndicatorForm(forms.ModelForm):
             kwargs['initial']['lop_target'] = lop_stripped
         self.request = kwargs.pop('request')
         self.programval = kwargs.pop('program')
+        self.prefilled_level = kwargs.pop('level') if 'level' in kwargs else False
 
         super(IndicatorForm, self).__init__(*args, **kwargs)
 
-
-        self.fields['level'].queryset = Level.objects.filter(program_id=self.programval)
+        self.fields['program_display'] = forms.ChoiceField(
+            choices=[('', self.programval.name),],
+            required=False,
+        )
+        self.fields['program_display'].disabled = True
         self.fields['level'].label = _('Result level')
+        self.fields['level'].label_from_instance = lambda obj: obj.display_name
+        if self.prefilled_level:
+            self.fields['level'].queryset = Level.objects.filter(pk=self.prefilled_level)
+            self.fields['level'].initial = self.prefilled_level
+            self.fields['level'].disabled = True
+        else:
+            self.fields['level'].queryset = Level.objects.filter(program_id=self.programval)
         self.fields['number'].label = _('Display number')
         self.fields['number'].help_text = _(
             "This number is displayed in place of the indicator number automatically " +
