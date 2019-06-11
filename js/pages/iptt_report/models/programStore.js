@@ -141,7 +141,7 @@ class NewLevel extends Level {
     }
     
     get outcomeChainDisplay() {
-        return `${this.tier.name} ${this.sort} and sub-levels: ${this.name}`;
+        return `${this.tier.name} ${this._sort} and sub-levels: ${this.name}`;
     }
     
     get childLevels() {
