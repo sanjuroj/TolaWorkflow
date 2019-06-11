@@ -240,15 +240,15 @@ class IndicatorCreate(IndicatorFormMixin, CreateView):
     def dispatch(self, request, *args, **kwargs):
         self.set_form_guidance()
         self.program = Program.objects.get(pk=kwargs['program'])
+        self.level_pk = self.request.GET.get('levelId')
         return super(IndicatorCreate, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super(IndicatorCreate, self).get_context_data(**kwargs)
-
-        context['program'] = self.program
-
-        context['periodic_targets'] = []
-
+        context.update({
+            'program': self.program,
+            'periodic_targets': []
+        })
         return context
 
     def get_initial(self):
@@ -259,8 +259,11 @@ class IndicatorCreate(IndicatorFormMixin, CreateView):
 
     def get_form_kwargs(self):
         kwargs = super(IndicatorCreate, self).get_form_kwargs()
-        kwargs['request'] = self.request
-        kwargs['program'] = self.program
+        kwargs.update({
+            'request': self.request,
+            'program': self.program,
+            'level': self.level_pk
+        })
         return kwargs
 
     def form_valid(self, form, **kwargs):
