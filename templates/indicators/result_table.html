@@ -173,10 +173,15 @@
                     {% endwith %}
             </td>
             <td class="td--stretch">
-                {% if result.evidence %}
-                    {% if result.evidence.url %}<a href="{{result.evidence.url}}" target="_blank">{% endif %}
-                    {{ result.evidence|default_if_none:"" }}
-                    {% if result.evidence.url %}</a>{% endif %}
+                {% if result.evidence_url %}
+                    <a href="{{ result.evidence_url }}" target="_blank">
+                        {# this condition *should* test for strings that are all nonprinting i.e spaces or returns, as well as None or '' #}
+                        {% if result.record_name %}
+                            {{ result.record_name }}
+                        {% else %}
+                            {{ result.evidence_url }}
+                        {% endif %}
+                    </a>
                 {% endif %}
                 <div class="float-right">
                     {% if result.complete %}
