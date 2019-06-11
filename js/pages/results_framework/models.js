@@ -122,7 +122,10 @@ export class LevelStore {
         // add new Level to the various Store components
         this.rootStore.uiStore.activeCard = "new";
         this.levels.push(newLevel);
-        // TODO: change focus to new level, since it could be very far from the one that triggered the create
+        setTimeout(
+            function(){$("#level-card-new")[0].scrollIntoView({behavior:"smooth"})},
+            100
+        )
     };
 
     @action
