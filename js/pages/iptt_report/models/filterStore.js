@@ -672,7 +672,7 @@ export default class FilterStore {
             } else {
                 return this.filterLevels('indicators').map(
                     level => ({
-                        label: `${level.tier.name} ${level.sort}`,
+                        label: `${level.tier.name} ${level.sortDisplay}`,
                         options: this.filterIndicators(level.indicators, 'indicators').map(
                             indicator => ({
                                     value: indicator.pk,

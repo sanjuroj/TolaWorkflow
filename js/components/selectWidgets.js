@@ -103,7 +103,8 @@ const GroupHeading = (props) => {
         return (
             <React.Fragment>
                 <hr style={{ margin: '3px 0px 0px 0px' }} />
-                <div style={{ textTransform: 'uppercase',
+                <div className="text-muted"
+                     style={{ textTransform: 'uppercase',
                               paddingLeft: '4px',
                               marginBottom: '2px'}}>
                     { props.children }
