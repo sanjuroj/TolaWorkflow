@@ -122,8 +122,10 @@
           {% if object %}
               {% if object.indicator.level %}{{ object.indicator.level }} {% trans "indicator" %}: {% endif %}
               {{ object.indicator.name }}
+          {% elif indicator.program.using_results_framework %}
+              {{ indicator.leveltier_name }} {% trans "indicator" %} {{ indicator.level.display_ontology }}{{ indicator.level_order_display }}: {{ indicator.name }}
           {% else %}
-              {{ indicator.level }} {% trans "indicator" %}:
+              {{ indicator.old_level }} {% trans "indicator" %}:
               {{ indicator.name }}
           {% endif %}
         </h3>
