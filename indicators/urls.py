@@ -53,5 +53,4 @@ urlpatterns = [
 
     # API call for program page
     url(r'^api/indicator/(?P<indicator>\d+)', views.api_indicator_view, name='api_indicator_view'),
-    url(r'^api/indicator/new/(?P<program>\d+)', views.api_new_indicator_view, name='api_indicator_view_new'),
 ]

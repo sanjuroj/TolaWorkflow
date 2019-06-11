@@ -7,7 +7,7 @@
 <div id="numDataPoints" style="display: none;">{{ object.result_set.all.count }}</div>
 <div id="indicatorId" style="display:none;">{{ object.pk }}</div>
 <div id="programId" style="display:none;">{{ program.id }}</div>
-<div id="initialLopTarget" style="display:none;">{{ object.lop_target }}</div>
+<div id="initialLopTarget" style="display:none;">{{ object.lop_target|default_if_none:'' }}</div>
 
 {# This template gets shoved into #indicator_modal_div in indicator_list_modals.html #}
 
@@ -15,10 +15,10 @@
     <div id="indicator_modal_header" style="width:100%" class="modal-title">
 
         {% if indicator %}
-            <h2>
+            <h2 id="id_title">
             {% trans "indicator" as ind %}
             {% if program.using_results_framework and indicator.level.leveltier %}
-                {{ indicator.level.leveltier.name }} {{ ind }} {{ indicator.level.display_ontology }}{{ indicator.level_order_display }}:
+                {{ title_str }}
             {% elif not program.using_results_framework %}
                 {{ indicator.old_level }} {{ ind }}:
             {% endif %}
@@ -27,13 +27,13 @@
             <h2 class="mb-3">{% trans 'Add indicator' %}</h2>
         {% endif %}
 
-        <span id="modalmessages" width="100%"></span>
-
         {% if indicator %}
-        <h3 class="no-bold">
-            {{ indicator.name|truncatechars:300 }}
+        <h3 id="id_subtitle" class="no-bold">
+            {{ subtitle_str }}
         </h3>
         {% endif %}
+
+        <span id="modalmessages" width="100%"></span>
     </div>
     <button
         type="button"
@@ -457,7 +457,7 @@
             <div class="form-actions">
                 <div>
                     <button type="button" id="id_update_indicator_btn" class="btn btn-primary">{% trans 'Save changes' %}</button>
-                    <input type="reset" class="btn btn-reset" value="{% trans 'Reset' %}">
+                    <button type="button" id="id_cancel_btn" class="btn btn-reset">{% trans 'Cancel' %}</button>
                 </div>
                 <div class="text-muted">{% include "form_guidance.html" %}</div>
             </div>
@@ -521,7 +521,7 @@
         updateLopTargetDisplay();
 
         //Use BS multiselect widget where needed
-        var multiselectOptions = {
+        let multiselectOptions = {
             includeSelectAllOption: true,
             enableFiltering: true,
             enableCaseInsensitiveFiltering: true,
@@ -539,10 +539,13 @@
         $('#id_indicator_type').multiselect(multiselectOptions);
         $('#id_strategic_objectives').multiselect(multiselectOptions);
 
+        warnIfLopTargetDoesNotMatchComputed();
 
         // used for tracking if changes were made to the form
         // see indicator_form_common_js.html for def
         recordTrackedFieldsSnapshot(true);
+
+        allowModalToClose = false;
     });
 
 </script>

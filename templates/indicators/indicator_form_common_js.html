@@ -1,8 +1,17 @@
 {% load i18n %}
 
 <script>
+    /*
+     * Global state for indicator form
+     *
+     * These values are single instance and not re-created on each
+     * form load. As such, they need to be reset when the form is reset
+     *
+     */
+
     let validation_msgs = {};
     let initialTrackedFieldsFormState;
+    let allowModalToClose = false;  // Can the create modal be closed without prompting the user?
 
     const DELETE_ALL_TARGETS_MESSAGE = "{% trans 'Any results assigned to these targets will need to be reassigned. For future reference, please provide a reason for deleting these targets.' %}"
     const DELETE_INDICATOR_MESSAGE = "{% trans 'All details about this indicator and results recorded to the indicator will be permanently removed. For future reference, please provide a reason for deleting this indicator.' %}"
@@ -13,7 +22,10 @@
     const DELETE_TARGETS_NO_RATIONALE = "{% trans 'Are you sure you want to remove all targets?' %}"
     const DELETE_TARGET_NO_RATIONALE = "{% trans 'Are you sure you want to remove this target?' %}"
     const DELETE_TARGET_MESSAGE = "{% trans 'For future reference, please provide a reason for deleting this target.' %}"
-    
+
+    const CLOSE_BEFORE_SAVING_WARNING_PREAMBLE = "{% trans 'This indicator is missing required details and cannot be saved.' %}";
+    const CLOSE_BEFORE_SAVING_WARNING_MESSAGE = "{% trans 'Are you sure you want to continue?' %}";
+
     // Indicator fields tracked in the admin changelog, which require prompting for a rationale if modified
     let TRACKED_FIELDS = new Set([
         'name',
@@ -28,8 +40,31 @@
         'target_frequency',
     ]);
 
+    function showSuccessNotifiction(message) {
+        PNotify.success({
+            title: "{% trans 'Success' %}",
+            text: message,
+            type: 'success',
+            width: '350px',
+            minHeight: '150px',
+            stack: {
+                'dir1': 'right',
+                'dir2': 'up',
+                'firstpos1': 0,
+                'firstpos2': 0
+            },
+            modules: {
+                Buttons: {
+                    closer: true,
+                    closerHover: false,
+                    sticker: false
+                }
+            }
+        });
+    }
+
     // Open the modal with a create form (as opposed to an update form)
-    // form isn't laoded yet, so programId must come from somewhere else
+    // form isn't loaded yet, so programId must come from somewhere else
     function openCreateIndicatorFormModal({programId, levelId = null}) {
         let url = `/indicators/indicator_create/${programId}/`;
         // in cases (such as rf builder) where the levelID is prepopulated, add as get parameter to request:
@@ -64,7 +99,27 @@
 
     });
 
-    $("#indicator_modal_div").on('shown.bs.tab', function() {
+
+    $("#indicator_modal_div").on('hide.bs.modal', function(e) {
+
+        // Prompt user if closing a create form without saving
+        if (isCreateForm() && ! allowModalToClose) {
+            // prevent the modal from actually closing
+            e.preventDefault();
+
+            // prompt the user if they actually want to close
+            window.create_no_rationale_changeset_notice({
+                preamble: CLOSE_BEFORE_SAVING_WARNING_PREAMBLE,
+                message_text: CLOSE_BEFORE_SAVING_WARNING_MESSAGE,
+                context: document.getElementById('indicator_update_form'),
+                on_submit: () => {
+                    allowModalToClose = true;
+                    closeIndicatorFormModal();
+                }
+            });
+
+            scrollToIndicatorFormBottom();
+        }
 
     });
 
@@ -140,28 +195,10 @@
             $.post(url, {rationale: rationale})
              .done(function(data, textStatus, jqXHR){
                  if (data.status == "success") {
-                    var success = PNotify.success({
-                        title: "{% trans 'Success' %}",
-                        text: data.msg,
-                        type: 'success',
-                        width: '350px',
-                        minHeight: '150px',
-                        stack: {
-                            'dir1': 'right',
-                            'dir2': 'up',
-                            'firstpos1': 0,
-                            'firstpos2': 0
-                            },
-                        modules: {
-                            Buttons: {
-                                closer: true,
-                                closerHover: false,
-                                sticker: false
-                            }
-                        }
-                        });
-                    $('#indicator_modal_div').trigger('deleted.tola.save', saveEventParams())
-                        .find('form').attr('deleted', true);
+                    showSuccessNotifiction(data.msg);
+
+                    $('#indicator_modal_div').trigger('deleted.tola.indicator.save', saveEventParams());
+
                     closeIndicatorFormModal();
                  } else {
                      createAlert("danger", data.msg, true, "#modalmessages");
@@ -185,11 +222,9 @@
         let row = $(e.currentTarget).closest('tr');
         let numResultsLinkedToEventTarget = parseInt(row.data('collected-count'));
 
-        // if no other targets have changed, we'll update the snapshot so we don't double-prompt for rationale
-        const updateSnapshot = !(
-            JSON.stringify(getFormPeriodicTargets(row)) == initialTrackedFieldsFormState.periodic_targets &&
-            initialTrackedFieldsFormState.target_frequency == getTrackedFieldsObject().target_frequency
-            );
+        // if no other periodic target values have changed, update the snapshot to reflect new server state
+        // there's a missed edge case here if the PT being deleted also had a value change, but meh
+        const updateSnapshot = ! hasTargetsChanged();
 
          /* If target is new, delete means just remove row,
          * If target is saved, delete means call to delete
@@ -204,9 +239,11 @@
                 $.post(url, {rationale: rationale})
                     .done((data) => {
                         if (data.status === "success") {
-                            $('#indicator_modal_div').trigger('success.tola.save', saveEventParams());
+                            $('#indicator_modal_div').trigger('updated.tola.indicator.save', saveEventParams());
                             row.remove();
-                            if (updateSnapshot) updateTargetSnapshot();
+                            if (updateSnapshot) {
+                                updatePTsAndLopTargetOnSnapshot();
+                            }
                             updateIfLastEvent();
                             updateLopTargetDisplay();
                         }
@@ -251,7 +288,7 @@
                        clearPeriodicTargetsForm).done(
                             (data) => {
                             if (data.status === "success") {
-                                $('#indicator_modal_div').trigger('success.tola.save', saveEventParams());
+                                $('#indicator_modal_div').trigger('updated.tola.indicator.save', saveEventParams());
                             }
                         });
             };
@@ -316,7 +353,7 @@
             return;
         }
 
-        submitForm().done(() => {
+        submitFormCreate().done(() => {
             closeIndicatorFormModal();
         });
     });
@@ -328,7 +365,7 @@
             return;
         }
 
-        submitForm().done(() => {
+        submitFormCreate().done(() => {
             reloadCreateIndicatorForm();
         });
     });
@@ -364,7 +401,7 @@
         updateLopTargetDisplay();
     }
 
-    // remove the periodic targest from from form UI and reset target frequency
+    // remove the periodic targets from from form UI and reset target frequency
     function clearPeriodicTargetsForm() {
         $("#id_div_periodic_tables_placeholder").empty();
         enable_target_frequecy_field();
@@ -419,10 +456,8 @@
         $("#periodic_targets_table tbody tr:nth-last-child(1)").before(markup);
     });
 
-    $('#indicator_modal_content').on('click', "input[type='reset']", function(e) {
-    });
-
     // submits form - returns a jQuery deferred obj to attached callbacks onto
+    // only has code shared by both CREATE and UPDATE
     function submitForm(rationale = '') {
         // clear any success/failure messages
         let alertElement = "#modalmessages";
@@ -453,18 +488,44 @@
             url: form_url,
             data: formArr,
         }).done(function(data, textStatus, jqXHR) {
-            $('#indicator_modal_div').trigger('success.tola.save', saveEventParams());
             insertPeriodicTargetForm(data["content"]);
         });
     }
 
-    // Submit the the UPDATE form
+    // Submit the CREATE form
+    function submitFormCreate() {
+        return submitForm().done((data) => {
+            $('#indicator_modal_div').trigger('created.tola.indicator.save', {
+                programId: programId(),
+                indicatorId: data.id
+            });
+
+            // remember such that the user can close the modal without a prompt
+            allowModalToClose = true;
+
+            // success msg
+            {# Translators: success message when an indicator was created, ex. "Indicator 2a was saved and linked to Outcome 2.2" #}
+            let msg = "{% trans 'Indicator %s was saved and linked to %s' %}";
+            console.log(data)
+            msg = interpolate(msg, [data.indicator_number, data.result_level_display_ontology])
+            showSuccessNotifiction(msg);
+        });
+    }
+
+    // Submit the UPDATE form
     function submitFormUpdate(rationale = '') {
-        submitForm(rationale).done((data) => {
+        return submitForm(rationale).done((data) => {
+            $('#indicator_modal_div').trigger('updated.tola.indicator.save', saveEventParams());
+
+            // Show success message on form
             let alertElement = "#modalmessages";
             $(alertElement).html('');
             createAlert("success", "{% trans 'Success, form data saved.'|escapejs %}", true, alertElement);
             scrollToTop();
+
+            // update the header
+            $('#id_title').text(data.title_str);
+            $('#id_subtitle').text(data.subtitle_str);
 
             // this is our new base state
             recordTrackedFieldsSnapshot();
@@ -600,6 +661,11 @@
     function getIsCumulative() {
         return $("input[name='is_cumulative']:checked").val() === "2";
     }
+
+    // Is units of measure a percentage?
+    function getIsPercentage() {
+        return $("#id_unit_of_measure_type_1").is(":checked");
+    }
     
     function cleanFloat(value) {
         if (isNaN(parseFloat(value))) {
@@ -685,6 +751,51 @@
      * Form validation
      */
 
+    // does the periodic targets form exist in the modal?
+    // if not, assume no PTs have been created
+    function hasPeriodicTargetsForm() {
+        return $('#id_div_periodic_tables_placeholder').children().length > 0;
+    }
+
+
+    /*
+     * If the manually entered in LoP target of an indicator currently saved in the DB
+     * does not matched the computed LoP target, based on periodic target values
+     * then show a warning to the user
+     */
+    function warnIfLopTargetDoesNotMatchComputed() {
+        let dbTarget = initialLopTarget();
+        let calculatedTarget = computeLopTarget();
+        let msg;
+
+        // either create form - or very old indicator w/ no LoP set
+        if (dbTarget === undefined) return;
+
+        let percentStr = getIsPercentage() ? '%' : '';
+
+        // PTs exist, and are not of type LoP only
+        if (calculatedTarget != null) {
+            // DB value doesn't match PTs
+
+            // compare num to str here...
+            if (dbTarget == calculatedTarget) return;
+
+            {# Translators: warning to user that manually entered in value doesn't match computed value, %s is a number or percentage #}
+            msg = "{% trans 'Life of Program (LoP) targets are now automatically displayed. The current LoP target does not match what was manually entered in the past -- %s. You may need to update your target values.' %}";
+            msg = interpolate(msg, [dbTarget + percentStr]);
+        } else if (! hasPeriodicTargetsForm()) {
+            // DB value but no PTs
+            {# Translators: warning to user that manually entered in value doesn't match computed value, %s is a number or percentage #}
+            msg = "{% trans 'This program previously had a LoP target of %s. Life of Program (LoP) targets are now automatically displayed.' %}";
+            msg = interpolate(msg, [dbTarget + percentStr]);
+        } else {
+            // lop only - should always match DB value
+            return;
+        }
+
+        validation_msgs['lop_target_not_matching'] = msg;
+        showValidations('#modalmessages');
+    }
 
     function reset_baseline_errors(){
         $("#id_baseline").removeClass('is-invalid');
@@ -979,45 +1090,43 @@
 
     // Returns an array of objects of periodic target form values
     // can be called with a row to exclude from the list (to check if _other_ targets have changed)
-    function getFormPeriodicTargets(excluded_row=null) {
+    function getFormPeriodicTargets() {
         let periodic_targets = [];
 
         // Collect all existing periodic_targets into an array.
         $('#periodic_targets_table tbody tr.periodic-target').each(function () {
             let $this = $(this);
-            if (excluded_row === null || excluded_row[0] !== $this[0]) {
-                let eventNameElement = $($this.find('input[type=text]'));
-                let targetValueSelector = $($this.find('input[type=number]'));
-    
-                let pt_id;
-                let pt_name;
-                try {
-                    pt_id = parseInt(targetValueSelector.attr('id').split('-')[1]);
-                    if (!$.isNumeric(pt_id)) {
-                        pt_id = 0;
-                    }
-                } catch (err) {
+            let eventNameElement = $($this.find('input[type=text]'));
+            let targetValueSelector = $($this.find('input[type=number]'));
+
+            let pt_id;
+            let pt_name;
+            try {
+                pt_id = parseInt(targetValueSelector.attr('id').split('-')[1]);
+                if (!$.isNumeric(pt_id)) {
                     pt_id = 0;
                 }
-    
-                if (eventNameElement.length > 0) {
-                    pt_name = eventNameElement.val();
-                } else {
-                    pt_name = targetValueSelector.attr('name');
-                }
-    
-                let pt_value = targetValueSelector.val();
-                let start_date = targetValueSelector.data("startDate");
-                let end_date = targetValueSelector.data("endDate");
-    
-                periodic_targets.push({
-                    'id': pt_id,
-                    'period': pt_name,
-                    'target': pt_value,
-                    'start_date': start_date,
-                    'end_date': end_date
-                });
+            } catch (err) {
+                pt_id = 0;
             }
+
+            if (eventNameElement.length > 0) {
+                pt_name = eventNameElement.val();
+            } else {
+                pt_name = targetValueSelector.attr('name');
+            }
+
+            let pt_value = targetValueSelector.val();
+            let start_date = targetValueSelector.data("startDate");
+            let end_date = targetValueSelector.data("endDate");
+
+            periodic_targets.push({
+                'id': pt_id,
+                'period': pt_name,
+                'target': pt_value,
+                'start_date': start_date,
+                'end_date': end_date
+            });
         });
 
         return periodic_targets;
@@ -1050,8 +1159,7 @@
         if (formObj['lop_target'] === undefined) {
             formObj['lop_target'] = computeLopTarget();
         } else {
-            // str -> float conversion needed when pulling from form for later comparisions
-            formObj['lop_target'] = parseFloat(formObj['lop_target']);
+            formObj['lop_target'] = formObj['lop_target'];
         }
 
         let periodic_targets = getFormPeriodicTargets();
@@ -1084,15 +1192,15 @@
         // side calculated LoP target. The snapshot reflects the client value
         // by default, but may need to reflect the DB value to prompt for rationale
         if (useDBLopTarget) {
-            // snapshot returns lop target as string, since it's pulled from the form
-            initialTrackedFieldsFormState['lop_target'] = initialLopTarget();
+            initialTrackedFieldsFormState['lop_target'] = cleanFloat(initialLopTarget());
         }
     }
-        
-    // update just the targets portion of the form object:
-    function updateTargetSnapshot() {
-        let periodic_targets = getFormPeriodicTargets();
-        initialTrackedFieldsFormState.periodic_targets = JSON.stringify(periodic_targets);
+
+    // update targets and indicator LoP target of the initial form snapshot
+    function updatePTsAndLopTargetOnSnapshot() {
+        let formObj = getIndicatorFormAsObject();
+        initialTrackedFieldsFormState.periodic_targets = formObj.periodic_targets;
+        initialTrackedFieldsFormState.lop_target = formObj.lop_target;
     }
 
     // have any tracked fields changed in the form?
@@ -1110,7 +1218,7 @@
         let prevTargetFieldsState = initialTrackedFieldsFormState.periodic_targets;
         let currTargetFieldsState = currTrackedFieldsFormState.periodic_targets;
 
-        // LoP has not values, so look at changes in the target type itself
+        // LoP has no values, so look at changes in the target type itself
         let prevTargetType = initialTrackedFieldsFormState.target_frequency;
         let currTargetType = currTrackedFieldsFormState.target_frequency;
 

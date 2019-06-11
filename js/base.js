@@ -341,7 +341,6 @@ window.target_with_results_text = target_with_results_text;
 
 
 const create_changeset_notice = ({
-    message_text = DEFAULT_NONDESTRUCTIVE_MESSAGE,
     on_submit = () => {},
     on_cancel = () => {},
     // # Translators: Button to approve a form
@@ -442,7 +441,6 @@ window.create_destructive_changeset_notice = ({
     message_text = DEFAULT_DESTRUCTIVE_MESSAGE,
     on_submit = () => {},
     on_cancel = () => {},
-    is_indicator = false,
     // # Translators: Button to approve a form
     confirm_text = gettext('Ok'),
     // # Translators: Button to cancel a form submission
@@ -478,7 +476,6 @@ window.create_destructive_changeset_notice = ({
         message_text: message_text,
         on_submit: on_submit,
         on_cancel: on_cancel,
-        is_indicator: is_indicator,
         confirm_text: confirm_text,
         cancel_text: cancel_text,
         type: 'error',
@@ -492,7 +489,6 @@ window.create_nondestructive_changeset_notice = ({
     message_text = DEFAULT_NONDESTRUCTIVE_MESSAGE,
     on_submit = () => {},
     on_cancel = () => {},
-    is_indicator = false,
     // # Translators: Button to approve a form
     confirm_text = gettext('Ok'),
     // # Translators: Button to cancel a form submission
@@ -523,7 +519,6 @@ window.create_nondestructive_changeset_notice = ({
         message_text: message_text,
         on_submit: on_submit,
         on_cancel: on_cancel,
-        is_indicator: is_indicator,
         confirm_text: confirm_text,
         cancel_text: cancel_text,
         type: 'notice',
@@ -536,7 +531,6 @@ window.create_no_rationale_changeset_notice = ({
     message_text = DEFAULT_NO_RATIONALE_TEXT,
     on_submit = () => {},
     on_cancel = () => {},
-    is_indicator = false,
     // # Translators: Button to approve a form
     confirm_text = gettext('Ok'),
     // # Translators: Button to cancel a form submission
@@ -571,7 +565,6 @@ window.create_no_rationale_changeset_notice = ({
         message_text: message_text,
         on_submit: on_submit,
         on_cancel: on_cancel,
-        is_indicator: is_indicator,
         confirm_text: confirm_text,
         cancel_text: cancel_text,
         type: 'error',

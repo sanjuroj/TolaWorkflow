@@ -5,6 +5,7 @@ import re
 from datetime import datetime, timedelta
 import dateparser
 import requests
+from django.template.defaultfilters import truncatechars
 from weasyprint import HTML, CSS
 
 from django.contrib import messages
@@ -308,7 +309,14 @@ class IndicatorCreate(IndicatorFormMixin, CreateView):
             'N/A'
         )
 
-        return JsonResponse({'success': True})
+        return JsonResponse({
+            'success': True,
+            'id': indicator.id,
+            # These are used the success message - in the future perhaps serialize the indicator/level and
+            # make the front-end deal with this display string creation completely
+            'indicator_number': '{}{}'.format(indicator.level.display_ontology, indicator.level_order_display),
+            'result_level_display_ontology': '{} {}'.format(indicator.level.leveltier.name, indicator.level.display_ontology),
+        })
 
 
 class IndicatorUpdate(IndicatorFormMixin, UpdateView):
@@ -331,6 +339,23 @@ class IndicatorUpdate(IndicatorFormMixin, UpdateView):
         self.set_form_guidance()
 
         return super(IndicatorUpdate, self).dispatch(request, *args, **kwargs)
+
+    @property
+    def _form_title_display_str(self):
+        """
+        The header of the form when updating - composed here instead of in the template
+        such that it can also be used via AJAX
+        """
+        return '{} {} {}{}'.format(
+            self.object.level.leveltier.name,
+            _('indicator'),
+            self.object.level.display_ontology,
+            self.object.level_order_display,
+        )
+
+    @property
+    def _form_subtitle_display_str(self):
+        return truncatechars(self.object.name, 300)
 
     def get_context_data(self, **kwargs):
         context = super(IndicatorUpdate, self).get_context_data(**kwargs)
@@ -386,6 +411,9 @@ class IndicatorUpdate(IndicatorFormMixin, UpdateView):
             context['targetsactive'] = True
 
         context['readonly'] = not self.request.has_write_access
+
+        context['title_str'] = self._form_title_display_str
+        context['subtitle_str'] = self._form_subtitle_display_str
 
         return context
 
@@ -501,6 +529,8 @@ class IndicatorUpdate(IndicatorFormMixin, UpdateView):
 
         return JsonResponse({
             'content': content,
+            'title_str': self._form_title_display_str,
+            'subtitle_str': self._form_subtitle_display_str,
         })
 
 
@@ -1239,24 +1269,3 @@ def api_indicator_view(request, indicator, program):
         .annotate(target_period_last_end_date=Max('periodictargets__end_date')).get(pk=indicator.pk)
 
     return JsonResponse(IndicatorSerializer(indicator).data)
-
-@login_required
-@has_program_read_access
-def api_new_indicator_view(request, program):
-    """
-    API call for viewing an indicator for the program page
-    """
-    program = ProgramWithMetrics.program_page.get(pk=program)
-    program.indicator_filters = {}
-
-    freshness_threshold = timezone.now() - timedelta(minutes=5)
-
-    indicators = program.annotated_indicators.filter(
-        program_id=program,
-        create_date__gte=freshness_threshold
-    ).annotate(
-        target_period_last_end_date=Max('periodictargets__end_date')
-    )
-
-    return JsonResponse(IndicatorSerializer(indicators, many=True).data, safe=False)
-
