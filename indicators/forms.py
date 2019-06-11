@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 from functools import partial
 
 from workflow.models import (
@@ -7,8 +7,8 @@ from workflow.models import (
 from tola.util import getCountry
 from indicators.models import (
     Indicator, PeriodicTarget, Result, Objective, StrategicObjective,
-    TolaTable, DisaggregationType, Level, IndicatorType,
-    PinnedReport)
+    DisaggregationType, Level, IndicatorType, PinnedReport
+)
 from indicators.widgets import DataAttributesSelect
 
 import dateparser
