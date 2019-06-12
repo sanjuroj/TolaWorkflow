@@ -319,7 +319,7 @@ export class LevelStore {
 
 export class UIStore {
 
-    @observable activeCard = null;
+    @observable activeCard;
     @observable hasVisibleChildren = [];
     activeCardNeedsConfirm = "";
 
@@ -327,6 +327,7 @@ export class UIStore {
         this.rootStore = rootStore;
         this.hasVisibleChildren = this.rootStore.levelStore.levels.map(l => l.id)
         this.activeCardNeedsConfirm = false;
+        this.activeCard = null;
     }
 
     @computed get tierLockStatus () {
@@ -371,7 +372,7 @@ export class UIStore {
         setTimeout(
             function(){$(`#level-card-${levelId}`)[0].scrollIntoView({behavior:"smooth"})},
             100
-        )
+        );
         this.activeCardNeedsConfirm = false;
     };
 

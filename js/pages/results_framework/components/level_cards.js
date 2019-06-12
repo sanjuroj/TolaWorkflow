@@ -6,7 +6,7 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCaretRight, faCaretDown, faArrowsAlt } from '@fortawesome/free-solid-svg-icons'
 import { SingleReactSelect } from "../../../components/selectWidgets";
-import { AddIndicatorButton } from '../../../components/indicatorModalComponents';
+import { AddIndicatorButton, UpdateIndicatorButton } from '../../../components/indicatorModalComponents';
 import {sortableContainer, sortableElement, sortableHandle} from 'react-sortable-hoc';
 import HelpPopover from "../../../components/helpPopover";
 
@@ -222,21 +222,23 @@ export class LevelCardExpanded extends React.Component {
     };
 
     cancelEdit = () => {
-        let submitFunc = () => this.props.rootStore.levelStore.cancelEdit(this.props.level.id);
+
+        // Need to just clear the form if only the root level card is being cancelled.
+        let cancelFunc = () => this.props.rootStore.levelStore.cancelEdit(this.props.level.id);
         if (this.props.rootStore.levelStore.levels.length == 1 && this.props.level.id == "new"){
-            submitFunc = this.clearData;
+            cancelFunc = this.clearData;
         }
         if (this.dataHasChanged) {
             create_no_rationale_changeset_notice({
-                /* # Translators:  This is a confirmation prompt that is triggered by clicking on a cancel button.  */
+                /* # Translators: This is part of a confirmation prompt that is triggered by clicking on a cancel button.  */
                 message_text: gettext("Are you sure you want to continue?"),
                 /* # Translators:  This is a warning provided to the user when they try to cancel the editing of something they have already modified.  */
                 preamble: gettext(`Changes to this ${this.props.levelProps.tierName} will not be saved`),
-                on_submit: () => submitFunc()
+                on_submit: () => cancelFunc()
             })
         }
         else{
-            submitFunc()
+            cancelFunc()
         }
 
     };
@@ -304,6 +306,7 @@ export class LevelCardExpanded extends React.Component {
                         tierName={this.props.levelProps.tierName}
                         indicators={this.indicators}
                         disabled={!this.name}
+                        dragDisabled={this.indicators.length < 2}
                         changeFunc={this.updateIndicatorOrder}
                         dragEndFunc={this.onDragEnd}/>
 
@@ -406,7 +409,7 @@ class IndicatorList extends React.Component {
                     />
                     <div className="sortable-list__item__actions">
                         { /* # Translators: A label for a button that allows the user to modify the settings of an object */}
-                        <a href="#" className="indicator-link"><i className="fas fa-cog"></i> {gettext("Settings")}</a>
+                        <UpdateIndicatorButton readonly={this.props.disabled} label={gettext("Settings")} indicatorId={indicator.id}/>
                     </div>
                 </React.Fragment>
             )
@@ -450,13 +453,17 @@ class IndicatorList extends React.Component {
                     }
                     <SortableContainer onSortEnd={this.props.dragEndFunc} useDragHandle lockAxis="y" lockToContainerEdges>
                         {indicatorMarkup.map((value, index) => (
-                            <SortableItem key={`item-${index}`} index={index} value={value} disabled={this.props.disabled} />
+                            <SortableItem
+                                key={`item-${index}`}
+                                index={index}
+                                value={value}
+                                disabled={this.props.disabled || this.props.dragDisabled} />
                         ))}
                     </SortableContainer>
                     <div className="sortable-list-actions">
                         <AddIndicatorButton readonly={ !this.props.level.id || this.props.level.id == 'new' || this.props.disabled }
                                             programId={ this.props.rootStore.levelStore.program_id }
-                                            levelId={ this.props.level.id } />
+                                            levelId={ this.props.level.id }/>
                     </div>
                 </div>
             </div>
