@@ -27,3 +27,8 @@ ReactDOM.render(
         </React.Fragment>
     </Provider>,
     document.querySelector('#level-builder-react-component'));
+
+// Reload indicators when a new one is created, updated, or deleted
+$('#indicator_modal_div').on('created.tola.indicator.save updated.tola.indicator.save deleted.tola.indicator.save', (e, params) => {
+    rootStore.levelStore.fetchIndicatorsFromDB();
+});

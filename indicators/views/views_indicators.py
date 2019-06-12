@@ -32,7 +32,8 @@ from django.views.generic.list import ListView
 from feed.serializers import FlatJsonSerializer
 from tola.util import group_excluded, getCountry
 
-from indicators.serializers import IndicatorSerializer, ProgramSerializer
+from indicators.serializers import (
+    IndicatorSerializer, IndicatorSerializerMinimal, ProgramSerializer)
 from indicators.views.view_utils import (
     import_indicator,
     generate_periodic_targets,

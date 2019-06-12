@@ -254,9 +254,19 @@ export class LevelStore {
         this.rootStore.uiStore.activeCardNeedsConfirm = false;
     };
 
-    saveReorderedIndicatorsToDB = (indicators) =>{
+    saveReorderedIndicatorsToDB = indicators => {
         api.post("/reorder_indicators/", indicators)
                 .then(response => {
+                })
+                .catch( error => {
+                    console.log("There was an error:", error);
+                })
+    };
+
+    fetchIndicatorsFromDB = () => {
+        api.get(`/indicator_list/${this.program_id}/`)
+                .then(response => {
+                    runInAction(() => this.indicators.replace(response.data));
                 })
                 .catch( error => {
                     console.log("There was an error:", error);
