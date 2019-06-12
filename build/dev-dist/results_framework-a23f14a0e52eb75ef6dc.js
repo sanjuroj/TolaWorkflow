@@ -635,20 +635,34 @@ function (_React$Component3) {
     };
 
     _this3.cancelEdit = function () {
+      // Need to just clear the form if only the root level card is being cancelled.
+      var cancelFunc = function cancelFunc() {
+        return _this3.props.rootStore.levelStore.cancelEdit(_this3.props.level.id);
+      };
+
+      if (_this3.props.rootStore.levelStore.levels.length == 1 && _this3.props.level.id == "new") {
+        cancelFunc = _this3.clearData;
+      }
+
       if (_this3.dataHasChanged) {
         create_no_rationale_changeset_notice({
-          /* # Translators:  This is a confirmation prompt that is triggered by clicking on a cancel button.  */
+          /* # Translators: This is part of a confirmation prompt that is triggered by clicking on a cancel button.  */
           message_text: gettext("Are you sure you want to continue?"),
 
           /* # Translators:  This is a warning provided to the user when they try to cancel the editing of something they have already modified.  */
           preamble: gettext("Changes to this ".concat(_this3.props.levelProps.tierName, " will not be saved")),
           on_submit: function on_submit() {
-            return _this3.props.rootStore.levelStore.cancelEdit(_this3.props.level.id);
+            return cancelFunc();
           }
         });
       } else {
-        _this3.props.rootStore.levelStore.cancelEdit(_this3.props.level.id);
+        cancelFunc();
       }
+    };
+
+    _this3.clearData = function () {
+      _this3.name = "";
+      _this3.assumptions = "";
     };
 
     _this3.onFormChange = function (event) {
@@ -738,6 +752,7 @@ function (_React$Component3) {
         tierName: this.props.levelProps.tierName,
         indicators: this.indicators,
         disabled: !this.name,
+        dragDisabled: this.indicators.length < 2,
         changeFunc: this.updateIndicatorOrder,
         dragEndFunc: this.onDragEnd
       }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ButtonBar, {
@@ -909,12 +924,11 @@ function (_React$Component6) {
           disabled: _this5.props.disabled
         }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
           className: "sortable-list__item__actions"
-        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
-          href: "#",
-          className: "indicator-link"
-        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
-          className: "fas fa-cog"
-        }), " ", gettext("Settings"))));
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_indicatorModalComponents__WEBPACK_IMPORTED_MODULE_8__["UpdateIndicatorButton"], {
+          readonly: _this5.props.disabled,
+          label: gettext("Settings"),
+          indicatorId: indicator.id
+        })));
       }); // Conditionally set the other elements that are only visible when there are indicators
 
       var order = null;
@@ -961,7 +975,7 @@ function (_React$Component6) {
           key: "item-".concat(index),
           index: index,
           value: value,
-          disabled: _this5.props.disabled
+          disabled: _this5.props.disabled || _this5.props.dragDisabled
         });
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "sortable-list-actions"
@@ -1365,6 +1379,16 @@ function () {
       });
     };
 
+    this.fetchIndicatorsFromDB = function () {
+      _api_js__WEBPACK_IMPORTED_MODULE_1__["api"].get("/indicator_list/".concat(_this.program_id, "/")).then(function (response) {
+        Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
+          return _this.indicators.replace(response.data);
+        });
+      }).catch(function (error) {
+        console.log("There was an error:", error);
+      });
+    };
+
     this.deriveTemplateKey = function () {
       // Check each tier set in the templates to see if the tier order and content are exactly the same
       // If they are, return the template key
@@ -1730,6 +1754,7 @@ function () {
       return l.id;
     });
     this.activeCardNeedsConfirm = false;
+    this.activeCard = null;
   }
 
   _createClass(UIStore, [{
@@ -1757,9 +1782,7 @@ function () {
   configurable: true,
   enumerable: true,
   writable: true,
-  initializer: function initializer() {
-    return null;
-  }
+  initializer: null
 }), _descriptor10 = _applyDecoratedDescriptor(_class3.prototype, "hasVisibleChildren", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
@@ -1825,6 +1848,7 @@ function () {
 
     return function () {
       _this9.activeCard = null;
+      _this9.rootStore.uiStore.activeCardNeedsConfirm = false;
     };
   }
 }), _descriptor14 = _applyDecoratedDescriptor(_class3.prototype, "updateVisibleChildren", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
@@ -1929,7 +1953,11 @@ var rootStore = new _models__WEBPACK_IMPORTED_MODULE_8__["RootStore"](program_id
 
 react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render(react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(mobx_react__WEBPACK_IMPORTED_MODULE_2__["Provider"], {
   rootStore: rootStore
-}, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_leveltier_picker__WEBPACK_IMPORTED_MODULE_7__["LevelTierPicker"], null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_level_list__WEBPACK_IMPORTED_MODULE_6__["LevelListPanel"], null))), document.querySelector('#level-builder-react-component'));
+}, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_leveltier_picker__WEBPACK_IMPORTED_MODULE_7__["LevelTierPicker"], null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_level_list__WEBPACK_IMPORTED_MODULE_6__["LevelListPanel"], null))), document.querySelector('#level-builder-react-component')); // Reload indicators when a new one is created, updated, or deleted
+
+$('#indicator_modal_div').on('created.tola.indicator.save updated.tola.indicator.save deleted.tola.indicator.save', function (e, params) {
+  rootStore.levelStore.fetchIndicatorsFromDB();
+});
 
 /***/ }),
 
@@ -1960,12 +1988,13 @@ var api = axios__WEBPACK_IMPORTED_MODULE_0___default.a.create({
 /*!***************************************************!*\
   !*** ./js/components/indicatorModalComponents.js ***!
   \***************************************************/
-/*! exports provided: AddIndicatorButton */
+/*! exports provided: AddIndicatorButton, UpdateIndicatorButton */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AddIndicatorButton", function() { return AddIndicatorButton; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UpdateIndicatorButton", function() { return UpdateIndicatorButton; });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "q1tI");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! mobx-react */ "okNM");
@@ -1980,14 +2009,32 @@ var AddIndicatorButton = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observe
       params = _objectWithoutProperties(_ref, ["readonly"]);
 
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+    type: "button",
     disabled: readonly,
     className: "btn btn-link btn-add",
     onClick: function onClick(e) {
-      return openCreateIndicatorFormModal(params);
+      openCreateIndicatorFormModal(params);
     }
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
     className: "fas fa-plus-circle"
   }), " ", gettext("Add indicator"));
+});
+var UpdateIndicatorButton = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function (_ref2) {
+  var readonly = _ref2.readonly,
+      _ref2$label = _ref2.label,
+      label = _ref2$label === void 0 ? null : _ref2$label,
+      params = _objectWithoutProperties(_ref2, ["readonly", "label"]);
+
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+    type: "button",
+    disabled: readonly,
+    className: "btn btn-link",
+    onClick: function onClick(e) {
+      openUpdateIndicatorFormModal(params);
+    }
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+    className: "fas fa-cog"
+  }), label);
 });
 
 /***/ }),
@@ -2172,4 +2219,4 @@ function (_React$Component2) {
 /***/ })
 
 },[["QTZG","runtime","vendors"]]]);
-//# sourceMappingURL=results_framework-be42c3195e448098bc30.js.map
+//# sourceMappingURL=results_framework-a23f14a0e52eb75ef6dc.js.map
