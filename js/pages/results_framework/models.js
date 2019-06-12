@@ -100,8 +100,7 @@ export class LevelStore {
             // Now remove the new card
             this.levels.replace(this.levels.filter((element) => element.id != "new"));
         }
-        this.rootStore.uiStore.removeActiveCard()
-
+        this.rootStore.uiStore.removeActiveCard();
     };
 
     @action
@@ -383,6 +382,7 @@ export class UIStore {
     @action
     removeActiveCard = () => {
         this.activeCard = null;
+        this.rootStore.uiStore.activeCardNeedsConfirm = false;
     };
 
     @action
