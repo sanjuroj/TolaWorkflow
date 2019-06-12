@@ -122,7 +122,10 @@ export class LevelStore {
         // add new Level to the various Store components
         this.rootStore.uiStore.activeCard = "new";
         this.levels.push(newLevel);
-        // TODO: change focus to new level, since it could be very far from the one that triggered the create
+        setTimeout(
+            function(){$("#level-card-new")[0].scrollIntoView({behavior:"smooth"})},
+            100
+        )
     };
 
     @action
@@ -249,7 +252,7 @@ export class LevelStore {
                     console.log("There was an error:", error);
                 })
         }
-
+        this.rootStore.uiStore.activeCardNeedsConfirm = false;
     };
 
     saveReorderedIndicatorsToDB = (indicators) =>{
@@ -340,10 +343,11 @@ export class UIStore {
 
         return null;
     }
-
+    // TODO: Make sure old editing data is not preserved when an edit is cancelled
     @action
     editCard = (levelId) => {
         if (this.activeCardNeedsConfirm) {
+            $(`#level-card-${this.activeCard}`)[0].scrollIntoView({behavior:"smooth"});
             const oldTierName = this.rootStore.levelStore.levelProperties[this.activeCard].tierName;
             $(".edit-button").prop("disabled", true);
             create_no_rationale_changeset_notice({
@@ -364,6 +368,11 @@ export class UIStore {
     onLeaveConfirm = (levelId) => {
         $(".edit-button").prop("disabled", false);
         this.activeCard = levelId;
+        // Need to use set timeout to ensure that scrolling loses the race with components reacting to the new position of the open card.
+        setTimeout(
+            function(){$(`#level-card-${levelId}`)[0].scrollIntoView({behavior:"smooth"})},
+            100
+        )
         this.activeCardNeedsConfirm = false;
     };
 

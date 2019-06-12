@@ -247,7 +247,7 @@ export class LevelCardExpanded extends React.Component {
             target.after(`<p id=name-feedback-${this.props.level.id} class="invalid-feedback">${feedbackText}</p>`);
         }
         else{
-            $("#level-name").removeClass("is-invalid");
+            $(`#level-name-${this.props.level.id}`).removeClass("is-invalid");
             $(`#name-feedback-${this.props.level.id}`).remove();
         }
         this.props.rootStore.uiStore.activeCardNeedsConfirm = this.dataHasChanged;
@@ -267,7 +267,7 @@ export class LevelCardExpanded extends React.Component {
                     />
 
                 </div>
-                <form className="level-card--expanded__form" id={`level-card-form-${this.props.level.id}`} onSubmit={this.saveLevel}>
+                <form className="level-card--expanded__form" onSubmit={this.saveLevel}>
                     <div className="form-group">
                         <textarea
                             className="form-control"
@@ -444,7 +444,7 @@ class IndicatorList extends React.Component {
                         ))}
                     </SortableContainer>
                     <div className="sortable-list-actions">
-                        <AddIndicatorButton readonly={ !this.props.level.id || this.props.level.id == 'new' }
+                        <AddIndicatorButton readonly={ !this.props.level.id || this.props.level.id == 'new' || this.props.disabled }
                                             programId={ this.props.rootStore.levelStore.program_id }
                                             levelId={ this.props.level.id } />
                     </div>

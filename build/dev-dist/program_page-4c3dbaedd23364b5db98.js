@@ -560,7 +560,6 @@ function () {
     this.updateIndicator = this.updateIndicator.bind(this);
     this.removeIndicator = this.removeIndicator.bind(this);
     this.filterIndicators = this.filterIndicators.bind(this);
-    this.addIndicators = this.addIndicators.bind(this);
   }
 
   _createClass(IndicatorStore, [{
@@ -572,24 +571,9 @@ function () {
 
       if (i > -1) {
         this.indicators[i] = indicator;
+      } else {
+        this.indicators.push(indicator);
       }
-    }
-  }, {
-    key: "addIndicators",
-    value: function addIndicators(indicatorJSON) {
-      var _this = this;
-
-      indicatorJSON.forEach(function (indicator) {
-        var i = _this.indicators.findIndex(function (e) {
-          return e.id === indicator.id;
-        });
-
-        if (i > -1) {
-          _this.indicators[i] = indicator;
-        } else {
-          _this.indicators.push(indicator);
-        }
-      });
     }
   }, {
     key: "removeIndicator",
@@ -768,7 +752,7 @@ function () {
   initializer: function initializer() {
     return [];
   }
-}), _applyDecoratedDescriptor(_class.prototype, "updateIndicator", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "updateIndicator"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "addIndicators", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "addIndicators"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "removeIndicator", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "removeIndicator"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "getIndicatorsNeedingTargets", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "getIndicatorsNeedingTargets"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "getIndicatorsNeedingResults", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "getIndicatorsNeedingResults"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "getIndicatorsNeedingEvidence", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "getIndicatorsNeedingEvidence"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "getIndicatorsNotReporting", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "getIndicatorsNotReporting"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "getIndicatorsAboveTarget", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "getIndicatorsAboveTarget"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "getIndicatorsBelowTarget", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "getIndicatorsBelowTarget"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "getIndicatorsOnTarget", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "getIndicatorsOnTarget"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "getIndicatorsReporting", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "getIndicatorsReporting"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "getTotalResultsCount", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "getTotalResultsCount"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "getTotalResultsWithEvidenceCount", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "getTotalResultsWithEvidenceCount"), _class.prototype)), _class);
+}), _applyDecoratedDescriptor(_class.prototype, "updateIndicator", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "updateIndicator"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "removeIndicator", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "removeIndicator"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "getIndicatorsNeedingTargets", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "getIndicatorsNeedingTargets"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "getIndicatorsNeedingResults", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "getIndicatorsNeedingResults"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "getIndicatorsNeedingEvidence", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "getIndicatorsNeedingEvidence"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "getIndicatorsNotReporting", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "getIndicatorsNotReporting"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "getIndicatorsAboveTarget", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "getIndicatorsAboveTarget"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "getIndicatorsBelowTarget", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "getIndicatorsBelowTarget"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "getIndicatorsOnTarget", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "getIndicatorsOnTarget"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "getIndicatorsReporting", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "getIndicatorsReporting"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "getTotalResultsCount", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "getTotalResultsCount"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "getTotalResultsWithEvidenceCount", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "getTotalResultsWithEvidenceCount"), _class.prototype)), _class);
 var ProgramPageStore = (_class3 = (_temp2 =
 /*#__PURE__*/
 function () {
@@ -970,9 +954,6 @@ _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].on('delete-indicator-results',
 
 _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].on('reload-indicator', function (indicatorId) {
   $.get("/indicators/api/indicator/".concat(indicatorId), rootStore.indicatorStore.updateIndicator);
-});
-_eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].on('load-new-indicator', function (programId) {
-  $.get("/indicators/api/indicator/new/".concat(programId), rootStore.indicatorStore.addIndicators);
 }); // remove an indicator from the list
 
 _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].on('indicator-deleted', rootStore.indicatorStore.removeIndicator); // close all expanded indicators in the table
@@ -1046,30 +1027,27 @@ $("#indicator-list-react-component").on("click", ".indicator-link[data-tab]", fu
   $("#modalmessages").empty();
   $("#indicator_modal_content").load(url);
   $("#indicator_modal_div").modal('show');
-}); // when indicator update modal is closed, update targets
+}); // when indicator creation modal form completes a save
 
-$('#indicator_modal_div').on('hide.bs.modal', function (e) {
-  var form = $(this).find('form');
-  var form_action = form.attr('action').split('/');
-  var item_id = parseInt(form_action[form_action.length - 2]);
+$('#indicator_modal_div').on('created.tola.indicator.save', function (e, params) {
+  _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].emit('reload-indicator', params.indicatorId);
+}); // when indicator update modal form completes a save or change to periodic targets
 
-  if (form_action[form_action.length - 3] == 'indicator_create') {
-    var program_id = item_id;
-    _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].emit('load-new-indicator', item_id);
-  } else if (form.attr('deleted') === 'true') {
-    // if this form has just successfully deleted this indicator, don't update it, remove it
-    _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].emit('indicator-deleted', item_id);
-  } else {
-    _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].emit('reload-indicator', item_id);
+$('#indicator_modal_div').on('updated.tola.indicator.save', function (e, params) {
+  var indicatorId = params.indicatorId;
+  _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].emit('reload-indicator', indicatorId);
 
-    if (rootStore.resultsMap.has(item_id)) {
-      _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].emit('load-indicator-results', item_id);
-    }
+  if (rootStore.resultsMap.has(indicatorId)) {
+    _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].emit('load-indicator-results', indicatorId);
   }
+}); // when indicator is deleted from modal
+
+$('#indicator_modal_div').on('deleted.tola.indicator.save', function (e, params) {
+  _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].emit('indicator-deleted', params.indicatorId);
 }); // When "add results" modal is closed, the targets data needs refreshing
 // the indicator itself also needs refreshing for the gas tank gauge
 
-$('#indicator_results_div').on('hide.bs.modal', function (e) {
+$('#indicator_results_div').on('hidden.bs.modal', function (e) {
   var recordchanged = $(this).find('form').data('recordchanged');
 
   if (recordchanged === true) {
@@ -1205,14 +1183,9 @@ var AddIndicatorButton = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observe
   var readonly = _ref.readonly,
       params = _objectWithoutProperties(_ref, ["readonly"]);
 
-  if (readonly) {
-    // do we want to show a message of some kind to folks for whom this button is disabled or just hide it?
-    return '';
-  }
-
-  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
-    role: "button",
-    className: "btn-link btn-add",
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+    disabled: readonly,
+    className: "btn btn-link btn-add",
     onClick: function onClick(e) {
       return openCreateIndicatorFormModal(params);
     }
@@ -1704,4 +1677,4 @@ var ProgramMetrics = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])
 /***/ })
 
 },[["aJgA","runtime","vendors"]]]);
-//# sourceMappingURL=program_page-9cd7a58b9e9d93980c33.js.map
+//# sourceMappingURL=program_page-4c3dbaedd23364b5db98.js.map
