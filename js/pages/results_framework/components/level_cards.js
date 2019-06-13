@@ -305,7 +305,7 @@ export class LevelCardExpanded extends React.Component {
                         level={this.props.level}
                         tierName={this.props.levelProps.tierName}
                         indicators={this.indicators}
-                        disabled={!this.name}
+                        disabled={!this.name || this.props.level.id == "new"}
                         reorderDisabled={this.indicators.length < 2}
                         changeFunc={this.updateIndicatorOrder}
                         dragEndFunc={this.onDragEnd}/>
