@@ -5,13 +5,15 @@ import { observer } from 'mobx-react';
 export default class ProgramSettings extends React.Component {
     constructor(props) {
         super(props);
+        let grouping = props.program_data._using_results_framework === undefined ?
+                false : props.program_data._using_results_framework;
         this.state = {
             autonumber: props.program_data.auto_number_indicators,
-            grouping: props.program_data.using_results_framework
-        }
+            grouping: grouping
+        };
         const originalState = {
             autonumber: props.program_data.auto_number_indicators,
-            grouping: props.program_data.using_results_framework
+            grouping: grouping
         };
         this.resetForm = () => {
             this.setState(originalState);
@@ -35,18 +37,20 @@ export default class ProgramSettings extends React.Component {
     
     groupingChange = (e) => {
         if (e.target.checked) {
-            this.setState({grouping: true});
+            this.setState({grouping: 2});
         } else {
-            this.setState({grouping: false});
+            this.setState({grouping: 1});
         }
     }
     
     save = (e) => {
         e.preventDefault();
         let data = { ...this.props.program_data,
-                     auto_number_indicators: this.state.autonumber,
-                     using_results_framework: this.state.grouping
+                     auto_number_indicators: this.state.autonumber
                      };
+        if (this.state.grouping !== false) {
+            data._using_results_framework = this.state.grouping;
+        }
         this.props.onSave(this.props.program_data.id, data);
     }
 
@@ -92,6 +96,8 @@ export default class ProgramSettings extends React.Component {
                             <strong className="text-danger">&nbsp; {gettext('Manually entered numbers do not affect the order in which indicators are listed; they are purely for display purposes.')}</strong>
                             </label>        
                         </div>
+                        { this.state.grouping !== false &&
+                        <React.Fragment>
                         <h4>{ gettext("Indicator grouping") }</h4>
                          <div className="form-check mb-3">
                             <input
@@ -99,7 +105,7 @@ export default class ProgramSettings extends React.Component {
                                 type="checkbox"
                                 name="grouping"
                                 id="grouping"
-                                checked={ this.state.grouping }
+                                checked={ this.state.grouping == 2 }
                                 onChange={ this.groupingChange }
                                 />
                             <label className="form-check-label" htmlFor="grouping">
@@ -112,6 +118,7 @@ export default class ProgramSettings extends React.Component {
                             </span>
                             </label>        
                         </div>
+                        </React.Fragment>}
                         <div className="form-group btn-row">
                             <button disabled={!this.formDirty()} className="btn btn-primary" type="button" onClick={(e) => this.save(e)}>{gettext("Save Changes")}</button>
                             <button className="btn btn-reset" type="button" onClick={() => this.resetForm()}>{gettext("Reset")}</button>

@@ -1,7 +1,6 @@
 import copy
 import json
 import logging
-import re
 from datetime import datetime, timedelta
 import dateparser
 import requests
@@ -10,12 +9,11 @@ from weasyprint import HTML, CSS
 
 from django.contrib import messages
 from django.core import serializers
-from django.core.serializers.json import DjangoJSONEncoder
 from django.core.urlresolvers import reverse_lazy
 from django.core.exceptions import PermissionDenied
 from django.db import connection, transaction
 from django.db.models import (
-    Count, Q, Sum, Avg, Max, Min
+    Count, Q, Max
 )
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
@@ -29,25 +27,22 @@ from django.views.generic.detail import View
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
 
-from feed.serializers import FlatJsonSerializer
-from tola.util import group_excluded, getCountry
-
+from tola.util import group_excluded
 from indicators.serializers import (
     IndicatorSerializer, IndicatorSerializerMinimal, ProgramSerializer)
 from indicators.views.view_utils import (
     import_indicator,
     generate_periodic_targets,
-    generate_periodic_target_single,
     dictfetchall
 )
 from workflow.models import (
-    Program, Sector, TolaSites, FormGuidance
+    Program, TolaSites, FormGuidance
 )
 from ..forms import IndicatorForm, ResultForm, PTFormInputsForm
 from ..models import (
     Indicator, PeriodicTarget, DisaggregationLabel, DisaggregationValue,
-    Result, IndicatorType, Level, LevelTier, ExternalServiceRecord,
-    ExternalService, TolaTable, PinnedReport
+    Result, LevelTier,
+    TolaTable, PinnedReport
 )
 from indicators.queries import ProgramWithMetrics, ResultsIndicator
 
@@ -310,13 +305,20 @@ class IndicatorCreate(IndicatorFormMixin, CreateView):
             'N/A'
         )
 
+        using_rf = indicator.results_framework
+
+        # success msg strings
+        indicator_number = '{}{}'.format(indicator.level_display_ontology, indicator.level_order_display) if using_rf else ''
+        result_level_display_ontology = '{} {}'.format(indicator.leveltier_name, indicator.level_display_ontology) if using_rf else ''
+
         return JsonResponse({
             'success': True,
             'id': indicator.id,
             # These are used the success message - in the future perhaps serialize the indicator/level and
             # make the front-end deal with this display string creation completely
-            'indicator_number': '{}{}'.format(indicator.level.display_ontology, indicator.level_order_display),
-            'result_level_display_ontology': '{} {}'.format(indicator.level.leveltier.name, indicator.level.display_ontology),
+            'using_rf': using_rf,
+            'indicator_number': indicator_number,
+            'result_level_display_ontology': result_level_display_ontology,
         })
 
 
@@ -347,12 +349,18 @@ class IndicatorUpdate(IndicatorFormMixin, UpdateView):
         The header of the form when updating - composed here instead of in the template
         such that it can also be used via AJAX
         """
-        return '{} {} {}{}'.format(
-            self.object.level.leveltier.name,
-            _('indicator'),
-            self.object.level.display_ontology,
-            self.object.level_order_display,
-        )
+        if self.object.results_framework:
+            return '{} {} {}{}'.format(
+                self.object.leveltier_name,
+                _('indicator'),
+                self.object.level_display_ontology,
+                self.object.level_order_display,
+            )
+        else:
+            return '{} {}:'.format(
+                self.object.old_level,
+                _('indicator'),
+            )
 
     @property
     def _form_subtitle_display_str(self):
@@ -725,6 +733,10 @@ class ResultCreate(ResultFormMixin, CreateView):
         context['indicator'] = self.indicator
         context['custom_disaggregation_labels'] = custom_disaggregation_labels
         context['standard_disaggregation_labels'] = standard_disaggregation_labels
+        context['title_str'] = '{}: {}'.format(
+            self.indicator.form_title_level,
+            self.indicator.name
+        )
         return context
 
     def get_form_kwargs(self):
@@ -825,6 +837,10 @@ class ResultUpdate(ResultFormMixin, UpdateView):
         context['custom_disaggregation_values'] = custom_disaggregation_values
         context['standard_disaggregation_labels'] = standard_disaggregation_labels
         context['standard_disaggregation_values'] = standard_disaggregation_values
+        context['title_str'] = '{}: {}'.format(
+            self.indicator.form_title_level,
+            self.indicator.name
+        )
         return context
 
     def get_form_kwargs(self):
@@ -1058,7 +1074,7 @@ class ProgramPage(ListView):
             return HttpResponseRedirect('/')
         unannotated_program = Program.objects.only(
             'reporting_period_start', 'reporting_period_end',
-            'start_date', 'end_date', 'using_results_framework'
+            'start_date', 'end_date', '_using_results_framework'
             ).get(pk=program_id)
         if unannotated_program.reporting_period_start is None or unannotated_program.reporting_period_end is None:
             context = {
@@ -1068,7 +1084,7 @@ class ProgramPage(ListView):
             return render(
                 request, 'indicators/program_setup_incomplete.html', context
                 )
-        if unannotated_program.using_results_framework:
+        if unannotated_program.results_framework:
             second_leveltier = LevelTier.objects.filter(program_id=program_id, tier_depth=2)
             if second_leveltier.exists():
                 second_tier_name = second_leveltier.first().name

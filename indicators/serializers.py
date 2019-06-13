@@ -63,6 +63,7 @@ class IndicatorSerializer(serializers.ModelSerializer):
     """
     Serializer specific to the Program Page
     """
+    number_if_numbering = serializers.SerializerMethodField()
     reporting = serializers.BooleanField()
     all_targets_defined = serializers.IntegerField()
     results_count = serializers.IntegerField()
@@ -99,7 +100,13 @@ class IndicatorSerializer(serializers.ModelSerializer):
             'results_with_evidence_count',
             'target_period_last_end_date', # last end date of last target period, for time-aware indicators
             'over_under',  # indicator progress towards targets (1: over, 0: within 15% of target, -1: under, "None": non reporting
+            'number_if_numbering', # only a number if the program is on manual numbers 
         ]
+
+    def get_number_if_numbering(self, obj):
+        if obj.results_framework and obj.program.auto_number_indicators:
+            return None
+        return obj.number
 
 
 class ProgramSerializer(serializers.ModelSerializer):
@@ -110,12 +117,17 @@ class ProgramSerializer(serializers.ModelSerializer):
         model = Program
         fields = [
             'id',
+            'pk',
+            'name',
             'does_it_need_additional_target_periods',
             'reporting_period_start',
             'reporting_period_end',
-            'using_results_framework',
+            'results_framework',
         ]
 
+class IPTTProgramSerializer(ProgramSerializer):
+    reporting_period_start = serializers.DateField(format=None)
+    reporting_period_end = serializers.DateField(format=None)
 
 
 class ExcelRendererBase(object):
@@ -545,7 +557,7 @@ class IPTTFullReportMixin:
 
     @property
     def level_rows(self):
-        if not self.program_data['using_results_framework']:
+        if not self.program_data['results_framework']:
             return False
         return self._level_rows.get(self.frequency, [])
 
@@ -751,7 +763,7 @@ class IPTTSingleExcelMixin(IPTTExcelMixin):
         filter_params = ['sites', 'types', 'sectors', 'indicators']
         filters = {param: self.request.getlist(param) for param in self.request.viewkeys() & filter_params}
         if self.request.getlist('levels'):
-            if self.program_data['using_results_framework']:
+            if self.program_data['results_framework']:
                 filters['levels'] = [level.pk for levels in [
                     [level] + level.get_children()
                     for level in Level.objects.filter(pk__in=self.request.getlist('levels'))
@@ -768,7 +780,7 @@ class IPTTSingleExcelMixin(IPTTExcelMixin):
             self.filters = False
         else:
             self.filters = filters
-            filters['old_levels'] = not self.program_data['using_results_framework']
+            filters['old_levels'] = not self.program_data['results_framework']
             indicators = indicators.apply_filters(**filters)
         return indicators
 
@@ -778,7 +790,7 @@ class IPTTSingleExcelMixin(IPTTExcelMixin):
 
     @property
     def level_rows(self):
-        if not self.program_data['using_results_framework'] or len(self.blank_level_row) == len(self.indicators):
+        if not self.program_data['results_framework'] or len(self.blank_level_row) == len(self.indicators):
             return False
         return self._level_rows
 
@@ -808,15 +820,11 @@ class IPTTSerializer(object):
                 ))
 
     def __init__(self, *args, **kwargs):
-        self.program_data = Program.objects.values(
-            'pk',
-            'name',
-            'reporting_period_start',
-            'reporting_period_end',
-            'using_results_framework'
-            ).get(pk=self.request.get('programId'))
+        self.program_data = IPTTProgramSerializer(
+            Program.objects.get(pk=self.request.get('programId'))
+            ).data
         self._indicators = self.annotate_indicators(self.load_indicators())
-        if self.program_data['using_results_framework']:
+        if self.program_data['results_framework']:
             self._level_rows = self.get_rf_levels()
         if not self.full_report:
             self.frequency = int(self.request.get('frequency'))
@@ -828,7 +836,7 @@ class IPTTSerializer(object):
 
     @property
     def level_column(self):
-        return not self.program_data['using_results_framework']
+        return not self.program_data['results_framework']
 
     @property
     def indicators(self):

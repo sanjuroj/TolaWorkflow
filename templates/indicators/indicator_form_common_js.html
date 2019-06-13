@@ -513,10 +513,15 @@
             allowModalToClose = true;
 
             // success msg
-            {# Translators: success message when an indicator was created, ex. "Indicator 2a was saved and linked to Outcome 2.2" #}
-            let msg = "{% trans 'Indicator %s was saved and linked to %s' %}";
-            console.log(data)
-            msg = interpolate(msg, [data.indicator_number, data.result_level_display_ontology])
+            {# Translators: success message when an indicator was created" #}
+            let msg = "{% trans 'Success! Indicator created.' %}";
+
+            if (data.using_rf) {
+                {# Translators: success message when an indicator was created, ex. "Indicator 2a was saved and linked to Outcome 2.2" #}
+                msg = "{% trans 'Indicator %s was saved and linked to %s' %}";
+                msg = interpolate(msg, [data.indicator_number, data.result_level_display_ontology]);
+            }
+
             showSuccessNotifiction(msg);
         });
     }

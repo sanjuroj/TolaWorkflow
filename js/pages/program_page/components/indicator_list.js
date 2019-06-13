@@ -234,7 +234,8 @@ class IndicatorListTable extends React.Component {
                             >
                                 <FontAwesomeIcon icon={resultsExist ? 'caret-down' : 'caret-right'} />
                                 <strong>
-                                    { indicator.number_display ? indicator.number_display + ':' : indicator.number }
+                                    { indicator.number_if_numbering || indicator.number_display ?
+                                            indicator.number_display + ':' : ''  }
                                 </strong>&nbsp;
                                 <span className="indicator_name">{ indicator.name }</span>
                             </a>
