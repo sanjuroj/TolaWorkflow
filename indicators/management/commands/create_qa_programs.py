@@ -248,6 +248,7 @@ class Command(BaseCommand):
             'reporting_period_end': end_date,
             'funding_status': 'Funded',
             'gaitid': 'fake_gait_id_{}'.format(random.randint(1, 9999)),
+            '_using_results_framework': Program.NOT_MIGRATED,
         })
         program.country.add(country)
         if multi_country:
@@ -496,7 +497,7 @@ class Command(BaseCommand):
 
     def create_levels(self, program_id, level_data):
         fixture_data = deepcopy(level_data)
-        tier_labels = LevelTier.PRESETS['Mercy Corps standard']
+        tier_labels = LevelTier.TEMPLATES['mc_standard']['tiers']
         for i, tier in enumerate(tier_labels):
             t = LevelTier(name=tier, tier_depth=i+1, program_id=program_id)
             t.save()

@@ -367,7 +367,7 @@ function (_React$Component3) {
           }
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_6__["FontAwesomeIcon"], {
           icon: resultsExist ? 'caret-down' : 'caret-right'
-        }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, indicator.number_display ? indicator.number_display + ':' : indicator.number), "\xA0", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+        }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, indicator.number_if_numbering || indicator.number_display ? indicator.number_display + ':' : ''), "\xA0", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
           className: "indicator_name"
         }, indicator.name)), indicator.key_performance_indicator && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
           className: "badge"
@@ -790,7 +790,7 @@ function () {
   }, {
     key: "oldStyleLevels",
     get: function get() {
-      return !this.program.using_results_framework;
+      return !this.program.results_framework;
     }
   }]);
 
@@ -1677,4 +1677,4 @@ var ProgramMetrics = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])
 /***/ })
 
 },[["aJgA","runtime","vendors"]]]);
-//# sourceMappingURL=program_page-4c3dbaedd23364b5db98.js.map
+//# sourceMappingURL=program_page-10e8daadf6031fc9dbe3.js.map

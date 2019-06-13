@@ -1058,6 +1058,12 @@ class Indicator(SafeDeleteModel):
         return None
 
     @property
+    def level_display_ontology(self):
+        if self.level:
+            return self.level.display_ontology
+        return None
+
+    @property
     def leveltier_depth(self):
         if self.level and self.level.leveltier:
             return self.level.get_level_depth()
@@ -1080,14 +1086,39 @@ class Indicator(SafeDeleteModel):
 
     @property
     def number_display(self):
-        if self.program.using_results_framework and self.level and self.level.leveltier:
+        if self.results_framework and self.program.auto_number_indicators and self.level and self.level.leveltier:
             return "{0} {1}{2}".format(
                 self.leveltier_name, self.level.display_ontology, self.level_order_display
             )
-        elif self.program.using_results_framework:
+        elif self.results_framework and not self.program.auto_number_indicators:
+            return self.number
+        elif self.results_framework:
             return None
         else:
             return self.number
+
+    @property
+    def form_title_level(self):
+        if self.results_framework:
+            return '{} {} {}'.format(
+                self.leveltier_name,
+                _('indicator'),
+                self.name
+            )
+        else:
+            return '{} {}'.format(
+                self.old_level,
+                _('indicator')
+            )
+
+
+    @property
+    def results_framework(self):
+        if hasattr(self, 'using_results_framework'):
+            return self.using_results_framework
+        elif hasattr(self.program, 'using_results_framework'):
+            return self.program.using_results_framework
+        return self.program._using_results_framework != Program.NOT_MIGRATED
 
 
 class PeriodicTarget(models.Model):
