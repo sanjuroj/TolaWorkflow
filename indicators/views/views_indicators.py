@@ -1043,13 +1043,21 @@ def indicator_plan(request, program):
     program = get_object_or_404(Program, id=program)
 
     verify_program_access_level(request, program.id, 'low')
-
-    indicators = ip.indicator_queryset(program.pk)
+    if program.results_framework and request.GET.get('orderby') == 2:
+        rows = ip.get_rf_rows(ip.tier_sorted_indicator_queryset(program.pk))
+        ordering = 2
+    elif program.results_framework:
+        rows = ip.get_rf_rows(ip.chain_sorted_indicator_queryset(program.pk))
+        ordering = 1
+    else:
+        rows = ip.get_non_rf_rows(ip.non_rf_indicator_queryset(program.pk))
+        ordering = False
 
     return render(request, "indicators/indicator_plan.html", {
         'program': program,
         'column_names': ip.column_names(),
-        'rows': [ip.row(i) for i in indicators]
+        'rows': rows,
+        'ordering': ordering
     })
 
 

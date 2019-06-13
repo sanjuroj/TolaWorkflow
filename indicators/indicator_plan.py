@@ -26,13 +26,13 @@ COLUMNS = [
     {
         'name': _('Level'),
         'category': PERFORMANCE_INDICATOR,
-        'field': lambda i: i.level.name if i.level else None,
+        'field': lambda i: i.leveltier_name if i.results_framework else i.old_level,
         'cell_width': 10,
     },
     {
         'name': _('No.'),
         'category': PERFORMANCE_INDICATOR,
-        'field': 'number',
+        'field': lambda i: i.results_aware_number,
     },
     {
         'name': _('Performance indicator'),
@@ -191,12 +191,43 @@ def column_names():
     return [c['name'] for c in COLUMNS]
 
 
-def indicator_queryset(program_id):
+def non_rf_indicator_queryset(program_id):
     """
     A QS of indicators to create the indicator plan from
     """
-    return models.Indicator.objects.filter(program_id=program_id).select_related().order_by('level', 'number')
+    return models.Indicator.objects.filter(program_id=program_id).select_related().with_logframe_sorting()
 
+def tier_sorted_indicator_queryset(program_id):
+    """RF program with the "sort by level" option picked queryset"""
+    return sorted(
+        models.Level.objects.filter(program_id=program_id),
+        key=lambda l: l.get_level_depth()
+        )
+
+def chain_sorted_indicator_queryset(program_id):
+    """RF program with the "sort by outcome chain" option (default) picked queryset"""
+    levels = []
+    top_tier = models.Level.objects.filter(program_id=program_id, parent__isnull=True)
+    for level in top_tier:
+        levels += level.get_children()
+    return levels
+
+def get_rf_rows(level_qs):
+    rows = []
+    for level in level_qs:
+        indicators = level.indicator_set.all()
+        if indicators:
+            rows.append(
+                {
+                    'row_type': 'level',
+                    'row_data': level.display_name
+                }
+            )
+            rows += [{'row_type': 'indicator', 'row_data': row(i)} for i in indicators]
+    return rows
+
+def get_non_rf_rows(indicator_qs):
+    return [{'row_type': 'indicator', 'row_data': row(i)} for i in indicator_qs]
 
 def columns_by_category():
     """

@@ -1112,6 +1112,12 @@ class Indicator(SafeDeleteModel):
                 _('indicator')
             )
 
+    @property
+    def results_aware_number(self):
+        if self.results_framework and self.program.auto_number_indicators:
+            return '{}{}'.format(self.level_display_ontology, self.level_order_display)
+        else:
+            return self.number
 
     @property
     def results_framework(self):

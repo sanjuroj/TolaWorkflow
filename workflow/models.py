@@ -714,6 +714,17 @@ class Program(models.Model):
         }
 
     @property
+    def rf_chain_sort_label(self):
+        """Many pages ask whether you sort indicators "by Level" or "by <second tier name> chain"
+
+            This helper method provides the second option label"""
+        tier = self.level_tiers.filter(tier_depth=2).first() if self.results_framework else None
+        if tier:
+            # Translators: this labels a filter to sort indicators, for example, "by Outcome chain":
+            return _('by %(level_name)s chain') % {'level_name': tier.name}
+        return None
+
+    @property
     def results_framework(self):
         if hasattr(self, 'using_results_framework'):
             return self.using_results_framework
