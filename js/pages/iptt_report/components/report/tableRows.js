@@ -121,7 +121,7 @@ const IndicatorRow = inject('reportStore')(
                             : gettext('Non-cumulative');
         return (
             <tr>
-                <IndicatorCell value={ indicator.number } align="center" />
+                <IndicatorCell value={ indicator.number } />
                 <IndicatorResultModalCell indicator={ indicator } />
                 <IndicatorEditModalCell indicator={ indicator } />
                 { levelCol && <IndicatorCell value={ indicator.levelName } /> }
@@ -138,7 +138,7 @@ const IndicatorRow = inject('reportStore')(
                         (value, index) => <PeriodCell value={ value } key={ index } resultCell={ true }/>
                     )
                 }
-                
+
             </tr>
         );
     })
