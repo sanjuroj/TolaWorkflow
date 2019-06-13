@@ -633,7 +633,7 @@ class IPTTTVAMixin:
                 'level': level,
                 'indicators': [indicator for indicator in self.indicators.filter(level=level)]
             }
-            if level_row['indicators'] or not self.filters:
+            if level_row['indicators']:
                 yield level_row
 
 
@@ -676,7 +676,7 @@ class IPTTTimeperiodsMixin:
                 'level': level,
                 'indicators': [indicator for indicator in self.indicators.filter(level=level)]
             }
-            if level_row['indicators'] or not self.filters:
+            if level_row['indicators']:
                 yield level_row
 
 class IPTTJSONMixin:
