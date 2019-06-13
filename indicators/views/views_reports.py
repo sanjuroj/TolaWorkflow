@@ -7,7 +7,7 @@ from workflow.models import Program
 from indicators.models import Indicator, PeriodicTarget, PinnedReport, Level, LevelTier
 from indicators.forms import PinnedReportForm
 from indicators.queries import IPTTIndicator
-from indicators.serializers import IPTTSerializer
+from indicators.serializers import IPTTSerializer, ProgramSerializer
 from tola.l10n_utils import l10n_date_medium, l10n_date_long, l10n_monthname
 from tola_management.permissions import verify_program_access_level
 
@@ -141,17 +141,11 @@ def get_program_filter_data(request):
             })
     return programs
 
-def get_program_data(program_id):
-    return Program.objects.values(
-        'pk',
-        'reporting_period_start',
-        'reporting_period_end',
-        'using_results_framework'
-        ).get(pk=program_id)
-
 
 def get_iptt_indicator(program_id, frequency, indicator_pk, tva=False):
-    program_data = get_program_data(program_id)
+    program_data = IPTTProgramSerializer(
+        Program.objects.get(pk=program_id)
+        ).data
     frequency = int(frequency)
     indicator_qs = IPTTIndicator.tva if tva else IPTTIndicator.timeperiods
     indicator_qs = indicator_qs.filter(
@@ -161,18 +155,21 @@ def get_iptt_indicator(program_id, frequency, indicator_pk, tva=False):
 
 def get_iptt_program(program_id, frequency, tva=False):
     frequency = int(frequency)
-    program_data = get_program_data(program_id)
+    program_data = IPTTProgramSerializer(
+        Program.objects.get(pk=program_id)
+        ).data
     if tva:
         indicator_qs = IPTTIndicator.tva.filter(program_id=program_id, target_frequency=frequency)
     else:
         indicator_qs = IPTTIndicator.timeperiods.filter(program_id=program_id)
     return process_iptt_data(program_data, frequency, indicator_qs, tva)
 
+
 def process_iptt_data(program_data, frequency, indicator_qs, tva):
     indicator_qs = indicator_qs.with_frequency_annotations(
         frequency, program_data['reporting_period_start'], program_data['reporting_period_end'])
     level_data = []
-    if program_data['using_results_framework']:
+    if program_data['results_framework']:
         results_framework = True
         levels = Level.objects.filter(program_id=program_data['pk'])
         for level in levels:

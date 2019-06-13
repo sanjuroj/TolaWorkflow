@@ -517,6 +517,10 @@ class ActiveProgramsManager(models.Manager):
             funding_status__iexact=self.ACTIVE_FUNDING_STATUS)
 
 class Program(models.Model):
+    NOT_MIGRATED = 1 # programs created before satsuma release which have not switched over yet
+    MIGRATED = 2 # programs created before satsuma which have switched to new RF levels
+    RF_ALWAYS = 3 # programs created after satsuma release - on new RF levels with no option
+
     gaitid = models.CharField(_("ID"), max_length=255, null=True, blank=True)
     name = models.CharField(_("Program Name"), max_length=255, blank=True)
     funding_status = models.CharField(_("Funding Status"), max_length=255, blank=True)
@@ -544,9 +548,9 @@ class Program(models.Model):
         _("Auto-number indicators according to the results framework"),
         default=True, blank=False
     )
-    using_results_framework = models.BooleanField(
+    _using_results_framework = models.IntegerField(
         _("Group indicators according to the results framework"),
-        default=True, blank=False
+        default=RF_ALWAYS, blank=False
     )
 
     objects = models.Manager()
@@ -708,6 +712,12 @@ class Program(models.Model):
             "start_date": start_date,
             "end_date": end_date
         }
+
+    @property
+    def results_framework(self):
+        if hasattr(self, 'using_results_framework'):
+            return self.using_results_framework
+        return self._using_results_framework != self.RF_PRE_MIGRATION
 
 
 PROGRAM_ROLE_CHOICES = (

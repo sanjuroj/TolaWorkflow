@@ -110,12 +110,16 @@ class ProgramSerializer(serializers.ModelSerializer):
         model = Program
         fields = [
             'id',
+            'pk',
             'does_it_need_additional_target_periods',
             'reporting_period_start',
             'reporting_period_end',
-            'using_results_framework',
+            'results_framework',
         ]
 
+class IPTTProgramSerializer(ProgramSerializer):
+    reporting_period_start = serializers.DateField(format=None)
+    reporting_period_end = serializers.DateField(format=None)
 
 
 class ExcelRendererBase(object):
@@ -808,13 +812,9 @@ class IPTTSerializer(object):
                 ))
 
     def __init__(self, *args, **kwargs):
-        self.program_data = Program.objects.values(
-            'pk',
-            'name',
-            'reporting_period_start',
-            'reporting_period_end',
-            'using_results_framework'
-            ).get(pk=self.request.get('programId'))
+        self.program_data = ProgramSerializer(
+            Program.objects.get(pk=self.request.get('programId'))
+            ).data
         self._indicators = self.annotate_indicators(self.load_indicators())
         if self.program_data['using_results_framework']:
             self._level_rows = self.get_rf_levels()

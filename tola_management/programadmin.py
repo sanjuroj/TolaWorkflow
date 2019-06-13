@@ -183,11 +183,11 @@ class ProgramAdminSerializer(ModelSerializer):
     name = CharField(required=True, max_length=255)
     funding_status = CharField(required=True)
     gaitid = CharField(required=False, allow_blank=True, allow_null=True)
-    description = CharField(allow_blank=True)
+    description = CharField(allow_null=True)
     sector = NestedSectorSerializer(required=True, many=True)
     country = NestedCountrySerializer(required=True, many=True)
     auto_number_indicators = BooleanField(required=False)
-    using_results_framework = BooleanField(required=False)
+    _using_results_framework = IntegerField(required=False, allow_null=True)
 
     def validate_country(self, values):
         if not values:
@@ -205,7 +205,7 @@ class ProgramAdminSerializer(ModelSerializer):
             'sector',
             'country',
             'auto_number_indicators',
-            'using_results_framework'
+            '_using_results_framework'
         )
 
     def to_representation(self, program, with_aggregates=True):
@@ -224,10 +224,15 @@ class ProgramAdminSerializer(ModelSerializer):
         ret['program_users'] = len(program_users)
         ret['organizations'] = organization_count
         ret['onlyOrganizationId'] = organizations.pop() if organization_count == 1 else None
+        if ret['_using_results_framework'] == Program.RF_ALWAYS:
+            ret.pop('_using_results_framework')
         return ret
 
     @transaction.atomic
     def create(self, validated_data):
+        if '_using_results_framework' in validated_data and \
+                validated_data['_using_results_framework'] is None:
+            validated_data.pop('_using_results_framework')
         country = validated_data.pop('country')
         sector = validated_data.pop('sector')
         if not validated_data['gaitid']:
@@ -246,7 +251,11 @@ class ProgramAdminSerializer(ModelSerializer):
     @transaction.atomic
     def update(self, instance, validated_data):
         previous_state = instance.admin_logged_fields
-
+        
+        if '_using_results_framework' in validated_data and \
+                validated_data['_using_results_framework'] is None:
+            validated_data['_using_results_framework'] = instance._using_results_framework
+        
         original_countries = instance.country.all()
         incoming_countries = validated_data.pop('country')
         added_countries = [x for x in incoming_countries if x not in original_countries]

@@ -1070,7 +1070,7 @@ class ProgramPage(ListView):
             return HttpResponseRedirect('/')
         unannotated_program = Program.objects.only(
             'reporting_period_start', 'reporting_period_end',
-            'start_date', 'end_date', 'using_results_framework'
+            'start_date', 'end_date', '_using_results_framework'
             ).get(pk=program_id)
         if unannotated_program.reporting_period_start is None or unannotated_program.reporting_period_end is None:
             context = {
@@ -1080,7 +1080,7 @@ class ProgramPage(ListView):
             return render(
                 request, 'indicators/program_setup_incomplete.html', context
                 )
-        if unannotated_program.using_results_framework:
+        if unannotated_program.results_framework:
             second_leveltier = LevelTier.objects.filter(program_id=program_id, tier_depth=2)
             if second_leveltier.exists():
                 second_tier_name = second_leveltier.first().name

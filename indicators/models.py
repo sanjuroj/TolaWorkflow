@@ -1089,6 +1089,14 @@ class Indicator(SafeDeleteModel):
         else:
             return self.number
 
+    @property
+    def results_framework(self):
+        if hasattr(self, 'using_results_framework'):
+            return self.using_results_framework
+        elif hasattr(self.program, 'using_results_framework'):
+            return self.program.using_results_framework
+        return self.program._using_results_framework != Program.NOT_MIGRATED
+
 
 class PeriodicTarget(models.Model):
     LOP_PERIOD = _('Life of Program (LoP) only')

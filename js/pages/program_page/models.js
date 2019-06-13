@@ -196,7 +196,7 @@ export class ProgramPageStore {
     
     @computed
     get oldStyleLevels() {
-        return !this.program.using_results_framework;
+        return !this.program.results_framework;
     }
 
 }
