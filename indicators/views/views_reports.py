@@ -7,7 +7,7 @@ from workflow.models import Program
 from indicators.models import Indicator, PeriodicTarget, PinnedReport, Level, LevelTier
 from indicators.forms import PinnedReportForm
 from indicators.queries import IPTTIndicator
-from indicators.serializers import IPTTSerializer, ProgramSerializer
+from indicators.serializers import IPTTSerializer, ProgramSerializer, IPTTProgramSerializer
 from tola.l10n_utils import l10n_date_medium, l10n_date_long, l10n_monthname
 from tola_management.permissions import verify_program_access_level
 
