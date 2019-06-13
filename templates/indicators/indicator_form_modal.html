@@ -16,12 +16,7 @@
 
         {% if indicator %}
             <h2 id="id_title">
-            {% trans "indicator" as ind %}
-            {% if program.using_results_framework and indicator.level.leveltier %}
                 {{ title_str }}
-            {% elif not program.using_results_framework %}
-                {{ indicator.old_level }} {{ ind }}:
-            {% endif %}
             </h2>
         {% else %}
             <h2 class="mb-3">{% trans 'Add indicator' %}</h2>

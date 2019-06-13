@@ -1,10 +1,11 @@
 """Creates a program with a fully fleshed out results framework and a few indicators for testing/QA"""
 
 import datetime
+from django.utils import timezone
 import itertools
 import random
 from workflow.models import Program, Country, Organization, Sector, TolaUser, CountryAccess
-from indicators.models import LevelTier, Level, Indicator, IndicatorType
+from indicators.models import LevelTier, Level, Indicator, IndicatorType, PeriodicTarget
 from django.core.management.base import BaseCommand
 
 def create_tolaland():
@@ -72,7 +73,7 @@ def get_kwarg_generator():
             'direction_of_change': next(direction_of_changes),
             'is_cumulative': random.choice([True, False]),
             'target_frequency': next(target_frequencys),
-            'sector': next(sectors)
+            'sector': next(sectors),
         }
 
 
@@ -92,6 +93,13 @@ def add_indicators(levels, program, kwarg_generator=None):
     )
     indicator.indicator_type.add(indicator_type)
     indicator.save()
+    if indicator.target_frequency == Indicator.LOP:
+        PeriodicTarget.objects.create(
+                indicator=indicator,
+                period=PeriodicTarget.LOP_PERIOD,
+                target=indicator.lop_target,
+                create_date=timezone.now(),
+            )
     kwargs['name'] = "Indicator B for {0} {1}".format(level.leveltier, level.display_ontology)
     kwargs['level_order'] = 1
     indicator = Indicator.objects.create(
@@ -99,6 +107,13 @@ def add_indicators(levels, program, kwarg_generator=None):
     )
     indicator.indicator_type.add(indicator_type)
     indicator.save()
+    if indicator.target_frequency == Indicator.LOP:
+        PeriodicTarget.objects.create(
+                indicator=indicator,
+                period=PeriodicTarget.LOP_PERIOD,
+                target=indicator.lop_target,
+                create_date=timezone.now(),
+            )
     for child in levels[1]:
         add_indicators(child, program, kwarg_generator)
 

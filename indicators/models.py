@@ -1058,6 +1058,12 @@ class Indicator(SafeDeleteModel):
         return None
 
     @property
+    def level_display_ontology(self):
+        if self.level:
+            return self.level.display_ontology
+        return None
+
+    @property
     def leveltier_depth(self):
         if self.level and self.level.leveltier:
             return self.level.get_level_depth()
@@ -1088,6 +1094,21 @@ class Indicator(SafeDeleteModel):
             return None
         else:
             return self.number
+
+    @property
+    def form_title_level(self):
+        if self.results_framework:
+            return '{} {} {}'.format(
+                self.leveltier_name,
+                _('indicator'),
+                self.name
+            )
+        else:
+            return '{} {}'.format(
+                self.old_level,
+                _('indicator')
+            )
+
 
     @property
     def results_framework(self):
