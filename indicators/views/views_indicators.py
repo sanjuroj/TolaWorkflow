@@ -466,12 +466,12 @@ class IndicatorUpdate(IndicatorFormMixin, UpdateView):
 
         # Save completed PeriodicTargets to the DB)
         if new_target_frequency == Indicator.LOP:
+            # assume only 1 PT at this point
             lop_pt, created = PeriodicTarget.objects.update_or_create(
                 indicator=old_indicator,
-                period=PeriodicTarget.LOP_PERIOD,
                 defaults={
                     'target': lop,
-
+                    'period': PeriodicTarget.LOP_PERIOD,
                 }
             )
 
