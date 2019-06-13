@@ -183,7 +183,7 @@ class ProgramAdminSerializer(ModelSerializer):
     name = CharField(required=True, max_length=255)
     funding_status = CharField(required=True)
     gaitid = CharField(required=False, allow_blank=True, allow_null=True)
-    description = CharField(allow_null=True)
+    description = CharField(allow_null=True, allow_blank=True)
     sector = NestedSectorSerializer(required=True, many=True)
     country = NestedCountrySerializer(required=True, many=True)
     auto_number_indicators = BooleanField(required=False)
