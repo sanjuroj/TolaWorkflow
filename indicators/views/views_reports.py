@@ -771,8 +771,8 @@ class IPTT_ExcelExport(IPTT_Mixin, TemplateView):
         ws['C1'].font = report_header_font
         ws.merge_cells('C1:J1')
 
-        set_cell_value(ws['C2'], u"{0} - {1}".format(l10n_date_long(data['report_start_date']),
-                                                     l10n_date_long(data['report_end_date'])))
+        set_cell_value(ws['C2'], u"{0} - {1}".format(l10n_date_long(data['report_start_date']).decode('utf-8'),
+                                                     l10n_date_long(data['report_end_date']).decode('utf-8')))
         ws['C2'].font = report_header_font
         ws.merge_cells('C2:J2')
 
@@ -799,8 +799,8 @@ class IPTT_ExcelExport(IPTT_Mixin, TemplateView):
         for period in periods:
             col = periods_start_col + col_offset
             try:
-                start_date = l10n_date_medium(period['start'])
-                end_date = l10n_date_medium(period['end'])
+                start_date = l10n_date_medium(period['start']).decode('utf-8')
+                end_date = l10n_date_medium(period['end']).decode('utf-8')
             except TypeError:
                 start_date = u''
                 end_date = u''
