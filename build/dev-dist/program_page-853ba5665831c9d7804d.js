@@ -1164,12 +1164,13 @@ $(function () {
 /*!***************************************************!*\
   !*** ./js/components/indicatorModalComponents.js ***!
   \***************************************************/
-/*! exports provided: AddIndicatorButton */
+/*! exports provided: AddIndicatorButton, UpdateIndicatorButton */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AddIndicatorButton", function() { return AddIndicatorButton; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UpdateIndicatorButton", function() { return UpdateIndicatorButton; });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "q1tI");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! mobx-react */ "okNM");
@@ -1184,14 +1185,32 @@ var AddIndicatorButton = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observe
       params = _objectWithoutProperties(_ref, ["readonly"]);
 
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+    type: "button",
     disabled: readonly,
     className: "btn btn-link btn-add",
     onClick: function onClick(e) {
-      return openCreateIndicatorFormModal(params);
+      openCreateIndicatorFormModal(params);
     }
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
     className: "fas fa-plus-circle"
   }), " ", gettext("Add indicator"));
+});
+var UpdateIndicatorButton = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function (_ref2) {
+  var readonly = _ref2.readonly,
+      _ref2$label = _ref2.label,
+      label = _ref2$label === void 0 ? null : _ref2$label,
+      params = _objectWithoutProperties(_ref2, ["readonly", "label"]);
+
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+    type: "button",
+    disabled: readonly,
+    className: "btn btn-link",
+    onClick: function onClick(e) {
+      openUpdateIndicatorFormModal(params);
+    }
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+    className: "fas fa-cog"
+  }), label);
 });
 
 /***/ }),
@@ -1677,4 +1696,4 @@ var ProgramMetrics = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])
 /***/ })
 
 },[["aJgA","runtime","vendors"]]]);
-//# sourceMappingURL=program_page-10e8daadf6031fc9dbe3.js.map
+//# sourceMappingURL=program_page-853ba5665831c9d7804d.js.map

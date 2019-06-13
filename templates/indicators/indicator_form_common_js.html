@@ -71,6 +71,15 @@
         if (levelId !== null) {
             url += `?levelId=${levelId}`;
         }
+        openIndicatorFormModal(url);
+    }
+
+    function openUpdateIndicatorFormModal({indicatorId}) {
+        let url = `/indicators/indicator_update/${indicatorId}/`;
+        openIndicatorFormModal(url);
+    }
+
+    function openIndicatorFormModal(url){
 
         $("#indicator_modal_content").empty();
         $("#modalmessages").empty();

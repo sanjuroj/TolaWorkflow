@@ -100,8 +100,7 @@ export class LevelStore {
             // Now remove the new card
             this.levels.replace(this.levels.filter((element) => element.id != "new"));
         }
-        this.rootStore.uiStore.removeActiveCard()
-
+        this.rootStore.uiStore.removeActiveCard();
     };
 
     @action
@@ -255,9 +254,19 @@ export class LevelStore {
         this.rootStore.uiStore.activeCardNeedsConfirm = false;
     };
 
-    saveReorderedIndicatorsToDB = (indicators) =>{
+    saveReorderedIndicatorsToDB = indicators => {
         api.post("/reorder_indicators/", indicators)
                 .then(response => {
+                })
+                .catch( error => {
+                    console.log("There was an error:", error);
+                })
+    };
+
+    fetchIndicatorsFromDB = () => {
+        api.get(`/indicator_list/${this.program_id}/`)
+                .then(response => {
+                    runInAction(() => this.indicators.replace(response.data));
                 })
                 .catch( error => {
                     console.log("There was an error:", error);
@@ -320,7 +329,7 @@ export class LevelStore {
 
 export class UIStore {
 
-    @observable activeCard = null;
+    @observable activeCard;
     @observable hasVisibleChildren = [];
     activeCardNeedsConfirm = "";
 
@@ -328,6 +337,7 @@ export class UIStore {
         this.rootStore = rootStore;
         this.hasVisibleChildren = this.rootStore.levelStore.levels.map(l => l.id)
         this.activeCardNeedsConfirm = false;
+        this.activeCard = null;
     }
 
     @computed get tierLockStatus () {
@@ -372,7 +382,7 @@ export class UIStore {
         setTimeout(
             function(){$(`#level-card-${levelId}`)[0].scrollIntoView({behavior:"smooth"})},
             100
-        )
+        );
         this.activeCardNeedsConfirm = false;
     };
 
@@ -383,6 +393,7 @@ export class UIStore {
     @action
     removeActiveCard = () => {
         this.activeCard = null;
+        this.rootStore.uiStore.activeCardNeedsConfirm = false;
     };
 
     @action

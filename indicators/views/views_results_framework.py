@@ -1,7 +1,8 @@
 import logging
 import copy
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
 from django.views.generic.list import ListView
 
 from rest_framework import viewsets
@@ -142,6 +143,7 @@ def save_leveltiers(request):
     return Response({"message": "success"})
 
 # TODO: add security
+@login_required
 @api_view(http_method_names=['POST'])
 def reorder_indicators(request):
     program_ids = list({Indicator.objects.get(pk=i['id']).program.id for i in request.data})
@@ -155,3 +157,20 @@ def reorder_indicators(request):
         indicator.save()
     return Response({"message": "success"})
 
+
+@login_required
+def indicator_list(request, program_id):
+    """
+    API call for updating the level-associated indicators
+    """
+
+    program = Program.objects.get(pk=program_id)
+    if not request.user.tola_user.program_role(program.id):
+        return Response({"message": "Request failed"}, status=400)
+
+    filterNameMap = {'levelId': 'level_id', 'indicatorId': 'pk'}
+    filters = {filterNameMap[key]: request.GET.get(key) for key in filterNameMap.keys() if request.GET.get(key, None)}
+
+    indicators = Indicator.objects.filter(program=program, **filters)
+
+    return JsonResponse(IndicatorSerializerMinimal(indicators, many=True).data, safe=False, status=200)
