@@ -3,7 +3,10 @@ Data definitions and code related to Indicator Plan table view and XLS export
 """
 from itertools import groupby
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import (
+    ugettext,
+    ugettext_lazy as _
+)
 
 # Column groupings
 from openpyxl import Workbook
@@ -212,7 +215,7 @@ def chain_sorted_indicator_queryset(program_id):
         levels += level.get_children()
     return levels
 
-def get_rf_rows(level_qs):
+def get_rf_rows(level_qs, program_id):
     rows = []
     for level in level_qs:
         indicators = level.indicator_set.all()
@@ -224,6 +227,15 @@ def get_rf_rows(level_qs):
                 }
             )
             rows += [{'row_type': 'indicator', 'row_data': row(i)} for i in indicators]
+    unassigned_indicators = models.Indicator.objects.filter(program_id=program_id, level_id__isnull=True)
+    if unassigned_indicators:
+        rows.append(
+            {
+                'row_type': 'level',
+                'row_data': _('Indicators unassigned to a results framework level')
+            }
+        )
+        rows += [{'row_type': 'indicator', 'row_data': row(i)} for i in unassigned_indicators]
     return rows
 
 def get_non_rf_rows(indicator_qs):
@@ -235,7 +247,6 @@ def columns_by_category():
     :return:
     """
     return groupby(COLUMNS, lambda c: c['category'])
-
 
 
 # XLS generation
@@ -280,10 +291,8 @@ def _set_column_widths(ws, col_num, width):
 def _set_row_height(ws, row_num, height):
     ws.row_dimensions[row_num].height = height
 
-def create_workbook(indicators):
-    """
-    Take an iterable of indicators and return a workbook
-    """
+
+def _get_formatted_workbook():
     wb = Workbook()
     ws = wb.active
     ws.title = _('Indicator plan')
@@ -323,6 +332,72 @@ def create_workbook(indicators):
         _apply_label_styling(cell)
         col_num += 1
     row_num += 1
+    return wb, row_num
+
+
+def _style_level_row(ws, row_num):
+    ws.merge_cells(start_row=row_num, start_column=START_COLUMN, end_row=row_num, end_column=len(COLUMNS))
+    cell = ws.cell(row_num, START_COLUMN)
+    cell.font = Font(bold=True, size=10)
+    cell.fill = PatternFill(fill_type='solid', start_color=TAN, end_color=TAN)
+    bd = Side(style='thin', color=BLACK)
+    cell.border = Border(left=bd, top=bd, right=bd, bottom=bd)
+    ws.row_dimensions[row_num].height = 30
+
+
+def create_rf_workbook(levels, program_id):
+    """
+    Take an iterable of levels and return a workbook
+    """
+    wb, row_num = _get_formatted_workbook()
+    ws = wb.active
+    col_num = START_COLUMN
+    for level in levels:
+        indicators = level.indicator_set.all()
+        if indicators:
+            cell = ws.cell(row_num, col_num)
+            cell.value = level.display_name
+            _style_level_row(ws, row_num)
+            row_num += 1
+            for indicator in indicators:
+                for i, val in enumerate(row(indicator)):
+                    cell = ws.cell(row_num, col_num, val)
+                    if i == 0:
+                        _apply_label_styling(cell)
+                    else:
+                        _apply_body_styling(cell)
+                    col_num += 1
+                col_num = START_COLUMN
+                row_num += 1
+    unassigned_indicators = models.Indicator.objects.filter(program_id=program_id, level_id__isnull=True)
+    if unassigned_indicators:
+        cell = ws.cell(row_num, col_num)
+        cell.value = ugettext('Indicators unassigned to a results framework level')
+        _style_level_row(ws, row_num)
+        row_num += 1
+        for indicator in unassigned_indicators:
+            for i, val in enumerate(row(indicator)):
+                cell = ws.cell(row_num, col_num, val)
+                if i == 0:
+                    _apply_label_styling(cell)
+                else:
+                    _apply_body_styling(cell)
+                col_num += 1
+            col_num = START_COLUMN
+            row_num += 1
+
+    # fix issue with borders applied to multi-column cells
+    update_borders(wb)
+
+    return wb
+
+
+def create_non_rf_workbook(indicators):
+    """
+    Take an iterable of indicators and return a workbook
+    """
+    wb, row_num = _get_formatted_workbook()
+    ws = wb.active
 
     # rows
     col_num = START_COLUMN
@@ -357,8 +432,6 @@ def create_workbook(indicators):
     update_borders(wb)
 
     return wb
-
-
 
 
 # openpyxl fix

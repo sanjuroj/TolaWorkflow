@@ -16,7 +16,7 @@
             <h3><a href="{{ program.program_page_url }}">{{ program.gaitid }} - {{ program.name }}</a></h3>
         </div>
         <div class="subheader__actions">
-            <button type="submit" class="btn btn-sm btn-secondary" onClick="location.href='/indicators/indicator_plan/export/{{ program.id }}/'"><i class="fas fa-download"></i> Excel {# Excel (brand name) not translated #}</button>
+            <button type="submit" class="btn btn-sm btn-secondary" onClick="location.href='/indicators/indicator_plan/export/{{ program.id }}/{% if ordering %}?orderby={{ordering}}{% endif %}'"><i class="fas fa-download"></i> Excel {# Excel (brand name) not translated #}</button>
             {% if ordering %}
             <form method="GET" action="#">
                 <label for="orderby_select">{% trans 'Group indicators' %}:</label>
