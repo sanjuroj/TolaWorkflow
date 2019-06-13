@@ -803,9 +803,6 @@ export default class FilterStore {
             levels = this._findChildren(parents, []);
         }
         if (levels) {
-            if (this.noFilters) {
-                return levels;
-            }
             var levelPks;
             if (skip) {
                 levelPks = new Set(this.filterIndicators(this.program.indicators, skip).map(indicator => indicator.levelpk));
