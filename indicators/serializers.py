@@ -118,6 +118,7 @@ class ProgramSerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'pk',
+            'name',
             'does_it_need_additional_target_periods',
             'reporting_period_start',
             'reporting_period_end',
@@ -819,7 +820,7 @@ class IPTTSerializer(object):
                 ))
 
     def __init__(self, *args, **kwargs):
-        self.program_data = ProgramSerializer(
+        self.program_data = IPTTProgramSerializer(
             Program.objects.get(pk=self.request.get('programId'))
             ).data
         self._indicators = self.annotate_indicators(self.load_indicators())
