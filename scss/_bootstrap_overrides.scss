@@ -170,6 +170,7 @@ body > .container {
 
 // Overrides for form elements
 .form-check-input {
+    height: auto !important; // fixes height bug after BS 4.3
     width: auto !important; // fixes bug in latest Chrome + pre-Mojave macs ?
 }
 
