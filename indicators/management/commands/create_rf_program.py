@@ -21,7 +21,9 @@ def create_program(country, name, count=0):
         'reporting_period_start': datetime.date(2016, 1, 1),
         'reporting_period_end': datetime.date(2020, 12, 31),
         'funding_status': 'Funded',
-        'gaitid': 'rf_fake_gait_id_{}'.format(count)
+        'gaitid': 'rf_fake_gait_id_{}'.format(count),
+        '_using_results_framework': Program.MIGRATED,
+        'auto_number_indicators': True,
     })
     program.country.add(country)
     return program
