@@ -227,7 +227,9 @@ def get_rf_rows(level_qs, program_id):
                 }
             )
             rows += [{'row_type': 'indicator', 'row_data': row(i)} for i in indicators]
-    unassigned_indicators = models.Indicator.objects.filter(program_id=program_id, level_id__isnull=True)
+    unassigned_indicators = models.Indicator.objects.filter(
+        program_id=program_id, level_id__isnull=True
+        ).with_logframe_sorting()
     if unassigned_indicators:
         rows.append(
             {
@@ -369,7 +371,9 @@ def create_rf_workbook(levels, program_id):
                     col_num += 1
                 col_num = START_COLUMN
                 row_num += 1
-    unassigned_indicators = models.Indicator.objects.filter(program_id=program_id, level_id__isnull=True)
+    unassigned_indicators = models.Indicator.objects.filter(
+        program_id=program_id, level_id__isnull=True
+        ).with_logframe_sorting()
     if unassigned_indicators:
         cell = ws.cell(row_num, col_num)
         cell.value = ugettext('Indicators unassigned to a results framework level')
