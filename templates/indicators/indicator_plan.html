@@ -22,7 +22,7 @@
                 <label for="orderby_select">{% trans 'Group indicators' %}:</label>
                 <select id="orderby_select" name="orderby" onchange="this.form.submit()">
                     <option value="1" {% if ordering == 1 %}selected{% endif %}>{{ program.rf_chain_sort_label }}</option>
-                    <option value="2" {% if ordering == 1 %}selected{% endif %}>{% trans 'by Level' %}</option>
+                    <option value="2" {% if ordering == 2 %}selected{% endif %}>{% trans 'by Level' %}</option>
                 </select>
             </form>
             {% endif %}

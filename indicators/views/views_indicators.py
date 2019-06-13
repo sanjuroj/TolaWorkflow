@@ -1043,7 +1043,7 @@ def indicator_plan(request, program):
     program = get_object_or_404(Program, id=program)
 
     verify_program_access_level(request, program.id, 'low')
-    if program.results_framework and request.GET.get('orderby') == 2:
+    if program.results_framework and request.GET.get('orderby') == '2':
         rows = ip.get_rf_rows(ip.tier_sorted_indicator_queryset(program.pk))
         ordering = 2
     elif program.results_framework:
