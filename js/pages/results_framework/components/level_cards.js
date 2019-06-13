@@ -306,7 +306,7 @@ export class LevelCardExpanded extends React.Component {
                         tierName={this.props.levelProps.tierName}
                         indicators={this.indicators}
                         disabled={!this.name}
-                        dragDisabled={this.indicators.length < 2}
+                        reorderDisabled={this.indicators.length < 2}
                         changeFunc={this.updateIndicatorOrder}
                         dragEndFunc={this.onDragEnd}/>
 
@@ -394,6 +394,7 @@ class IndicatorList extends React.Component {
 
         let indicatorMarkup = this.props.indicators.map ( (indicator) => {
             // let options = this.props.indicators.map( (entry, index) => <option value={index+1}>{index+1}</option>);
+            const indicator_label = <span title={indicator.name}>{indicator.name.replace(/(.{55})..+/, "$1...")}</span>
             return (
                 <React.Fragment>
                     <SingleReactSelect
@@ -403,9 +404,9 @@ class IndicatorList extends React.Component {
                         formRowClasses="sortable-list__item__label"
                         selectClasses="sortable-list__item__select"
                         value={{value: indicator.level_order, label: indicator.level_order + 1}}
-                        label={indicator.name}
+                        label={indicator_label}
                         options={options}
-                        disabled={this.props.disabled}
+                        disabled={this.props.disabled || this.props.reorderDisabled}
                     />
                     <div className="sortable-list__item__actions">
                         { /* # Translators: A label for a button that allows the user to modify the settings of an object */}
@@ -457,7 +458,7 @@ class IndicatorList extends React.Component {
                                 key={`item-${index}`}
                                 index={index}
                                 value={value}
-                                disabled={this.props.disabled || this.props.dragDisabled} />
+                                disabled={this.props.disabled || this.props.reorderDisabled} />
                         ))}
                     </SortableContainer>
                     <div className="sortable-list-actions">
