@@ -2636,10 +2636,6 @@ function () {
       }
 
       if (levels) {
-        if (this.noFilters) {
-          return levels;
-        }
-
         var levelPks;
 
         if (skip) {
@@ -4982,4 +4978,4 @@ function () {
 /***/ })
 
 },[["mYfJ","runtime","vendors"]]]);
-//# sourceMappingURL=iptt_report-2c07b9c15ba15943f9e7.js.map
+//# sourceMappingURL=iptt_report-962747104241f20485e4.js.map
