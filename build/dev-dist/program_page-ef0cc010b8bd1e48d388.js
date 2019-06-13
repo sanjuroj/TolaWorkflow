@@ -790,7 +790,7 @@ function () {
   }, {
     key: "oldStyleLevels",
     get: function get() {
-      return !this.program.using_results_framework;
+      return !this.program.results_framework;
     }
   }]);
 
@@ -1677,4 +1677,4 @@ var ProgramMetrics = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])
 /***/ })
 
 },[["aJgA","runtime","vendors"]]]);
-//# sourceMappingURL=program_page-4c3dbaedd23364b5db98.js.map
+//# sourceMappingURL=program_page-ef0cc010b8bd1e48d388.js.map
