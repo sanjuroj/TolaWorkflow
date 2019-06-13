@@ -63,6 +63,7 @@ class IndicatorSerializer(serializers.ModelSerializer):
     """
     Serializer specific to the Program Page
     """
+    number_if_numbering = serializers.SerializerMethodField()
     reporting = serializers.BooleanField()
     all_targets_defined = serializers.IntegerField()
     results_count = serializers.IntegerField()
@@ -99,7 +100,13 @@ class IndicatorSerializer(serializers.ModelSerializer):
             'results_with_evidence_count',
             'target_period_last_end_date', # last end date of last target period, for time-aware indicators
             'over_under',  # indicator progress towards targets (1: over, 0: within 15% of target, -1: under, "None": non reporting
+            'number_if_numbering', # only a number if the program is on manual numbers 
         ]
+
+    def get_number_if_numbering(self, obj):
+        if obj.results_framework and obj.program.auto_number_indicators:
+            return None
+        return obj.number
 
 
 class ProgramSerializer(serializers.ModelSerializer):
