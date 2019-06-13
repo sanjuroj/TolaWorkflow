@@ -752,7 +752,7 @@ function (_React$Component3) {
         tierName: this.props.levelProps.tierName,
         indicators: this.indicators,
         disabled: !this.name,
-        dragDisabled: this.indicators.length < 2,
+        reorderDisabled: this.indicators.length < 2,
         changeFunc: this.updateIndicatorOrder,
         dragEndFunc: this.onDragEnd
       }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ButtonBar, {
@@ -907,6 +907,9 @@ function (_React$Component6) {
       });
       var indicatorMarkup = this.props.indicators.map(function (indicator) {
         // let options = this.props.indicators.map( (entry, index) => <option value={index+1}>{index+1}</option>);
+        var indicator_label = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+          title: indicator.name
+        }, indicator.name.replace(/(.{55})..+/, "$1..."));
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_selectWidgets__WEBPACK_IMPORTED_MODULE_7__["SingleReactSelect"], {
           update: function update(value) {
             return _this5.props.changeFunc(value, indicator.id);
@@ -919,9 +922,9 @@ function (_React$Component6) {
             value: indicator.level_order,
             label: indicator.level_order + 1
           },
-          label: indicator.name,
+          label: indicator_label,
           options: options,
-          disabled: _this5.props.disabled
+          disabled: _this5.props.disabled || _this5.props.reorderDisabled
         }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
           className: "sortable-list__item__actions"
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_indicatorModalComponents__WEBPACK_IMPORTED_MODULE_8__["UpdateIndicatorButton"], {
@@ -975,7 +978,7 @@ function (_React$Component6) {
           key: "item-".concat(index),
           index: index,
           value: value,
-          disabled: _this5.props.disabled || _this5.props.dragDisabled
+          disabled: _this5.props.disabled || _this5.props.reorderDisabled
         });
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "sortable-list-actions"
@@ -2219,4 +2222,4 @@ function (_React$Component2) {
 /***/ })
 
 },[["QTZG","runtime","vendors"]]]);
-//# sourceMappingURL=results_framework-a23f14a0e52eb75ef6dc.js.map
+//# sourceMappingURL=results_framework-03edb63b2ca80acd3729.js.map
