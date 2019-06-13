@@ -717,7 +717,7 @@ class Program(models.Model):
     def results_framework(self):
         if hasattr(self, 'using_results_framework'):
             return self.using_results_framework
-        return self._using_results_framework != self.RF_PRE_MIGRATION
+        return self._using_results_framework != self.NOT_MIGRATED
 
 
 PROGRAM_ROLE_CHOICES = (

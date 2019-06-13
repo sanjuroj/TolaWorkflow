@@ -95,7 +95,7 @@ class IndicatorForm(forms.ModelForm):
         else:
             # populate with all levels for the indicator's program:
             self.fields['level'].queryset = Level.objects.filter(program_id=self.programval)
-        if not self.programval.using_results_framework or self.programval.auto_number_indicators:
+        if not self.programval.results_framework or self.programval.auto_number_indicators:
             # in this (the default) case, the number field is removed (values not updated):
             self.fields.pop('number')
         else:
@@ -106,7 +106,7 @@ class IndicatorForm(forms.ModelForm):
                 "generated through the results framework.  An admin can turn on auto-numbering " +
                 "in program settings"
             )
-        if self.programval.using_results_framework:
+        if self.programval.results_framework:
             # no need to update the old_level field if they are using the results framework:
             self.fields.pop('old_level')
             self.fields['level'].required = True

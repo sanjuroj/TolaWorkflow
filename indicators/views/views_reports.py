@@ -82,7 +82,7 @@ def get_program_filter_data(request):
             programs.append({
                 'id': program.pk,
                 'name': program.name,
-                'old_style_levels': not program.using_results_framework,
+                'old_style_levels': not program.results_framework,
                 'frequencies': frequencies,
                 'reporting_period_start': start_formatted,
                 'reporting_period_end': end_formatted,
