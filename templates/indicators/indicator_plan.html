@@ -18,9 +18,10 @@
         <div class="subheader__actions">
             <button type="submit" class="btn btn-sm btn-secondary" onClick="location.href='/indicators/indicator_plan/export/{{ program.id }}/{% if ordering %}?orderby={{ordering}}{% endif %}'"><i class="fas fa-download"></i> Excel {# Excel (brand name) not translated #}</button>
             {% if ordering %}
-            <form method="GET" action="#">
+            <form method="GET" action="#" class="form-inline">
+                <div class="form-group"></div>
                 <label for="orderby_select">{% trans 'Group indicators' %}:</label>
-                <select id="orderby_select" name="orderby" onchange="this.form.submit()">
+                <select class="form-control" id="orderby_select" name="orderby" onchange="this.form.submit()">
                     <option value="1" {% if ordering == 1 %}selected{% endif %}>{{ program.rf_chain_sort_label }}</option>
                     <option value="2" {% if ordering == 2 %}selected{% endif %}>{% trans 'by Level' %}</option>
                 </select>
