@@ -868,6 +868,7 @@ class Indicator(SafeDeleteModel):
     class Meta:
         ordering = ('create_date',)
         verbose_name = _("Indicator")
+        unique_together = ['level', 'level_order']
 
     def __unicode__(self):
         return self.name
