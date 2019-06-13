@@ -309,13 +309,20 @@ class IndicatorCreate(IndicatorFormMixin, CreateView):
             'N/A'
         )
 
+        using_rf = indicator.program.using_results_framework
+
+        # success msg strings
+        indicator_number = '{}{}'.format(indicator.level.display_ontology, indicator.level_order_display) if using_rf else ''
+        result_level_display_ontology = '{} {}'.format(indicator.level.leveltier.name, indicator.level.display_ontology) if using_rf else ''
+
         return JsonResponse({
             'success': True,
             'id': indicator.id,
             # These are used the success message - in the future perhaps serialize the indicator/level and
             # make the front-end deal with this display string creation completely
-            'indicator_number': '{}{}'.format(indicator.level.display_ontology, indicator.level_order_display),
-            'result_level_display_ontology': '{} {}'.format(indicator.level.leveltier.name, indicator.level.display_ontology),
+            'using_rf': using_rf,
+            'indicator_number': indicator_number,
+            'result_level_display_ontology': result_level_display_ontology,
         })
 
 
@@ -346,12 +353,18 @@ class IndicatorUpdate(IndicatorFormMixin, UpdateView):
         The header of the form when updating - composed here instead of in the template
         such that it can also be used via AJAX
         """
-        return '{} {} {}{}'.format(
-            self.object.level.leveltier.name,
-            _('indicator'),
-            self.object.level.display_ontology,
-            self.object.level_order_display,
-        )
+        if self.object.program.using_results_framework:
+            return '{} {} {}{}'.format(
+                self.object.level.leveltier.name,
+                _('indicator'),
+                self.object.level.display_ontology,
+                self.object.level_order_display,
+            )
+        else:
+            return '{} {}:'.format(
+                self.object.old_level,
+                _('indicator'),
+            )
 
     @property
     def _form_subtitle_display_str(self):
