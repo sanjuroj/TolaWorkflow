@@ -7,8 +7,10 @@ from decimal import Decimal
 import dateparser
 from dateutil.relativedelta import relativedelta
 from django.core.validators import MinValueValidator
+from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models import Avg
+from django.db.models import signals
+from django.dispatch import receiver
 from django.http import QueryDict
 from django.urls import reverse
 from django.utils import formats, timezone, functional
@@ -213,6 +215,13 @@ class Level(models.Model):
                 models.Max('level_order')
             ).get('level_order__max', None)
         return 0 if current_max is None else current_max + 1
+
+    def update_level_order(self):
+        if self.indicator_set.filter(deleted__isnull=True).exists():
+            for c, indicator in enumerate(self.indicator_set.filter(deleted__isnull=True).order_by('level_order')):
+                if c != indicator.level_order:
+                    indicator.level_order = c
+                    indicator.save()
 
 
 class LevelAdmin(admin.ModelAdmin):
@@ -868,7 +877,7 @@ class Indicator(SafeDeleteModel):
     class Meta:
         ordering = ('create_date',)
         verbose_name = _("Indicator")
-        unique_together = ['level', 'level_order']
+        unique_together = ['level', 'level_order', 'deleted']
 
     def __unicode__(self):
         return self.name
@@ -877,6 +886,15 @@ class Indicator(SafeDeleteModel):
         if self.create_date is None:
             self.create_date = timezone.now()
         self.edit_date = timezone.now()
+        if self.level and self.level.program_id != self.program_id:
+            raise ValidationError(
+                _('Level/Indicator mismatched program IDs ' +
+                  '(level %(level_program_id)d and indicator %(indicator_program_id)d)'),
+                code='foreign_key_constraint',
+                params={
+                    'level_program_id': self.level.program_id,
+                    'indicator_program_id': self.program_id
+                })
         super(Indicator, self).save(*args, **kwargs)
 
     @property
@@ -979,7 +997,7 @@ class Indicator(SafeDeleteModel):
 
     @property
     def get_result_average(self):
-        avg = self.result_set.aggregate(Avg('achieved'))['achieved__avg']
+        avg = self.result_set.aggregate(models.Avg('achieved'))['achieved__avg']
         return avg
 
     @property
@@ -1126,6 +1144,42 @@ class Indicator(SafeDeleteModel):
         elif hasattr(self.program, 'using_results_framework'):
             return self.program.using_results_framework
         return self.program._using_results_framework != Program.NOT_MIGRATED
+
+
+@receiver(signals.pre_save, sender=Indicator)
+def new_level_order(sender, instance, *args, **kwargs):
+    try:
+        original = sender.objects.get(pk=instance.pk)
+    except sender.DoesNotExist:
+        # new indicator being created:
+        if instance.level:
+            # if the new indicator is being created with a level, give it a new sort order:
+            instance.level_order = instance.level.next_sort_order
+    else:
+        # if the level didn't change, do nothing:
+        if instance.level and original.level and instance.level.pk == original.level.pk:
+            pass
+        else:
+            if instance.level:
+                instance.level_order = instance.level.next_sort_order
+            if original.level:
+                # hang the original level pk on the instance for catching in the post save signal below:
+                instance.old_level_pk = original.level.pk
+
+
+@receiver(signals.post_save, sender=Indicator)
+def reorder_former_level_on_update(sender, update_fields, created, instance, **kwargs):
+    old_level_pk = getattr(instance, 'old_level_pk', None)
+    if old_level_pk:
+        try:
+            level = Level.objects.get(pk=old_level_pk)
+        except Level.DoesNotExist:
+            pass
+        else:
+            level.update_level_order()
+    elif instance.deleted and instance.level:
+        # indicator is being deleted, reorder it's levels
+        instance.level.update_level_order()
 
 
 class PeriodicTarget(models.Model):
