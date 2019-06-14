@@ -264,7 +264,7 @@ class IndicatorCreate(IndicatorFormMixin, CreateView):
         return kwargs
 
     def form_valid(self, form, **kwargs):
-        indicator = form.save(commit=False)
+        indicator = form.save()
 
         periodic_targets = self.request.POST.get('periodic_targets')
 
