@@ -147,6 +147,20 @@ class IndicatorForm(forms.ModelForm):
             raise forms.ValidationError(_('Please enter a number larger than zero.'))
         return data
 
+    def clean_level(self):
+        level = self.cleaned_data['level']
+        if level and level.program_id != self.programval.pk:
+            raise forms.ValidationError(
+                _('Level program ID %(l_p_id)d and indicator program ID (%i_p_id)d mismatched'),
+                code='foreign_key_mismatch',
+                params={
+                    'l_p_id': level.program_id,
+                    'i_p_id': self.programval.pk
+                }
+            )
+        return level
+
+
     def save(self, commit=True):
         # set the program on the indicator on create (it's already set on update)
         if self.instance.program_id is None:

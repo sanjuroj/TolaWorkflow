@@ -16,14 +16,24 @@
             <h3><a href="{{ program.program_page_url }}">{{ program.gaitid }} - {{ program.name }}</a></h3>
         </div>
         <div class="subheader__actions">
-            <button type="submit" class="btn btn-sm btn-secondary" onClick="location.href='/indicators/indicator_plan/export/{{ program.id }}/'"><i class="fas fa-download"></i> Excel {# Excel (brand name) not translated #}</button>
+            <button type="submit" class="btn btn-sm btn-secondary" onClick="location.href='/indicators/indicator_plan/export/{{ program.id }}/{% if ordering %}?orderby={{ordering}}{% endif %}'"><i class="fas fa-download"></i> Excel {# Excel (brand name) not translated #}</button>
+            {% if ordering %}
+            <form method="GET" action="#" class="form-inline">
+                <div class="form-group"></div>
+                <label for="orderby_select">{% trans 'Group indicators' %}:</label>
+                <select class="form-control" id="orderby_select" name="orderby" onchange="this.form.submit()">
+                    <option value="1" {% if ordering == 1 %}selected{% endif %}>{{ program.rf_chain_sort_label }}</option>
+                    <option value="2" {% if ordering == 2 %}selected{% endif %}>{% trans 'by Level' %}</option>
+                </select>
+            </form>
+            {% endif %}
         </div>
     </div>
 
-    <div class="table-responsive ">
-        <table class="table table-striped table-bordered table-hover table-sm text-small">
-            <thead>
-                <tr>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-sm text-small table__ip">
+            <thead class="thead-light">
+                <tr class="title-row">
                     {% for name in column_names %}
                     <th class="text-nowrap">{{ name }}</th>
                     {% endfor %}
@@ -31,11 +41,20 @@
             </thead>
             <tbody>
                 {% for row in rows %}
-                <tr>
-                    {% for val in row %}
-                        <td>{{ val|default_if_none:'' }}</td>
-                    {% endfor %}
-                </tr>
+                {% if row.row_type == 'level' %}
+                    <tr>
+                        <td class="ip-level-row" colspan="{{column_names|length}}">
+                            {{ row.row_data|default_if_none:'' }}
+                        </td>
+                    </tr>
+                {% elif row.row_type == 'indicator' %}
+                    <tr>
+                        {% for val in row.row_data %}
+                            <td>{{ val|default_if_none:'' }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endif %}
+                
                 {% endfor %}
             </tbody>
         </table>

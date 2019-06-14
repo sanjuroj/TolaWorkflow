@@ -69,7 +69,7 @@ body.page_iptt_table { // body element for extra specificity
     }
 }
 
-td.iptt-level-row {
+td.iptt-level-row, td.ip-level-row {
     background-color: $gray-300;
     font-weight: bold;
 }

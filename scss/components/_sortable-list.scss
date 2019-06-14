@@ -80,4 +80,6 @@
 }
 .sortable-list__item__select {
     width: $grid-gutter-width * 3;
+    flex-grow: 0;
+    flex-shrink: 0;
 }

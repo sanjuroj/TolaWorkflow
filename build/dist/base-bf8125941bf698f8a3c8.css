@@ -8205,6 +8205,7 @@ body > .container {
   padding-left: 7.5px; }
 
 .form-check-input {
+  height: auto !important;
   width: auto !important; }
 
 span[data-toggle="popover"]:hover {
@@ -9852,7 +9853,9 @@ input[type=radio]:disabled {
   white-space: nowrap; }
 
 .sortable-list__item__select {
-  width: 90px; }
+  width: 90px;
+  flex-grow: 0;
+  flex-shrink: 0; }
 
 /* Local custom CSS and overloads for non-BS libraries */
 .help-block {
@@ -10097,7 +10100,7 @@ body.page_iptt_table {
 .page_iptt_table .modal-dialog .results-table__actions {
   background: transparent; }
 
-td.iptt-level-row {
+td.iptt-level-row, td.ip-level-row {
   background-color: #dbdcde;
   font-weight: bold; }
 
@@ -10579,5 +10582,3 @@ a:hover {
 
 /* Unsorted custom selectors */
 
-
-/*# sourceMappingURL=base-9c306dbc79e61f1e51db.css.map*/

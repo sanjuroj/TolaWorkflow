@@ -264,10 +264,7 @@ class IndicatorCreate(IndicatorFormMixin, CreateView):
         return kwargs
 
     def form_valid(self, form, **kwargs):
-        indicator = form.save(commit=False)
-        if indicator.level:
-            indicator.level_order = indicator.level.next_sort_order
-        indicator.save()
+        indicator = form.save()
 
         periodic_targets = self.request.POST.get('periodic_targets')
 
@@ -466,12 +463,12 @@ class IndicatorUpdate(IndicatorFormMixin, UpdateView):
 
         # Save completed PeriodicTargets to the DB)
         if new_target_frequency == Indicator.LOP:
+            # assume only 1 PT at this point
             lop_pt, created = PeriodicTarget.objects.update_or_create(
                 indicator=old_indicator,
-                period=PeriodicTarget.LOP_PERIOD,
                 defaults={
                     'target': lop,
-
+                    'period': PeriodicTarget.LOP_PERIOD,
                 }
             )
 
@@ -646,13 +643,17 @@ class PeriodicTargetDeleteAllView(View):
 
 
 def reset_indicator_target_frequency(ind):
-    if ind.target_frequency and ind.target_frequency != 1 and not ind.periodictargets.count():
+    """
+    This thing exists due to how the indicator form used to work, which was way more
+    permissive in letting you save the target frequency without generating targets.
+    It mostly exists now to clean up indicators in a bad state whre the target frequency
+    is set but PT count is 0.
+    """
+    if ind.target_frequency is not None and ind.periodictargets.count() == 0:
         ind.target_frequency = None
         ind.target_frequency_start = None
         ind.target_frequency_num_periods = 1
         ind.save()
-        return True
-    return False
 
 
 @method_decorator(login_required, name='dispatch')
@@ -1043,13 +1044,21 @@ def indicator_plan(request, program):
     program = get_object_or_404(Program, id=program)
 
     verify_program_access_level(request, program.id, 'low')
-
-    indicators = ip.indicator_queryset(program.pk)
+    if program.results_framework and request.GET.get('orderby') == '2':
+        rows = ip.get_rf_rows(ip.tier_sorted_indicator_queryset(program.pk), program.pk)
+        ordering = 2
+    elif program.results_framework:
+        rows = ip.get_rf_rows(ip.chain_sorted_indicator_queryset(program.pk), program.pk)
+        ordering = 1
+    else:
+        rows = ip.get_non_rf_rows(ip.non_rf_indicator_queryset(program.pk))
+        ordering = False
 
     return render(request, "indicators/indicator_plan.html", {
         'program': program,
         'column_names': ip.column_names(),
-        'rows': [ip.row(i) for i in indicators]
+        'rows': rows,
+        'ordering': ordering
     })
 
 
@@ -1266,8 +1275,13 @@ class IndicatorExport(View):
     Export all indicators to an XLS file
     """
     def get(self, request, *args, **kwargs):
-        queryset = ip.indicator_queryset(kwargs['program'])
-        wb = ip.create_workbook(queryset)
+        program = get_object_or_404(Program, pk=kwargs.get('program'))
+        if program.results_framework and request.GET.get('orderby') == '2':
+            wb = ip.create_rf_workbook(ip.tier_sorted_indicator_queryset(program.pk), program.pk)
+        elif program.results_framework:
+            wb = ip.create_rf_workbook(ip.chain_sorted_indicator_queryset(program.pk), program.pk)
+        else:
+            wb = ip.create_non_rf_workbook(ip.non_rf_indicator_queryset(program.pk))
 
         response = HttpResponse(content_type='application/ms-excel')
         response['Content-Disposition'] = 'attachment; filename="{}"'.format('indicator_plan.xlsx')
