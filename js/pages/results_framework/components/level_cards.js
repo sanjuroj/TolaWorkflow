@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import { observer, inject } from "mobx-react"
-import { toJS, extendObservable } from 'mobx';
+import { toJS, extendObservable, action } from 'mobx';
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCaretRight, faCaretDown, faArrowsAlt } from '@fortawesome/free-solid-svg-icons'
@@ -166,13 +166,49 @@ export class LevelCardExpanded extends React.Component {
         super(props);
         this.submitType = "saveOnly";
         this.indicatorWasReordered = false;
-        this.origData = JSON.stringify([props.level.name, props.level.assumptions, props.levelProps.indicators]);
+
+        // These 'base' vars will allow us to save orignalish data so we know whether to prompt users if they hit cancel.
+        // baseIndicators will need to be updated on indicator changes other than reordering since we don't
+        // want to warn for e.g. indicator creation, since users can't do anything about that.
+        this.baseLevelString = JSON.stringify([props.level.name, props.level.assumptions]);
+        this.baseIndicators = toJS(this.props.levelProps.indicators.slice());
+
         extendObservable(this, {
             name: props.level.name,
             assumptions: props.level.assumptions,
             indicators: props.levelProps.indicators.sort((a, b) => a.level_order - b.level_order),
+
             get dataHasChanged () {
-                return JSON.stringify([this.name, this.assumptions, this.indicators]) != this.origData}
+                const baseData = this.baseLevelString + JSON.stringify(this.baseIndicators.sort( (a, b) => a.id - b.id));
+                const currentData = JSON.stringify([this.name, this.assumptions]) + JSON.stringify(toJS(this.indicators).sort( (a, b) => a.id - b.id));
+                console.log('basedata', baseData);
+                console.log('currentData', currentData);
+                return currentData != baseData;
+            },
+
+            addIndicator (data) {
+                this.indicators.push(data);
+                this.baseIndicators.push(data)
+            },
+
+            deleteIndicator (indicatorId) {
+                this.indicators = this.indicators.filter( i => i.id != indicatorId);
+
+                this.indicators.forEach( (indicator, index) => indicator.level_order = index);
+                console.log('card inds', toJS(this.indicators))
+                this.baseIndicators = this.baseIndicators.filter( i => i.id != indicatorId);
+                this.baseIndicators.forEach( (indicator, index) => indicator.level_order = index);
+            },
+
+            updateIndicatorName (indicatorId, newName) {
+                this.indicators.find( i => i.id == indicatorId).name = newName;
+                this.baseIndicators.find( i => i.id == indicatorId).name = newName
+            }
+
+        }, {
+            addIndicator: action,
+            deleteIndicator: action,
+            updateIndicatorName: action
         });
     }
 
@@ -180,19 +216,33 @@ export class LevelCardExpanded extends React.Component {
         this.indicatorWasReordered = true;
         const indicatorId = this.indicators[oldIndex].id;
         const fakeChangeObj = {value: newIndex + 1, name: newIndex + 1};
-        this.updateIndicatorOrder(fakeChangeObj, indicatorId)
+        this.updateIndicatorOrder(indicatorId, fakeChangeObj)
     };
 
-
-    updateIndicatorOrder = (changeObj, indicatorId) => {
-        this.indicatorWasReordered = true;
+    /*
+        Updates the indicator order and resets level_order as necessary.  If changeObj is provided, that means
+        it's a move.  If only indicatorId is provided, it's a delete.
+    */
+    updateIndicatorOrder = (indicatorId, changeObj=null) => {
+        console.log('indicators in change order', toJS(this.indicators))
+        console.log('changeobj,indid', changeObj, indicatorId)
+        console.log('finded this', this.indicators.find(i => i.id == indicatorId));
         let oldIndex = this.indicators.find( i => i.id == indicatorId).level_order;
-        let newIndex = changeObj.value - 1;
-        let tempIndicators = this.indicators.slice();
-        tempIndicators.splice(newIndex, 0, tempIndicators.splice(oldIndex, 1)[0]);
+        let tempIndicators = toJS(this.indicators.slice());
+        console.log('init temp ind', toJS(tempIndicators));
+        if (changeObj) {
+            let newIndex = changeObj.value - 1;
+            tempIndicators.splice(newIndex, 0, tempIndicators.splice(oldIndex, 1)[0]);
+            this.props.rootStore.uiStore.activeCardNeedsConfirm = this.dataHasChanged;
+            this.indicatorWasReordered = true;
+        }
+        else{
+            tempIndicators = tempIndicators.filter( i => i.id != indicatorId);
+        }
+        console.log('before tempind', toJS(tempIndicators));
         tempIndicators.forEach( (indicator, index) => indicator.level_order = index);
-        this.indicators.replace(tempIndicators);
-        this.props.rootStore.uiStore.activeCardNeedsConfirm = this.dataHasChanged;
+        console.log('after tempind', toJS(tempIndicators));
+        this.indicators.replace(tempIndicators)
     }
 
     /*
@@ -207,6 +257,32 @@ export class LevelCardExpanded extends React.Component {
         // Enable popovers after update (they break otherwise)
         $('*[data-toggle="popover"]').popover({
             html: true
+        });
+
+        // Handle indicator creation.  Need to update rootStore and component store so if you close and reopen the card, you still see the new indicator
+        $('#indicator_modal_div').on('created.tola.indicator.save', (e, params) => {
+            const indicatorData = {
+                id: params.indicatorId,
+                name: params.indicatorName,
+                level: this.props.level.id,
+                level_order: this.indicators.length
+            };
+            this.props.rootStore.levelStore.addIndicatorToStore(indicatorData)
+            this.addIndicator(indicatorData)
+
+        });
+
+        // Handle indicator deletion.  Need to update rootStore and component store so if you close and reopen the card, you still see the new indicator
+        $('#indicator_modal_div').on('deleted.tola.indicator.save', (e, params) => {
+            this.props.rootStore.levelStore.deleteIndicatorFromStore(params.indicatorId);
+            this.deleteIndicator(params.indicatorId)
+
+        });
+
+        // Handle indicator update.  Need to update rootStore and component store so if you close and reopen the card, you still see the new indicator
+        $('#indicator_modal_div').on('updated.tola.indicator.save', (e, params) => {
+            this.props.rootStore.levelStore.updateIndicatorNameInStore(params.indicatorId, params.indicatorName);
+            this.updateIndicatorName(params.indicatorId, params.indicatorName)
         });
     }
 

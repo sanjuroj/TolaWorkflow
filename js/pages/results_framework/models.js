@@ -100,6 +100,9 @@ export class LevelStore {
             // Now remove the new card
             this.levels.replace(this.levels.filter((element) => element.id != "new"));
         }
+
+        this.fetchIndicatorsFromDB();
+
         this.rootStore.uiStore.removeActiveCard();
     };
 
@@ -177,7 +180,7 @@ export class LevelStore {
     };
 
     deleteLevelFromDB = (levelId) => {
-        const level_label = `${this.levelProperties[levelId]['tierName']} ${this.levelProperties[levelId]['ontologyLabel']}`
+        const level_label = `${this.levelProperties[levelId]['tierName']} ${this.levelProperties[levelId]['ontologyLabel']}`;
         api.delete(`/level/${levelId}`)
             .then(response => {
                 this.levels.replace(response.data);
@@ -251,26 +254,51 @@ export class LevelStore {
                     console.log("There was an error:", error);
                 })
         }
+
+
+        this.fetchIndicatorsFromDB();
+
         this.rootStore.uiStore.activeCardNeedsConfirm = false;
     };
 
     saveReorderedIndicatorsToDB = indicators => {
         api.post("/reorder_indicators/", indicators)
                 .then(response => {
+                   this.fetchIndicatorsFromDB()
                 })
                 .catch( error => {
                     console.log("There was an error:", error);
                 })
     };
 
-    fetchIndicatorsFromDB = () => {
-        api.get(`/indicator_list/${this.program_id}/`)
-                .then(response => {
-                    runInAction(() => this.indicators.replace(response.data));
-                })
-                .catch( error => {
-                    console.log("There was an error:", error);
-                })
+    @action
+    updateIndicatorNameInStore(indicatorId, newName) {
+        this.indicators.find( i => i.id == indicatorId).name = newName;
+    }
+
+    @action
+    deleteIndicatorFromStore = (indicatorId, levelId) => {
+        this.indicators = this.indicators.filter( i => i.id != indicatorId);
+        this.indicators
+            .filter( i => i.level == levelId)
+            .sort( (a, b) => a.level_order - b.level_order)
+            .forEach( (indicator, index) => indicator.level_order = index);
+    };
+
+    @action
+    addIndicatorToStore = (indicatorData) => {
+        this.indicators.push(indicatorData);
+    };
+
+
+    fetchIndicatorsFromDB = (indicatorId=null) => {
+        const indicatorQParam = indicatorId ? `?indicatorId=${indicatorId}` : "";
+        api.get(`/indicator_list/${this.program_id}/${indicatorQParam}`)
+            .then((response) => runInAction(() => {
+                this.indicators = response.data;
+                console.log("fetching inds from db")
+            }))
+            .catch((error) => console.log('There was an error:', error));
     }
 
 

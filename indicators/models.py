@@ -209,7 +209,7 @@ class Level(models.Model):
     def next_sort_order(self):
         current_max = None
         if self.indicator_set.exists():
-            current_max = self.indicator_set.aggregate(
+            current_max = self.indicator_set.filter(deleted__isnull=True).aggregate(
                 models.Max('level_order')
             ).get('level_order__max', None)
         return 0 if current_max is None else current_max + 1
@@ -868,7 +868,7 @@ class Indicator(SafeDeleteModel):
     class Meta:
         ordering = ('create_date',)
         verbose_name = _("Indicator")
-        unique_together = ['level', 'level_order']
+        unique_together = ['level', 'level_order', 'deleted']
 
     def __unicode__(self):
         return self.name
