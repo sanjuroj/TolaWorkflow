@@ -8205,6 +8205,7 @@ body > .container {
   padding-left: 7.5px; }
 
 .form-check-input {
+  height: auto !important;
   width: auto !important; }
 
 span[data-toggle="popover"]:hover {
@@ -9852,7 +9853,9 @@ input[type=radio]:disabled {
   white-space: nowrap; }
 
 .sortable-list__item__select {
-  width: 90px; }
+  width: 90px;
+  flex-grow: 0;
+  flex-shrink: 0; }
 
 /* Local custom CSS and overloads for non-BS libraries */
 .help-block {
@@ -10579,3 +10582,5 @@ a:hover {
 
 /* Unsorted custom selectors */
 
+
+/*# sourceMappingURL=base-680aed8917cf16abb9ba.css.map*/

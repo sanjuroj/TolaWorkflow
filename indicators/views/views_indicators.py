@@ -466,12 +466,12 @@ class IndicatorUpdate(IndicatorFormMixin, UpdateView):
 
         # Save completed PeriodicTargets to the DB)
         if new_target_frequency == Indicator.LOP:
+            # assume only 1 PT at this point
             lop_pt, created = PeriodicTarget.objects.update_or_create(
                 indicator=old_indicator,
-                period=PeriodicTarget.LOP_PERIOD,
                 defaults={
                     'target': lop,
-
+                    'period': PeriodicTarget.LOP_PERIOD,
                 }
             )
 
@@ -646,13 +646,17 @@ class PeriodicTargetDeleteAllView(View):
 
 
 def reset_indicator_target_frequency(ind):
-    if ind.target_frequency and ind.target_frequency != 1 and not ind.periodictargets.count():
+    """
+    This thing exists due to how the indicator form used to work, which was way more
+    permissive in letting you save the target frequency without generating targets.
+    It mostly exists now to clean up indicators in a bad state whre the target frequency
+    is set but PT count is 0.
+    """
+    if ind.target_frequency is not None and ind.periodictargets.count() == 0:
         ind.target_frequency = None
         ind.target_frequency_start = None
         ind.target_frequency_num_periods = 1
         ind.save()
-        return True
-    return False
 
 
 @method_decorator(login_required, name='dispatch')
