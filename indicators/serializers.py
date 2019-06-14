@@ -584,12 +584,12 @@ class IPTTFullReportMixin:
         for frequency in self.frequencies:
             level_rows[frequency] = []
             for level in sorted_levels:
-                level_rows[frequency].append({
-                    'level': level,
-                    'indicators': [
-                        indicator for indicator in self._indicators.get(frequency).filter(level=level)
-                        ]
-                })
+                indicators = [indicator for indicator in self._indicators.get(frequency).filter(level=level)]
+                if indicators:
+                    level_rows[frequency].append({
+                        'level': level,
+                        'indicators': indicators
+                    })
         return level_rows
 
 
@@ -633,7 +633,7 @@ class IPTTTVAMixin:
                 'level': level,
                 'indicators': [indicator for indicator in self.indicators.filter(level=level)]
             }
-            if level_row['indicators'] or not self.filters:
+            if level_row['indicators']:
                 yield level_row
 
 
@@ -676,7 +676,7 @@ class IPTTTimeperiodsMixin:
                 'level': level,
                 'indicators': [indicator for indicator in self.indicators.filter(level=level)]
             }
-            if level_row['indicators'] or not self.filters:
+            if level_row['indicators']:
                 yield level_row
 
 class IPTTJSONMixin:

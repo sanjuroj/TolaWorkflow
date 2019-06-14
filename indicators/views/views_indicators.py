@@ -1047,13 +1047,21 @@ def indicator_plan(request, program):
     program = get_object_or_404(Program, id=program)
 
     verify_program_access_level(request, program.id, 'low')
-
-    indicators = ip.indicator_queryset(program.pk)
+    if program.results_framework and request.GET.get('orderby') == '2':
+        rows = ip.get_rf_rows(ip.tier_sorted_indicator_queryset(program.pk), program.pk)
+        ordering = 2
+    elif program.results_framework:
+        rows = ip.get_rf_rows(ip.chain_sorted_indicator_queryset(program.pk), program.pk)
+        ordering = 1
+    else:
+        rows = ip.get_non_rf_rows(ip.non_rf_indicator_queryset(program.pk))
+        ordering = False
 
     return render(request, "indicators/indicator_plan.html", {
         'program': program,
         'column_names': ip.column_names(),
-        'rows': [ip.row(i) for i in indicators]
+        'rows': rows,
+        'ordering': ordering
     })
 
 
@@ -1270,8 +1278,13 @@ class IndicatorExport(View):
     Export all indicators to an XLS file
     """
     def get(self, request, *args, **kwargs):
-        queryset = ip.indicator_queryset(kwargs['program'])
-        wb = ip.create_workbook(queryset)
+        program = get_object_or_404(Program, pk=kwargs.get('program'))
+        if program.results_framework and request.GET.get('orderby') == '2':
+            wb = ip.create_rf_workbook(ip.tier_sorted_indicator_queryset(program.pk), program.pk)
+        elif program.results_framework:
+            wb = ip.create_rf_workbook(ip.chain_sorted_indicator_queryset(program.pk), program.pk)
+        else:
+            wb = ip.create_non_rf_workbook(ip.non_rf_indicator_queryset(program.pk))
 
         response = HttpResponse(content_type='application/ms-excel')
         response['Content-Disposition'] = 'attachment; filename="{}"'.format('indicator_plan.xlsx')

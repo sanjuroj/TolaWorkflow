@@ -10100,7 +10100,7 @@ body.page_iptt_table {
 .page_iptt_table .modal-dialog .results-table__actions {
   background: transparent; }
 
-td.iptt-level-row {
+td.iptt-level-row, td.ip-level-row {
   background-color: #dbdcde;
   font-weight: bold; }
 
