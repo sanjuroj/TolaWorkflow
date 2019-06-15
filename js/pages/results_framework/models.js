@@ -296,7 +296,6 @@ export class LevelStore {
         api.get(`/indicator_list/${this.program_id}/${indicatorQParam}`)
             .then((response) => runInAction(() => {
                 this.indicators = response.data;
-                console.log("fetching inds from db")
             }))
             .catch((error) => console.log('There was an error:', error));
     }
