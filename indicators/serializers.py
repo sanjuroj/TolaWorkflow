@@ -586,7 +586,7 @@ class IPTTTVASerializerMixin:
                 'level': level,
                 'indicators': [indicator for indicator in self.indicators.filter(level=level)]
             }
-            if level_row['indicators']:
+            if level_row['indicators'] or level.parent is None:
                 yield level_row
 
 
@@ -629,7 +629,7 @@ class IPTTTimeperiodsSerializerMixin:
                 'level': level,
                 'indicators': [indicator for indicator in self.indicators.filter(level=level)]
             }
-            if level_row['indicators']:
+            if level_row['indicators'] or level.parent is None:
                 yield level_row
 
 class IPTTJSONRendererMixin:
