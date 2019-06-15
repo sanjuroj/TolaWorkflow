@@ -2647,9 +2647,15 @@ function () {
           }));
         }
 
-        return levels.filter(function (level) {
+        levels = levels.filter(function (level) {
           return !level._parent || levelPks.has(level.pk);
         });
+
+        if (levels.length == 1 && !levelPks.has(levels[0].pk)) {
+          return [];
+        }
+
+        return levels;
       }
 
       return [];
@@ -4977,4 +4983,4 @@ function () {
 /***/ })
 
 },[["mYfJ","runtime","vendors"]]]);
-//# sourceMappingURL=iptt_report-b1c7fe4e317f83a62586.js.map
+//# sourceMappingURL=iptt_report-ded35f93efd658b3d9b2.js.map
