@@ -809,7 +809,7 @@ export default class FilterStore {
             } else {
                 levelPks = new Set(this.filteredIndicators.map(indicator => indicator.levelpk));
             }
-            return levels.filter(level => levelPks.has(level.pk));
+            return levels.filter(level => !level._parent || levelPks.has(level.pk));
         }
         return [];
     }
