@@ -135,6 +135,11 @@ class ProgramSerializer(serializers.ModelSerializer):
 
 
 
+#######################
+#    INDICATOR PLAN   #
+#######################
+
+
 class IndicatorPlanIndicatorSerializerBase(serializers.ModelSerializer):
     """
     Serializer for the indicator plan page and excel export
@@ -205,13 +210,6 @@ class IndicatorPlanIndicatorSerializerBase(serializers.ModelSerializer):
         return data
 
 
-
-#######################
-#    INDICATOR PLAN   #
-#######################
-
-
-
 class IndicatorFormatsMixin(object):
     translateable_fields = (
         'tier_name_only',
@@ -278,8 +276,6 @@ class IndicatorFormatsMixin(object):
 
 
 class IndicatorWebMixin(IndicatorFormatsMixin):
-
-
     def get_translated(self, value):
         return value if value is None else ugettext_lazy(value)
 
@@ -299,8 +295,6 @@ class IndicatorWebMixin(IndicatorFormatsMixin):
 
 
 class IndicatorExcelMixin(IndicatorFormatsMixin):
-
-
     def get_translated(self, value):
         return value if value is None else ugettext(value)
 
@@ -380,7 +374,7 @@ class IndicatorPlanIndicatorExcelSerializer(IndicatorExcelMixin, IndicatorPlanIn
 
 class IndicatorPlanLevelSerializerBase(serializers.ModelSerializer):
     """
-    Serializer for the indicator plan page and excel export
+    Level serializer for the indicator plan page and excel export
     """
     display_name = serializers.SerializerMethodField()
 
