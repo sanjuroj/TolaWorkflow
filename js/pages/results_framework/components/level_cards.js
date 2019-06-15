@@ -468,7 +468,7 @@ class IndicatorList extends React.Component {
             return (
                 <React.Fragment>
                     <SingleReactSelect
-                        update={(value) => this.props.changeFunc(value, indicator.id)}
+                        update={(value) => this.props.changeFunc(indicator.id, value)}
                         selectId={"ind"+indicator.id}
                         labelClasses=" "
                         formRowClasses="sortable-list__item__label"
