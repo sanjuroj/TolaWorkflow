@@ -211,7 +211,7 @@ class Level(models.Model):
     def next_sort_order(self):
         current_max = None
         if self.indicator_set.exists():
-            current_max = self.indicator_set.aggregate(
+            current_max = self.indicator_set.filter(deleted__isnull=True).aggregate(
                 models.Max('level_order')
             ).get('level_order__max', None)
         return 0 if current_max is None else current_max + 1

@@ -167,7 +167,9 @@
     function saveEventParams() {
         return {
             programId: programId(),
-            indicatorId: indicatorId()
+            indicatorId: indicatorId(),
+            indicatorName: $("#id_name").val(),
+            levelId: parseInt($("#id_level").val())
         };
     }
 
@@ -506,7 +508,8 @@
         return submitForm().done((data) => {
             $('#indicator_modal_div').trigger('created.tola.indicator.save', {
                 programId: programId(),
-                indicatorId: data.id
+                indicatorId: data.id,
+                indicatorName: $("#id_name").val()
             });
 
             // remember such that the user can close the modal without a prompt
