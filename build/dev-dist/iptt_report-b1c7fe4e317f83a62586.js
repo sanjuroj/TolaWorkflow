@@ -2648,7 +2648,7 @@ function () {
         }
 
         return levels.filter(function (level) {
-          return levelPks.has(level.pk);
+          return !level._parent || levelPks.has(level.pk);
         });
       }
 
@@ -4977,4 +4977,4 @@ function () {
 /***/ })
 
 },[["mYfJ","runtime","vendors"]]]);
-//# sourceMappingURL=iptt_report-38d6ef14a3bce5be8042.js.map
+//# sourceMappingURL=iptt_report-b1c7fe4e317f83a62586.js.map
