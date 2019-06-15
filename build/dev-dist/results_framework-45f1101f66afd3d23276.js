@@ -596,12 +596,10 @@ function (_React$Component3) {
         name: newIndex + 1
       };
 
-      _this3.updateIndicatorOrder(fakeChangeObj, indicatorId);
+      _this3.changeIndicatorOrder(indicatorId, fakeChangeObj);
     };
 
-    _this3.updateIndicatorOrder = function (changeObj, indicatorId) {
-      _this3.indicatorWasReordered = true;
-
+    _this3.changeIndicatorOrder = function (indicatorId, changeObj) {
       var oldIndex = _this3.indicators.find(function (i) {
         return i.id == indicatorId;
       }).level_order;
@@ -618,6 +616,7 @@ function (_React$Component3) {
       _this3.indicators.replace(tempIndicators);
 
       _this3.props.rootStore.uiStore.activeCardNeedsConfirm = _this3.dataHasChanged;
+      _this3.indicatorWasReordered = true;
     };
 
     _this3.updateSubmitType = function (newType) {
@@ -685,8 +684,14 @@ function (_React$Component3) {
     };
 
     _this3.submitType = "saveOnly";
-    _this3.indicatorWasReordered = false;
-    _this3.origData = JSON.stringify([props.level.name, props.level.assumptions, props.levelProps.indicators]);
+    _this3.indicatorWasReordered = false; // These 'base' vars will allow us to save orignalish data so we know whether to prompt users if they hit cancel.
+    // baseIndicators will need to be updated on indicator changes other than reordering since we don't
+    // want to warn for e.g. indicator creation, since users can't do anything about that.
+
+    _this3.baseLevelString = JSON.stringify([props.level.name, props.level.assumptions]);
+    _this3.baseIndicators = _this3.props.levelProps.indicators.slice().map(function (i) {
+      return Object(mobx__WEBPACK_IMPORTED_MODULE_3__["toJS"])(i);
+    });
     Object(mobx__WEBPACK_IMPORTED_MODULE_3__["extendObservable"])(_assertThisInitialized(_assertThisInitialized(_this3)), {
       name: props.level.name,
       assumptions: props.level.assumptions,
@@ -695,9 +700,45 @@ function (_React$Component3) {
       }),
 
       get dataHasChanged() {
-        return JSON.stringify([this.name, this.assumptions, this.indicators]) != this.origData;
-      }
+        var baseData = this.baseLevelString + JSON.stringify(this.baseIndicators.sort(function (a, b) {
+          return a.id - b.id;
+        }));
+        var currentData = JSON.stringify([this.name, this.assumptions]) + JSON.stringify(Object(mobx__WEBPACK_IMPORTED_MODULE_3__["toJS"])(this.indicators).sort(function (a, b) {
+          return a.id - b.id;
+        }));
+        return currentData != baseData;
+      },
 
+      addIndicator: function addIndicator(data) {
+        this.indicators.push(data);
+        this.baseIndicators.push(data);
+      },
+      deleteIndicator: function deleteIndicator(indicatorId) {
+        this.indicators = this.indicators.filter(function (i) {
+          return i.id != indicatorId;
+        });
+        this.indicators.forEach(function (indicator, index) {
+          return indicator.level_order = index;
+        });
+        this.baseIndicators = this.baseIndicators.filter(function (i) {
+          return i.id != indicatorId;
+        });
+        this.baseIndicators.forEach(function (indicator, index) {
+          return indicator.level_order = index;
+        });
+      },
+      updateIndicatorName: function updateIndicatorName(indicatorId, newName) {
+        this.indicators.find(function (i) {
+          return i.id == indicatorId;
+        }).name = newName;
+        this.baseIndicators.find(function (i) {
+          return i.id == indicatorId;
+        }).name = newName;
+      }
+    }, {
+      addIndicator: mobx__WEBPACK_IMPORTED_MODULE_3__["action"],
+      deleteIndicator: mobx__WEBPACK_IMPORTED_MODULE_3__["action"],
+      updateIndicatorName: mobx__WEBPACK_IMPORTED_MODULE_3__["action"]
     });
     return _this3;
   }
@@ -705,9 +746,50 @@ function (_React$Component3) {
   _createClass(LevelCardExpanded, [{
     key: "componentDidMount",
     value: function componentDidMount() {
+      var _this4 = this;
+
       // Enable popovers after update (they break otherwise)
       $('*[data-toggle="popover"]').popover({
         html: true
+      }); // Handle indicator creation.  Need to update rootStore and component store so if you close and reopen the card, you still see the new indicator
+
+      $('#indicator_modal_div').on('created.tola.indicator.save', function (e, params) {
+        var indicatorData = {
+          id: params.indicatorId,
+          name: params.indicatorName,
+          level: _this4.props.level.id,
+          level_order: _this4.indicators.length
+        };
+
+        _this4.props.rootStore.levelStore.addIndicatorToStore(indicatorData);
+
+        _this4.addIndicator(indicatorData);
+      }); // Handle indicator deletion.  Need to update rootStore and component store so if you close and reopen the card, you still see the new indicator
+
+      $('#indicator_modal_div').on('deleted.tola.indicator.save', function (e, params) {
+        _this4.props.rootStore.levelStore.deleteIndicatorFromStore(params.indicatorId);
+
+        _this4.deleteIndicator(params.indicatorId);
+      }); // Handle indicator update.  Need to update rootStore and component store so if you close and reopen the card, you still see the new indicator
+
+      $('#indicator_modal_div').on('updated.tola.indicator.save', function (e, params) {
+        if (params.levelId != _this4.props.level.id) {
+          // Only add the indicator to another level if it wasn't blanked out
+          if (params.levelId) {
+            var movedLevel = Object(mobx__WEBPACK_IMPORTED_MODULE_3__["toJS"])(_this4.indicators.find(function (i) {
+              return i.id == params.indicatorId;
+            }));
+            movedLevel.level = params.levelId;
+
+            _this4.props.rootStore.levelStore.addIndicatorToStore(movedLevel);
+          }
+
+          _this4.deleteIndicator(params.indicatorId);
+        } else {
+          _this4.props.rootStore.levelStore.updateIndicatorNameInStore(params.indicatorId, params.indicatorName);
+
+          _this4.updateIndicatorName(params.indicatorId, params.indicatorName);
+        }
       });
     }
   }, {
@@ -751,9 +833,9 @@ function (_React$Component3) {
         level: this.props.level,
         tierName: this.props.levelProps.tierName,
         indicators: this.indicators,
-        disabled: !this.name,
+        disabled: !this.name || this.props.level.id == "new",
         reorderDisabled: this.indicators.length < 2,
-        changeFunc: this.updateIndicatorOrder,
+        changeFunc: this.changeIndicatorOrder,
         dragEndFunc: this.onDragEnd
       }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ButtonBar, {
         level: this.props.level,
@@ -857,7 +939,7 @@ function (_React$Component5) {
   _createClass(LevelButton, [{
     key: "render",
     value: function render() {
-      var _this4 = this;
+      var _this5 = this;
 
       var buttonType = this.props.submitType == "cancel" ? "button" : "submit";
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
@@ -865,7 +947,7 @@ function (_React$Component5) {
         type: buttonType,
         className: this.props.classes + ' level-button btn btn-sm',
         onClick: function onClick() {
-          return _this4.props.submitFunc(_this4.props.submitType);
+          return _this5.props.submitFunc(_this5.props.submitType);
         }
       }, this.props.text);
     }
@@ -896,7 +978,7 @@ function (_React$Component6) {
   }, {
     key: "render",
     value: function render() {
-      var _this5 = this;
+      var _this6 = this;
 
       // Create the list of indicators and the dropdowns for setting the indicator order
       var options = this.props.indicators.map(function (entry, index) {
@@ -912,7 +994,7 @@ function (_React$Component6) {
         }, indicator.name.replace(/(.{55})..+/, "$1..."));
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_selectWidgets__WEBPACK_IMPORTED_MODULE_7__["SingleReactSelect"], {
           update: function update(value) {
-            return _this5.props.changeFunc(value, indicator.id);
+            return _this6.props.changeFunc(value, indicator.id);
           },
           selectId: "ind" + indicator.id,
           labelClasses: " ",
@@ -924,11 +1006,11 @@ function (_React$Component6) {
           },
           label: indicator_label,
           options: options,
-          disabled: _this5.props.disabled || _this5.props.reorderDisabled
+          disabled: _this6.props.disabled || _this6.props.reorderDisabled
         }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
           className: "sortable-list__item__actions"
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_indicatorModalComponents__WEBPACK_IMPORTED_MODULE_8__["UpdateIndicatorButton"], {
-          readonly: _this5.props.disabled,
+          readonly: _this6.props.disabled,
           label: gettext("Settings"),
           indicatorId: indicator.id
         })));
@@ -978,7 +1060,7 @@ function (_React$Component6) {
           key: "item-".concat(index),
           index: index,
           value: value,
-          disabled: _this5.props.disabled || _this5.props.reorderDisabled
+          disabled: _this6.props.disabled || _this6.props.reorderDisabled
         });
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "sortable-list-actions"
@@ -1233,7 +1315,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UIStore", function() { return UIStore; });
 /* harmony import */ var mobx__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! mobx */ "2vnA");
 /* harmony import */ var _api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../api.js */ "XoI5");
-var _class, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _temp, _class3, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _temp2;
+var _class, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _temp, _class3, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _descriptor16, _temp2;
 
 function _initializerDefineProperty(target, property, descriptor, context) { if (!descriptor) return; Object.defineProperty(target, property, { enumerable: descriptor.enumerable, configurable: descriptor.configurable, writable: descriptor.writable, value: descriptor.initializer ? descriptor.initializer.call(context) : void 0 }); }
 
@@ -1373,22 +1455,32 @@ function () {
         });
       }
 
+      _this.fetchIndicatorsFromDB();
+
       _this.rootStore.uiStore.activeCardNeedsConfirm = false;
     };
 
     this.saveReorderedIndicatorsToDB = function (indicators) {
-      _api_js__WEBPACK_IMPORTED_MODULE_1__["api"].post("/reorder_indicators/", indicators).then(function (response) {}).catch(function (error) {
+      _api_js__WEBPACK_IMPORTED_MODULE_1__["api"].post("/reorder_indicators/", indicators).then(function (response) {
+        _this.fetchIndicatorsFromDB();
+      }).catch(function (error) {
         console.log("There was an error:", error);
       });
     };
 
+    _initializerDefineProperty(this, "deleteIndicatorFromStore", _descriptor9, this);
+
+    _initializerDefineProperty(this, "addIndicatorToStore", _descriptor10, this);
+
     this.fetchIndicatorsFromDB = function () {
-      _api_js__WEBPACK_IMPORTED_MODULE_1__["api"].get("/indicator_list/".concat(_this.program_id, "/")).then(function (response) {
-        Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
-          return _this.indicators.replace(response.data);
+      var indicatorId = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+      var indicatorQParam = indicatorId ? "?indicatorId=".concat(indicatorId) : "";
+      _api_js__WEBPACK_IMPORTED_MODULE_1__["api"].get("/indicator_list/".concat(_this.program_id, "/").concat(indicatorQParam)).then(function (response) {
+        return Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
+          _this.indicators = response.data;
         });
       }).catch(function (error) {
-        console.log("There was an error:", error);
+        return console.log('There was an error:', error);
       });
     };
 
@@ -1493,6 +1585,13 @@ function () {
     value: function changeTierSet(newTierSetKey) {
       this.chosenTierSetKey = newTierSetKey;
       this.chosenTierSet = this.tierTemplates[newTierSetKey]['tiers'];
+    }
+  }, {
+    key: "updateIndicatorNameInStore",
+    value: function updateIndicatorNameInStore(indicatorId, newName) {
+      this.indicators.find(function (i) {
+        return i.id == indicatorId;
+      }).name = newName;
     }
   }, {
     key: "sortedLevels",
@@ -1626,6 +1725,8 @@ function () {
         }));
       }
 
+      _this3.fetchIndicatorsFromDB();
+
       _this3.rootStore.uiStore.removeActiveCard();
     };
   }
@@ -1727,6 +1828,38 @@ function () {
       _this6.rootStore.uiStore.activeCard = "new";
     };
   }
+}), _applyDecoratedDescriptor(_class.prototype, "updateIndicatorNameInStore", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "updateIndicatorNameInStore"), _class.prototype), _descriptor9 = _applyDecoratedDescriptor(_class.prototype, "deleteIndicatorFromStore", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    var _this7 = this;
+
+    return function (indicatorId, levelId) {
+      _this7.indicators = _this7.indicators.filter(function (i) {
+        return i.id != indicatorId;
+      });
+
+      _this7.indicators.filter(function (i) {
+        return i.level == levelId;
+      }).sort(function (a, b) {
+        return a.level_order - b.level_order;
+      }).forEach(function (indicator, index) {
+        return indicator.level_order = index;
+      });
+    };
+  }
+}), _descriptor10 = _applyDecoratedDescriptor(_class.prototype, "addIndicatorToStore", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    var _this8 = this;
+
+    return function (indicatorData) {
+      _this8.indicators.push(indicatorData);
+    };
+  }
 })), _class);
 var UIStore = (_class3 = (_temp2 =
 /*#__PURE__*/
@@ -1734,23 +1867,23 @@ function () {
   function UIStore(rootStore) {
     _classCallCheck(this, UIStore);
 
-    _initializerDefineProperty(this, "activeCard", _descriptor9, this);
+    _initializerDefineProperty(this, "activeCard", _descriptor11, this);
 
-    _initializerDefineProperty(this, "hasVisibleChildren", _descriptor10, this);
+    _initializerDefineProperty(this, "hasVisibleChildren", _descriptor12, this);
 
     this.activeCardNeedsConfirm = "";
 
-    _initializerDefineProperty(this, "editCard", _descriptor11, this);
+    _initializerDefineProperty(this, "editCard", _descriptor13, this);
 
-    _initializerDefineProperty(this, "onLeaveConfirm", _descriptor12, this);
+    _initializerDefineProperty(this, "onLeaveConfirm", _descriptor14, this);
 
     this.onLeaveCancel = function () {
       $(".edit-button").prop("disabled", false);
     };
 
-    _initializerDefineProperty(this, "removeActiveCard", _descriptor13, this);
+    _initializerDefineProperty(this, "removeActiveCard", _descriptor15, this);
 
-    _initializerDefineProperty(this, "updateVisibleChildren", _descriptor14, this);
+    _initializerDefineProperty(this, "updateVisibleChildren", _descriptor16, this);
 
     this.rootStore = rootStore;
     this.hasVisibleChildren = this.rootStore.levelStore.levels.map(function (l) {
@@ -1781,31 +1914,31 @@ function () {
   }]);
 
   return UIStore;
-}(), _temp2), (_descriptor9 = _applyDecoratedDescriptor(_class3.prototype, "activeCard", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}(), _temp2), (_descriptor11 = _applyDecoratedDescriptor(_class3.prototype, "activeCard", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: null
-}), _descriptor10 = _applyDecoratedDescriptor(_class3.prototype, "hasVisibleChildren", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor12 = _applyDecoratedDescriptor(_class3.prototype, "hasVisibleChildren", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return [];
   }
-}), _applyDecoratedDescriptor(_class3.prototype, "tierLockStatus", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class3.prototype, "tierLockStatus"), _class3.prototype), _descriptor11 = _applyDecoratedDescriptor(_class3.prototype, "editCard", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
+}), _applyDecoratedDescriptor(_class3.prototype, "tierLockStatus", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class3.prototype, "tierLockStatus"), _class3.prototype), _descriptor13 = _applyDecoratedDescriptor(_class3.prototype, "editCard", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
-    var _this7 = this;
+    var _this9 = this;
 
     return function (levelId) {
-      if (_this7.activeCardNeedsConfirm) {
-        $("#level-card-".concat(_this7.activeCard))[0].scrollIntoView({
+      if (_this9.activeCardNeedsConfirm) {
+        $("#level-card-".concat(_this9.activeCard))[0].scrollIntoView({
           behavior: "smooth"
         });
-        var oldTierName = _this7.rootStore.levelStore.levelProperties[_this7.activeCard].tierName;
+        var oldTierName = _this9.rootStore.levelStore.levelProperties[_this9.activeCard].tierName;
         $(".edit-button").prop("disabled", true);
         create_no_rationale_changeset_notice({
           /* # Translators:  This is a confirmation prompt that is triggered by clicking on a cancel button.  */
@@ -1814,47 +1947,16 @@ function () {
           /* # Translators:  This is a warning provided to the user when they try to cancel the editing of something they have already modified.  */
           preamble: gettext("Changes to this ".concat(oldTierName, " will not be saved")),
           on_submit: function on_submit() {
-            return _this7.onLeaveConfirm(levelId);
+            return _this9.onLeaveConfirm(levelId);
           },
-          on_cancel: _this7.onLeaveCancel
+          on_cancel: _this9.onLeaveCancel
         });
       } else {
-        _this7.activeCard = levelId;
+        _this9.activeCard = levelId;
       }
     };
   }
-}), _descriptor12 = _applyDecoratedDescriptor(_class3.prototype, "onLeaveConfirm", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
-  configurable: true,
-  enumerable: true,
-  writable: true,
-  initializer: function initializer() {
-    var _this8 = this;
-
-    return function (levelId) {
-      $(".edit-button").prop("disabled", false);
-      _this8.activeCard = levelId; // Need to use set timeout to ensure that scrolling loses the race with components reacting to the new position of the open card.
-
-      setTimeout(function () {
-        $("#level-card-".concat(levelId))[0].scrollIntoView({
-          behavior: "smooth"
-        });
-      }, 100);
-      _this8.activeCardNeedsConfirm = false;
-    };
-  }
-}), _descriptor13 = _applyDecoratedDescriptor(_class3.prototype, "removeActiveCard", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
-  configurable: true,
-  enumerable: true,
-  writable: true,
-  initializer: function initializer() {
-    var _this9 = this;
-
-    return function () {
-      _this9.activeCard = null;
-      _this9.rootStore.uiStore.activeCardNeedsConfirm = false;
-    };
-  }
-}), _descriptor14 = _applyDecoratedDescriptor(_class3.prototype, "updateVisibleChildren", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
+}), _descriptor14 = _applyDecoratedDescriptor(_class3.prototype, "onLeaveConfirm", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
   configurable: true,
   enumerable: true,
   writable: true,
@@ -1862,24 +1964,55 @@ function () {
     var _this10 = this;
 
     return function (levelId) {
+      $(".edit-button").prop("disabled", false);
+      _this10.activeCard = levelId; // Need to use set timeout to ensure that scrolling loses the race with components reacting to the new position of the open card.
+
+      setTimeout(function () {
+        $("#level-card-".concat(levelId))[0].scrollIntoView({
+          behavior: "smooth"
+        });
+      }, 100);
+      _this10.activeCardNeedsConfirm = false;
+    };
+  }
+}), _descriptor15 = _applyDecoratedDescriptor(_class3.prototype, "removeActiveCard", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    var _this11 = this;
+
+    return function () {
+      _this11.activeCard = null;
+      _this11.rootStore.uiStore.activeCardNeedsConfirm = false;
+    };
+  }
+}), _descriptor16 = _applyDecoratedDescriptor(_class3.prototype, "updateVisibleChildren", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    var _this12 = this;
+
+    return function (levelId) {
       var forceHide = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
       var forceShow = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
 
       // forceHide is to ensure that descendant levels are also made hidden, even if they are not actually visible.
-      if (_this10.hasVisibleChildren.indexOf(levelId) >= 0 || forceHide) {
-        _this10.hasVisibleChildren = _this10.hasVisibleChildren.filter(function (level_id) {
+      if (_this12.hasVisibleChildren.indexOf(levelId) >= 0 || forceHide) {
+        _this12.hasVisibleChildren = _this12.hasVisibleChildren.filter(function (level_id) {
           return level_id != levelId;
         });
 
-        var childLevels = _this10.rootStore.levelStore.levels.filter(function (l) {
+        var childLevels = _this12.rootStore.levelStore.levels.filter(function (l) {
           return l.parent == levelId;
         });
 
         childLevels.forEach(function (l) {
-          return _this10.updateVisibleChildren(l.id, true);
+          return _this12.updateVisibleChildren(l.id, true);
         });
       } else {
-        _this10.hasVisibleChildren.push(levelId);
+        _this12.hasVisibleChildren.push(levelId);
       }
     };
   }
@@ -1956,11 +2089,7 @@ var rootStore = new _models__WEBPACK_IMPORTED_MODULE_8__["RootStore"](program_id
 
 react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render(react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(mobx_react__WEBPACK_IMPORTED_MODULE_2__["Provider"], {
   rootStore: rootStore
-}, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_leveltier_picker__WEBPACK_IMPORTED_MODULE_7__["LevelTierPicker"], null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_level_list__WEBPACK_IMPORTED_MODULE_6__["LevelListPanel"], null))), document.querySelector('#level-builder-react-component')); // Reload indicators when a new one is created, updated, or deleted
-
-$('#indicator_modal_div').on('created.tola.indicator.save updated.tola.indicator.save deleted.tola.indicator.save', function (e, params) {
-  rootStore.levelStore.fetchIndicatorsFromDB();
-});
+}, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_leveltier_picker__WEBPACK_IMPORTED_MODULE_7__["LevelTierPicker"], null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_level_list__WEBPACK_IMPORTED_MODULE_6__["LevelListPanel"], null))), document.querySelector('#level-builder-react-component'));
 
 /***/ }),
 
@@ -2222,4 +2351,4 @@ function (_React$Component2) {
 /***/ })
 
 },[["QTZG","runtime","vendors"]]]);
-//# sourceMappingURL=results_framework-03edb63b2ca80acd3729.js.map
+//# sourceMappingURL=results_framework-45f1101f66afd3d23276.js.map
