@@ -15,27 +15,33 @@
         <div class="subheader__title">
             <h3><a href="{{ program.program_page_url }}">{{ program.gaitid }} - {{ program.name }}</a></h3>
         </div>
-        <div class="subheader__actions">
+        <div class="subheader__actions d-flex flex-column align-items-end">
             <button type="submit" class="btn btn-sm btn-secondary" onClick="location.href='/indicators/indicator_plan/export/{{ program.id }}/{% if ordering %}?orderby={{ordering}}{% endif %}'"><i class="fas fa-download"></i> Excel {# Excel (brand name) not translated #}</button>
             {% if ordering %}
-            <form method="GET" action="#" class="form-inline">
+            <form method="GET" action="#" class="form-inline mt-2">
                 <div class="form-group"></div>
                 <label for="orderby_select">{% trans 'Group indicators' %}:</label>
-                <select class="form-control" id="orderby_select" name="orderby" onchange="this.form.submit()">
-                    <option value="1" {% if ordering == 1 %}selected{% endif %}>{{ program.rf_chain_sort_label }}</option>
-                    <option value="2" {% if ordering == 2 %}selected{% endif %}>{% trans 'by Level' %}</option>
-                </select>
+                <div class="controls">
+                    <select class="select form-control" id="orderby_select" name="orderby" onchange="this.form.submit()">
+                        <option value="1" {% if ordering == 1 %}selected{% endif %}>{{ program.rf_chain_sort_label }}</option>
+                        <option value="2" {% if ordering == 2 %}selected{% endif %}>{% trans 'by Level' %}</option>
+                    </select>
+                </div>
             </form>
             {% endif %}
         </div>
     </div>
 
     <div class="table-responsive">
-        <table class="table table-bordered table-hover table-sm text-small table__ip">
+        <table class="table table-bordered table-hover table-sm text-small table__ip"
+               style="width: {{ table_width }}px; table-layout: fixed;">
+            {% for width in column_widths %}
+                <col style="width: {{ width }}px">
+            {% endfor %}
             <thead class="thead-light">
                 <tr class="title-row">
                     {% for name in column_names %}
-                    <th class="text-nowrap">{{ name }}</th>
+                    <th>{{ name }}</th>
                     {% endfor %}
                 </tr>
             </thead>
@@ -50,7 +56,7 @@
                 {% elif row.row_type == 'indicator' %}
                     <tr>
                         {% for val in row.row_data %}
-                            <td>{{ val|default_if_none:'' }}</td>
+                            <td>{{ val|linebreaks|default_if_none:'' }}</td>
                         {% endfor %}
                     </tr>
                 {% endif %}

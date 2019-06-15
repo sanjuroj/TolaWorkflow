@@ -1,16 +1,23 @@
 # -*- coding: utf-8 -*-
-import openpyxl
 from rest_framework import serializers
-from django.shortcuts import render
-from django.http import HttpResponse
-from django.utils import timezone
-from django.utils.translation import ugettext
+from django.utils import timezone, formats
+from django.utils.translation import ugettext, ugettext_lazy
 from tola.l10n_utils import l10n_date_medium
 
 from workflow.models import Program
 from indicators.models import Indicator, Level, LevelTier, PeriodicTarget
 from indicators.queries import IPTTIndicator
-from tola_management.programadmin import get_audit_log_workbook
+from indicators.export_renderers import (
+    FullReportExcelRenderer,
+    OneSheetExcelRenderer,
+    EM_DASH,
+)
+
+
+
+#######################
+#      PROGRAM PAGE   #
+#######################
 
 
 class LevelSerializer(serializers.ModelSerializer):
@@ -109,6 +116,7 @@ class IndicatorSerializer(serializers.ModelSerializer):
         return obj.number
 
 
+
 class ProgramSerializer(serializers.ModelSerializer):
     """
     Serializer specific to the Program Page
@@ -125,355 +133,293 @@ class ProgramSerializer(serializers.ModelSerializer):
             'results_framework',
         ]
 
+
+
+#######################
+#    INDICATOR PLAN   #
+#######################
+
+
+class IndicatorPlanIndicatorSerializerBase(serializers.ModelSerializer):
+    """
+    Serializer for the indicator plan page and excel export
+    """
+    tier_name_only = serializers.SerializerMethodField()
+    disaggregation = serializers.StringRelatedField(many=True)
+    is_cumulative = serializers.SerializerMethodField()
+    baseline = serializers.SerializerMethodField()
+    lop_target = serializers.SerializerMethodField()
+    data_collection_frequency = serializers.StringRelatedField()
+    reporting_frequency = serializers.StringRelatedField()
+
+    class Meta:
+        model = Indicator
+        fields = [
+            'id',
+            'tier_name_only',
+            'results_aware_number',
+            'name',
+            'source',
+            'definition',
+            'disaggregation',
+            'unit_of_measure',
+            'get_direction_of_change_display',
+            'get_unit_of_measure_type_display',
+            'is_cumulative',
+            'baseline',
+            'lop_target',
+            'rationale_for_target',
+            'get_target_frequency_display',
+            'means_of_verification',
+            'data_collection_method',
+            'data_collection_frequency',
+            'data_points',
+            'responsible_person',
+            'method_of_analysis',
+            'information_use',
+            'reporting_frequency',
+            'quality_assurance',
+            'data_issues',
+            'comments',
+        ]
+
+    def get_lop_target(self, obj):
+        return obj.calculated_lop_target
+
+    def get_tier_name_only(self, obj):
+        if obj.results_framework and obj.level and obj.level.leveltier:
+            return obj.level.leveltier.name
+        elif not obj.results_framework and obj.old_level:
+            return obj.old_level
+        return None
+
+    def get_is_cumulative(self, obj):
+        if obj.target_frequency == Indicator.LOP:
+            return None
+        return obj.is_cumulative
+
+    def get_baseline(self, obj):
+        if obj.baseline_na:
+            return None
+        return obj.baseline
+
+    def to_representation(self, instance):
+        data = super(IndicatorPlanIndicatorSerializerBase, self).to_representation(instance)
+        for field in data:
+            data[field] = self.render_value(field, instance, data)
+        return data
+
+
+class IndicatorFormatsMixin(object):
+    translateable_fields = (
+        'tier_name_only',
+        'get_direction_of_change_display',
+        'get_unit_of_measure_type_display',
+    )
+    method_fields = (
+        'is_cumulative',
+        'disaggregation',
+    )
+    bullet_list_fields = (
+        'disaggregation',
+    )
+    numeric_fields = (
+        'baseline',
+        'lop_target',
+    )
+    em_dash_fields = (
+        'results_aware_number',
+    )
+    not_applicable_fields = (
+        'baseline',
+        'is_cumulative',
+    )
+
+    def format_is_cumulative(self, value, **kwargs):
+        if value is True:
+            # Translators: C stands for Cumulative (targets are summative)
+            return self.get_translated('C')
+        elif value is False:
+            # Translators: NC stands for Not Cumulative (targets do not sum over time)
+            return self.get_translated('NC')
+        return value
+
+    def format_disaggregation(self, value, **kwargs):
+        return [self.get_translated(v) for v in value] if value else None
+
+    def format_list(self, value):
+        return value if value is None else "\n".join(u'-{}'.format(item) for item in value)
+
+    def render_value(self, field, instance, data):
+        value = data.get(field, None)
+        if value == '' or value is False or value == []:
+            value = None
+        if field in self.translateable_fields:
+            value = self.get_translated(value)
+        if field in self.method_fields:
+            if hasattr(self, 'format_{}'.format(field)):
+                value = getattr(self, 'format_{}'.format(field))(
+                    value, instance=instance, data=data
+                    )
+        if field in self.numeric_fields:
+            value = self.format_numeric(value, instance)
+        if field in self.bullet_list_fields:
+            value = self.format_list(value)
+        if value is None:
+            if field in self.em_dash_fields:
+                value = EM_DASH
+            elif field in self.not_applicable_fields:
+                value = self.get_translated('N/A')
+            else:
+                value = u''
+        return value
+
+
+class IndicatorWebMixin(IndicatorFormatsMixin):
+    def get_translated(self, value):
+        return value if value is None else ugettext_lazy(value)
+
+    def format_numeric(self, value, indicator, decimal_places=2):
+        if value is None:
+            return value
+        try:
+            f_value = round(float(value), decimal_places)
+            f_value = int(value) if f_value.is_integer() else f_value
+        except ValueError:
+            return value
+        else:
+            value = formats.number_format(f_value, use_l10n=True)
+            if indicator.unit_of_measure_type == indicator.PERCENTAGE:
+                value = u'{}%'.format(value)
+            return value
+
+
+class IndicatorExcelMixin(IndicatorFormatsMixin):
+    def get_translated(self, value):
+        return value if value is None else ugettext(value)
+
+    def format_numeric(self, value, indicator, decimal_places=2):
+        if value is None:
+            return value
+        if indicator.unit_of_measure_type == indicator.PERCENTAGE:
+            return self.format_percentage(float(value)/100, indicator, decimal_places)
+        try:
+            f_value = round(float(value), decimal_places)
+            if f_value.is_integer():
+                return {
+                    'value': int(value),
+                    'number_format': '0'
+                    }
+            elif round(float(value), 1) == f_value:
+                return {
+                    'value': round(float(value), 1),
+                    'number_format': '0.0'
+                }
+            return {
+                'value': f_value,
+                'number_format': '0.00'
+            }
+        except ValueError:
+            return value
+
+    def format_percentage(self, value, indicator, decimal_places=2):
+        if value is None:
+            return value
+        try:
+            f_value = round(float(value), decimal_places+2)
+            if f_value == round(float(value), decimal_places):
+                return {
+                    'value': round(float(value), decimal_places),
+                    'number_format': '0%'
+                    }
+            elif round(float(value), decimal_places+1) == f_value:
+                return {
+                    'value': round(float(value), decimal_places+1),
+                    'number_format': '0.0%'
+                }
+            return {
+                'value': f_value,
+                'number_format': '0.00%'
+            }
+        except ValueError:
+            return value
+
+    def render_value(self, field, instance, data):
+        value = super(IndicatorExcelMixin, self).render_value(field, instance, data)
+        if type(value) == dict and 'value' in value:
+            pass
+        elif value is None:
+            value = {
+                'value': u'',
+                'number_format': 'General'
+            }
+        else:
+            value = {
+                'value': unicode(value),
+                'number_format': 'General'
+            }
+        value.update({
+            'field': field
+        })
+        return value
+
+
+class IndicatorPlanIndicatorWebSerializer(IndicatorWebMixin, IndicatorPlanIndicatorSerializerBase):
+    pass
+
+
+class IndicatorPlanIndicatorExcelSerializer(IndicatorExcelMixin, IndicatorPlanIndicatorSerializerBase):
+    pass
+
+
+class IndicatorPlanLevelSerializerBase(serializers.ModelSerializer):
+    """
+    Level serializer for the indicator plan page and excel export
+    """
+    display_name = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Level
+        fields = [
+            'id',
+            'display_name',
+            'indicator_set'
+        ]
+
+
+    def get_display_name(self, obj):
+        tier = ugettext(obj.leveltier.name) if obj.leveltier else u''
+        ontology = obj.display_ontology if obj.display_ontology else u''
+        name = unicode(obj.name)
+        #return u' '.join([w for w in [tier, ontology, name] if w is not None])
+        return u'{tier}{tier_space}{ontology}{colon}{name}'.format(
+            tier=tier,
+            tier_space=u' ' if tier and ontology else u'',
+            ontology=ontology,
+            colon=u': ' if (tier or ontology) else u'',
+            name=name
+        )
+
+
+class IndicatorPlanLevelWebSerializer(IndicatorPlanLevelSerializerBase):
+    indicator_set = IndicatorPlanIndicatorWebSerializer(many=True, read_only=True)
+
+
+class IndicatorPlanLevelExcelSerializer(IndicatorPlanLevelSerializerBase):
+    indicator_set = IndicatorPlanIndicatorExcelSerializer(many=True, read_only=True)
+
+
+
+#######################
+#      IPTT           #
+#######################
+
+
+
 class IPTTProgramSerializer(ProgramSerializer):
     reporting_period_start = serializers.DateField(format=None)
     reporting_period_end = serializers.DateField(format=None)
 
-
-class ExcelRendererBase(object):
-    """Set of utility functions for rendering a serialized IPTT into an Excel export"""
-
-    BLANK_CELL = u'–'
-    TITLE_START_COLUMN = 3 # 2 rows currently hidden at start, title starts at column C
-    TITLE_FONT = openpyxl.styles.Font(size=18)
-    HEADER_FONT = openpyxl.styles.Font(bold=True)
-    LEVEL_ROW_FONT = openpyxl.styles.Font(bold=True)
-    HEADER_FILL = openpyxl.styles.PatternFill('solid', 'EEEEEE')
-    LEVEL_ROW_FILL = openpyxl.styles.PatternFill('solid', 'CCCCCC')
-    CENTER_ALIGN = openpyxl.styles.Alignment(horizontal='center', vertical='bottom')
-    RIGHT_ALIGN = openpyxl.styles.Alignment(horizontal='right', vertical='bottom')
-    LEFT_ALIGN_WRAP = openpyxl.styles.Alignment(wrap_text=True)
-    INDICATOR_NAME = openpyxl.styles.NamedStyle(
-        name="indicator_name",
-        font=openpyxl.styles.Font(underline='single'),
-        alignment=openpyxl.styles.Alignment(wrap_text=True)
-    )
-
-    def __init__(self, serializer):
-        self.NAME_MAP = {
-            1: ugettext('Life of Program (LoP) only'),
-            2: ugettext('Midline and endline'),
-            3: ugettext('Annual'),
-            4: ugettext('Semi-annual'),
-            5: ugettext('Tri-annual'),
-            # Translators: this is the measure of time (3 months)
-            6: ugettext('Quarterly'),
-            7: ugettext('Monthly')
-        }
-        self.serializer = serializer
-        self.wb = openpyxl.Workbook()
-        self.wb.remove(self.wb.active)
-
-    def add_sheet(self, name):
-        sheet = self.wb.create_sheet(name)
-        return sheet
-
-    @property
-    def header_columns(self):
-        headers = [
-            ugettext('Program ID'),
-            ugettext('Indicator ID'),
-            # Translators: "No." as in abbreviation for Number
-            ugettext('No.'),
-            ugettext('Indicator')
-        ]
-        if self.serializer.level_column:
-            headers += [
-                ugettext('Level')
-            ]
-        headers += [
-            ugettext('Unit of measure'),
-            # Translators: this is short for "Direction of Change" as in + or -
-            ugettext('Change'),
-            # Translators: 'C' as in Cumulative and 'NC' as in Non Cumulative
-            ugettext('C / NC'),
-            u'# / %',
-            ugettext('Baseline')
-        ]
-        return headers
-
-    def add_headers(self, sheet):
-        for row, title in enumerate([
-                self.serializer.report_title,
-                self.serializer.report_date_range,
-                self.serializer.program_name]):
-            cell = sheet.cell(row=row+1, column=self.TITLE_START_COLUMN)
-            cell.value = unicode(title)
-            cell.font = self.TITLE_FONT
-            sheet.merge_cells(
-                start_row=row+1, start_column=self.TITLE_START_COLUMN,
-                end_row=row+1, end_column=len(self.header_columns)
-                )
-        for column, header in enumerate(self.header_columns):
-            cell = sheet.cell(row=4, column=column+1)
-            cell.value = unicode(header)
-            cell.font = self.HEADER_FONT
-            cell.alignment = self.CENTER_ALIGN
-            cell.fill = self.HEADER_FILL
-        period_column = len(self.header_columns) + 1
-        for period in self.all_periods:
-            period_column = self.add_period_header(
-                sheet, period_column, period
-            )
-
-    def add_period_header(self, sheet, col, period):
-        for header, row in [
-                (period.header, 2),
-                (period.subheader, 3)
-            ]:
-            if header:
-                cell = sheet.cell(row=row, column=col)
-                cell.value = unicode(header)
-                cell.font = self.HEADER_FONT
-                cell.alignment = self.CENTER_ALIGN
-                if period.tva:
-                    sheet.merge_cells(start_row=row, start_column=col, end_row=row, end_column=col+2)
-        columns = [ugettext('Target'), ugettext('Actual'), ugettext('% Met')] if period.tva else [ugettext('Actual'),]
-        for col_no, col_header in enumerate(columns):
-            cell = sheet.cell(row=4, column=col+col_no)
-            cell.value = unicode(col_header)
-            cell.font = self.HEADER_FONT
-            cell.fill = self.HEADER_FILL
-            cell.alignment = self.RIGHT_ALIGN
-        return col + (3 if period.tva else 1)
-
-    def add_level_row(self, row, sheet, level_name):
-        sheet.cell(row=row, column=1).fill = self.LEVEL_ROW_FILL
-        sheet.cell(row=row, column=2).fill = self.LEVEL_ROW_FILL
-        cell = sheet.cell(row=row, column=3)
-        cell.value = unicode(level_name)
-        cell.font = self.LEVEL_ROW_FONT
-        cell.fill = self.LEVEL_ROW_FILL
-        sheet.merge_cells(start_row=row, start_column=3, end_row=row, end_column=self.column_count)
-
-    def int_cell(self, value):
-        if not value:
-            return None, 'General'
-        return int(value), '0'
-
-    def float_cell(self, value):
-        if not value:
-            return None, 'General'
-        value = round(float(value), 2)
-        if value == int(value):
-            return int(value), '0'
-        elif value == round(value, 1):
-            return round(value, 1), '0.0'
-        return value, '0.00'
-
-    def percent_cell(self, value):
-        if not value:
-            return None, 'General'
-        value = round(float(value), 4)
-        if value == round(value, 2):
-            return round(value, 2), '0%'
-        elif value == round(value, 3):
-            return round(value, 3), '0.0%'
-        return value, '0.00%'
-
-    def percent_value_cell(self, value):
-        if not value:
-            return None, 'General'
-        value = round(float(value), 2)
-        if value == int(value):
-            return value/100, '0%'
-        else:
-            return value/100, '0.00%'
-
-    def na_if_blank_cell(self, values_func):
-        def na_if_blank_func(value):
-            value, number_format = values_func(value)
-            value = value if value is not None else ugettext('N/A')
-            return value, number_format
-        return na_if_blank_func
-
-    def str_cell(self, value):
-        if not value:
-            return None, 'General'
-        value = unicode(value)
-        return value, 'General'
-
-    def get_met_func(self, target_attribute, actual_attribute):
-        def get_percent_met(indicator):
-            try:
-                actual = float(getattr(indicator, actual_attribute))
-                target = float(getattr(indicator, target_attribute))
-            except (TypeError, ValueError) as e:
-                return None
-            if target == 0:
-                return None
-            return actual / target
-        return get_percent_met
-
-    def get_number(self, indicator):
-        if indicator.number_display:
-            return indicator.number_display
-        return indicator.number
-
-    def add_indicator_row(self, row, sheet, indicator):
-        if indicator.unit_of_measure_type == Indicator.PERCENTAGE:
-            values_func = self.percent_value_cell
-        else:
-            values_func = self.float_cell
-        na_if_blank = self.na_if_blank_cell(values_func)
-        indicator_columns = [
-            ('program_id', self.int_cell, self.RIGHT_ALIGN, None),
-            ('id', self.int_cell, self.RIGHT_ALIGN, None),
-            (self.get_number, self.str_cell, self.RIGHT_ALIGN, None),
-            ('name', self.str_cell, None, self.INDICATOR_NAME)
-        ]
-        if self.serializer.level_column:
-            indicator_columns.append(
-                ('old_level', self.str_cell, None, None)
-            )
-        indicator_columns += [
-            ('unit_of_measure', self.str_cell, None, None),
-            ('get_direction_of_change', self.str_cell, self.CENTER_ALIGN, 'empty_blank'),
-            ('is_cumulative_display', self.str_cell, None, None),
-            ('get_unit_of_measure_type', self.str_cell, self.CENTER_ALIGN, 'empty_blank'),
-            ('baseline', na_if_blank, None, None),
-            ]
-        for period in self.all_periods:
-            if period.tva:
-                indicator_columns.append(
-                    (period.target_attribute, values_func, None, None)
-                )
-            indicator_columns.append(
-                (period.actual_attribute, values_func, None, None)
-            )
-            if period.tva:
-                indicator_columns.append(
-                    (self.get_met_func(period.target_attribute, period.actual_attribute),
-                     self.percent_cell, None, None)
-                )
-        for column, (attribute, format_func, alignment, style) in enumerate(indicator_columns):
-            cell = sheet.cell(row=row, column=column+1)
-            empty_blank = False
-            if style == 'empty_blank':
-                style = None
-                empty_blank = True
-            try:
-                if callable(attribute):
-                    value, number_format = format_func(attribute(indicator))
-                elif isinstance(attribute, str):
-                    value, number_format = format_func(getattr(indicator, attribute))
-                else:
-                    value, number_format = None, None
-            except (AttributeError, TypeError, ValueError) as e:
-                cell.value = None
-                cell.comment = openpyxl.comments.Comment(
-                    'error {} with attribute {} on indicator pk {}'.format(
-                        e, attribute, indicator.pk
-                        ), 'Tola System')
-            else:
-                if value is None:
-                    value = '' if empty_blank else self.BLANK_CELL
-                    alignment = self.CENTER_ALIGN
-                cell.value = value
-                if alignment is not None:
-                    cell.alignment = alignment
-                if style is not None:
-                    cell.style = style
-                if number_format is not None:
-                    cell.number_format = number_format
-
-    def set_column_widths(self, sheet):
-        widths = [10, 10, 15, 100]
-        if self.serializer.level_column:
-            widths.append(12)
-        widths += [30, 8, 15, 8, 12]
-        for period in self.all_periods:
-            widths += [12]*3 if period.tva else [12,]
-        for col_no, width in enumerate(widths):
-            sheet.column_dimensions[openpyxl.utils.get_column_letter(col_no + 1)].width = width
-        sheet.column_dimensions['A'].hidden = True
-        sheet.column_dimensions['B'].hidden = True
-
-
-    def render(self):
-        response = HttpResponse(content_type='application/ms-excel')
-        response['Content-Disposition'] = 'attachment; filename="{}"'.format(self.serializer.filename)
-        self.wb.save(response)
-        return response
-
-    def add_level_row_data(self, sheet):
-        row_offset = 5
-        for level_row in self.serializer.level_rows:
-            self.add_level_row(row_offset, sheet, level_row['level'].display_name)
-            row_offset += 1
-            for indicator in level_row['indicators']:
-                self.add_indicator_row(row_offset, sheet, indicator)
-                row_offset += 1
-        if self.serializer.blank_level_row:
-            self.add_level_row(
-                row_offset,
-                sheet,
-                ugettext('Indicators unassigned to a results framework level')
-                )
-            row_offset += 1
-            for indicator in self.serializer.blank_level_row:
-                self.add_indicator_row(row_offset, sheet, indicator)
-                row_offset += 1
-
-    def add_indicator_row_data(self, sheet):
-        row_offset = 5
-        for indicator in self.serializer.indicators:
-            self.add_indicator_row(row_offset, sheet, indicator)
-            row_offset += 1
-
-    def add_data(self, sheet):
-        if self.serializer.level_rows:
-            self.add_level_row_data(sheet)
-        else:
-            self.add_indicator_row_data(sheet)
-
-    @property
-    def column_count(self):
-        return len(self.header_columns) + sum(
-            [3 if period.tva else 1 for period in self.all_periods]
-            )
-
-
-class FullReportExcelRenderer(ExcelRendererBase):
-
-    def __init__(self, serializer):
-        super(FullReportExcelRenderer, self).__init__(serializer)
-        for frequency in self.NAME_MAP:
-            serializer.frequency = frequency
-            if serializer.indicators:
-                sheet = self.add_sheet(self.NAME_MAP[frequency])
-                self.frequency = frequency
-                self.add_headers(sheet)
-                self.add_data(sheet)
-                self.set_column_widths(sheet)
-        sheet = self.add_sheet('Change log')
-        program = Program.objects.get(pk=self.serializer.program_data['pk'])
-        get_audit_log_workbook(sheet, program)
-
-    def get_indicators(self):
-        return self.serializer.indicators
-
-    @property
-    def all_periods(self):
-        return self.serializer.all_periods_for_frequency
-
-
-
-class OneSheetExcelRenderer(ExcelRendererBase):
-
-    def __init__(self, serializer):
-        super(OneSheetExcelRenderer, self).__init__(serializer)
-        sheet = self.add_sheet(self.NAME_MAP[serializer.frequency])
-        self.add_headers(sheet)
-        self.add_data(sheet)
-        self.set_column_widths(sheet)
-
-    def get_indicators(self):
-        return self.serializer.indicators
-
-    @property
-    def all_periods(self):
-        return self.serializer.all_periods_for_frequency
 
 
 class Period:
@@ -530,7 +476,7 @@ class Period:
         return self.period['label']
 
 
-class IPTTFullReportMixin:
+class IPTTFullReportSerializerMixin:
     indicator_qs = IPTTIndicator.tva
     period_column_count = 3
     frequencies = [1, 2, 3, 4, 5, 6, 7]
@@ -601,7 +547,7 @@ class IPTTFullReportMixin:
         return level_rows
 
 
-class IPTTTVAMixin:
+class IPTTTVASerializerMixin:
     indicator_qs = IPTTIndicator.tva
     period_column_count = 3
 
@@ -641,11 +587,11 @@ class IPTTTVAMixin:
                 'level': level,
                 'indicators': [indicator for indicator in self.indicators.filter(level=level)]
             }
-            if level_row['indicators']:
+            if level_row['indicators'] or level.parent is None:
                 yield level_row
 
 
-class IPTTTimeperiodsMixin:
+class IPTTTimeperiodsSerializerMixin:
     indicator_qs = IPTTIndicator.timeperiods
     period_column_count = 1
 
@@ -684,10 +630,10 @@ class IPTTTimeperiodsMixin:
                 'level': level,
                 'indicators': [indicator for indicator in self.indicators.filter(level=level)]
             }
-            if level_row['indicators']:
+            if level_row['indicators'] or level.parent is None:
                 yield level_row
 
-class IPTTJSONMixin:
+class IPTTJSONRendererMixin:
     full_report = False
     filters = False # JSON never filters - all data sent to client and filtered in React
 
@@ -706,7 +652,7 @@ class IPTTJSONMixin:
         return self.indicator_qs.filter(program_id=self.program_data['pk'])
 
 
-class IPTTExcelMixin(object):
+class IPTTExcelRendererBase(object):
 
     @property
     def filename(self):
@@ -753,7 +699,7 @@ class IPTTExcelMixin(object):
         return self.renderer_class(self).render()
 
 
-class IPTTExcelFullReportMixin(IPTTExcelMixin):
+class IPTTFullReportExcelRendererMixin(IPTTExcelRendererBase):
     full_report = True
     renderer_class = FullReportExcelRenderer
 
@@ -762,7 +708,7 @@ class IPTTExcelFullReportMixin(IPTTExcelMixin):
 
 
 
-class IPTTSingleExcelMixin(IPTTExcelMixin):
+class IPTTSingleExcelRendererMixin(IPTTExcelRendererBase):
     full_report = False
     renderer_class = OneSheetExcelRenderer
 
@@ -811,10 +757,10 @@ class IPTTSerializer(object):
     TVA_FULL_EXCEL = 5
     REPORT_TYPES = {
         TIMEPERIODS_JSON: None,
-        TVA_JSON: None,
-        TIMEPERIODS_EXCEL: [IPTTTimeperiodsMixin, IPTTSingleExcelMixin],
-        TVA_EXCEL: [IPTTTVAMixin, IPTTSingleExcelMixin],
-        TVA_FULL_EXCEL: [IPTTFullReportMixin, IPTTExcelFullReportMixin]
+        TVA_JSON: [IPTTJSONRendererMixin,],
+        TIMEPERIODS_EXCEL: [IPTTTimeperiodsSerializerMixin, IPTTSingleExcelRendererMixin],
+        TVA_EXCEL: [IPTTTVASerializerMixin, IPTTSingleExcelRendererMixin],
+        TVA_FULL_EXCEL: [IPTTFullReportSerializerMixin, IPTTFullReportExcelRendererMixin]
     }
 
     def __new__(cls, report_type, request, **kwargs):

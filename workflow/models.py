@@ -721,7 +721,8 @@ class Program(models.Model):
         tier = self.level_tiers.filter(tier_depth=2).first() if self.results_framework else None
         if tier:
             # Translators: this labels a filter to sort indicators, for example, "by Outcome chain":
-            return _('by %(level_name)s chain') % {'level_name': tier.name}
+            tier_name = _(tier.name)
+            return _('by %(level_name)s chain') % {'level_name': tier_name}
         return None
 
     @property
