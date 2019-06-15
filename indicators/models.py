@@ -1145,6 +1145,12 @@ class Indicator(SafeDeleteModel):
             return self.program.using_results_framework
         return self.program._using_results_framework != Program.NOT_MIGRATED
 
+    @property
+    def auto_number_indicators(self):
+        if hasattr(self, '_auto_number_indicators'):
+            return self._auto_number_indicators
+        return self.program.auto_number_indicators
+
 
 @receiver(signals.pre_save, sender=Indicator)
 def new_level_order(sender, instance, *args, **kwargs):

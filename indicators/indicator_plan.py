@@ -14,6 +14,12 @@ from openpyxl.styles import Font, PatternFill, Alignment, Side, Border
 from openpyxl.utils.cell import coordinate_from_string, column_index_from_string, get_column_letter
 
 from indicators import models
+from indicators.serializers import (
+    IndicatorPlanIndicatorWebSerializer,
+    IndicatorPlanIndicatorExcelSerializer,
+    IndicatorPlanLevelWebSerializer,
+    IndicatorPlanLevelExcelSerializer
+)
 
 PERFORMANCE_INDICATOR = _('Performance Indicator')
 TARGETS = _('Targets')
@@ -23,155 +29,184 @@ ANALYSES_AND_REPORTING = _('Analyses and Reporting')
 # XLS cell widths
 LARGE_CELL = 40
 MEDIUM_CELL = 20
+MEDIUM_SMALL_CELL = 13
+
 
 # fields are either an Indicator attribute name (as str), or a callable
 COLUMNS = [
     {
         'name': _('Level'),
         'category': PERFORMANCE_INDICATOR,
-        'field': lambda i: i.leveltier_name if i.results_framework else i.old_level,
         'cell_width': 10,
+        'field': 'tier_name_only',
+        'screen_width': 7
     },
     {
         'name': _('No.'),
         'category': PERFORMANCE_INDICATOR,
-        'field': lambda i: i.results_aware_number,
+        'field': 'results_aware_number',
+        'screen_width': 3
     },
     {
         'name': _('Performance indicator'),
         'category': PERFORMANCE_INDICATOR,
-        'field': 'name',
         'cell_width': LARGE_CELL,
+        'field': 'name',
+        'screen_width': 25
     },
     {
         'name': _('Indicator source'),
         'category': PERFORMANCE_INDICATOR,
-        'field': 'source',
         'cell_width': MEDIUM_CELL,
+        'field': 'source',
+        'screen_width': 9
     },
     {
         'name': _('Indicator definition'),
         'category': PERFORMANCE_INDICATOR,
-        'field': 'definition',
         'cell_width': LARGE_CELL,
+        'field': 'definition',
+        'screen_width': 25
     },
     {
         'name': _('Disaggregation'),
         'category': PERFORMANCE_INDICATOR,
-        'field': 'disaggregations',
         'cell_width': MEDIUM_CELL,
+        'field': 'disaggregation',
+        'screen_width': 10
     },
 
     {
         'name': _('Unit of measure'),
         'category': TARGETS,
-        'field': 'unit_of_measure',
         'cell_width': MEDIUM_CELL,
+        'field': 'unit_of_measure',
+        'screen_width': 7,
     },
     {
         'name': _('Direction of change'),
         'category': TARGETS,
-        'field': lambda i: i.get_direction_of_change_display(),
+        'cell_width': MEDIUM_SMALL_CELL,
+        'field': 'get_direction_of_change_display',
+        'screen_width': 5,
     },
     {
         'name': _('# / %'),
         'category': TARGETS,
-        'field': lambda i: i.get_unit_of_measure_type_display(),
+        'cell_width': MEDIUM_SMALL_CELL,
+        'field': 'get_unit_of_measure_type_display',
+        'screen_width': 5,
     },
     {
         'name': _('Calculation'),
         'category': TARGETS,
-        'field': lambda i: 'C' if i.is_cumulative else 'NC',
+        'field': 'is_cumulative',
+        'screen_width': 7,
     },
     {
         'name': _('Baseline value'),
         'category': TARGETS,
         'field': 'baseline',
+        'screen_width': 5,
     },
     {
         'name': _('LOP target'),
         'category': TARGETS,
         'field': 'lop_target',
+        'screen_width': 5,
     },
     {
         'name': _('Rationale for target'),
         'category': TARGETS,
-        'field': 'rationale_for_target',
         'cell_width': MEDIUM_CELL,
+        'field': 'rationale_for_target',
+        'screen_width': 15,
     },
     {
         'name': _('Target frequency'),
         'category': TARGETS,
-        'field': lambda i: i.get_target_frequency_display(),
         'cell_width': MEDIUM_CELL,
+        'field': 'get_target_frequency_display',
+        'screen_width': 10,
     },
 
     {
         'name': _('Means of verification'),
         'category': DATA_ACQUISITION,
-        'field': 'means_of_verification',
         'cell_width': MEDIUM_CELL,
+        'field': 'means_of_verification',
+        'screen_width': 10,
     },
     {
         'name': _('Data collection method'),
         'category': DATA_ACQUISITION,
-        'field': 'data_collection_method',
         'cell_width': MEDIUM_CELL,
+        'field': 'data_collection_method',
+        'screen_width': 10,
     },
     {
         'name': _('Frequency of data collection'),
         'category': DATA_ACQUISITION,
-        'field': lambda i: i.data_collection_frequency.frequency if i.data_collection_frequency else None,
         'cell_width': MEDIUM_CELL,
+        'field': 'data_collection_frequency',
+        'screen_width': 10,
     },
     {
         'name': _('Data points'),
         'category': DATA_ACQUISITION,
-        'field': 'data_points',
         'cell_width': MEDIUM_CELL,
+        'field': 'data_points',
+        'screen_width': 10,
     },
     {
         'name': _('Responsible person(s) & team'),
         'category': DATA_ACQUISITION,
-        'field': 'responsible_person',
         'cell_width': MEDIUM_CELL,
+        'field': 'responsible_person',
+        'screen_width': 10,
     },
 
     {
         'name': _('Method of analysis'),
         'category': ANALYSES_AND_REPORTING,
-        'field': 'method_of_analysis',
         'cell_width': MEDIUM_CELL,
+        'field': 'method_of_analysis',
+        'screen_width': 10,
     },
     {
         'name': _('Information use'),
         'category': ANALYSES_AND_REPORTING,
-        'field': 'information_use',
         'cell_width': MEDIUM_CELL,
+        'field': 'information_use',
+        'screen_width': 10,
     },
     {
         'name': _('Frequency of reporting'),
         'category': ANALYSES_AND_REPORTING,
-        'field': lambda i: i.reporting_frequency.frequency if i.reporting_frequency else None,
         'cell_width': MEDIUM_CELL,
+        'field': 'reporting_frequency',
+        'screen_width': 10,
     },
     {
         'name': _('Quality assurance measures'),
         'category': ANALYSES_AND_REPORTING,
-        'field': 'quality_assurance',
         'cell_width': MEDIUM_CELL,
+        'field': 'quality_assurance',
+        'screen_width': 10,
     },
     {
         'name': _('Data issues'),
         'category': ANALYSES_AND_REPORTING,
-        'field': 'data_issues',
         'cell_width': MEDIUM_CELL,
+        'field': 'data_issues',
+        'screen_width': 10,
     },
     {
         'name': _('Comments'),
         'category': ANALYSES_AND_REPORTING,
-        'field': 'comments',
         'cell_width': MEDIUM_CELL,
+        'field': 'comments',
+        'screen_width': 10,
     },
 ]
 
@@ -182,8 +217,7 @@ def row(indicator):
     """
     r = []
     for col in COLUMNS:
-        field = col['field']
-        r.append(field(indicator) if callable(field) else getattr(indicator, field))
+        r.append(indicator.get(col.get('field')))
     return r
 
 
@@ -194,11 +228,20 @@ def column_names():
     return [c['name'] for c in COLUMNS]
 
 
+def column_widths(table_width):
+    """
+    Relative widths for sizing the html table columns
+    """
+    total = float(sum([col.get('screen_width') for col in COLUMNS]))
+    return [int(float(col.get('screen_width'))/total*table_width) for col in COLUMNS]
+
+
 def non_rf_indicator_queryset(program_id):
     """
     A QS of indicators to create the indicator plan from
     """
     return models.Indicator.objects.filter(program_id=program_id).select_related().with_logframe_sorting()
+
 
 def tier_sorted_indicator_queryset(program_id):
     """RF program with the "sort by level" option picked queryset"""
@@ -206,6 +249,7 @@ def tier_sorted_indicator_queryset(program_id):
         models.Level.objects.filter(program_id=program_id),
         key=lambda l: l.get_level_depth()
         )
+
 
 def chain_sorted_indicator_queryset(program_id):
     """RF program with the "sort by outcome chain" option (default) picked queryset"""
@@ -215,15 +259,19 @@ def chain_sorted_indicator_queryset(program_id):
         levels += level.get_children()
     return levels
 
+
 def get_rf_rows(level_qs, program_id):
     rows = []
-    for level in level_qs:
-        indicators = level.indicator_set.all()
-        if indicators:
+    for level in [IndicatorPlanLevelWebSerializer(level_obj).data for level_obj in level_qs]:
+        indicators = level.get('indicator_set')
+        # this check is being bypassed because we are testing the IP with all rows shown
+        #  - if it turns out we only want levels shown that HAVE indicators, remove the 'or true'
+        #serialized = IndicatorPlanLevelWebSerializer(level)
+        if indicators or True:
             rows.append(
                 {
                     'row_type': 'level',
-                    'row_data': level.display_name
+                    'row_data': level.get('display_name')
                 }
             )
             rows += [{'row_type': 'indicator', 'row_data': row(i)} for i in indicators]
@@ -237,11 +285,20 @@ def get_rf_rows(level_qs, program_id):
                 'row_data': _('Indicators unassigned to a results framework level')
             }
         )
-        rows += [{'row_type': 'indicator', 'row_data': row(i)} for i in unassigned_indicators]
+        rows += [
+            {
+                'row_type': 'indicator',
+                'row_data': row(IndicatorPlanIndicatorWebSerializer(i).data)
+            } for i in unassigned_indicators]
     return rows
 
+
 def get_non_rf_rows(indicator_qs):
-    return [{'row_type': 'indicator', 'row_data': row(i)} for i in indicator_qs]
+    return [{
+        'row_type': 'indicator',
+        'row_data': row(IndicatorPlanIndicatorWebSerializer(i).data)
+        } for i in indicator_qs]
+
 
 def columns_by_category():
     """
@@ -297,7 +354,7 @@ def _set_row_height(ws, row_num, height):
 def _get_formatted_workbook():
     wb = Workbook()
     ws = wb.active
-    ws.title = _('Indicator plan')
+    ws.title = ugettext('Indicator plan')
 
     row_num = START_ROW
     col_num = START_COLUMN
@@ -312,7 +369,7 @@ def _get_formatted_workbook():
 
     # Title
     col_num = START_COLUMN
-    cell = ws.cell(row_num, col_num, _('Indicator plan').encode('utf-8'))
+    cell = ws.cell(row_num, col_num, ugettext('Indicator plan').encode('utf-8'))
     _apply_title_styling(cell)
     ws.merge_cells(start_row=row_num, start_column=col_num, end_row=row_num, end_column=col_num + len(COLUMNS)-1)
     row_num += 1
@@ -338,7 +395,7 @@ def _get_formatted_workbook():
 
 
 def _style_level_row(ws, row_num):
-    ws.merge_cells(start_row=row_num, start_column=START_COLUMN, end_row=row_num, end_column=len(COLUMNS))
+    ws.merge_cells(start_row=row_num, start_column=START_COLUMN, end_row=row_num, end_column=len(COLUMNS) + 1)
     cell = ws.cell(row_num, START_COLUMN)
     cell.font = Font(bold=True, size=10)
     cell.fill = PatternFill(fill_type='solid', start_color=TAN, end_color=TAN)
@@ -354,20 +411,23 @@ def create_rf_workbook(levels, program_id):
     wb, row_num = _get_formatted_workbook()
     ws = wb.active
     col_num = START_COLUMN
-    for level in levels:
-        indicators = level.indicator_set.all()
-        if indicators:
+    for level in [IndicatorPlanLevelExcelSerializer(level_obj).data for level_obj in levels]:
+        indicators = level.get('indicator_set')
+        # this check is being bypassed because we are testing the IP with all rows shown
+        #  - if it turns out we only want levels shown that HAVE indicators, remove the 'or true'
+        if indicators or True:
             cell = ws.cell(row_num, col_num)
-            cell.value = level.display_name
+            cell.value = level.get('display_name')
             _style_level_row(ws, row_num)
             row_num += 1
             for indicator in indicators:
-                for i, val in enumerate(row(indicator)):
-                    cell = ws.cell(row_num, col_num, val)
+                for i, i_data in enumerate(row(indicator)):
+                    cell = ws.cell(row_num, col_num, i_data.get('value'))
                     if i == 0:
                         _apply_label_styling(cell)
                     else:
                         _apply_body_styling(cell)
+                    cell.number_format = i_data.get('number_format', 'General')
                     col_num += 1
                 col_num = START_COLUMN
                 row_num += 1
@@ -379,13 +439,14 @@ def create_rf_workbook(levels, program_id):
         cell.value = ugettext('Indicators unassigned to a results framework level')
         _style_level_row(ws, row_num)
         row_num += 1
-        for indicator in unassigned_indicators:
-            for i, val in enumerate(row(indicator)):
-                cell = ws.cell(row_num, col_num, val)
+        for indicator in [IndicatorPlanIndicatorExcelSerializer(i).data for i in unassigned_indicators]:
+            for i, i_data in enumerate(row(indicator)):
+                cell = ws.cell(row_num, col_num, i_data.get('value'))
                 if i == 0:
                     _apply_label_styling(cell)
                 else:
                     _apply_body_styling(cell)
+                cell.number_format = i_data.get('number_format', 'General')
                 col_num += 1
             col_num = START_COLUMN
             row_num += 1
@@ -394,6 +455,7 @@ def create_rf_workbook(levels, program_id):
     update_borders(wb)
 
     return wb
+
 
 
 def create_non_rf_workbook(indicators):
@@ -406,14 +468,17 @@ def create_non_rf_workbook(indicators):
     # rows
     col_num = START_COLUMN
     for level, level_indicators in groupby(indicators, lambda i: i.level):
-        for indicator in level_indicators:
-            for i, val in enumerate(row(indicator)):
+        for indicator in [IndicatorPlanIndicatorExcelSerializer(i).data for i in level_indicators]:
+            for i, i_data in enumerate(row(indicator)):
+                val = i_data.get('value')
+                number_format = i_data.get('number_format', 'General')
                 cell = ws.cell(row_num, col_num, val)
                 if i == 0:
                     # first column has different styling
                     _apply_label_styling(cell)
                 else:
                     _apply_body_styling(cell)
+                cell.number_format = number_format
                 col_num += 1
             col_num = START_COLUMN
             row_num += 1

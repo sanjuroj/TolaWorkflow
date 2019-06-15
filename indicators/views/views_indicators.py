@@ -1053,10 +1053,13 @@ def indicator_plan(request, program):
     else:
         rows = ip.get_non_rf_rows(ip.non_rf_indicator_queryset(program.pk))
         ordering = False
-
+        
+    table_width = 4000 #pixels
     return render(request, "indicators/indicator_plan.html", {
         'program': program,
         'column_names': ip.column_names(),
+        'column_widths': ip.column_widths(1200),
+        'table_width': table_width,
         'rows': rows,
         'ordering': ordering
     })
