@@ -48,7 +48,7 @@ class IPTTIndicatorQueryset(models.QuerySet, IndicatorSortingQSMixin):
             qs = qs.filter(pk__in=[int(i) for i in indicators])
         if old_levels:
             if levels:
-                old_level_names = [name for (pk, name) in Indicator.OLD_LEVELS if pk in levels]
+                old_level_names = [name for (pk, name) in Indicator.OLD_LEVELS if str(pk) in levels]
                 qs = qs.filter(old_level__in=old_level_names)
         else:
             if levels:

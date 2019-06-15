@@ -280,6 +280,13 @@ class ExcelRendererBase(object):
         else:
             return value/100, '0.00%'
 
+    def na_if_blank_cell(self, values_func):
+        def na_if_blank_func(value):
+            value, number_format = values_func(value)
+            value = value if value is not None else ugettext('N/A')
+            return value, number_format
+        return na_if_blank_func
+
     def str_cell(self, value):
         if not value:
             return None, 'General'
@@ -308,6 +315,7 @@ class ExcelRendererBase(object):
             values_func = self.percent_value_cell
         else:
             values_func = self.float_cell
+        na_if_blank = self.na_if_blank_cell(values_func)
         indicator_columns = [
             ('program_id', self.int_cell, self.RIGHT_ALIGN, None),
             ('id', self.int_cell, self.RIGHT_ALIGN, None),
@@ -323,7 +331,7 @@ class ExcelRendererBase(object):
             ('get_direction_of_change', self.str_cell, self.CENTER_ALIGN, 'empty_blank'),
             ('is_cumulative_display', self.str_cell, None, None),
             ('get_unit_of_measure_type', self.str_cell, self.CENTER_ALIGN, 'empty_blank'),
-            ('baseline', values_func, None, None),
+            ('baseline', na_if_blank, None, None),
             ]
         for period in self.all_periods:
             if period.tva:
