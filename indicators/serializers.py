@@ -386,6 +386,7 @@ class IndicatorPlanLevelSerializerBase(serializers.ModelSerializer):
             'indicator_set'
         ]
 
+
     def get_display_name(self, obj):
         tier = ugettext(obj.leveltier.name) if obj.leveltier else u''
         ontology = obj.display_ontology if obj.display_ontology else u''

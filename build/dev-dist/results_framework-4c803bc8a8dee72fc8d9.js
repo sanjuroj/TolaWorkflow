@@ -994,7 +994,7 @@ function (_React$Component6) {
         }, indicator.name.replace(/(.{55})..+/, "$1..."));
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_selectWidgets__WEBPACK_IMPORTED_MODULE_7__["SingleReactSelect"], {
           update: function update(value) {
-            return _this6.props.changeFunc(value, indicator.id);
+            return _this6.props.changeFunc(indicator.id, value);
           },
           selectId: "ind" + indicator.id,
           labelClasses: " ",
@@ -2351,4 +2351,4 @@ function (_React$Component2) {
 /***/ })
 
 },[["QTZG","runtime","vendors"]]]);
-//# sourceMappingURL=results_framework-45f1101f66afd3d23276.js.map
+//# sourceMappingURL=results_framework-4c803bc8a8dee72fc8d9.js.map
