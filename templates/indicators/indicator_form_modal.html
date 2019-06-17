@@ -451,7 +451,7 @@
             {% if indicator %}
             <div class="form-actions">
                 <div>
-                    <button type="button" id="id_update_indicator_btn" class="btn btn-primary">{% trans 'Save changes' %}</button>
+                    <button type="button" id="id_update_indicator_btn" class="btn btn-primary">{% trans 'Save and close' %}</button>
                     <button type="button" id="id_cancel_btn" class="btn btn-reset">{% trans 'Cancel' %}</button>
                 </div>
                 <div class="text-muted">{% include "form_guidance.html" %}</div>
@@ -459,12 +459,12 @@
             {% else %}
             <div class="form-actions">
                 <div>
-                    {# Translators: button label to save the item and then close a modal #}
                     <button type="button" id="id_save_and_close_indicator_btn" class="btn btn-primary">
+                        {# Translators: button label to save the item and then close a modal #}
                         {% trans 'Save and close' %}
                     </button>
-                    {# Translators: button label to save the form and be redirected to a blank for to add another item #}
                     <button type="button" id="id_save_and_add_another_indicator_btn" class="btn btn-secondary">
+                        {# Translators: button label to save the form and be redirected to a blank for to add another item #}
                         {% trans 'Save and add another' %}
                     </button>
                     {# Translators: close a modal throwing away any changes to the form #}
