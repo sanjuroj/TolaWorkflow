@@ -407,6 +407,7 @@ export class UIStore {
     // TODO: Make sure old editing data is not preserved when an edit is cancelled
     @action
     editCard = (levelId) => {
+        const cancelledLevelId = this.activeCard;
         if (this.activeCardNeedsConfirm) {
             $(`#level-card-${this.activeCard}`)[0].scrollIntoView({behavior:"smooth"});
             const oldTierName = this.rootStore.levelStore.levelProperties[this.activeCard].tierName;
@@ -416,7 +417,7 @@ export class UIStore {
                 message_text: gettext("Are you sure you want to continue?"),
                 /* # Translators:  This is a warning provided to the user when they try to cancel the editing of something they have already modified.  */
                 preamble: gettext(`Changes to this ${oldTierName} will not be saved`),
-                on_submit: () => this.onLeaveConfirm(levelId),
+                on_submit: () => this.onLeaveConfirm(levelId, cancelledLevelId),
                 on_cancel: this.onLeaveCancel,
             })
         }
@@ -427,7 +428,9 @@ export class UIStore {
     };
 
     @action
-    onLeaveConfirm = (levelId) => {
+    onLeaveConfirm = (levelId, cancelledLevelId) => {
+        this.rootStore.levelStore.cancelEdit(cancelledLevelId);
+        this.activeCardNeedsConfirm = false;
         $(".edit-button").prop("disabled", false);
         this.activeCard = levelId;
         // Need to use set timeout to ensure that scrolling loses the race with components reacting to the new position of the open card.
@@ -435,8 +438,6 @@ export class UIStore {
             function(){$(`#level-card-${levelId}`)[0].scrollIntoView({behavior:"smooth"})},
             100
         );
-        this.rootStore.levelStore.levels.replace(this.rootStore.levelStore.levels.filter( l => l.id != "new"))
-        this.activeCardNeedsConfirm = false;
     };
 
     onLeaveCancel = () => {
