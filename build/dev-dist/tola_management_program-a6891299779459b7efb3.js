@@ -2113,7 +2113,7 @@ function (_React$Component) {
         className: "nav-item"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
         href: "#",
-        className: "nav-link ".concat(settings_active_class),
+        className: "nav-link ".concat(settings_active_class, " ").concat(new_class),
         onClick: function onClick(e) {
           e.preventDefault();
 
@@ -3237,4 +3237,4 @@ function () {
 /***/ })
 
 },[["1faY","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_program-2f09eea72697fe744cb5.js.map
+//# sourceMappingURL=tola_management_program-a6891299779459b7efb3.js.map

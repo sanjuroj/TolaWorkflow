@@ -102,7 +102,7 @@ function (_React$Component) {
       }
 
       var tierTemplates = this.props.rootStore.levelStore.tierTemplates;
-      var options = Object.keys(tierTemplates).map(function (key) {
+      var options = Object.keys(tierTemplates).sort().map(function (key) {
         return {
           value: key,
           label: tierTemplates[key]['name']
@@ -1353,11 +1353,27 @@ function () {
 
     _initializerDefineProperty(this, "chosenTierSet", _descriptor4, this);
 
+    this.program_id = void 0;
     this.tierTemplates = void 0;
     this.defaultTemplateKey = "";
     this.customTierSetKey = "";
-    this.program_id = "";
     this.accessLevel = false;
+    this.monitorHeaderLink = Object(mobx__WEBPACK_IMPORTED_MODULE_0__["autorun"])(function (reaction) {
+      var headerSpan = $("#rf_builder_header");
+      var linkedFlag = headerSpan.children("a").length > 0;
+
+      if (_this.indicators.length > 0 && !linkedFlag) {
+        var headerText = headerSpan.text();
+        headerSpan.html("<a href=\"/program/".concat(_this.program_id, "/\">").concat(headerText, "</a>"));
+      } else if (_this.indicators.length == 0 && linkedFlag) {
+        var _headerText = $("#rf_builder_header > a").text();
+
+        headerSpan.text(_headerText);
+      } // delay is needed to prevent undefined value from being used for program_id that isn't set yet on first load.
+
+    }, {
+      delay: 50
+    });
 
     _initializerDefineProperty(this, "cancelEdit", _descriptor5, this);
 
@@ -2351,4 +2367,4 @@ function (_React$Component2) {
 /***/ })
 
 },[["QTZG","runtime","vendors"]]]);
-//# sourceMappingURL=results_framework-4c803bc8a8dee72fc8d9.js.map
+//# sourceMappingURL=results_framework-532d0d7d694cd1b561f3.js.map
