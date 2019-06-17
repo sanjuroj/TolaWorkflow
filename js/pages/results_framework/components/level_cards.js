@@ -298,6 +298,7 @@ export class LevelCardExpanded extends React.Component {
             cancelFunc = this.clearData;
         }
         if (this.dataHasChanged) {
+            $(".level-button").prop("disabled", true)
             create_no_rationale_changeset_notice({
                 /* # Translators: This is part of a confirmation prompt that is triggered by clicking on a cancel button.  */
                 message_text: gettext("Are you sure you want to continue?"),

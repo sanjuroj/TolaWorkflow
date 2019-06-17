@@ -118,7 +118,6 @@ export class LevelStore {
         }
 
         this.fetchIndicatorsFromDB();
-
         this.rootStore.uiStore.removeActiveCard();
     };
 
