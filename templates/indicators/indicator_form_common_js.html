@@ -517,13 +517,7 @@
 
             // success msg
             {# Translators: success message when an indicator was created" #}
-            let msg = "{% trans 'Success! Indicator created.' %}";
-
-            if (data.using_rf) {
-                {# Translators: success message when an indicator was created, ex. "Indicator 2a was saved and linked to Outcome 2.2" #}
-                msg = "{% trans 'Indicator %s was saved and linked to %s' %}";
-                msg = interpolate(msg, [data.indicator_number, data.result_level_display_ontology]);
-            }
+            let msg = data.save_success_msg || "{% trans 'Success! Indicator created.' %}";
 
             showSuccessNotifiction(msg);
         });
@@ -534,15 +528,19 @@
         return submitForm(rationale).done((data) => {
             $('#indicator_modal_div').trigger('updated.tola.indicator.save', saveEventParams());
 
-            // Show success message on form
+            // Clear any validation error messages
             let alertElement = "#modalmessages";
             $(alertElement).html('');
-            createAlert("success", "{% trans 'Success, form data saved.'|escapejs %}", true, alertElement);
-            scrollToTop();
 
             // update the header
             $('#id_title').text(data.title_str);
             $('#id_subtitle').text(data.subtitle_str);
+
+            // success msg
+            {# Translators: success message when an indicator was updated" #}
+            let msg = data.save_success_msg || "{% trans 'Success! Indicator updated.' %}";
+
+            showSuccessNotifiction(msg);
 
             // this is our new base state
             recordTrackedFieldsSnapshot();

@@ -228,6 +228,30 @@ class IndicatorFormMixin(object):
                 'Periodic Target start/end dates expected by server do not match what was sent by the client: %s vs %s' % (
                 server_period_dates, client_period_dates))
 
+    def _save_success_msg(self, indicator):
+        """
+        Returns the growl of success string for display on the client
+
+        This assumes usage of the new Results Framework.
+        If not using RF, return None
+        """
+        using_rf = indicator.results_framework
+
+        if not using_rf:
+            return None
+
+        # success msg strings
+        indicator_number = '{}{}'.format(indicator.level_display_ontology,
+                                         indicator.level_order_display) if using_rf else ''
+        result_level_display_ontology = '{} {}'.format(indicator.leveltier_name,
+                                                       indicator.level_display_ontology) if using_rf else ''
+
+        # Translators: success message when an indicator was created, ex. "Indicator 2a was saved and linked to Outcome 2.2"
+        return _('Indicator {indicator_number} was saved and linked to {result_level_display_ontology}').format(
+            indicator_number=indicator_number,
+            result_level_display_ontology=result_level_display_ontology
+        )
+
 
 class IndicatorCreate(IndicatorFormMixin, CreateView):
 
@@ -305,20 +329,10 @@ class IndicatorCreate(IndicatorFormMixin, CreateView):
             'N/A'
         )
 
-        using_rf = indicator.results_framework
-
-        # success msg strings
-        indicator_number = '{}{}'.format(indicator.level_display_ontology, indicator.level_order_display) if using_rf else ''
-        result_level_display_ontology = '{} {}'.format(indicator.leveltier_name, indicator.level_display_ontology) if using_rf else ''
-
         return JsonResponse({
             'success': True,
             'id': indicator.id,
-            # These are used the success message - in the future perhaps serialize the indicator/level and
-            # make the front-end deal with this display string creation completely
-            'using_rf': using_rf,
-            'indicator_number': indicator_number,
-            'result_level_display_ontology': result_level_display_ontology,
+            'save_success_msg': self._save_success_msg(indicator)
         })
 
 
@@ -540,6 +554,7 @@ class IndicatorUpdate(IndicatorFormMixin, UpdateView):
             'content': content,
             'title_str': self._form_title_display_str,
             'subtitle_str': self._form_subtitle_display_str,
+            'save_success_msg': self._save_success_msg(self.object),
         })
 
 
