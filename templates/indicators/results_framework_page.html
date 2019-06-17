@@ -6,7 +6,12 @@
 
 {% block extra_page_title_classes %}h2{% endblock %}
 {% block page_title %}
-<a href='{% url "program_page" program.id %}'>{{ program.name }}:</a> <span class="font-weight-normal text-muted text-nowrap">{% trans "Results framework" %}&nbsp;<small><i class="fas fa-sitemap"></i></small></span>
+    {%  if indicator_count > 0 %}
+        <span id="rf_builder_header"><a href='{% url "program_page" program.id %}'>{{ program.name }}:</a></span>
+    {%  else %}
+        <span id="rf_builder_header">{{ program.name }}:</span>
+    {% endif %}
+    <span class="font-weight-normal text-muted text-nowrap">{% trans "Results framework" %}&nbsp;<small><i class="fas fa-sitemap"></i></small></span>
 {% endblock %}
 
 {% block header_extras %}

@@ -1,4 +1,4 @@
-import { observable, computed, action, toJS, runInAction } from "mobx";
+import { observable, computed, action, toJS, runInAction, autorun } from "mobx";
 import { api } from "../../api.js"
 
 export class RootStore {
@@ -13,17 +13,16 @@ export class LevelStore {
     @observable indicators = [];
     @observable chosenTierSetKey = "";
     @observable chosenTierSet = [];
+    program_id;
     tierTemplates;
     defaultTemplateKey = "";
     customTierSetKey = "";
-    program_id = "";
     accessLevel = false;
 
     constructor(program_id, levels, indicators, levelTiers, tierTemplates, accessLevel, rootStore) {
         this.rootStore = rootStore;
         this.levels = levels;
         this.indicators = indicators;
-
         this.tierTemplates = tierTemplates;
         this.defaultTemplateKey = "mc_standard";
         this.customTierSetKey = "custom";
@@ -79,6 +78,23 @@ export class LevelStore {
             return this.tierTemplates[this.chosenTierSetKey]['name']
         }
     };
+
+    // This monitors the number of indicators attached to the program and adds/removes the header link depending on
+    // whether there are indicators.  It relies on all indicators being passed up from the server each time
+    // the indicator list is refreshed.
+    monitorHeaderLink = autorun( reaction => {
+        let headerSpan = $("#rf_builder_header");
+        let linkedFlag = headerSpan.children("a").length > 0;
+        if (this.indicators.length > 0 && !linkedFlag ) {
+            const headerText = headerSpan.text();
+            headerSpan.html(`<a href="/program/${this.program_id}/">${headerText}</a>`)
+        }
+        else if (this.indicators.length == 0 && linkedFlag) {
+            const headerText = $("#rf_builder_header > a").text();
+            headerSpan.text(headerText);
+        }
+    // delay is needed to prevent undefined value from being used for program_id that isn't set yet on first load.
+    }, {delay: 50});
 
     @action
     changeTierSet(newTierSetKey) {

@@ -28,7 +28,7 @@ export default class ProgramEditor extends React.Component {
                         </a>
                     </li>
                     <li className="nav-item">
-                        <a href="#" className={`nav-link ${settings_active_class}`}
+                        <a href="#" className={`nav-link ${settings_active_class} ${new_class}`}
                             onClick={(e) => { e.preventDefault(); this.updateActivePage('settings');}}>
                             {gettext("Settings")}
                         </a>
