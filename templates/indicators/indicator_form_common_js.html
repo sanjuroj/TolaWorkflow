@@ -542,8 +542,11 @@
 
             showSuccessNotifiction(msg);
 
+            // Since it's "Save and close" now, we should probably close
+            closeIndicatorFormModal();
+
             // this is our new base state
-            recordTrackedFieldsSnapshot();
+            //recordTrackedFieldsSnapshot();
         });
     }
 
