@@ -517,13 +517,7 @@
 
             // success msg
             {# Translators: success message when an indicator was created" #}
-            let msg = "{% trans 'Success! Indicator created.' %}";
-
-            if (data.using_rf) {
-                {# Translators: success message when an indicator was created, ex. "Indicator 2a was saved and linked to Outcome 2.2" #}
-                msg = "{% trans 'Indicator %s was saved and linked to %s' %}";
-                msg = interpolate(msg, [data.indicator_number, data.result_level_display_ontology]);
-            }
+            let msg = data.save_success_msg || "{% trans 'Success! Indicator created.' %}";
 
             showSuccessNotifiction(msg);
         });
@@ -534,18 +528,25 @@
         return submitForm(rationale).done((data) => {
             $('#indicator_modal_div').trigger('updated.tola.indicator.save', saveEventParams());
 
-            // Show success message on form
+            // Clear any validation error messages
             let alertElement = "#modalmessages";
             $(alertElement).html('');
-            createAlert("success", "{% trans 'Success, form data saved.'|escapejs %}", true, alertElement);
-            scrollToTop();
 
             // update the header
             $('#id_title').text(data.title_str);
             $('#id_subtitle').text(data.subtitle_str);
 
+            // success msg
+            {# Translators: success message when an indicator was updated" #}
+            let msg = data.save_success_msg || "{% trans 'Success! Indicator updated.' %}";
+
+            showSuccessNotifiction(msg);
+
+            // Since it's "Save and close" now, we should probably close
+            closeIndicatorFormModal();
+
             // this is our new base state
-            recordTrackedFieldsSnapshot();
+            //recordTrackedFieldsSnapshot();
         });
     }
 
@@ -933,7 +934,7 @@
 
     function getPTMessage () {
         if ($("#periodic_targets_table input[type=text]").length > 0){
-            return ("{% trans 'Please enter a name and target number for every event. Your target value can be zero.'|escapejs %}");
+            return ("{% trans 'Please enter a name and target number for every event.'|escapejs %}");
         }
         else {
             return ("{% trans 'Please enter a number with no letters or symbols.'|escapejs %}");
@@ -1029,7 +1030,7 @@
         }
     });
 
-    $("#indicator_modal_content").on("input", "#periodic_targets_table input[type=number]", function(e){
+    $("#indicator_modal_content").on("blur", "#periodic_targets_table input[type=number]", function(e){
         if ($(this).val() && $(this).val() >= 0) {
             $(this).removeClass('is-invalid');
             $("#id_pt_errors").text('');
@@ -1042,7 +1043,7 @@
         }
     });
 
-    $("#indicator_modal_content").on("input", "#periodic_targets_table input[type=text]", function(e){
+    $("#indicator_modal_content").on("blur", "#periodic_targets_table input[type=text]", function(e){
         if ($(this).val()) {
             $(this).removeClass('is-invalid');
             $("#id_pt_errors").text('');
