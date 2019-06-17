@@ -934,7 +934,7 @@
 
     function getPTMessage () {
         if ($("#periodic_targets_table input[type=text]").length > 0){
-            return ("{% trans 'Please enter a name and target number for every event. Your target value can be zero.'|escapejs %}");
+            return ("{% trans 'Please enter a name and target number for every event.'|escapejs %}");
         }
         else {
             return ("{% trans 'Please enter a number with no letters or symbols.'|escapejs %}");
@@ -1030,7 +1030,7 @@
         }
     });
 
-    $("#indicator_modal_content").on("input", "#periodic_targets_table input[type=number]", function(e){
+    $("#indicator_modal_content").on("blur", "#periodic_targets_table input[type=number]", function(e){
         if ($(this).val() && $(this).val() >= 0) {
             $(this).removeClass('is-invalid');
             $("#id_pt_errors").text('');
@@ -1043,7 +1043,7 @@
         }
     });
 
-    $("#indicator_modal_content").on("input", "#periodic_targets_table input[type=text]", function(e){
+    $("#indicator_modal_content").on("blur", "#periodic_targets_table input[type=text]", function(e){
         if ($(this).val()) {
             $(this).removeClass('is-invalid');
             $("#id_pt_errors").text('');
