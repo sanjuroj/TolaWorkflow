@@ -292,7 +292,6 @@ export class LevelCardExpanded extends React.Component {
     };
 
     cancelEdit = () => {
-
         // Need to just clear the form if only the root level card is being cancelled.
         let cancelFunc = () => this.props.rootStore.levelStore.cancelEdit(this.props.level.id);
         if (this.props.rootStore.levelStore.levels.length == 1 && this.props.level.id == "new"){
@@ -321,6 +320,7 @@ export class LevelCardExpanded extends React.Component {
     onFormChange = (event) => {
         event.preventDefault();
         this[event.target.name] = event.target.value;
+        // Add inline error message if name field is blanked out
         if (!this.name) {
             const target = $(`#level-name-${this.props.level.id}`);
             target.addClass("is-invalid");
@@ -339,6 +339,34 @@ export class LevelCardExpanded extends React.Component {
         // Need to reference indicators so it reacts to changes.  Simply passing the observable this.indicators through
         // to IndicatorList will result in a non-reactive Indicator list form fields.
         const tempIndicators = toJS(this.indicators);
+
+        let indicatorSection = "";
+        if (this.props.level.id == "new"){
+            indicatorSection = <div className="form-group">
+                    <button
+                    type="submit"
+                    disabled={this.name.length > 0 ? false : true}
+                    className="btn btn-link btn-lg "
+                    onClick={e => {this.updateSubmitType("saveAndEnableIndicators")}}>
+                        { /* # Translators: This is button text that allows users to save their work and unlock the ability to add indicators */ }
+                        <i className="fas fa-plus-circle"/>{gettext(`Save ${this.props.levelProps.tierName} and add indicators`)}
+                    </button>
+                </div>
+
+        }
+        else {
+            indicatorSection = <IndicatorList
+                        level={this.props.level}
+                        tierName={this.props.levelProps.tierName}
+                        indicators={this.indicators}
+                        disabled={!this.name || this.props.level.id == "new"}
+                        reorderDisabled={this.indicators.length < 2}
+                        changeFunc={this.changeIndicatorOrder}
+                        dragEndFunc={this.onDragEnd}/>
+        }
+
+
+
         return (
             <div className="level-card level-card--expanded" id={`level-card-${this.props.level.id}`}>
                 <div>
@@ -371,15 +399,7 @@ export class LevelCardExpanded extends React.Component {
                             value={this.assumptions || ""}
                             onChange={this.onFormChange}/>
                     </div>
-                    <IndicatorList
-                        level={this.props.level}
-                        tierName={this.props.levelProps.tierName}
-                        indicators={this.indicators}
-                        disabled={!this.name || this.props.level.id == "new"}
-                        reorderDisabled={this.indicators.length < 2}
-                        changeFunc={this.changeIndicatorOrder}
-                        dragEndFunc={this.onDragEnd}/>
-
+                    {indicatorSection}
                     <ButtonBar
                         level={this.props.level}
                         levelProps={this.props.levelProps}
@@ -499,7 +519,7 @@ class IndicatorList extends React.Component {
                     placement="bottom"/>
         }
         return(
-            <div className={`level-card--indicator-links ${this.props.disabled ? "disabled" : null}`}>
+            <div className={`level-card--indicator-links${this.props.disabled ? " disabled" : ""}`}>
                 <div className="indicator-links__header">
                     { /* # Translators: Title for a section that lists the Indicators associated with whatever this.props.tiername is. */}
                     <h4>{gettext(`Indicators linked to this ${this.props.tierName}`)}</h4>

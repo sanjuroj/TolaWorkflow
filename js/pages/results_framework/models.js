@@ -223,10 +223,13 @@ export class LevelStore {
 
     // TODO: better error handling for API
     saveLevelToDB = (submitType, levelId, indicatorWasUpdated, formData) => {
+        // if indicators have been updated, call a separate save method and remove the data from object that will be sent with the level saving post request
         if (indicatorWasUpdated) {
             this.saveReorderedIndicatorsToDB(formData.indicators)
         }
         delete formData.indicators;
+
+        // Now process the save differently depending on if it's a new level or a pre-existing one.
         let targetLevel = this.levels.find(level => level.id == levelId);
         let levelToSave = Object.assign(toJS(targetLevel), formData);
         if (levelId == "new") {
@@ -241,12 +244,18 @@ export class LevelStore {
                         this.levels.replace(response.data['all_data'])
                     });
                     const newId = response.data["new_level"]["id"];
-                    this.rootStore.uiStore.activeCard = null;
-                    if (submitType == "saveAndAddSibling"){
+                    if (submitType == "saveAndEnableIndicators") {
+                        runInAction( () => {
+                           this.rootStore.uiStore.activeCard = newId;
+                        });
+                    }
+                    else if (submitType == "saveAndAddSibling"){
                         this.createNewLevelFromSibling(newId);
+                        this.rootStore.uiStore.removeActiveCard()
                     }
                     else if (submitType == "saveAndAddChild"){
                         this.createNewLevelFromParent(newId);
+                        this.rootStore.uiStore.removeActiveCard()
                     }
                 })
                 .catch(error => console.log('error', error))
@@ -270,7 +279,6 @@ export class LevelStore {
                     console.log("There was an error:", error);
                 })
         }
-
 
         this.fetchIndicatorsFromDB();
 
@@ -414,6 +422,7 @@ export class UIStore {
         }
         else {
             this.activeCard = levelId;
+            this.rootStore.levelStore.levels.replace(this.rootStore.levelStore.levels.filter( l => l.id != "new"))
         }
     };
 
@@ -426,6 +435,7 @@ export class UIStore {
             function(){$(`#level-card-${levelId}`)[0].scrollIntoView({behavior:"smooth"})},
             100
         );
+        this.rootStore.levelStore.levels.replace(this.rootStore.levelStore.levels.filter( l => l.id != "new"))
         this.activeCardNeedsConfirm = false;
     };
 
