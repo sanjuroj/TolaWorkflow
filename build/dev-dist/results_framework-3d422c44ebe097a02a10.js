@@ -741,6 +741,7 @@ function (_React$Component3) {
       deleteIndicator: mobx__WEBPACK_IMPORTED_MODULE_3__["action"],
       updateIndicatorName: mobx__WEBPACK_IMPORTED_MODULE_3__["action"]
     });
+    console.log('constructor indicators', Object(mobx__WEBPACK_IMPORTED_MODULE_3__["toJS"])(_this3.indicators));
     return _this3;
   }
 
@@ -774,24 +775,44 @@ function (_React$Component3) {
       }); // Handle indicator update.  Need to update rootStore and component store so if you close and reopen the card, you still see the new indicator
 
       $('#indicator_modal_div').on('updated.tola.indicator.save', function (e, params) {
-        if (params.levelId != _this4.props.level.id) {
-          // Only add the indicator to another level if it wasn't blanked out
-          if (params.levelId) {
-            var movedLevel = Object(mobx__WEBPACK_IMPORTED_MODULE_3__["toJS"])(_this4.indicators.find(function (i) {
-              return i.id == params.indicatorId;
-            }));
-            movedLevel.level = params.levelId;
+        console.log('params level, props.level, rootstore active card', params.levelId, _this4.props.level.id, _this4.props.rootStore.uiStore.activeCard); // This.props.level.id doesn't seem to be updating here, perhaps because the event is attaching a jquery listener
+        // So rootstore props are bing used instead of passed in ones.
 
-            _this4.props.rootStore.levelStore.addIndicatorToStore(movedLevel);
+        var currentCardId = _this4.props.rootStore.uiStore.activeCard;
+
+        if (params.levelId != currentCardId) {
+          // Only add the indicator to another level if it wasn't blanked out
+          console.group();
+          console.log('updated indicator params', params);
+          console.log('indicators before', _this4.props.rootStore.levelStore.indicators.forEach(function (i) {
+            return console.log('i', Object(mobx__WEBPACK_IMPORTED_MODULE_3__["toJS"])(i));
+          }));
+          console.log('this.indicators count', _this4.indicators.length);
+          console.groupEnd();
+
+          if (params.levelId) {
+            _this4.props.rootStore.levelStore.moveIndicatorInStore(params.indicatorId, params.levelId);
           }
 
           _this4.deleteIndicator(params.indicatorId);
-        } else {
-          _this4.props.rootStore.levelStore.updateIndicatorNameInStore(params.indicatorId, params.indicatorName);
 
-          _this4.updateIndicatorName(params.indicatorId, params.indicatorName);
+          console.log('indicators after', _this4.props.rootStore.levelStore.indicators.forEach(function (i) {
+            return console.log('i2', Object(mobx__WEBPACK_IMPORTED_MODULE_3__["toJS"])(i));
+          }));
+        } else {
+          console.log('params ind id, params name, current name', params.indicatorId, params.indicatorName, _this4.props.level.name);
+          _this4.indicators.find(function (i) {
+            return i.id == params.indicatorId;
+          }).name = params.indicatorName;
+
+          _this4.props.rootStore.levelStore.updateIndicatorNameInStore(params.indicatorId, params.indicatorName);
         }
       });
+    }
+  }, {
+    key: "componentWillUnmount",
+    value: function componentWillUnmount() {
+      $('#indicator_modal_div').off('updated.tola.indicator.save');
     }
   }, {
     key: "render",
@@ -1337,7 +1358,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UIStore", function() { return UIStore; });
 /* harmony import */ var mobx__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! mobx */ "2vnA");
 /* harmony import */ var _api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../api.js */ "XoI5");
-var _class, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _temp, _class3, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _descriptor16, _temp2;
+var _class, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _temp, _class3, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _descriptor16, _descriptor17, _temp2;
 
 function _initializerDefineProperty(target, property, descriptor, context) { if (!descriptor) return; Object.defineProperty(target, property, { enumerable: descriptor.enumerable, configurable: descriptor.configurable, writable: descriptor.writable, value: descriptor.initializer ? descriptor.initializer.call(context) : void 0 }); }
 
@@ -1473,13 +1494,11 @@ function () {
               _this.rootStore.uiStore.activeCard = newId;
             });
           } else if (submitType == "saveAndAddSibling") {
+            // this.rootStore.uiStore.removeActiveCard();
             _this.createNewLevelFromSibling(newId);
-
-            _this.rootStore.uiStore.removeActiveCard();
           } else if (submitType == "saveAndAddChild") {
+            // this.rootStore.uiStore.removeActiveCard();
             _this.createNewLevelFromParent(newId);
-
-            _this.rootStore.uiStore.removeActiveCard();
           }
         }).catch(function (error) {
           return console.log('error', error);
@@ -1517,6 +1536,8 @@ function () {
     _initializerDefineProperty(this, "deleteIndicatorFromStore", _descriptor9, this);
 
     _initializerDefineProperty(this, "addIndicatorToStore", _descriptor10, this);
+
+    _initializerDefineProperty(this, "moveIndicatorInStore", _descriptor11, this);
 
     this.fetchIndicatorsFromDB = function () {
       var indicatorId = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
@@ -1843,11 +1864,21 @@ function () {
         return sib.customsort += 1;
       }); // add new Level to the various Store components
 
-      _this5.rootStore.uiStore.activeCard = "new";
-
       _this5.levels.push(newLevel);
 
+      console.group('create new level from parent');
+      console.log('indicators in store');
+
+      _this5.levels.forEach(function (l) {
+        return console.log(Object(mobx__WEBPACK_IMPORTED_MODULE_0__["toJS"])(l));
+      });
+
+      _this5.rootStore.uiStore.activeCard = "new";
+
       _this5.rootStore.uiStore.hasVisibleChildren.push(newLevel.parent);
+
+      console.log('active card=', _this5.rootStore.uiStore.activeCard);
+      console.groupEnd();
     };
   }
 }), _descriptor8 = _applyDecoratedDescriptor(_class.prototype, "createFirstLevel", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
@@ -1906,6 +1937,19 @@ function () {
       _this8.indicators.push(indicatorData);
     };
   }
+}), _descriptor11 = _applyDecoratedDescriptor(_class.prototype, "moveIndicatorInStore", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    var _this9 = this;
+
+    return function (indicatorId, newLevelId) {
+      _this9.indicators.find(function (i) {
+        return i.id == indicatorId;
+      }).level = newLevelId;
+    };
+  }
 })), _class);
 var UIStore = (_class3 = (_temp2 =
 /*#__PURE__*/
@@ -1913,23 +1957,23 @@ function () {
   function UIStore(rootStore) {
     _classCallCheck(this, UIStore);
 
-    _initializerDefineProperty(this, "activeCard", _descriptor11, this);
+    _initializerDefineProperty(this, "activeCard", _descriptor12, this);
 
-    _initializerDefineProperty(this, "hasVisibleChildren", _descriptor12, this);
+    _initializerDefineProperty(this, "hasVisibleChildren", _descriptor13, this);
 
     this.activeCardNeedsConfirm = "";
 
-    _initializerDefineProperty(this, "editCard", _descriptor13, this);
+    _initializerDefineProperty(this, "editCard", _descriptor14, this);
 
-    _initializerDefineProperty(this, "onLeaveConfirm", _descriptor14, this);
+    _initializerDefineProperty(this, "onLeaveConfirm", _descriptor15, this);
 
     this.onLeaveCancel = function () {
       $(".edit-button").prop("disabled", false);
     };
 
-    _initializerDefineProperty(this, "removeActiveCard", _descriptor15, this);
+    _initializerDefineProperty(this, "removeActiveCard", _descriptor16, this);
 
-    _initializerDefineProperty(this, "updateVisibleChildren", _descriptor16, this);
+    _initializerDefineProperty(this, "updateVisibleChildren", _descriptor17, this);
 
     this.rootStore = rootStore;
     this.hasVisibleChildren = this.rootStore.levelStore.levels.map(function (l) {
@@ -1960,33 +2004,34 @@ function () {
   }]);
 
   return UIStore;
-}(), _temp2), (_descriptor11 = _applyDecoratedDescriptor(_class3.prototype, "activeCard", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}(), _temp2), (_descriptor12 = _applyDecoratedDescriptor(_class3.prototype, "activeCard", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: null
-}), _descriptor12 = _applyDecoratedDescriptor(_class3.prototype, "hasVisibleChildren", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor13 = _applyDecoratedDescriptor(_class3.prototype, "hasVisibleChildren", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return [];
   }
-}), _applyDecoratedDescriptor(_class3.prototype, "tierLockStatus", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class3.prototype, "tierLockStatus"), _class3.prototype), _descriptor13 = _applyDecoratedDescriptor(_class3.prototype, "editCard", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
+}), _applyDecoratedDescriptor(_class3.prototype, "tierLockStatus", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class3.prototype, "tierLockStatus"), _class3.prototype), _descriptor14 = _applyDecoratedDescriptor(_class3.prototype, "editCard", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
-    var _this9 = this;
+    var _this10 = this;
 
     return function (levelId) {
-      var cancelledLevelId = _this9.activeCard;
+      var cancelledLevelId = _this10.activeCard;
 
-      if (_this9.activeCardNeedsConfirm) {
-        $("#level-card-".concat(_this9.activeCard))[0].scrollIntoView({
+      if (_this10.activeCardNeedsConfirm) {
+        console.log('in edit, needed confirm, levelId=', levelId);
+        $("#level-card-".concat(_this10.activeCard))[0].scrollIntoView({
           behavior: "smooth"
         });
-        var oldTierName = _this9.rootStore.levelStore.levelProperties[_this9.activeCard].tierName;
+        var oldTierName = _this10.rootStore.levelStore.levelProperties[_this10.activeCard].tierName;
         $(".edit-button").prop("disabled", true);
         create_no_rationale_changeset_notice({
           /* # Translators:  This is a confirmation prompt that is triggered by clicking on a cancel button.  */
@@ -1995,32 +2040,32 @@ function () {
           /* # Translators:  This is a warning provided to the user when they try to cancel the editing of something they have already modified.  */
           preamble: gettext("Changes to this ".concat(oldTierName, " will not be saved")),
           on_submit: function on_submit() {
-            return _this9.onLeaveConfirm(levelId, cancelledLevelId);
+            return _this10.onLeaveConfirm(levelId, cancelledLevelId);
           },
-          on_cancel: _this9.onLeaveCancel
+          on_cancel: _this10.onLeaveCancel
         });
       } else {
-        _this9.activeCard = levelId;
+        _this10.activeCard = levelId;
 
-        _this9.rootStore.levelStore.levels.replace(_this9.rootStore.levelStore.levels.filter(function (l) {
+        _this10.rootStore.levelStore.levels.replace(_this10.rootStore.levelStore.levels.filter(function (l) {
           return l.id != "new";
         }));
       }
     };
   }
-}), _descriptor14 = _applyDecoratedDescriptor(_class3.prototype, "onLeaveConfirm", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
+}), _descriptor15 = _applyDecoratedDescriptor(_class3.prototype, "onLeaveConfirm", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
-    var _this10 = this;
+    var _this11 = this;
 
     return function (levelId, cancelledLevelId) {
-      _this10.rootStore.levelStore.cancelEdit(cancelledLevelId);
+      _this11.rootStore.levelStore.cancelEdit(cancelledLevelId);
 
-      _this10.activeCardNeedsConfirm = false;
+      _this11.activeCardNeedsConfirm = false;
       $(".edit-button").prop("disabled", false);
-      _this10.activeCard = levelId; // Need to use set timeout to ensure that scrolling loses the race with components reacting to the new position of the open card.
+      _this11.activeCard = levelId; // Need to use set timeout to ensure that scrolling loses the race with components reacting to the new position of the open card.
 
       setTimeout(function () {
         $("#level-card-".concat(levelId))[0].scrollIntoView({
@@ -2029,44 +2074,44 @@ function () {
       }, 100);
     };
   }
-}), _descriptor15 = _applyDecoratedDescriptor(_class3.prototype, "removeActiveCard", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
-  configurable: true,
-  enumerable: true,
-  writable: true,
-  initializer: function initializer() {
-    var _this11 = this;
-
-    return function () {
-      _this11.activeCard = null;
-      _this11.rootStore.uiStore.activeCardNeedsConfirm = false;
-    };
-  }
-}), _descriptor16 = _applyDecoratedDescriptor(_class3.prototype, "updateVisibleChildren", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
+}), _descriptor16 = _applyDecoratedDescriptor(_class3.prototype, "removeActiveCard", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     var _this12 = this;
 
+    return function () {
+      _this12.activeCard = null;
+      _this12.rootStore.uiStore.activeCardNeedsConfirm = false;
+    };
+  }
+}), _descriptor17 = _applyDecoratedDescriptor(_class3.prototype, "updateVisibleChildren", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    var _this13 = this;
+
     return function (levelId) {
       var forceHide = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
       var forceShow = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
 
       // forceHide is to ensure that descendant levels are also made hidden, even if they are not actually visible.
-      if (_this12.hasVisibleChildren.indexOf(levelId) >= 0 || forceHide) {
-        _this12.hasVisibleChildren = _this12.hasVisibleChildren.filter(function (level_id) {
+      if (_this13.hasVisibleChildren.indexOf(levelId) >= 0 || forceHide) {
+        _this13.hasVisibleChildren = _this13.hasVisibleChildren.filter(function (level_id) {
           return level_id != levelId;
         });
 
-        var childLevels = _this12.rootStore.levelStore.levels.filter(function (l) {
+        var childLevels = _this13.rootStore.levelStore.levels.filter(function (l) {
           return l.parent == levelId;
         });
 
         childLevels.forEach(function (l) {
-          return _this12.updateVisibleChildren(l.id, true);
+          return _this13.updateVisibleChildren(l.id, true);
         });
       } else {
-        _this12.hasVisibleChildren.push(levelId);
+        _this13.hasVisibleChildren.push(levelId);
       }
     };
   }
@@ -2323,6 +2368,10 @@ function (_React$Component) {
       }
 
       return renderList.map(function (elem) {
+        console.group('in level list');
+        console.log('active card', _this.props.rootStore.uiStore.activeCard);
+        console.log('element', Object(mobx__WEBPACK_IMPORTED_MODULE_3__["toJS"])(elem));
+        console.groupEnd();
         var card = '';
 
         if (_this.props.rootStore.uiStore.activeCard == elem.id) {
@@ -2405,4 +2454,4 @@ function (_React$Component2) {
 /***/ })
 
 },[["QTZG","runtime","vendors"]]]);
-//# sourceMappingURL=results_framework-957488119b6254c7d6a8.js.map
+//# sourceMappingURL=results_framework-3d422c44ebe097a02a10.js.map
