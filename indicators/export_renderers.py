@@ -248,7 +248,7 @@ class ExcelRendererBase(object):
                     cell.number_format = number_format
 
     def set_column_widths(self, sheet):
-        widths = [10, 10, 25, 100]
+        widths = [10, 10, 17, 100]
         if self.serializer.level_column:
             widths.append(12)
         widths += [30, 8, 15, 8, 12]
