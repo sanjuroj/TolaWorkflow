@@ -183,12 +183,12 @@
                         <td class="periodic-targets__sum text-left">
                             <strong>{% trans "Life of Program (LoP) target" %}</strong>
                         </td>
-                        <td class="periodic-targets__sum text-right ">
+                        <td class="periodic-targets__sum text-right">
                             <span id="span_id_lop_target">
                                 <input type="number"
                                        name="lop_target"
                                        id="id_lop_target"
-                                       class="form-control"
+                                       class="form-control text-right"
                                        min="1"
                                     {% if indicator.lop_target != None %}
                                        value="{{ indicator.lop_target_stripped }}"

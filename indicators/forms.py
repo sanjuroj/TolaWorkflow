@@ -142,7 +142,7 @@ class IndicatorForm(forms.ModelForm):
 
     def clean_lop_target(self):
         data = self.cleaned_data['lop_target']
-        if data < 0:
+        if data <= 0:
             # Translators: Input form error message
             raise forms.ValidationError(_('Please enter a number larger than zero.'))
         return data
