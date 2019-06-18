@@ -98,6 +98,11 @@
     function reloadCreateIndicatorForm() {
         let url = `/indicators/indicator_create/${programId()}/`;
 
+        let levelId = initialLevelId();
+        if (levelId) {
+            url += `?levelId=${levelId}`;
+        }
+
         //$("#indicator_modal_content").empty();
         $("#modalmessages").empty();
 
@@ -163,6 +168,10 @@
 
     function initialLopTarget() {
         return $('#initialLopTarget').text() ? parseFloat($('#initialLopTarget').text()) : undefined;
+    }
+
+    function initialLevelId() {
+        return $('#initialLevelId').text() ? parseInt($('#initialLevelId').text()) : undefined;
     }
 
     function saveEventParams() {
@@ -372,6 +381,7 @@
 
     // Button click handler for CREATE form (save and add another)
     $("#indicator_modal_content").on("click", "#id_save_and_add_another_indicator_btn", function(e){
+        console.log(initialLevelId())
         if (validateForm() === false) {
             showValidations("#modalmessages");
             return;

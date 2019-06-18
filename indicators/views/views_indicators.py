@@ -268,7 +268,8 @@ class IndicatorCreate(IndicatorFormMixin, CreateView):
         context = super(IndicatorCreate, self).get_context_data(**kwargs)
         context.update({
             'program': self.program,
-            'periodic_targets': []
+            'periodic_targets': [],
+            'initial_level_id': self.level_pk,
         })
         return context
 

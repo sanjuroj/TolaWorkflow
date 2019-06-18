@@ -8,6 +8,7 @@
 <div id="indicatorId" style="display:none;">{{ object.pk }}</div>
 <div id="programId" style="display:none;">{{ program.id }}</div>
 <div id="initialLopTarget" style="display:none;">{{ object.lop_target|default_if_none:'' }}</div>
+<div id="initialLevelId" style="display:none;">{{ initial_level_id|default_if_none:'' }}</div>  {# only set on create #}
 
 {# This template gets shoved into #indicator_modal_div in indicator_list_modals.html #}
 
