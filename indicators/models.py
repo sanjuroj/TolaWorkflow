@@ -234,7 +234,7 @@ class LevelTier(models.Model):
     TEMPLATES = {
         'mc_standard': {
             # Translators: Name of the most commonly used organizational hierarchy of KPIs at Mercy Corps.
-            'name': ugettext('Mercy Corps standard'),
+            'name': ugettext('Mercy Corps'),
             'tiers': [
                 # Highest level objective of a project.  High level KPIs can be attached here.
                 ugettext('Goal'),
