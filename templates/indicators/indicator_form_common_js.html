@@ -745,17 +745,6 @@
 
 
     /*
-    Listen for value changes in periodic targets and recalculate the targets
-    sum or targets average
-    #periodic-targets-tablediv
-    */
-    $("#indicator_modal_content").on("blur", "#periodic_targets_table input[data-periodictarget]", function (e) {
-        validatePeriodicTargets();
-        updateLopTargetDisplay();
-    });
-
-
-    /*
     Listen for change event of the IS_CUMULATIVE radio buttons and toggle the
     targets_sum row accordingly.
     #id_div_is_cumulative
@@ -868,7 +857,6 @@
         } else {
             lop.removeClass('is-invalid');
             $("#validation_id_lop_target").text(" ");
-            errMsg = undefined;
             lop.val(Math.round(lop.val() * 100) / 100);
             return true;
         }
@@ -926,7 +914,19 @@
 
         if (errorFlag) {
             $("#id_pt_errors").html(`<span class="target-value-error"><small>${getPTMessage()}</small></span>`);
+            return false;
         }
+
+        // If all the inputs exist and are legit, try validating the LoP target now
+
+        let computedLop = computeLopTarget();
+        if (computedLop != null && computedLop < 1) {
+            let msg = "{% trans 'The LoP target cannot be zero.'|escapejs %}";
+            $("#id_pt_errors").html(`<span class="target-value-error"><small>${msg}</small></span>`);
+            return false;
+        }
+
+        return true;
     }
 
 
@@ -960,6 +960,7 @@
         var validationsTargetTab = true;
         var validationsSummaryTab = true;
         var validationsPerformanceTab = true;
+
         if  (validate_baseline() === false ) {
             validationsTargetTab = false
         }
@@ -1028,7 +1029,10 @@
         }
     });
 
-    $("#indicator_modal_content").on("blur", "#periodic_targets_table input[type=number]", function(e){
+    /*
+     * On change of events and periodic target numeric values, but NOT LoP only value
+     */
+    $("#indicator_modal_content").on("blur", "#periodic_targets_table input[data-periodictarget]", function(e){
         if ($(this).val() && $(this).val() >= 0) {
             $(this).removeClass('is-invalid');
             $("#id_pt_errors").text('');
@@ -1039,6 +1043,12 @@
         if ($("#id_div_periodic_tables_placeholder input[type=number], input[type=text]").hasClass("is-invalid") ) {
             $("#id_pt_errors").html(`<span class="target-value-error"><small>${getPTMessage()}</small></span>`);
         }
+
+        // validate LoP is not 0 among other things
+        validatePeriodicTargets();
+
+        // Update calculated display
+        updateLopTargetDisplay();
     });
 
     $("#indicator_modal_content").on("blur", "#periodic_targets_table input[type=text]", function(e){
