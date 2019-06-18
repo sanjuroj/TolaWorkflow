@@ -164,9 +164,14 @@ export class LevelStore {
 
         siblingsToReorder.forEach( sib => sib.customsort+=1);
         // add new Level to the various Store components
-        this.rootStore.uiStore.activeCard = "new";
         this.levels.push(newLevel);
+        console.group('create new level from parent');
+        console.log('indicators in store')
+        this.levels.forEach (l => console.log(toJS(l)));
+        this.rootStore.uiStore.activeCard = "new";
         this.rootStore.uiStore.hasVisibleChildren.push(newLevel.parent)
+        console.log('active card=', this.rootStore.uiStore.activeCard)
+        console.groupEnd()
     };
 
 
@@ -249,12 +254,14 @@ export class LevelStore {
                         });
                     }
                     else if (submitType == "saveAndAddSibling"){
+                        // this.rootStore.uiStore.removeActiveCard();
                         this.createNewLevelFromSibling(newId);
-                        this.rootStore.uiStore.removeActiveCard()
+
                     }
                     else if (submitType == "saveAndAddChild"){
+                        // this.rootStore.uiStore.removeActiveCard();
                         this.createNewLevelFromParent(newId);
-                        this.rootStore.uiStore.removeActiveCard()
+
                     }
                 })
                 .catch(error => console.log('error', error))
@@ -313,6 +320,10 @@ export class LevelStore {
         this.indicators.push(indicatorData);
     };
 
+    @action
+    moveIndicatorInStore = (indicatorId, newLevelId) => {
+        this.indicators.find( i => i.id == indicatorId).level = newLevelId;
+    };
 
     fetchIndicatorsFromDB = (indicatorId=null) => {
         const indicatorQParam = indicatorId ? `?indicatorId=${indicatorId}` : "";
@@ -408,6 +419,7 @@ export class UIStore {
     editCard = (levelId) => {
         const cancelledLevelId = this.activeCard;
         if (this.activeCardNeedsConfirm) {
+            console.log('in edit, needed confirm, levelId=', levelId, )
             $(`#level-card-${this.activeCard}`)[0].scrollIntoView({behavior:"smooth"});
             const oldTierName = this.rootStore.levelStore.levelProperties[this.activeCard].tierName;
             $(".edit-button").prop("disabled", true);

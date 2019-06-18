@@ -191,7 +191,6 @@ export class LevelCardExpanded extends React.Component {
 
             deleteIndicator (indicatorId) {
                 this.indicators = this.indicators.filter( i => i.id != indicatorId);
-
                 this.indicators.forEach( (indicator, index) => indicator.level_order = index);
                 this.baseIndicators = this.baseIndicators.filter( i => i.id != indicatorId);
                 this.baseIndicators.forEach( (indicator, index) => indicator.level_order = index);
@@ -207,6 +206,7 @@ export class LevelCardExpanded extends React.Component {
             deleteIndicator: action,
             updateIndicatorName: action
         });
+        console.log('constructor indicators', toJS(this.indicators))
     }
 
     onDragEnd = ({oldIndex, newIndex}) => {
@@ -264,20 +264,33 @@ export class LevelCardExpanded extends React.Component {
 
         // Handle indicator update.  Need to update rootStore and component store so if you close and reopen the card, you still see the new indicator
         $('#indicator_modal_div').on('updated.tola.indicator.save', (e, params) => {
-            if (params.levelId != this.props.level.id){
+            console.log('params level, props.level, rootstore active card', params.levelId, this.props.level.id, this.props.rootStore.uiStore.activeCard)
+            // This.props.level.id doesn't seem to be updating here, perhaps because the event is attaching a jquery listener
+            // So rootstore props are bing used instead of passed in ones.
+            const currentCardId = this.props.rootStore.uiStore.activeCard;
+            if (params.levelId != currentCardId){
                 // Only add the indicator to another level if it wasn't blanked out
+                console.group()
+                console.log('updated indicator params', params)
+                console.log('indicators before', this.props.rootStore.levelStore.indicators.forEach( i => console.log('i', toJS(i))))
+                console.log('this.indicators count', this.indicators.length);
+                console.groupEnd()
                 if (params.levelId){
-                    const movedLevel = toJS(this.indicators.find( i => i.id == params.indicatorId));
-                    movedLevel.level = params.levelId;
-                    this.props.rootStore.levelStore.addIndicatorToStore(movedLevel)
+                    this.props.rootStore.levelStore.moveIndicatorInStore(params.indicatorId, params.levelId)
                 }
                 this.deleteIndicator(params.indicatorId);
+                console.log('indicators after', this.props.rootStore.levelStore.indicators.forEach( i => console.log('i2', toJS(i))))
             }
             else {
+                console.log('params ind id, params name, current name', params.indicatorId, params.indicatorName, this.props.level.name);
+                this.indicators.find( i => i.id == params.indicatorId).name = params.indicatorName;
                 this.props.rootStore.levelStore.updateIndicatorNameInStore(params.indicatorId, params.indicatorName);
-                this.updateIndicatorName(params.indicatorId, params.indicatorName)
             }
         });
+    }
+
+    componentWillUnmount() {
+        $('#indicator_modal_div').off('updated.tola.indicator.save');
     }
 
     saveLevel = (event) => {
