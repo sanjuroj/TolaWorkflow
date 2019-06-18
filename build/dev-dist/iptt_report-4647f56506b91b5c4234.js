@@ -2476,6 +2476,7 @@ function () {
 
         if (!_this2._validFrequency(frequencyId)) {
           _this2.frequencyId = _this2.isTVA ? _this2.program.frequencies[0] : _constants__WEBPACK_IMPORTED_MODULE_1__["TIME_AWARE_FREQUENCIES"][0];
+          _this2.showAll = true;
         }
 
         if (showAll) {
@@ -4738,17 +4739,9 @@ function (_React$Component) {
           revert: false,
           mostRecentValue: _this.props.filterStore._mostRecentValue,
           latch: _this.props.filterStore.showAll !== false
-        }, function () {
-          if (_this.state.latch) {
-            Object(mobx__WEBPACK_IMPORTED_MODULE_2__["when"])(function () {
-              return !_this.props.filterStore.showAll || !_this.props.filterStore.mostRecent;
-            }, function () {
-              _this.setState({
-                latch: false
-              });
-            });
-          }
         });
+      } else if (_this.state.revert) {
+        _this.setShowAll();
       }
     };
 
@@ -4983,4 +4976,4 @@ function () {
 /***/ })
 
 },[["mYfJ","runtime","vendors"]]]);
-//# sourceMappingURL=iptt_report-ded35f93efd658b3d9b2.js.map
+//# sourceMappingURL=iptt_report-4647f56506b91b5c4234.js.map
