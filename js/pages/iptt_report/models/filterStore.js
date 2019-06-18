@@ -176,6 +176,7 @@ export default class FilterStore {
                     this.frequencyId = this.isTVA ?
                         this.program.frequencies[0] :
                         TIME_AWARE_FREQUENCIES[0];
+                    this.showAll = true;
                 }
                 if (showAll) {
                     this.showAll = true;
