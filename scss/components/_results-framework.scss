@@ -117,12 +117,10 @@
 .level-card--collapsed__actions {
     // contains: actions__*
 }
-.actions__top {
+.actions__top, .actions__bottom {
     display: flex;
     justify-content: flex-end;
 }
-.actions__bottom {}
-
 // component LevelCardExpanded
 .level-card--expanded {
     background-color: $teal-100;
