@@ -526,10 +526,7 @@
             allowModalToClose = true;
 
             // success msg
-            {# Translators: success message when an indicator was created" #}
-            let msg = data.save_success_msg || "{% trans 'Success! Indicator created.' %}";
-
-            showSuccessNotifiction(msg);
+            showSuccessNotifiction(data.save_success_msg);
         });
     }
 
@@ -547,10 +544,7 @@
             $('#id_subtitle').text(data.subtitle_str);
 
             // success msg
-            {# Translators: success message when an indicator was updated" #}
-            let msg = data.save_success_msg || "{% trans 'Success! Indicator updated.' %}";
-
-            showSuccessNotifiction(msg);
+            showSuccessNotifiction(data.save_success_msg);
 
             // Since it's "Save and close" now, we should probably close
             closeIndicatorFormModal();

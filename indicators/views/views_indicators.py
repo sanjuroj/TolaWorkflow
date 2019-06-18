@@ -228,17 +228,24 @@ class IndicatorFormMixin(object):
                 'Periodic Target start/end dates expected by server do not match what was sent by the client: %s vs %s' % (
                 server_period_dates, client_period_dates))
 
-    def _save_success_msg(self, indicator):
+    def _save_success_msg(self, indicator, created=True, level_changed=False):
         """
         Returns the growl of success string for display on the client
 
-        This assumes usage of the new Results Framework.
-        If not using RF, return None
+        Message can vary depending on
+          * Create or update save
+          * If new RF levels are in use or not
+          * If the new RF level was modified during the save or not
         """
         using_rf = indicator.results_framework
 
         if not using_rf:
-            return None
+            if created:
+                # Translators: success message when an indicator was created
+                return _('Success! Indicator created.')
+            else:
+                # Translators: success message when an indicator was updated
+                return _('Success! Indicator updated.')
 
         # success msg strings
         indicator_number = '{}{}'.format(indicator.level_display_ontology,
@@ -246,11 +253,15 @@ class IndicatorFormMixin(object):
         result_level_display_ontology = '{} {}'.format(indicator.leveltier_name,
                                                        indicator.level_display_ontology) if using_rf else ''
 
-        # Translators: success message when an indicator was created, ex. "Indicator 2a was saved and linked to Outcome 2.2"
-        return _('Indicator {indicator_number} was saved and linked to {result_level_display_ontology}').format(
-            indicator_number=indicator_number,
-            result_level_display_ontology=result_level_display_ontology
-        )
+        if created or level_changed:
+            # Translators: success message when an indicator was created, ex. "Indicator 2a was saved and linked to Outcome 2.2"
+            return _('Indicator {indicator_number} was saved and linked to {result_level_display_ontology}').format(
+                indicator_number=indicator_number,
+                result_level_display_ontology=result_level_display_ontology
+            )
+        else:
+            # Translators: success message when indicator was updated ex. "Indicator 2a updated"
+            return _('Indicator {indicator_number} updated.').format(indicator_number=indicator_number)
 
 
 class IndicatorCreate(IndicatorFormMixin, CreateView):
@@ -333,7 +344,7 @@ class IndicatorCreate(IndicatorFormMixin, CreateView):
         return JsonResponse({
             'success': True,
             'id': indicator.id,
-            'save_success_msg': self._save_success_msg(indicator)
+            'save_success_msg': self._save_success_msg(indicator, created=True)
         })
 
 
@@ -467,6 +478,7 @@ class IndicatorUpdate(IndicatorFormMixin, UpdateView):
         lop = form.cleaned_data.get('lop_target')
         rationale = form.cleaned_data.get('rationale')
         old_indicator_values = old_indicator.logged_fields
+        prev_level = old_indicator.level  # previous value of "new" level (not to be confused with Indicator.old_level)
 
         # if existing_target_frequency != new_target_frequency
         # then either existing_target_frequency is None or LoP
@@ -555,7 +567,11 @@ class IndicatorUpdate(IndicatorFormMixin, UpdateView):
             'content': content,
             'title_str': self._form_title_display_str,
             'subtitle_str': self._form_subtitle_display_str,
-            'save_success_msg': self._save_success_msg(self.object),
+            'save_success_msg': self._save_success_msg(
+                self.object,
+                created=False,
+                level_changed=(self.object.level != prev_level)
+            ),
         })
 
 
