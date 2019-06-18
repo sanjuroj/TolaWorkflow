@@ -516,25 +516,6 @@
         validatePeriodicTargets();
         updateLopTargetDisplay();
 
-        //Use BS multiselect widget where needed
-        let multiselectOptions = {
-            includeSelectAllOption: true,
-            enableFiltering: true,
-            enableCaseInsensitiveFiltering: true,
-            numberDisplayed: 1,
-            maxHeight: 320,
-            buttonClass: 'btn btn-light form-control',
-            templates: {
-                filter: '<li class="multiselect-item filter"><div class="input-group"><input class="form-control multiselect-search" type="text"></div></li>',
-                filterClearBtn: '<span class="input-group-btn"><button class="btn btn-default multiselect-clear-filter" type="button"><i class="fas fa-times-circle"></i></button></span>',
-            }
-        };
-
-        $('#id_objectives').multiselect(multiselectOptions);
-        $('#id_disaggregation').multiselect(multiselectOptions);
-        $('#id_indicator_type').multiselect(multiselectOptions);
-        $('#id_strategic_objectives').multiselect(multiselectOptions);
-
         warnIfLopTargetDoesNotMatchComputed();
 
         // used for tracking if changes were made to the form
@@ -543,5 +524,25 @@
 
         allowModalToClose = false;
     });
+
+    // Use BS multiselect widget where needed
+    // kept out of document.ready() because of 'flashing' on modal open
+    var multiselectOptions = {  // keep this a `var`
+        includeSelectAllOption: true,
+        enableFiltering: true,
+        enableCaseInsensitiveFiltering: true,
+        numberDisplayed: 1,
+        maxHeight: 320,
+        buttonClass: 'btn btn-light form-control',
+        templates: {
+            filter: '<li class="multiselect-item filter"><div class="input-group"><input class="form-control multiselect-search" type="text"></div></li>',
+            filterClearBtn: '<span class="input-group-btn"><button class="btn btn-default multiselect-clear-filter" type="button"><i class="fas fa-times-circle"></i></button></span>',
+        }
+    };
+
+    $('#id_objectives').multiselect(multiselectOptions);
+    $('#id_disaggregation').multiselect(multiselectOptions);
+    $('#id_indicator_type').multiselect(multiselectOptions);
+    $('#id_strategic_objectives').multiselect(multiselectOptions);
 
 </script>
