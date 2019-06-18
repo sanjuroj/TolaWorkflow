@@ -26,6 +26,10 @@ class LevelList extends React.Component {
         }
 
         return renderList.map((elem) => {
+            console.group('in level list');
+            console.log('active card', this.props.rootStore.uiStore.activeCard);
+            console.log('element', toJS(elem));
+            console.groupEnd();
             let card = '';
             if (this.props.rootStore.uiStore.activeCard == elem.id) {
                 card =
