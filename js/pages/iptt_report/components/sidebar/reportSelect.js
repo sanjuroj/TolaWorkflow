@@ -1,5 +1,5 @@
 import React from 'react';
-import { observer, inject } from 'mobx-react';
+import { observer, inject, computed } from 'mobx-react';
 import { when } from 'mobx';
 import { SingleReactSelect, SingleSelect, DateSelect } from '../../../../components/selectWidgets';
 
@@ -94,15 +94,9 @@ class TimeframeRadio extends React.Component {
                 revert: false,
                 mostRecentValue: this.props.filterStore._mostRecentValue,
                 latch: this.props.filterStore.showAll !== false
-            },
-            () => {
-                if (this.state.latch) {
-                    when(
-                        () => !this.props.filterStore.showAll || !this.props.filterStore.mostRecent,
-                        () => {this.setState({latch: false});}
-                    );
-                }
             });
+        } else if (this.state.revert) {
+            this.setShowAll();
         }
     }
 
@@ -130,6 +124,7 @@ class TimeframeRadio extends React.Component {
         if (this.state.focus || this.state.latch) {
             return this.state.mostRecentValue;
         } else {
+            
             return this.props.filterStore.mostRecent || '';
         }
     }

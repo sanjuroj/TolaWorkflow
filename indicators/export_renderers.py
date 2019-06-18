@@ -189,7 +189,7 @@ class ExcelRendererBase(object):
         indicator_columns = [
             ('program_id', self.int_cell, self.RIGHT_ALIGN, None),
             ('id', self.int_cell, self.RIGHT_ALIGN, None),
-            (self.get_number, self.str_cell, self.RIGHT_ALIGN, None),
+            (self.get_number, self.str_cell, self.LEFT_ALIGN_WRAP, None),
             ('name', self.str_cell, None, self.INDICATOR_NAME)
         ]
         if self.serializer.level_column:
@@ -248,7 +248,7 @@ class ExcelRendererBase(object):
                     cell.number_format = number_format
 
     def set_column_widths(self, sheet):
-        widths = [10, 10, 15, 100]
+        widths = [10, 10, 25, 100]
         if self.serializer.level_column:
             widths.append(12)
         widths += [30, 8, 15, 8, 12]
