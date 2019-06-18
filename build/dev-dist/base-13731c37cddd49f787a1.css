@@ -9735,7 +9735,7 @@ input[type=radio]:disabled {
   color: #54585a;
   margin-left: 7.5px; }
 
-.actions__top {
+.actions__top, .actions__bottom {
   display: flex;
   justify-content: flex-end; }
 
@@ -10582,3 +10582,5 @@ a:hover {
 
 /* Unsorted custom selectors */
 
+
+/*# sourceMappingURL=base-13731c37cddd49f787a1.css.map*/
