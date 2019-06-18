@@ -43,7 +43,7 @@ class Picker extends React.Component {
 
         const tierTemplates = this.props.rootStore.levelStore.tierTemplates;
 
-        const options = Object.keys(tierTemplates).map(key => {
+        const options = Object.keys(tierTemplates).sort().map(key => {
             return {value:key, label:tierTemplates[key]['name']};
         });
 

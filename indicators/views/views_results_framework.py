@@ -32,7 +32,10 @@ class ResultsFrameworkBuilder(ListView):
 
         tiers = LevelTier.objects.filter(program=program)
         levels = Level.objects.filter(program=program)
-        indicators = Indicator.objects.filter(program=program)
+        # All indicators associated with the program should be passed to the front-end, not just the ones
+        # associated with the rf levels.  The front-end uses the overall count to determine whether
+        # the program name in the header should be plain text or a link.
+        indicators = Indicator.objects.filter(program=program, deleted__isnull=True)
 
         js_context = {
             'program_id': program.id,
@@ -45,6 +48,7 @@ class ResultsFrameworkBuilder(ListView):
 
         context_data = {
             'program': program,
+            'indicator_count': indicators.count(),
             'js_context': js_context,
         }
         return render(request, self.template_name, context_data)
@@ -160,9 +164,6 @@ def reorder_indicators(request):
 
 @login_required
 def indicator_list(request, program_id):
-    """
-    API call for updating the level-associated indicators
-    """
 
     program = Program.objects.get(pk=program_id)
     if not request.user.tola_user.program_role(program.id):

@@ -1,4 +1,4 @@
-import { observable, computed, action, toJS, runInAction } from "mobx";
+import { observable, computed, action, toJS, runInAction, autorun } from "mobx";
 import { api } from "../../api.js"
 
 export class RootStore {
@@ -13,17 +13,16 @@ export class LevelStore {
     @observable indicators = [];
     @observable chosenTierSetKey = "";
     @observable chosenTierSet = [];
+    program_id;
     tierTemplates;
     defaultTemplateKey = "";
     customTierSetKey = "";
-    program_id = "";
     accessLevel = false;
 
     constructor(program_id, levels, indicators, levelTiers, tierTemplates, accessLevel, rootStore) {
         this.rootStore = rootStore;
         this.levels = levels;
         this.indicators = indicators;
-
         this.tierTemplates = tierTemplates;
         this.defaultTemplateKey = "mc_standard";
         this.customTierSetKey = "custom";
@@ -80,6 +79,23 @@ export class LevelStore {
         }
     };
 
+    // This monitors the number of indicators attached to the program and adds/removes the header link depending on
+    // whether there are indicators.  It relies on all indicators being passed up from the server each time
+    // the indicator list is refreshed.
+    monitorHeaderLink = autorun( reaction => {
+        let headerSpan = $("#rf_builder_header");
+        let linkedFlag = headerSpan.children("a").length > 0;
+        if (this.indicators.length > 0 && !linkedFlag ) {
+            const headerText = headerSpan.text();
+            headerSpan.html(`<a href="/program/${this.program_id}/">${headerText}</a>`)
+        }
+        else if (this.indicators.length == 0 && linkedFlag) {
+            const headerText = $("#rf_builder_header > a").text();
+            headerSpan.text(headerText);
+        }
+    // delay is needed to prevent undefined value from being used for program_id that isn't set yet on first load.
+    }, {delay: 50});
+
     @action
     changeTierSet(newTierSetKey) {
         this.chosenTierSetKey = newTierSetKey;
@@ -102,7 +118,6 @@ export class LevelStore {
         }
 
         this.fetchIndicatorsFromDB();
-
         this.rootStore.uiStore.removeActiveCard();
     };
 
@@ -207,10 +222,13 @@ export class LevelStore {
 
     // TODO: better error handling for API
     saveLevelToDB = (submitType, levelId, indicatorWasUpdated, formData) => {
+        // if indicators have been updated, call a separate save method and remove the data from object that will be sent with the level saving post request
         if (indicatorWasUpdated) {
             this.saveReorderedIndicatorsToDB(formData.indicators)
         }
         delete formData.indicators;
+
+        // Now process the save differently depending on if it's a new level or a pre-existing one.
         let targetLevel = this.levels.find(level => level.id == levelId);
         let levelToSave = Object.assign(toJS(targetLevel), formData);
         if (levelId == "new") {
@@ -225,12 +243,18 @@ export class LevelStore {
                         this.levels.replace(response.data['all_data'])
                     });
                     const newId = response.data["new_level"]["id"];
-                    this.rootStore.uiStore.activeCard = null;
-                    if (submitType == "saveAndAddSibling"){
+                    if (submitType == "saveAndEnableIndicators") {
+                        runInAction( () => {
+                           this.rootStore.uiStore.activeCard = newId;
+                        });
+                    }
+                    else if (submitType == "saveAndAddSibling"){
                         this.createNewLevelFromSibling(newId);
+                        this.rootStore.uiStore.removeActiveCard()
                     }
                     else if (submitType == "saveAndAddChild"){
                         this.createNewLevelFromParent(newId);
+                        this.rootStore.uiStore.removeActiveCard()
                     }
                 })
                 .catch(error => console.log('error', error))
@@ -254,7 +278,6 @@ export class LevelStore {
                     console.log("There was an error:", error);
                 })
         }
-
 
         this.fetchIndicatorsFromDB();
 
@@ -383,6 +406,7 @@ export class UIStore {
     // TODO: Make sure old editing data is not preserved when an edit is cancelled
     @action
     editCard = (levelId) => {
+        const cancelledLevelId = this.activeCard;
         if (this.activeCardNeedsConfirm) {
             $(`#level-card-${this.activeCard}`)[0].scrollIntoView({behavior:"smooth"});
             const oldTierName = this.rootStore.levelStore.levelProperties[this.activeCard].tierName;
@@ -392,17 +416,20 @@ export class UIStore {
                 message_text: gettext("Are you sure you want to continue?"),
                 /* # Translators:  This is a warning provided to the user when they try to cancel the editing of something they have already modified.  */
                 preamble: gettext(`Changes to this ${oldTierName} will not be saved`),
-                on_submit: () => this.onLeaveConfirm(levelId),
+                on_submit: () => this.onLeaveConfirm(levelId, cancelledLevelId),
                 on_cancel: this.onLeaveCancel,
             })
         }
         else {
             this.activeCard = levelId;
+            this.rootStore.levelStore.levels.replace(this.rootStore.levelStore.levels.filter( l => l.id != "new"))
         }
     };
 
     @action
-    onLeaveConfirm = (levelId) => {
+    onLeaveConfirm = (levelId, cancelledLevelId) => {
+        this.rootStore.levelStore.cancelEdit(cancelledLevelId);
+        this.activeCardNeedsConfirm = false;
         $(".edit-button").prop("disabled", false);
         this.activeCard = levelId;
         // Need to use set timeout to ensure that scrolling loses the race with components reacting to the new position of the open card.
@@ -410,7 +437,6 @@ export class UIStore {
             function(){$(`#level-card-${levelId}`)[0].scrollIntoView({behavior:"smooth"})},
             100
         );
-        this.activeCardNeedsConfirm = false;
     };
 
     onLeaveCancel = () => {

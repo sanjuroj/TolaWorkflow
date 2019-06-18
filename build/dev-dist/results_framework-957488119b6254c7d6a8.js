@@ -102,7 +102,7 @@ function (_React$Component) {
       }
 
       var tierTemplates = this.props.rootStore.levelStore.tierTemplates;
-      var options = Object.keys(tierTemplates).map(function (key) {
+      var options = Object.keys(tierTemplates).sort().map(function (key) {
         return {
           value: key,
           label: tierTemplates[key]['name']
@@ -644,6 +644,7 @@ function (_React$Component3) {
       }
 
       if (_this3.dataHasChanged) {
+        $(".level-button").prop("disabled", true);
         create_no_rationale_changeset_notice({
           /* # Translators: This is part of a confirmation prompt that is triggered by clicking on a cancel button.  */
           message_text: gettext("Are you sure you want to continue?"),
@@ -666,7 +667,7 @@ function (_React$Component3) {
 
     _this3.onFormChange = function (event) {
       event.preventDefault();
-      _this3[event.target.name] = event.target.value;
+      _this3[event.target.name] = event.target.value; // Add inline error message if name field is blanked out
 
       if (!_this3.name) {
         var target = $("#level-name-".concat(_this3.props.level.id));
@@ -795,9 +796,38 @@ function (_React$Component3) {
   }, {
     key: "render",
     value: function render() {
+      var _this5 = this;
+
       // Need to reference indicators so it reacts to changes.  Simply passing the observable this.indicators through
       // to IndicatorList will result in a non-reactive Indicator list form fields.
       var tempIndicators = Object(mobx__WEBPACK_IMPORTED_MODULE_3__["toJS"])(this.indicators);
+      var indicatorSection = "";
+
+      if (this.props.level.id == "new") {
+        indicatorSection = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+          className: "form-group"
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+          type: "submit",
+          disabled: this.name.length > 0 ? false : true,
+          className: "btn btn-link btn-lg ",
+          onClick: function onClick(e) {
+            _this5.updateSubmitType("saveAndEnableIndicators");
+          }
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+          className: "fas fa-plus-circle"
+        }), gettext("Save ".concat(this.props.levelProps.tierName, " and add indicators"))));
+      } else {
+        indicatorSection = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(IndicatorList, {
+          level: this.props.level,
+          tierName: this.props.levelProps.tierName,
+          indicators: this.indicators,
+          disabled: !this.name || this.props.level.id == "new",
+          reorderDisabled: this.indicators.length < 2,
+          changeFunc: this.changeIndicatorOrder,
+          dragEndFunc: this.onDragEnd
+        });
+      }
+
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "level-card level-card--expanded",
         id: "level-card-".concat(this.props.level.id)
@@ -829,15 +859,7 @@ function (_React$Component3) {
         autoComplete: "off",
         value: this.assumptions || "",
         onChange: this.onFormChange
-      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(IndicatorList, {
-        level: this.props.level,
-        tierName: this.props.levelProps.tierName,
-        indicators: this.indicators,
-        disabled: !this.name || this.props.level.id == "new",
-        reorderDisabled: this.indicators.length < 2,
-        changeFunc: this.changeIndicatorOrder,
-        dragEndFunc: this.onDragEnd
-      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ButtonBar, {
+      })), indicatorSection, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ButtonBar, {
         level: this.props.level,
         levelProps: this.props.levelProps,
         submitFunc: this.updateSubmitType,
@@ -939,7 +961,7 @@ function (_React$Component5) {
   _createClass(LevelButton, [{
     key: "render",
     value: function render() {
-      var _this5 = this;
+      var _this6 = this;
 
       var buttonType = this.props.submitType == "cancel" ? "button" : "submit";
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
@@ -947,7 +969,7 @@ function (_React$Component5) {
         type: buttonType,
         className: this.props.classes + ' level-button btn btn-sm',
         onClick: function onClick() {
-          return _this5.props.submitFunc(_this5.props.submitType);
+          return _this6.props.submitFunc(_this6.props.submitType);
         }
       }, this.props.text);
     }
@@ -978,7 +1000,7 @@ function (_React$Component6) {
   }, {
     key: "render",
     value: function render() {
-      var _this6 = this;
+      var _this7 = this;
 
       // Create the list of indicators and the dropdowns for setting the indicator order
       var options = this.props.indicators.map(function (entry, index) {
@@ -994,7 +1016,7 @@ function (_React$Component6) {
         }, indicator.name.replace(/(.{55})..+/, "$1..."));
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_selectWidgets__WEBPACK_IMPORTED_MODULE_7__["SingleReactSelect"], {
           update: function update(value) {
-            return _this6.props.changeFunc(indicator.id, value);
+            return _this7.props.changeFunc(indicator.id, value);
           },
           selectId: "ind" + indicator.id,
           labelClasses: " ",
@@ -1006,11 +1028,11 @@ function (_React$Component6) {
           },
           label: indicator_label,
           options: options,
-          disabled: _this6.props.disabled || _this6.props.reorderDisabled
+          disabled: _this7.props.disabled || _this7.props.reorderDisabled
         }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
           className: "sortable-list__item__actions"
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_indicatorModalComponents__WEBPACK_IMPORTED_MODULE_8__["UpdateIndicatorButton"], {
-          readonly: _this6.props.disabled,
+          readonly: _this7.props.disabled,
           label: gettext("Settings"),
           indicatorId: indicator.id
         })));
@@ -1031,7 +1053,7 @@ function (_React$Component6) {
       }
 
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "level-card--indicator-links ".concat(this.props.disabled ? "disabled" : null)
+        className: "level-card--indicator-links".concat(this.props.disabled ? " disabled" : "")
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "indicator-links__header"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", null, gettext("Indicators linked to this ".concat(this.props.tierName))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, helpLink)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -1060,7 +1082,7 @@ function (_React$Component6) {
           key: "item-".concat(index),
           index: index,
           value: value,
-          disabled: _this6.props.disabled || _this6.props.reorderDisabled
+          disabled: _this7.props.disabled || _this7.props.reorderDisabled
         });
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "sortable-list-actions"
@@ -1353,11 +1375,27 @@ function () {
 
     _initializerDefineProperty(this, "chosenTierSet", _descriptor4, this);
 
+    this.program_id = void 0;
     this.tierTemplates = void 0;
     this.defaultTemplateKey = "";
     this.customTierSetKey = "";
-    this.program_id = "";
     this.accessLevel = false;
+    this.monitorHeaderLink = Object(mobx__WEBPACK_IMPORTED_MODULE_0__["autorun"])(function (reaction) {
+      var headerSpan = $("#rf_builder_header");
+      var linkedFlag = headerSpan.children("a").length > 0;
+
+      if (_this.indicators.length > 0 && !linkedFlag) {
+        var headerText = headerSpan.text();
+        headerSpan.html("<a href=\"/program/".concat(_this.program_id, "/\">").concat(headerText, "</a>"));
+      } else if (_this.indicators.length == 0 && linkedFlag) {
+        var _headerText = $("#rf_builder_header > a").text();
+
+        headerSpan.text(_headerText);
+      } // delay is needed to prevent undefined value from being used for program_id that isn't set yet on first load.
+
+    }, {
+      delay: 50
+    });
 
     _initializerDefineProperty(this, "cancelEdit", _descriptor5, this);
 
@@ -1405,11 +1443,12 @@ function () {
     };
 
     this.saveLevelToDB = function (submitType, levelId, indicatorWasUpdated, formData) {
+      // if indicators have been updated, call a separate save method and remove the data from object that will be sent with the level saving post request
       if (indicatorWasUpdated) {
         _this.saveReorderedIndicatorsToDB(formData.indicators);
       }
 
-      delete formData.indicators;
+      delete formData.indicators; // Now process the save differently depending on if it's a new level or a pre-existing one.
 
       var targetLevel = _this.levels.find(function (level) {
         return level.id == levelId;
@@ -1428,12 +1467,19 @@ function () {
             _this.levels.replace(response.data['all_data']);
           });
           var newId = response.data["new_level"]["id"];
-          _this.rootStore.uiStore.activeCard = null;
 
-          if (submitType == "saveAndAddSibling") {
+          if (submitType == "saveAndEnableIndicators") {
+            Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
+              _this.rootStore.uiStore.activeCard = newId;
+            });
+          } else if (submitType == "saveAndAddSibling") {
             _this.createNewLevelFromSibling(newId);
+
+            _this.rootStore.uiStore.removeActiveCard();
           } else if (submitType == "saveAndAddChild") {
             _this.createNewLevelFromParent(newId);
+
+            _this.rootStore.uiStore.removeActiveCard();
           }
         }).catch(function (error) {
           return console.log('error', error);
@@ -1934,6 +1980,8 @@ function () {
     var _this9 = this;
 
     return function (levelId) {
+      var cancelledLevelId = _this9.activeCard;
+
       if (_this9.activeCardNeedsConfirm) {
         $("#level-card-".concat(_this9.activeCard))[0].scrollIntoView({
           behavior: "smooth"
@@ -1947,12 +1995,16 @@ function () {
           /* # Translators:  This is a warning provided to the user when they try to cancel the editing of something they have already modified.  */
           preamble: gettext("Changes to this ".concat(oldTierName, " will not be saved")),
           on_submit: function on_submit() {
-            return _this9.onLeaveConfirm(levelId);
+            return _this9.onLeaveConfirm(levelId, cancelledLevelId);
           },
           on_cancel: _this9.onLeaveCancel
         });
       } else {
         _this9.activeCard = levelId;
+
+        _this9.rootStore.levelStore.levels.replace(_this9.rootStore.levelStore.levels.filter(function (l) {
+          return l.id != "new";
+        }));
       }
     };
   }
@@ -1963,7 +2015,10 @@ function () {
   initializer: function initializer() {
     var _this10 = this;
 
-    return function (levelId) {
+    return function (levelId, cancelledLevelId) {
+      _this10.rootStore.levelStore.cancelEdit(cancelledLevelId);
+
+      _this10.activeCardNeedsConfirm = false;
       $(".edit-button").prop("disabled", false);
       _this10.activeCard = levelId; // Need to use set timeout to ensure that scrolling loses the race with components reacting to the new position of the open card.
 
@@ -1972,7 +2027,6 @@ function () {
           behavior: "smooth"
         });
       }, 100);
-      _this10.activeCardNeedsConfirm = false;
     };
   }
 }), _descriptor15 = _applyDecoratedDescriptor(_class3.prototype, "removeActiveCard", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
@@ -2351,4 +2405,4 @@ function (_React$Component2) {
 /***/ })
 
 },[["QTZG","runtime","vendors"]]]);
-//# sourceMappingURL=results_framework-4c803bc8a8dee72fc8d9.js.map
+//# sourceMappingURL=results_framework-957488119b6254c7d6a8.js.map
