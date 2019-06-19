@@ -546,6 +546,8 @@ window.create_no_rationale_changeset_notice = function () {
       cancel_text = _ref4$cancel_text === void 0 ? gettext('Cancel') : _ref4$cancel_text,
       _ref4$context = _ref4.context,
       context = _ref4$context === void 0 ? null : _ref4$context,
+      _ref4$type = _ref4.type,
+      type = _ref4$type === void 0 ? 'error' : _ref4$type,
       _ref4$preamble = _ref4.preamble,
       preamble = _ref4$preamble === void 0 ? false : _ref4$preamble;
 
@@ -565,7 +567,7 @@ window.create_no_rationale_changeset_notice = function () {
     on_cancel: on_cancel,
     confirm_text: confirm_text,
     cancel_text: cancel_text,
-    type: 'error',
+    type: type,
     inner: inner,
     context: context,
     rationale_required: false,
@@ -624,4 +626,4 @@ window.scrollToBottom = scrollToBottom;
 /***/ })
 
 },[["YqHn","runtime","vendors"]]]);
-//# sourceMappingURL=base-f9402ab5399b8c044543.js.map
+//# sourceMappingURL=base-eac6ddc8b5ebae175a20.js.map
