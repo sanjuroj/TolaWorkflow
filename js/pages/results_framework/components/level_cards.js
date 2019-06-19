@@ -317,7 +317,8 @@ export class LevelCardExpanded extends React.Component {
                 message_text: gettext("Are you sure you want to continue?"),
                 /* # Translators:  This is a warning provided to the user when they try to cancel the editing of something they have already modified.  */
                 preamble: gettext(`Changes to this ${this.props.levelProps.tierName} will not be saved`),
-                on_submit: () => cancelFunc()
+                on_submit: () => cancelFunc(),
+                type: "notice"
             })
         }
         else{

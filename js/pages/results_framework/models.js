@@ -428,6 +428,7 @@ export class UIStore {
                 message_text: gettext("Are you sure you want to continue?"),
                 /* # Translators:  This is a warning provided to the user when they try to cancel the editing of something they have already modified.  */
                 preamble: gettext(`Changes to this ${oldTierName} will not be saved`),
+                type: "notice",
                 on_submit: () => this.onLeaveConfirm(levelId, cancelledLevelId),
                 on_cancel: this.onLeaveCancel,
             })
