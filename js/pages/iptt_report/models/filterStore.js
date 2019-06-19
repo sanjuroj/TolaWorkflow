@@ -29,8 +29,10 @@ export default class FilterStore {
     @observable _sectors = [];
     @observable _types = [];
     @observable _indicators = [];
+    @observable _latchMostRecent = false;
     _oldShowAll = null;
     _oldMostRecent = null;
+    
 
     constructor(programStore) {
         this.programStore = programStore;
@@ -142,6 +144,7 @@ export default class FilterStore {
     updateTransitionParams() {
         this._oldShowAll = this.showAll;
         this._oldMostRecent = this.mostRecent;
+        this._latchMostRecent = false;
     }
     
     clearTransitionParams() {
@@ -227,6 +230,7 @@ export default class FilterStore {
     set startPeriod(startPeriod) {
         if (this.lastPeriod !== null) {
             this._startPeriod = Math.max(0, Math.min(this.lastPeriod.index, startPeriod));
+            this._latchMostRecent = false;
             if (this.endPeriod && this._startPeriod > this.endPeriod) {
                 this.endPeriod = startPeriod;
             }
@@ -243,6 +247,7 @@ export default class FilterStore {
     set endPeriod(endPeriod) {
         if (this.lastPeriod !== null) {
             this._endPeriod = Math.max((this.startPeriod || 0), Math.min(this.lastPeriod.index, endPeriod));
+            this._latchMostRecent = false;
         }
     }
     
@@ -257,12 +262,19 @@ export default class FilterStore {
         if (showAll === true && this.lastPeriod) {
             this.startPeriod = 0;
             this.endPeriod = this.lastPeriod.index;
+            this._latchMostRecent = false;
         }
+    }
+    
+    @computed get _internalShowAll() {
+        return (
+            this.startPeriod === 0 && this.lastPeriod && this.endPeriod === this.lastPeriod.index
+            );
     }
     
     @computed get showAll() {
         return (
-            this.startPeriod === 0 && this.lastPeriod && this.endPeriod === this.lastPeriod.index
+            !this._latchMostRecent && this._internalShowAll
             );
     }
     
@@ -270,6 +282,7 @@ export default class FilterStore {
         if (this.currentPeriod) {
             this.endPeriod = this.currentPeriod.index;
             this.startPeriod = Math.max(0, this.currentPeriod.index - (parseInt(count) || 2) + 1);
+            this._latchMostRecent = this._internalShowAll;
         }
     }
     
