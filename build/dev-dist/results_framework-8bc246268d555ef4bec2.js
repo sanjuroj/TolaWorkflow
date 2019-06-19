@@ -746,11 +746,20 @@ function (_React$Component3) {
   }
 
   _createClass(LevelCardExpanded, [{
+    key: "componentDidUpdate",
+    value: function componentDidUpdate() {
+      // Enable popovers after update.  This is needed for the help popover in the indicator list section.
+      // Without this, the popover doesnt' pop.
+      $('*[data-toggle="popover"]').popover({
+        html: true
+      });
+    }
+  }, {
     key: "componentDidMount",
     value: function componentDidMount() {
       var _this4 = this;
 
-      // Enable popovers after update (they break otherwise)
+      // Enable popovers after load (they break otherwise)
       $('*[data-toggle="popover"]').popover({
         html: true
       }); // Handle indicator creation.  Need to update rootStore and component store so if you close and reopen the card, you still see the new indicator
@@ -806,7 +815,11 @@ function (_React$Component3) {
           }).name = params.indicatorName;
 
           _this4.props.rootStore.levelStore.updateIndicatorNameInStore(params.indicatorId, params.indicatorName);
-        }
+        } // Need to remount the tooltip so it reflects a potential new name.  It's a big janky, should probably use a react component instead.
+
+
+        $('*[data-toggle="tooltip"]').tooltip('dispose');
+        $('*[data-toggle="tooltip"]').tooltip();
       });
     }
   }, {
@@ -1017,6 +1030,12 @@ function (_React$Component6) {
       $('*[data-toggle="popover"]').popover({
         html: true
       });
+      $('*[data-toggle="tooltip"]').tooltip();
+    }
+  }, {
+    key: "componentDidUpdate",
+    value: function componentDidUpdate() {
+      $('*[data-toggle="tooltip"]').tooltip();
     }
   }, {
     key: "render",
@@ -1032,9 +1051,12 @@ function (_React$Component6) {
       });
       var indicatorMarkup = this.props.indicators.map(function (indicator) {
         // let options = this.props.indicators.map( (entry, index) => <option value={index+1}>{index+1}</option>);
+        var tipTemplate = '<div class="tooltip sortable-list__item__tooltip" role="tooltip"><div class="arrow"></div><div class="tooltip-inner"></div></div>';
         var indicator_label = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+          "data-toggle": "tooltip",
+          "data-template": tipTemplate,
           title: indicator.name
-        }, indicator.name.replace(/(.{55})..+/, "$1..."));
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, indicator.name.replace(/(.{55})..+/, "$1...")));
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_selectWidgets__WEBPACK_IMPORTED_MODULE_7__["SingleReactSelect"], {
           update: function update(value) {
             return _this7.props.changeFunc(indicator.id, value);
@@ -1091,9 +1113,7 @@ function (_React$Component6) {
         className: "sortable-list-header__actions"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
         className: "fas fa-cog"
-      }), " ", gettext("Settings"))) : react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "sortable-list-header--empty"
-      }, gettext("No indicators")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(SortableContainer, {
+      }), " ", gettext("Settings"))) : null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(SortableContainer, {
         onSortEnd: this.props.dragEndFunc,
         useDragHandle: true,
         lockAxis: "y",
@@ -2455,4 +2475,4 @@ function (_React$Component2) {
 /***/ })
 
 },[["QTZG","runtime","vendors"]]]);
-//# sourceMappingURL=results_framework-d6d20bf482b64438ac51.js.map
+//# sourceMappingURL=results_framework-8bc246268d555ef4bec2.js.map

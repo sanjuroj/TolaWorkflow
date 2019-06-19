@@ -9857,6 +9857,15 @@ input[type=radio]:disabled {
   flex-grow: 0;
   flex-shrink: 0; }
 
+.sortable-list__item__tooltip > .tooltip-inner {
+  color: #fff;
+  background-color: #71757b; }
+
+.sortable-list__item__tooltip > .arrow::before,
+.sortable-list__item__tooltip > .arrow {
+  color: #71757b;
+  border-top-color: #71757b; }
+
 /* Local custom CSS and overloads for non-BS libraries */
 .help-block {
   color: #71757b !important;
@@ -10583,4 +10592,4 @@ a:hover {
 /* Unsorted custom selectors */
 
 
-/*# sourceMappingURL=base-f0e5f864478bedff335e.css.map*/
+/*# sourceMappingURL=base-575b817ea898e46e2c96.css.map*/
