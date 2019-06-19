@@ -163,7 +163,7 @@ function (_React$Component) {
         href: "#",
         id: "show-all-indicators",
         onClick: this.onShowAllClick
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("small", null, gettext('Show all')))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_indicatorModalComponents__WEBPACK_IMPORTED_MODULE_4__["AddIndicatorButton"], {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("small", null, gettext('Show all')))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, !readonly && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_indicatorModalComponents__WEBPACK_IMPORTED_MODULE_4__["AddIndicatorButton"], {
         readonly: readonly,
         programId: programId
       })));
@@ -1696,4 +1696,4 @@ var ProgramMetrics = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])
 /***/ })
 
 },[["aJgA","runtime","vendors"]]]);
-//# sourceMappingURL=program_page-853ba5665831c9d7804d.js.map
+//# sourceMappingURL=program_page-d5880b91ff2c339261b5.js.map
