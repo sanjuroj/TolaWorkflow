@@ -83,3 +83,14 @@
     flex-grow: 0;
     flex-shrink: 0;
 }
+
+.sortable-list__item__tooltip > .tooltip-inner {
+    color: $white;
+    background-color: $gray-600;
+}
+
+.sortable-list__item__tooltip > .arrow::before,
+.sortable-list__item__tooltip > .arrow{
+    color: $gray-600;
+    border-top-color: $gray-600;
+}

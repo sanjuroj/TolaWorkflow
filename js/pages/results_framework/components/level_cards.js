@@ -236,8 +236,16 @@ export class LevelCardExpanded extends React.Component {
         this.submitType = newType;
     };
 
+    componentDidUpdate() {
+        // Enable popovers after update.  This is needed for the help popover in the indicator list section.
+        // Without this, the popover doesnt' pop.
+        $('*[data-toggle="popover"]').popover({
+            html: true
+        });
+    }
+
     componentDidMount() {
-        // Enable popovers after update (they break otherwise)
+        // Enable popovers after load (they break otherwise)
         $('*[data-toggle="popover"]').popover({
             html: true
         });
@@ -286,6 +294,10 @@ export class LevelCardExpanded extends React.Component {
                 this.indicators.find( i => i.id == params.indicatorId).name = params.indicatorName;
                 this.props.rootStore.levelStore.updateIndicatorNameInStore(params.indicatorId, params.indicatorName);
             }
+
+            // Need to remount the tooltip so it reflects a potential new name.  It's a big janky, should probably use a react component instead.
+            $('*[data-toggle="tooltip"]').tooltip('dispose');
+            $('*[data-toggle="tooltip"]').tooltip();
         });
     }
 
@@ -489,7 +501,15 @@ class IndicatorList extends React.Component {
         $('*[data-toggle="popover"]').popover({
             html: true
         });
+
+        $('*[data-toggle="tooltip"]').tooltip()
     }
+
+    componentDidUpdate() {
+
+        $('*[data-toggle="tooltip"]').tooltip()
+    }
+
 
     render() {
 
@@ -498,7 +518,11 @@ class IndicatorList extends React.Component {
 
         let indicatorMarkup = this.props.indicators.map ( (indicator) => {
             // let options = this.props.indicators.map( (entry, index) => <option value={index+1}>{index+1}</option>);
-            const indicator_label = <span title={indicator.name}>{indicator.name.replace(/(.{55})..+/, "$1...")}</span>
+            const tipTemplate = '<div class="tooltip sortable-list__item__tooltip" role="tooltip"><div class="arrow"></div><div class="tooltip-inner"></div></div>';
+            const indicator_label =
+                <span data-toggle="tooltip" data-template={tipTemplate} title={indicator.name}>
+                    <span>{indicator.name.replace(/(.{55})..+/, "$1...")}</span>
+                </span>
             return (
                 <React.Fragment>
                     <SingleReactSelect
@@ -552,9 +576,7 @@ class IndicatorList extends React.Component {
                             </div>
                         </div>
                     :
-                        <div className="sortable-list-header--empty">
-                            { gettext("No indicators") }
-                        </div>
+                        null
                     }
                     <SortableContainer onSortEnd={this.props.dragEndFunc} useDragHandle lockAxis="y" lockToContainerEdges>
                         {indicatorMarkup.map((value, index) => (
