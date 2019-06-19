@@ -23,10 +23,12 @@
                                 data-ptid="{{ pt.id }}"
                                 class="periodic-target">
                                 <td class="text-left d-flex align-items-center td--stretch">
+                                    {% if not readonly %}
                                     <a href="{% url 'pt_delete' pt.id %}" id="delete_event_{{ pt.id }}"
                                        class="deletebtn btn btn-sm event-target-delete-button">
                                         <i class="fas fa-times text-danger"></i>
                                     </a>
+                                    {% endif %}
                         {% else %}
                             <tr id="target_row_{{forloop.counter0}}"
                                 data-collected-count="0"
@@ -39,7 +41,12 @@
                                         <i class="fas fa-times text-danger"></i>
                                     </a>
                         {% endif %}
-                            <input type="text" placeholder="{% trans 'Enter event name' %}" name="{{ pt.period }}" value="{{ pt.period }}" class="form-control input-text">
+                            <input type="text"
+                                   placeholder="{% trans 'Enter event name' %}"
+                                   name="{{ pt.period }}"
+                                   value="{{ pt.period }}"
+                                   class="form-control input-text"
+                                   {% if readonly %}disabled="disabled"{% endif %}>
                             <span style="" class="help-block"> </span>
                         </td>
                     {% else %}
@@ -94,7 +101,7 @@
 
         <div class="d-flex justify-content-between align-items-baseline">
             <div>
-                {% if indicator.target_frequency == 8 %}
+                {% if indicator.target_frequency == 8 and not readonly %}
                 <a href="#" id="addNewPeriodicTarget" class="btn btn-add btn-link"><i class="fas fa-plus-circle"></i> {% trans "Add an event" %}</a>
                 {% endif %}
             </div>
@@ -190,6 +197,7 @@
                                        id="id_lop_target"
                                        class="form-control text-right"
                                        min="1"
+                                       {% if readonly %}disabled="disabled"{% endif %}
                                     {% if indicator.lop_target != None %}
                                        value="{{ indicator.lop_target_stripped }}"
                                     {% endif %}
