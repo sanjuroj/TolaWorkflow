@@ -113,8 +113,8 @@
                             {% endblocktrans %}
                         </p>
                     {% else %}
-                        {# Translators: This message appears if users are trying to edit a program that isn't ready for viewing/editing. #}
-                        <p>{% trans "Your program administrator must initialize this program before you will be able to view or edit it" %}</p>
+                        {# Translators: A message telling the user why they can not access it due to the start and end date not being set. #}
+                        <p>{% trans "Before you can view this program, an administrator needs to set the program's start and end dates." %}</p>
                     {% endif %}
                 {% elif program.metrics.indicator_count == 0 %}
                     {% if has_high_role %}
@@ -141,6 +141,7 @@
                         {% endif %}
 
                     {% else %}
+                        {# Translators: A message telling the user a program can not yet be accessed because indicators have not been created on it. #}
                         <p>{% trans "No indicators have been entered for this program." %}</p>
                     {% endif %}
                 {% else %}
