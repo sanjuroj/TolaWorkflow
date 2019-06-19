@@ -81,7 +81,9 @@ class StatusHeader extends React.Component {
                 }
             </h3>
             <div>
-                <AddIndicatorButton readonly={readonly} programId={programId} />
+                {!readonly &&
+                <AddIndicatorButton readonly={readonly} programId={programId}/>
+                }
             </div>
         </div>
     }
