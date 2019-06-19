@@ -65,13 +65,11 @@ class TimeframeRadio extends React.Component {
             focus: false,
             mostRecentValue: props.filterStore.mostRecent || '',
             revert: false,
-            latch: false
         };
     }
 
     setShowAll = () => {
         this.setState({
-            latch: false,
             focus: false,
             revert: false,
             });
@@ -93,10 +91,13 @@ class TimeframeRadio extends React.Component {
                 focus: false,
                 revert: false,
                 mostRecentValue: this.props.filterStore._mostRecentValue,
-                latch: this.props.filterStore.showAll !== false
             });
         } else if (this.state.revert) {
             this.setShowAll();
+        } else {
+            this.setState({
+                focus: false
+            });
         }
     }
 
@@ -113,7 +114,7 @@ class TimeframeRadio extends React.Component {
         let newState = {
             focus: true,
             mostRecentValue: (this.props.filterStore._mostRecentValue || '')
-            };;
+            };
         if (!this.mostRecentValue) {
             newState.mostRecentValue = '';
         }
@@ -121,64 +122,65 @@ class TimeframeRadio extends React.Component {
     }
 
     get mostRecentValue() {
-        if (this.state.focus || this.state.latch) {
+        if (this.state.focus) {
             return this.state.mostRecentValue;
         } else {
-            
             return this.props.filterStore.mostRecent || '';
         }
     }
 
     render() {
-        return <div className="form-row mb-3">
-                    <div className="col-sm-4">
-                        <div className="form-check form-check-inline pt-1">
-                            <span className="form-check-input">
-                                <input type="radio"
-                                       checked={ !this.state.latch && !this.state.focus && this.props.filterStore.showAll }
-                                       disabled={ this.props.filterStore.periodsDisabled }
-                                       onChange={ this.setShowAll }
-                                       />
-                            </span>
-                            <label onClick={ this.setShowAll } 
-                                   className="form-check-label">
-                                {
-                                    /* # Translators: option to show all periods for the report */
-                                    gettext('Show all')
-                                }
-                            </label>
-                        </div>
+        return (
+            <div className="form-row mb-3">
+                <div className="col-sm-4">
+                    <div className="form-check form-check-inline pt-1">
+                        <span className="form-check-input">
+                            <input type="radio"
+                                   checked={ !this.props.filterStore.periodsDisabled && !this.state.focus && this.props.filterStore.showAll }
+                                   disabled={ this.props.filterStore.periodsDisabled }
+                                   onChange={ this.setShowAll }
+                                   />
+                        </span>
+                        <label onClick={ this.setShowAll } 
+                               className="form-check-label">
+                            {
+                                /* # Translators: option to show all periods for the report */
+                                gettext('Show all')
+                            }
+                        </label>
                     </div>
-                    <div className="col-sm-4 p-0">
-                        <div className="form-check form-check-inline pt-1">
-                            <span className="form-check-input">
-                                <input type="radio"
-                                       checked={ this.state.latch || this.state.focus || this.props.filterStore.mostRecent }
-                                       disabled={ this.props.filterStore.periodsDisabled }
-                                       onChange={ this.checkMostRecent }
-                                       />
-                            </span>
-                            <label onClick={ this.checkMostRecent }
-                                   className="form-check-label">
-                                {
-                                    /* # Translators: option to show a number of recent periods for the report */
-                                    gettext('Most recent')
-                                }
-                            </label>
-                        </div>
+                </div>
+                <div className="col-sm-4 p-0">
+                    <div className="form-check form-check-inline pt-1">
+                        <span className="form-check-input">
+                            <input type="radio"
+                                   checked={ !this.props.filterStore.periodsDisabled && (this.state.focus || this.props.filterStore.mostRecent) }
+                                   disabled={ this.props.filterStore.periodsDisabled }
+                                   onChange={ this.checkMostRecent }
+                                   />
+                        </span>
+                        <label onClick={ this.checkMostRecent }
+                               className="form-check-label">
+                            {
+                                /* # Translators: option to show a number of recent periods for the report */
+                                gettext('Most recent')
+                            }
+                        </label>
                     </div>
-                    <div className="col-sm-4">
-                        <input type="number" className="form-control"
-                               value={ this.mostRecentValue }
-                               ref={ this.mostRecentInputRef }
-                               disabled={ this.props.filterStore.periodsDisabled }
-                               onChange={ this.handleChange }
-                               onFocus={ this.handleFocus }
-                               onBlur={ this.handleBlur }
-                               onKeyDown={ this.handleKeyDown }
-                               />
-                    </div>
-               </div>;
+                </div>
+                <div className="col-sm-4">
+                    <input type="number" className="form-control"
+                           value={ !this.props.filterStore.periodsDisabled && this.mostRecentValue }
+                           ref={ this.mostRecentInputRef }
+                           disabled={ this.props.filterStore.periodsDisabled }
+                           onChange={ this.handleChange }
+                           onFocus={ this.handleFocus }
+                           onBlur={ this.handleBlur }
+                           onKeyDown={ this.handleKeyDown }
+                           />
+                </div>
+           </div>
+        );
     }
 }
 

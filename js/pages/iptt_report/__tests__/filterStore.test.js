@@ -237,6 +237,24 @@ describe('filterStore basics (init)', () => {
                 instance.endPeriod = 3;
                 expect(instance.mostRecent).toEqual(3);
             });
+            it('reports show all instead of most recent when both are true and show all clicked', () => {
+                mockDataStore.currentPeriod = 10;
+                mockDataStore.lastPeriod = 10;
+                instance.showAll = true;
+                expect(instance.startPeriod).toEqual(0);
+                expect(instance.endPeriod).toEqual(10);
+                expect(instance.showAll).toBeTruthy();
+                expect(instance.mostRecent).toBeFalsy();
+            });
+            it('reports most recent instead of show all when both are true and most recent clicked', () => {
+                mockDataStore.currentPeriod = 10;
+                mockDataStore.lastPeriod = 10;
+                instance.mostRecent = 11;
+                expect(instance.startPeriod).toEqual(0);
+                expect(instance.endPeriod).toEqual(10);
+                expect(instance.showAll).toBeFalsy();
+                expect(instance.mostRecent).toEqual(11);
+            });
             it('handles start period from date', () => {
                 mockDataStore.getPeriodIndex = 3;
                 instance.setStartPeriodFromDate(new Date('2016-04-01'));
@@ -466,6 +484,9 @@ describe('dataStore with program selected', () => {
             lastPeriod() {
                 let index = this.periods.length - 1;
                 return {index: index};
+            },
+            currentPeriod() {
+                return this.lastPeriod();
             },
             isLoaded(rt, fr) {
                 return this.initialized[rt].includes(fr);
