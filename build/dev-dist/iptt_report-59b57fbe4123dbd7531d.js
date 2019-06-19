@@ -2433,6 +2433,8 @@ function () {
      * promise will immediately complete if the program is already loaded
      */
     value: function getLoadedProgram() {
+      this.updateTransitionParams();
+
       if (this.reportType && this.program && this.frequencyId) {
         return this.programStore.getLoadedProgram(this.reportType, this.programId, this.frequencyId);
       } else {
@@ -2470,9 +2472,10 @@ function () {
           programId = _ref2[1],
           frequencyId = _ref2[2];
 
-      var showAll = this.oldShowAll;
-      var mostRecent = this.oldMostRecent;
       this.programStore.loadProgram(reportType, programId, frequencyId).then(function () {
+        var showAll = _this2.oldShowAll;
+        var mostRecent = _this2.oldMostRecent;
+
         _this2.clearTransitionParams();
 
         _this2.frequencyId = _this2.frequencyId || null;
@@ -2484,7 +2487,7 @@ function () {
 
         if (showAll) {
           _this2.showAll = true;
-        } else if (mostRecent) {
+        } else if (mostRecent !== false) {
           _this2.mostRecent = mostRecent;
         } else {
           _this2.startPeriod = _this2.startPeriod || 0;
@@ -4995,4 +4998,4 @@ function () {
 /***/ })
 
 },[["mYfJ","runtime","vendors"]]]);
-//# sourceMappingURL=iptt_report-85379e7f1a8289cbe34d.js.map
+//# sourceMappingURL=iptt_report-59b57fbe4123dbd7531d.js.map

@@ -125,6 +125,7 @@ export default class FilterStore {
      * promise will immediately complete if the program is already loaded
      */
     getLoadedProgram() {
+        this.updateTransitionParams();
         if (this.reportType && this.program && this.frequencyId) {
             return this.programStore.getLoadedProgram(
                 this.reportType, this.programId, this.frequencyId
@@ -169,10 +170,10 @@ export default class FilterStore {
      *  - clearing indicator filters
      */
     @action _reportParamsUpdated([reportType, programId, frequencyId]) {
-        const showAll = this.oldShowAll;
-        const mostRecent = this.oldMostRecent;
         this.programStore.loadProgram(reportType, programId, frequencyId)
             .then(() => {
+                const showAll = this.oldShowAll;
+                const mostRecent = this.oldMostRecent;
                 this.clearTransitionParams();
                 this.frequencyId = this.frequencyId || null;
                 if (!this._validFrequency(frequencyId)) {
@@ -183,7 +184,7 @@ export default class FilterStore {
                 }
                 if (showAll) {
                     this.showAll = true;
-                } else if (mostRecent) {
+                } else if (mostRecent !== false) {
                     this.mostRecent = mostRecent;
                 } else {
                     this.startPeriod = this.startPeriod || 0;
