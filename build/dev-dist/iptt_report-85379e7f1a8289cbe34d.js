@@ -2323,7 +2323,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var mobx__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! mobx */ "2vnA");
 /* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../constants */ "v38i");
 /* harmony import */ var _general_utilities__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../general_utilities */ "WtQ/");
-var _class, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _temp;
+var _class, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _descriptor16, _temp;
 
 function _objectWithoutProperties(source, excluded) { if (source == null) return {}; var target = _objectWithoutPropertiesLoose(source, excluded); var key, i; if (Object.getOwnPropertySymbols) { var sourceSymbolKeys = Object.getOwnPropertySymbols(source); for (i = 0; i < sourceSymbolKeys.length; i++) { key = sourceSymbolKeys[i]; if (excluded.indexOf(key) >= 0) continue; if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue; target[key] = source[key]; } } return target; }
 
@@ -2395,6 +2395,8 @@ function () {
 
     _initializerDefineProperty(this, "_indicators", _descriptor12, this);
 
+    _initializerDefineProperty(this, "_latchMostRecent", _descriptor13, this);
+
     this._oldShowAll = null;
     this._oldMostRecent = null;
 
@@ -2410,11 +2412,11 @@ function () {
       return false;
     };
 
-    _initializerDefineProperty(this, "clearFilters", _descriptor13, this);
+    _initializerDefineProperty(this, "clearFilters", _descriptor14, this);
 
-    _initializerDefineProperty(this, "indicatorUpdate", _descriptor14, this);
+    _initializerDefineProperty(this, "indicatorUpdate", _descriptor15, this);
 
-    _initializerDefineProperty(this, "indicatorDelete", _descriptor15, this);
+    _initializerDefineProperty(this, "indicatorDelete", _descriptor16, this);
 
     this.programStore = programStore;
     var reportChange = Object(mobx__WEBPACK_IMPORTED_MODULE_0__["reaction"])(function () {
@@ -2442,6 +2444,7 @@ function () {
     value: function updateTransitionParams() {
       this._oldShowAll = this.showAll;
       this._oldMostRecent = this.mostRecent;
+      this._latchMostRecent = false;
     }
   }, {
     key: "clearTransitionParams",
@@ -2821,6 +2824,7 @@ function () {
     set: function set(startPeriod) {
       if (this.lastPeriod !== null) {
         this._startPeriod = Math.max(0, Math.min(this.lastPeriod.index, startPeriod));
+        this._latchMostRecent = false;
 
         if (this.endPeriod && this._startPeriod > this.endPeriod) {
           this.endPeriod = startPeriod;
@@ -2839,6 +2843,7 @@ function () {
     set: function set(endPeriod) {
       if (this.lastPeriod !== null) {
         this._endPeriod = Math.max(this.startPeriod || 0, Math.min(this.lastPeriod.index, endPeriod));
+        this._latchMostRecent = false;
       }
     },
     get: function get() {
@@ -2854,8 +2859,14 @@ function () {
       if (showAll === true && this.lastPeriod) {
         this.startPeriod = 0;
         this.endPeriod = this.lastPeriod.index;
+        this._latchMostRecent = false;
       }
     },
+    get: function get() {
+      return !this._latchMostRecent && this._internalShowAll;
+    }
+  }, {
+    key: "_internalShowAll",
     get: function get() {
       return this.startPeriod === 0 && this.lastPeriod && this.endPeriod === this.lastPeriod.index;
     }
@@ -2865,6 +2876,7 @@ function () {
       if (this.currentPeriod) {
         this.endPeriod = this.currentPeriod.index;
         this.startPeriod = Math.max(0, this.currentPeriod.index - (parseInt(count) || 2) + 1);
+        this._latchMostRecent = this._internalShowAll;
       }
     },
     get: function get() {
@@ -3524,7 +3536,14 @@ function () {
   initializer: function initializer() {
     return [];
   }
-}), _applyDecoratedDescriptor(_class.prototype, "reportType", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "reportType"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "isTVA", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "isTVA"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "_validProgramId", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "_validProgramId"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "programId", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "programId"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "program", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "program"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "frequencyDisabled", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "frequencyDisabled"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "frequencyId", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "frequencyId"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "programIsLoaded", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "programIsLoaded"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "_reportParamsUpdated", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "_reportParamsUpdated"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "periodsDisabled", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "periodsDisabled"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "periods", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "periods"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "lastPeriod", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "lastPeriod"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "currentPeriod", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "currentPeriod"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "startPeriod", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "startPeriod"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "endPeriod", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "endPeriod"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "showAll", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "showAll"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "mostRecent", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "mostRecent"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "_mostRecentValue", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "_mostRecentValue"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "oldLevels", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "oldLevels"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "groupByDisabled", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "groupByDisabled"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "groupBy", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "groupBy"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "resultChainFilterLabel", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "resultChainFilterLabel"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "filtersDisabled", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "filtersDisabled"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "levels", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "levels"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "tiers", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "tiers"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "sites", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "sites"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "types", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "types"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "sectors", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "sectors"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "indicators", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "indicators"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "programOptions", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "programOptions"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "selectedProgramOption", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "selectedProgramOption"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "frequencyOptions", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "frequencyOptions"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "selectedFrequencyOption", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "selectedFrequencyOption"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "startOptions", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "startOptions"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "startPeriodLabel", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "startPeriodLabel"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "endOptions", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "endOptions"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "endPeriodLabel", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "endPeriodLabel"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "levelOptions", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "levelOptions"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "levelsSelected", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "levelsSelected"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "tiersSelected", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "tiersSelected"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "typeOptions", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "typeOptions"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "typesSelected", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "typesSelected"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "sectorOptions", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "sectorOptions"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "sectorsSelected", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "sectorsSelected"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "siteOptions", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "siteOptions"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "sitesSelected", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "sitesSelected"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "indicatorOptions", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "indicatorOptions"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "indicatorsSelected", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "indicatorsSelected"), _class.prototype), _descriptor13 = _applyDecoratedDescriptor(_class.prototype, "clearFilters", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
+}), _descriptor13 = _applyDecoratedDescriptor(_class.prototype, "_latchMostRecent", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    return false;
+  }
+}), _applyDecoratedDescriptor(_class.prototype, "reportType", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "reportType"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "isTVA", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "isTVA"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "_validProgramId", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "_validProgramId"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "programId", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "programId"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "program", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "program"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "frequencyDisabled", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "frequencyDisabled"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "frequencyId", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "frequencyId"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "programIsLoaded", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "programIsLoaded"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "_reportParamsUpdated", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "_reportParamsUpdated"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "periodsDisabled", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "periodsDisabled"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "periods", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "periods"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "lastPeriod", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "lastPeriod"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "currentPeriod", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "currentPeriod"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "startPeriod", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "startPeriod"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "endPeriod", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "endPeriod"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "_internalShowAll", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "_internalShowAll"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "showAll", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "showAll"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "mostRecent", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "mostRecent"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "_mostRecentValue", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "_mostRecentValue"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "oldLevels", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "oldLevels"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "groupByDisabled", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "groupByDisabled"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "groupBy", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "groupBy"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "resultChainFilterLabel", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "resultChainFilterLabel"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "filtersDisabled", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "filtersDisabled"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "levels", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "levels"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "tiers", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "tiers"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "sites", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "sites"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "types", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "types"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "sectors", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "sectors"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "indicators", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "indicators"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "programOptions", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "programOptions"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "selectedProgramOption", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "selectedProgramOption"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "frequencyOptions", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "frequencyOptions"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "selectedFrequencyOption", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "selectedFrequencyOption"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "startOptions", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "startOptions"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "startPeriodLabel", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "startPeriodLabel"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "endOptions", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "endOptions"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "endPeriodLabel", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "endPeriodLabel"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "levelOptions", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "levelOptions"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "levelsSelected", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "levelsSelected"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "tiersSelected", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "tiersSelected"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "typeOptions", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "typeOptions"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "typesSelected", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "typesSelected"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "sectorOptions", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "sectorOptions"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "sectorsSelected", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "sectorsSelected"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "siteOptions", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "siteOptions"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "sitesSelected", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "sitesSelected"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "indicatorOptions", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "indicatorOptions"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "indicatorsSelected", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "indicatorsSelected"), _class.prototype), _descriptor14 = _applyDecoratedDescriptor(_class.prototype, "clearFilters", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
   configurable: true,
   enumerable: true,
   writable: true,
@@ -3540,7 +3559,7 @@ function () {
       _this12.tiers = [];
     };
   }
-}), _applyDecoratedDescriptor(_class.prototype, "noFilters", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "noFilters"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "programPageUrl", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "programPageUrl"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "filteredIndicators", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "filteredIndicators"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "filteredLevels", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "filteredLevels"), _class.prototype), _descriptor14 = _applyDecoratedDescriptor(_class.prototype, "indicatorUpdate", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
+}), _applyDecoratedDescriptor(_class.prototype, "noFilters", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "noFilters"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "programPageUrl", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "programPageUrl"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "filteredIndicators", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "filteredIndicators"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "filteredLevels", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "filteredLevels"), _class.prototype), _descriptor15 = _applyDecoratedDescriptor(_class.prototype, "indicatorUpdate", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
   configurable: true,
   enumerable: true,
   writable: true,
@@ -3557,7 +3576,7 @@ function () {
       }
     };
   }
-}), _descriptor15 = _applyDecoratedDescriptor(_class.prototype, "indicatorDelete", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
+}), _descriptor16 = _applyDecoratedDescriptor(_class.prototype, "indicatorDelete", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
   configurable: true,
   enumerable: true,
   writable: true,
@@ -4712,7 +4731,6 @@ function (_React$Component) {
 
     _this.setShowAll = function () {
       _this.setState({
-        latch: false,
         focus: false,
         revert: false
       });
@@ -4737,11 +4755,14 @@ function (_React$Component) {
         _this.setState({
           focus: false,
           revert: false,
-          mostRecentValue: _this.props.filterStore._mostRecentValue,
-          latch: _this.props.filterStore.showAll !== false
+          mostRecentValue: _this.props.filterStore._mostRecentValue
         });
       } else if (_this.state.revert) {
         _this.setShowAll();
+      } else {
+        _this.setState({
+          focus: false
+        });
       }
     };
 
@@ -4762,7 +4783,6 @@ function (_React$Component) {
         focus: true,
         mostRecentValue: _this.props.filterStore._mostRecentValue || ''
       };
-      ;
 
       if (!_this.mostRecentValue) {
         newState.mostRecentValue = '';
@@ -4775,8 +4795,7 @@ function (_React$Component) {
     _this.state = {
       focus: false,
       mostRecentValue: props.filterStore.mostRecent || '',
-      revert: false,
-      latch: false
+      revert: false
     };
     return _this;
   }
@@ -4794,7 +4813,7 @@ function (_React$Component) {
         className: "form-check-input"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         type: "radio",
-        checked: !this.state.latch && !this.state.focus && this.props.filterStore.showAll,
+        checked: !this.props.filterStore.periodsDisabled && !this.state.focus && this.props.filterStore.showAll,
         disabled: this.props.filterStore.periodsDisabled,
         onChange: this.setShowAll
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
@@ -4810,7 +4829,7 @@ function (_React$Component) {
         className: "form-check-input"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         type: "radio",
-        checked: this.state.latch || this.state.focus || this.props.filterStore.mostRecent,
+        checked: !this.props.filterStore.periodsDisabled && (this.state.focus || this.props.filterStore.mostRecent),
         disabled: this.props.filterStore.periodsDisabled,
         onChange: this.checkMostRecent
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
@@ -4823,7 +4842,7 @@ function (_React$Component) {
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         type: "number",
         className: "form-control",
-        value: this.mostRecentValue,
+        value: !this.props.filterStore.periodsDisabled && this.mostRecentValue,
         ref: this.mostRecentInputRef,
         disabled: this.props.filterStore.periodsDisabled,
         onChange: this.handleChange,
@@ -4835,7 +4854,7 @@ function (_React$Component) {
   }, {
     key: "mostRecentValue",
     get: function get() {
-      if (this.state.focus || this.state.latch) {
+      if (this.state.focus) {
         return this.state.mostRecentValue;
       } else {
         return this.props.filterStore.mostRecent || '';
@@ -4976,4 +4995,4 @@ function () {
 /***/ })
 
 },[["mYfJ","runtime","vendors"]]]);
-//# sourceMappingURL=iptt_report-4647f56506b91b5c4234.js.map
+//# sourceMappingURL=iptt_report-85379e7f1a8289cbe34d.js.map
