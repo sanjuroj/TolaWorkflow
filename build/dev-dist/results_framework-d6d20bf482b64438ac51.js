@@ -644,7 +644,6 @@ function (_React$Component3) {
       }
 
       if (_this3.dataHasChanged) {
-        $(".level-button").prop("disabled", true);
         create_no_rationale_changeset_notice({
           /* # Translators: This is part of a confirmation prompt that is triggered by clicking on a cancel button.  */
           message_text: gettext("Are you sure you want to continue?"),
@@ -653,7 +652,8 @@ function (_React$Component3) {
           preamble: gettext("Changes to this ".concat(_this3.props.levelProps.tierName, " will not be saved")),
           on_submit: function on_submit() {
             return cancelFunc();
-          }
+          },
+          type: "notice"
         });
       } else {
         cancelFunc();
@@ -1449,7 +1449,7 @@ function () {
 
 
         success_notice({
-          message_text: gettext("".concat(level_label, " was successfully deleted.")),
+          message_text: gettext("".concat(level_label, " was deleted.")),
           addClass: 'program-page__rationale-form',
           stack: {
             dir1: 'up',
@@ -2039,6 +2039,7 @@ function () {
 
           /* # Translators:  This is a warning provided to the user when they try to cancel the editing of something they have already modified.  */
           preamble: gettext("Changes to this ".concat(oldTierName, " will not be saved")),
+          type: "notice",
           on_submit: function on_submit() {
             return _this10.onLeaveConfirm(levelId, cancelledLevelId);
           },
@@ -2454,4 +2455,4 @@ function (_React$Component2) {
 /***/ })
 
 },[["QTZG","runtime","vendors"]]]);
-//# sourceMappingURL=results_framework-3d422c44ebe097a02a10.js.map
+//# sourceMappingURL=results_framework-d6d20bf482b64438ac51.js.map

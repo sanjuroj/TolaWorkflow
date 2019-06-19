@@ -536,7 +536,8 @@ window.create_no_rationale_changeset_notice = ({
     // # Translators: Button to cancel a form submission
     cancel_text = gettext('Cancel'),
     context = null,
-    preamble = false
+    type = 'error',
+    preamble = false,
 } = {}) => {
     if (!message_text) {message_text = DEFAULT_NO_RATIONALE_TEXT}
     if (!preamble) {preamble = gettext("This action cannot be undone.")};
@@ -567,7 +568,7 @@ window.create_no_rationale_changeset_notice = ({
         on_cancel: on_cancel,
         confirm_text: confirm_text,
         cancel_text: cancel_text,
-        type: 'error',
+        type: type,
         inner: inner,
         context: context,
         rationale_required: false,
