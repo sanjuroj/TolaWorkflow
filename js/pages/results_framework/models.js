@@ -211,7 +211,7 @@ export class LevelStore {
 
                 // Translators: Notification to user that the deletion command that they issued was successful
                 success_notice({
-                    message_text: gettext(`${level_label} was successfully deleted.`),
+                    message_text: gettext(`${level_label} was deleted.`),
                     addClass: 'program-page__rationale-form',
                     stack: {
                         dir1: 'up',
