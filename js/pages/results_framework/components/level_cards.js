@@ -236,8 +236,16 @@ export class LevelCardExpanded extends React.Component {
         this.submitType = newType;
     };
 
+    componentDidUpdate() {
+        // Enable popovers after update.  This is needed for the help popover in the indicator list section.
+        // Without this, the popover doesnt' pop.
+        $('*[data-toggle="popover"]').popover({
+            html: true
+        });
+    }
+
     componentDidMount() {
-        // Enable popovers after update (they break otherwise)
+        // Enable popovers after load (they break otherwise)
         $('*[data-toggle="popover"]').popover({
             html: true
         });
@@ -552,9 +560,7 @@ class IndicatorList extends React.Component {
                             </div>
                         </div>
                     :
-                        <div className="sortable-list-header--empty">
-                            { gettext("No indicators") }
-                        </div>
+                        null
                     }
                     <SortableContainer onSortEnd={this.props.dragEndFunc} useDragHandle lockAxis="y" lockToContainerEdges>
                         {indicatorMarkup.map((value, index) => (
