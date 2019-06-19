@@ -101,7 +101,7 @@
 
         <div class="d-flex justify-content-between align-items-baseline">
             <div>
-                {% if indicator.target_frequency == 8 %}
+                {% if indicator.target_frequency == 8 and not readonly %}
                 <a href="#" id="addNewPeriodicTarget" class="btn btn-add btn-link"><i class="fas fa-plus-circle"></i> {% trans "Add an event" %}</a>
                 {% endif %}
             </div>
