@@ -30,11 +30,13 @@ const MeansCell = ({ indicator }) => {
 }
 
 const IndicatorCells = ({ indicators, ontology }) => {
-    if (!indicators) {
+    if (!indicators || indicators.length == 0) {
         return (
-            <div className="table-cell-inner-row colspan-2 table-cell ">
-                <div className="table-cell--text table-cell--empty"></div>
-                <div className="table-cell--text table-cell--empty"></div>
+            <div className="table-cell-column colspan-2">
+                <div className="table-cell-inner-row table-cell-inner-row--empty">
+                    <div className="table-cell--text table-cell--empty"></div>
+                    <div className="table-cell--text table-cell--empty"></div>
+                </div>
             </div>
         );
     }

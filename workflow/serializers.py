@@ -84,11 +84,7 @@ class LogframeProgramSerializer(serializers.ModelSerializer):
     levels = LogframeLevelSerializer(many=True, read_only=True)
     indicators = LogframeIndicatorSerializer(source='indicator_set', many=True, read_only=True)
 
-    needed_fields = [
-        'pk',
-        'name',
-        'using_results_framework'
-    ]
+
     class Meta:
         model = Program
         fields = [
@@ -104,8 +100,8 @@ class LogframeProgramSerializer(serializers.ModelSerializer):
 
     @classmethod
     def load(cls, pk):
-        program = Program.active.only(
-            *cls._needed_fields
+        program = Program.active_programs.only(
+            'pk', 'name', '_using_results_framework', 'auto_number_indicators'
         ).get(pk=pk)
         return cls(program)
 
