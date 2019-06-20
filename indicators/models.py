@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import collections
 import string
 import uuid
 from datetime import timedelta, date
@@ -222,6 +223,40 @@ class Level(models.Model):
                 if c != indicator.level_order:
                     indicator.level_order = c
                     indicator.save()
+
+    @staticmethod
+    def sort_by_ontology(levels):
+        """
+        Take a sequence of Level objects, and order them by their ontology hierarchy (DFS traversal)
+        Assume one root node - assert if multiple roots found
+        Levels not part of the tree will not be returned
+        """
+        # A root node has parent_id is None, or a parent_id not present in the list (sub-tree)
+        level_ids = set(l.id for l in levels)
+        root_nodes = [l for l in levels if l.parent_id is None or l.parent_id not in level_ids]
+        assert len(root_nodes) == 1
+        root_node = root_nodes[0]
+
+        # ensure levels are ordered by customsort at their given tier
+        sorted_levels = sorted(levels, key=lambda level: (level.parent_id, level.customsort))
+
+        # parent_id -> [] of child Levels
+        tree_map = collections.defaultdict(list)
+
+        for level in sorted_levels:
+            tree_map[level.parent_id].append(level)
+
+        return_levels = []
+        dfs_stack = [root_node]
+
+        while dfs_stack:
+            level = dfs_stack.pop()
+            children = tree_map.get(level.id, [])
+            children.reverse()  # does not return a list!
+            dfs_stack.extend(children)
+            return_levels.append(level)
+
+        return return_levels
 
 
 class LevelAdmin(admin.ModelAdmin):
