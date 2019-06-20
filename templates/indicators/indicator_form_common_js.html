@@ -11,6 +11,7 @@
 
     let validation_msgs = {};
     let initialTrackedFieldsFormState;
+    let initialLevelFormValue;  // level field is tracked independent of initialTrackedFieldsFormState
     let allowModalToClose = false;  // Can the create modal be closed without prompting the user?
 
     const DELETE_ALL_TARGETS_MESSAGE = "{% trans 'Any results assigned to these targets will need to be reassigned. For future reference, please provide a reason for deleting these targets.' %}"
@@ -362,6 +363,13 @@
                 });
             }
             scrollToIndicatorFormBottom();
+        } else if (hasLevelBeenUpdatedOrCleared()) {
+            window.create_nondestructive_changeset_notice({
+                context: document.getElementById('indicator_update_form'),
+                on_submit: (rationale) => {
+                    submitFormUpdate(rationale);
+                }
+            });
         } else {
             submitFormUpdate('');
         }
@@ -1198,6 +1206,11 @@
         return periodic_targets;
     }
 
+    // just the level value from the form
+    function getLevelFormValue() {
+        return $('#id_level').val();
+    }
+
     // return a JS obj of key/vals of indicator form
     // WARNING: this totally doesn't work correctly with multi-selects (or any key w/ multiple values)
     function getIndicatorFormAsObject() {
@@ -1224,8 +1237,6 @@
         // Compute LoP if not explicit in form
         if (formObj['lop_target'] === undefined) {
             formObj['lop_target'] = computeLopTarget();
-        } else {
-            formObj['lop_target'] = formObj['lop_target'];
         }
 
         let periodic_targets = getFormPeriodicTargets();
@@ -1260,6 +1271,8 @@
         if (useDBLopTarget) {
             initialTrackedFieldsFormState['lop_target'] = cleanFloat(initialLopTarget());
         }
+
+        initialLevelFormValue = getLevelFormValue();
     }
 
     // update targets and indicator LoP target of the initial form snapshot
@@ -1289,5 +1302,21 @@
         let currTargetType = currTrackedFieldsFormState.target_frequency;
 
         return prevTargetFieldsState !== currTargetFieldsState || prevTargetType !== currTargetType;
+    }
+
+    // has `level` changed in a way we care about (as opposed to any way possible)?
+    // the rules here are that we don't care of a level goes from nothing -> something
+    // only if it goes from something -> something or something -> nothing
+    function hasLevelBeenUpdatedOrCleared() {
+        let currLevelFormValue = getLevelFormValue();
+
+        // empty string if nothing selected
+        if (! initialLevelFormValue) {
+            // don't bother prompting using if they are setting a level
+            // where a level wasn't set in the past
+            return false;
+        }
+
+        return initialLevelFormValue !== currLevelFormValue;
     }
 </script>

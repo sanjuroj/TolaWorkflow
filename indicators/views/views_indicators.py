@@ -546,9 +546,9 @@ class IndicatorUpdate(IndicatorFormMixin, UpdateView):
         form.save()
         self.object.refresh_from_db()
 
-        # Write to audit log if results attached
+        # Write to audit log if results attached or special case of RF level reassignment
         results_count = Result.objects.filter(indicator=self.object).count()
-        if results_count > 0:
+        if results_count > 0 or old_indicator.level_id != self.object.level_id:
             ProgramAuditLog.log_indicator_updated(
                 self.request.user,
                 self.object,
