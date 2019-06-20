@@ -96,8 +96,8 @@ class IndicatorForm(forms.ModelForm):
         else:
             # populate with all levels for the indicator's program:
             # self.fields['level'].queryset = Level.objects.filter(program_id=self.programval)
-            self.fields['level'].choices = [(l.id, l.display_name) for l in
-                                            Level.sort_by_ontology(Level.objects.filter(program_id=self.programval))]
+            self.fields['level'].choices = [('', '------')] + \
+                                           [(l.id, l.display_name) for l in Level.sort_by_ontology(Level.objects.filter(program_id=self.programval))]
 
 
         if not self.programval.results_framework or self.programval.auto_number_indicators:
