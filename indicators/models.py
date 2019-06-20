@@ -959,7 +959,8 @@ class Indicator(SafeDeleteModel):
                     "name": t.period_name.strip(),
                 }
                 for t in s.periodictargets.all()
-            }
+            },
+            "level": str(s.level) if s.level is not None else '',
         }
 
     @property
