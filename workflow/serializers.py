@@ -41,12 +41,14 @@ class DocumentListDocumentSerializer(serializers.ModelSerializer):
 
 class LogframeIndicatorSerializer(serializers.ModelSerializer):
     number_display = serializers.SerializerMethodField()
+    level = serializers.PrimaryKeyRelatedField(read_only=True)
     class Meta:
         model = Indicator
         fields = [
             'pk',
             'name',
             'means_of_verification',
+            'level',
             'number_display',
             'old_level',
         ]

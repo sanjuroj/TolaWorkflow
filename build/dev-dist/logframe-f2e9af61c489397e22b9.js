@@ -189,6 +189,7 @@ var Indicator = function Indicator(indicatorData) {
 
   this.pk = indicatorData.pk;
   this.level_order = indicatorData.level_order;
+  this.level = indicatorData.level || false;
   this.name = indicatorData.name;
   this.number_display = indicatorData.number_display;
   this.means_of_verification = indicatorData.means_of_verification;
@@ -226,6 +227,7 @@ function () {
     this._levelsByChain = [];
     this._levelsByTier = [];
     this._indicatorsByPk = {};
+    this._unassignedIndicatorPks = [];
 
     this.getChildLevels = function (levelpk) {
       var levels = [levelpk];
@@ -261,6 +263,10 @@ function () {
       programData.indicators.forEach(function (indicatorData) {
         var indicator = new Indicator(indicatorData);
         _this2._indicatorsByPk[indicator.pk] = indicator;
+
+        if (!indicator.level) {
+          _this2._unassignedIndicatorPks.push(indicator.pk);
+        }
       });
     }
 
@@ -309,9 +315,17 @@ function () {
   }
 
   _createClass(ProgramStore, [{
-    key: "oldLevels",
+    key: "unassignedIndicators",
     get: function get() {
-      return Object.values(this._levelsByPk);
+      var _this3 = this;
+
+      if (!this._unassignedIndicatorPks || this._unassignedIndicatorPks.length == 0) {
+        return [];
+      }
+
+      return this._unassignedIndicatorPks.map(function (pk) {
+        return _this3._indicatorsByPk[pk];
+      });
     }
   }]);
 
@@ -839,7 +853,7 @@ var IndicatorCell = function IndicatorCell(_ref2) {
   var indicator = _ref2.indicator;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "table-cell--text"
-  }, gettext('Indicator'), " ", indicator.number_display, ": ", indicator.name);
+  }, gettext('Indicator'), indicator.number_display ? " ".concat(indicator.number_display, ":") : '', " ", indicator.name);
 };
 
 var MeansCell = function MeansCell(_ref3) {
@@ -919,6 +933,8 @@ function (_React$Component) {
           level: level,
           key: idx
         });
+      }), this.unassignedLevel && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(LevelRow, {
+        level: this.unassignedLevel
       }));
     }
   }, {
@@ -928,15 +944,28 @@ function (_React$Component) {
         return this.props.dataStore.getLevelsGroupedBy(this.props.filterStore.groupBy);
       }
 
-      return this.props.dataStore.oldLevels;
+      return [];
+    }
+  }, {
+    key: "unassignedLevel",
+    get: function get() {
+      if (this.props.dataStore.unassignedIndicators.length > 0) {
+        return {
+          display_name: gettext('Indicators unassigned to  a results framework level'),
+          indicators: this.props.dataStore.unassignedIndicators,
+          assumptions: null
+        };
+      }
+
+      return false;
     }
   }]);
 
   return LogframeTable;
-}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component), (_applyDecoratedDescriptor(_class2.prototype, "levels", [mobx__WEBPACK_IMPORTED_MODULE_1__["computed"]], Object.getOwnPropertyDescriptor(_class2.prototype, "levels"), _class2.prototype)), _class2)) || _class) || _class);
+}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component), (_applyDecoratedDescriptor(_class2.prototype, "levels", [mobx__WEBPACK_IMPORTED_MODULE_1__["computed"]], Object.getOwnPropertyDescriptor(_class2.prototype, "levels"), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, "unassignedLevel", [mobx__WEBPACK_IMPORTED_MODULE_1__["computed"]], Object.getOwnPropertyDescriptor(_class2.prototype, "unassignedLevel"), _class2.prototype)), _class2)) || _class) || _class);
 /* harmony default export */ __webpack_exports__["default"] = (LogframeTable);
 
 /***/ })
 
 },[["+uhY","runtime","vendors"]]]);
-//# sourceMappingURL=logframe-cbf628a004a62ef0ef6b.js.map
+//# sourceMappingURL=logframe-f2e9af61c489397e22b9.js.map

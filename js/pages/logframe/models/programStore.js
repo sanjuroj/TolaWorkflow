@@ -7,6 +7,7 @@ class Indicator {
     constructor(indicatorData) {
         this.pk = indicatorData.pk;
         this.level_order = indicatorData.level_order;
+        this.level = indicatorData.level || false;
         this.name = indicatorData.name;
         this.number_display = indicatorData.number_display;
         this.means_of_verification = indicatorData.means_of_verification;
@@ -33,6 +34,7 @@ class ProgramStore {
     _levelsByChain = [];
     _levelsByTier = [];
     _indicatorsByPk = {};
+    _unassignedIndicatorPks = [];
 
     constructor(programData) {
         this.name = programData.name;
@@ -44,6 +46,9 @@ class ProgramStore {
             programData.indicators.forEach(indicatorData => {
                 let indicator = new Indicator(indicatorData);
                 this._indicatorsByPk[indicator.pk] = indicator;
+                if (!indicator.level) {
+                    this._unassignedIndicatorPks.push(indicator.pk);
+                }
             });
         }
         if (programData.levels && Array.isArray(programData.levels)) {
@@ -109,8 +114,13 @@ class ProgramStore {
         return Object.values(this._levelsByPk);
     }
     
-    get oldLevels() {
-        return Object.values(this._levelsByPk);
+    get unassignedIndicators() {
+        if (!this._unassignedIndicatorPks || this._unassignedIndicatorPks.length == 0) {
+            return [];
+        }
+        return this._unassignedIndicatorPks.map(
+            pk => this._indicatorsByPk[pk]
+        );
     }
     
 }

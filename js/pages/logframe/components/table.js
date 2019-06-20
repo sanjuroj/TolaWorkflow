@@ -10,7 +10,7 @@ const LevelNameCell = ({ name }) => {
 const IndicatorCell = ({ indicator }) => {
     return (
         <div className="table-cell--text">
-            { gettext('Indicator')} { indicator.number_display }: { indicator.name }
+            { gettext('Indicator')}{ indicator.number_display ? ` ${indicator.number_display}:` : '' } { indicator.name }
         </div>
     );
 }
@@ -75,7 +75,19 @@ class LogframeTable extends React.Component {
         if (this.props.dataStore.results_framework) {
             return this.props.dataStore.getLevelsGroupedBy(this.props.filterStore.groupBy)
         }
-        return this.props.dataStore.oldLevels;
+        return [];
+    }
+    
+    @computed
+    get unassignedLevel() {
+        if (this.props.dataStore.unassignedIndicators.length > 0) {
+            return {
+                display_name: gettext('Indicators unassigned to  a results framework level'),
+                indicators: this.props.dataStore.unassignedIndicators,
+                assumptions: null
+            };
+        }
+        return false;
     }
     
     render() {
@@ -83,6 +95,7 @@ class LogframeTable extends React.Component {
             <React.Fragment>
                 <HeaderRow headers={ this.props.filterStore.headerColumns } />
                 { this.levels.map((level, idx) => <LevelRow level={ level } key={ idx } />) }
+                { this.unassignedLevel && <LevelRow level={ this.unassignedLevel } /> }
             </React.Fragment>
         );
     }
