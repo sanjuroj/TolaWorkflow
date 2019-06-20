@@ -1143,7 +1143,7 @@ var DragHandle = Object(react_sortable_hoc__WEBPACK_IMPORTED_MODULE_9__["sortabl
 /*!****************************************!*\
   !*** ./js/components/selectWidgets.js ***!
   \****************************************/
-/*! exports provided: SingleReactSelect, DateSelect, SingleSelect, MultiSelectCheckbox */
+/*! exports provided: SingleReactSelect, DateSelect, SingleSelect, MultiSelectCheckbox, GroupBySelect */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1152,17 +1152,24 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DateSelect", function() { return DateSelect; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SingleSelect", function() { return SingleSelect; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MultiSelectCheckbox", function() { return MultiSelectCheckbox; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "GroupBySelect", function() { return GroupBySelect; });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "q1tI");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var react_select__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-select */ "y2Vs");
 /* harmony import */ var react_multiselect_checkboxes__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-multiselect-checkboxes */ "VCnP");
 /* harmony import */ var react_multiselect_checkboxes__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react_multiselect_checkboxes__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _formUtils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../formUtils */ "G56O");
+/* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../constants */ "v38i");
+function _objectWithoutProperties(source, excluded) { if (source == null) return {}; var target = _objectWithoutPropertiesLoose(source, excluded); var key, i; if (Object.getOwnPropertySymbols) { var sourceSymbolKeys = Object.getOwnPropertySymbols(source); for (i = 0; i < sourceSymbolKeys.length; i++) { key = sourceSymbolKeys[i]; if (excluded.indexOf(key) >= 0) continue; if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue; target[key] = source[key]; } } return target; }
+
+function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
+
 function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 
 
 
@@ -1222,16 +1229,19 @@ var DateSelect = function DateSelect(props) {
 };
 var SingleSelect = function SingleSelect(props) {
   var selectId = Object(_formUtils__WEBPACK_IMPORTED_MODULE_3__["uniqueId"])('react-select');
+  var formGroupClass = props.formGroupClass || "form-row mb-3";
+  var labelClass = props.labelClass || "col-form-label text-uppercase";
+  var selectClass = props.selectClass || "form-control";
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "form-row mb-3"
+    className: formGroupClass
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
     htmlFor: selectId,
-    className: "col-form-label text-uppercase"
+    className: labelClass
   }, props.label), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("select", {
     onChange: props.update,
     value: props.value,
     id: selectId,
-    className: "form-control",
+    className: selectClass,
     disabled: props.disabled
   }, props.options));
 };
@@ -1340,6 +1350,27 @@ var MultiSelectCheckbox = function MultiSelectCheckbox(props) {
     value: props.value,
     onChange: props.update
   }, multiSelectProps)));
+};
+var GroupBySelect = function GroupBySelect(_ref2) {
+  var chainLabel = _ref2.chainLabel,
+      selectProps = _objectWithoutProperties(_ref2, ["chainLabel"]);
+
+  var options = [react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
+    value: _constants__WEBPACK_IMPORTED_MODULE_4__["GROUP_BY_CHAIN"],
+    key: 1
+  }, chainLabel), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
+    value: _constants__WEBPACK_IMPORTED_MODULE_4__["GROUP_BY_LEVEL"],
+    key: 2
+  },
+  /* # Translators: refers to grouping the report by the level of the indicator */
+  gettext('by Level'))];
+  ;
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(SingleSelect, _extends({
+    label:
+    /* # Translators: menu for selecting how rows are grouped in a report */
+    gettext('Group indicators'),
+    options: options
+  }, selectProps));
 };
 
 /***/ }),
@@ -2452,7 +2483,75 @@ function (_React$Component2) {
   return LevelListPanel;
 }(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component)) || _class2) || _class2);
 
+/***/ }),
+
+/***/ "v38i":
+/*!*************************!*\
+  !*** ./js/constants.js ***!
+  \*************************/
+/*! exports provided: BLANK_OPTION, BLANK_LABEL, BLANK_TABLE_CELL, TVA, TIMEPERIODS, TIME_AWARE_FREQUENCIES, GROUP_BY_CHAIN, GROUP_BY_LEVEL, getPeriodLabels, STATUS_CODES */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BLANK_OPTION", function() { return BLANK_OPTION; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BLANK_LABEL", function() { return BLANK_LABEL; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BLANK_TABLE_CELL", function() { return BLANK_TABLE_CELL; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TVA", function() { return TVA; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TIMEPERIODS", function() { return TIMEPERIODS; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TIME_AWARE_FREQUENCIES", function() { return TIME_AWARE_FREQUENCIES; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "GROUP_BY_CHAIN", function() { return GROUP_BY_CHAIN; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "GROUP_BY_LEVEL", function() { return GROUP_BY_LEVEL; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getPeriodLabels", function() { return getPeriodLabels; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "STATUS_CODES", function() { return STATUS_CODES; });
+/**
+ * IPTT Constants:
+ */
+var BLANK_LABEL = '---------';
+var BLANK_OPTION = {
+  value: null,
+  label: BLANK_LABEL
+};
+var BLANK_TABLE_CELL = '—';
+var TVA = 1;
+var TIMEPERIODS = 2;
+var TIME_AWARE_FREQUENCIES = [3, 4, 5, 6, 7];
+
+var GROUP_BY_CHAIN = 1;
+var GROUP_BY_LEVEL = 2;
+
+
+var _gettext = typeof gettext !== 'undefined' ? gettext : function (s) {
+  return s;
+};
+
+function getPeriodLabels() {
+  return {
+    targetperiodLabels: {
+      1: _gettext("Life of Program (LoP) only"),
+      3: _gettext("Annual"),
+      2: _gettext("Midline and endline"),
+      5: _gettext("Tri-annual"),
+      4: _gettext("Semi-annual"),
+      7: _gettext("Monthly"),
+      6: _gettext("Quarterly")
+    },
+    timeperiodLabels: {
+      3: _gettext("Years"),
+      5: _gettext("Tri-annual periods"),
+      4: _gettext("Semi-annual periods"),
+      7: _gettext("Months"),
+      6: _gettext("Quarters")
+    }
+  };
+}
+
+
+var STATUS_CODES = {
+  NO_INDICATOR_IN_UPDATE: 1
+};
+
 /***/ })
 
 },[["QTZG","runtime","vendors"]]]);
-//# sourceMappingURL=results_framework-d6d20bf482b64438ac51.js.map
+//# sourceMappingURL=results_framework-68f067b9c339e56e6ea4.js.map

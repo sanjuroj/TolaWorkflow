@@ -1917,7 +1917,7 @@ var LevelGroup = function LevelGroup(_ref11) {
 /*!****************************************!*\
   !*** ./js/components/selectWidgets.js ***!
   \****************************************/
-/*! exports provided: SingleReactSelect, DateSelect, SingleSelect, MultiSelectCheckbox */
+/*! exports provided: SingleReactSelect, DateSelect, SingleSelect, MultiSelectCheckbox, GroupBySelect */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1926,17 +1926,24 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DateSelect", function() { return DateSelect; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SingleSelect", function() { return SingleSelect; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MultiSelectCheckbox", function() { return MultiSelectCheckbox; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "GroupBySelect", function() { return GroupBySelect; });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "q1tI");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var react_select__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-select */ "y2Vs");
 /* harmony import */ var react_multiselect_checkboxes__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-multiselect-checkboxes */ "VCnP");
 /* harmony import */ var react_multiselect_checkboxes__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react_multiselect_checkboxes__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _formUtils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../formUtils */ "G56O");
+/* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../constants */ "v38i");
+function _objectWithoutProperties(source, excluded) { if (source == null) return {}; var target = _objectWithoutPropertiesLoose(source, excluded); var key, i; if (Object.getOwnPropertySymbols) { var sourceSymbolKeys = Object.getOwnPropertySymbols(source); for (i = 0; i < sourceSymbolKeys.length; i++) { key = sourceSymbolKeys[i]; if (excluded.indexOf(key) >= 0) continue; if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue; target[key] = source[key]; } } return target; }
+
+function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
+
 function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 
 
 
@@ -1996,16 +2003,19 @@ var DateSelect = function DateSelect(props) {
 };
 var SingleSelect = function SingleSelect(props) {
   var selectId = Object(_formUtils__WEBPACK_IMPORTED_MODULE_3__["uniqueId"])('react-select');
+  var formGroupClass = props.formGroupClass || "form-row mb-3";
+  var labelClass = props.labelClass || "col-form-label text-uppercase";
+  var selectClass = props.selectClass || "form-control";
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "form-row mb-3"
+    className: formGroupClass
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
     htmlFor: selectId,
-    className: "col-form-label text-uppercase"
+    className: labelClass
   }, props.label), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("select", {
     onChange: props.update,
     value: props.value,
     id: selectId,
-    className: "form-control",
+    className: selectClass,
     disabled: props.disabled
   }, props.options));
 };
@@ -2114,6 +2124,27 @@ var MultiSelectCheckbox = function MultiSelectCheckbox(props) {
     value: props.value,
     onChange: props.update
   }, multiSelectProps)));
+};
+var GroupBySelect = function GroupBySelect(_ref2) {
+  var chainLabel = _ref2.chainLabel,
+      selectProps = _objectWithoutProperties(_ref2, ["chainLabel"]);
+
+  var options = [react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
+    value: _constants__WEBPACK_IMPORTED_MODULE_4__["GROUP_BY_CHAIN"],
+    key: 1
+  }, chainLabel), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
+    value: _constants__WEBPACK_IMPORTED_MODULE_4__["GROUP_BY_LEVEL"],
+    key: 2
+  },
+  /* # Translators: refers to grouping the report by the level of the indicator */
+  gettext('by Level'))];
+  ;
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(SingleSelect, _extends({
+    label:
+    /* # Translators: menu for selecting how rows are grouped in a report */
+    gettext('Group indicators'),
+    options: options
+  }, selectProps));
 };
 
 /***/ }),
@@ -4912,26 +4943,13 @@ var EndDateSelect = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inject"])('f
 
 var GroupingSelect = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inject"])('filterStore')(Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function (_ref5) {
   var filterStore = _ref5.filterStore;
-  var options = [react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
-    value: "1",
-    key: 1
-  }, filterStore.resultChainFilterLabel), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
-    value: "2",
-    key: 2
-  },
-  /* # Translators: refers to grouping the report by the level of the indicator */
-  gettext('by Level'))];
-  ;
-  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_selectWidgets__WEBPACK_IMPORTED_MODULE_3__["SingleSelect"], {
-    label:
-    /* # Translators: menu for selecting how rows are grouped in a report */
-    gettext('Group indicators'),
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_selectWidgets__WEBPACK_IMPORTED_MODULE_3__["GroupBySelect"], {
+    chainLabel: filterStore.resultChainFilterLabel,
     disabled: filterStore.groupByDisabled,
     value: filterStore.groupBy,
     update: function update(e) {
       filterStore.groupBy = e.target.value;
-    },
-    options: options
+    }
   });
 }));
 
@@ -4998,4 +5016,4 @@ function () {
 /***/ })
 
 },[["mYfJ","runtime","vendors"]]]);
-//# sourceMappingURL=iptt_report-59b57fbe4123dbd7531d.js.map
+//# sourceMappingURL=iptt_report-2900f45f1f1653b7a892.js.map
