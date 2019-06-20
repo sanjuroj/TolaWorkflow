@@ -1035,6 +1035,7 @@ function (_React$Component6) {
         var tipTemplate = '<div class="tooltip sortable-list__item__tooltip" role="tooltip"><div class="arrow"></div><div class="tooltip-inner"></div></div>';
         var indicator_label = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
           "data-toggle": "tooltip",
+          "data-delay": 900,
           "data-template": tipTemplate,
           title: indicator.name
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, indicator.name.replace(/(.{55})..+/, "$1...")));
@@ -2456,4 +2457,4 @@ function (_React$Component2) {
 /***/ })
 
 },[["QTZG","runtime","vendors"]]]);
-//# sourceMappingURL=results_framework-9e8bba777266b8b12c6c.js.map
+//# sourceMappingURL=results_framework-66b067491845a7ad007d.js.map
