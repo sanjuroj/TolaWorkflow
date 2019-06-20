@@ -303,6 +303,8 @@ export class LevelCardExpanded extends React.Component {
 
     componentWillUnmount() {
         $('#indicator_modal_div').off('updated.tola.indicator.save');
+        $('#indicator_modal_div').off('deleted.tola.indicator.save');
+        $('#indicator_modal_div').off('created.tola.indicator.save');
     }
 
     saveLevel = (event) => {

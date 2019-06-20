@@ -322,7 +322,9 @@ export class LevelStore {
 
     @action
     moveIndicatorInStore = (indicatorId, newLevelId) => {
-        this.indicators.find( i => i.id == indicatorId).level = newLevelId;
+        let target = this.indicators.find( i => i.id == indicatorId);
+        target.level = newLevelId;
+        target.level_order = this.indicators.filter( i => i.level == newLevelId).length -1;
     };
 
     fetchIndicatorsFromDB = (indicatorId=null) => {
@@ -332,7 +334,7 @@ export class LevelStore {
                 this.indicators = response.data;
             }))
             .catch((error) => console.log('There was an error:', error));
-    }
+    };
 
 
     deriveTemplateKey = () => {
@@ -353,7 +355,7 @@ export class LevelStore {
 
         // If this has been reached, the db has stored tiers but they're not a match to a template
         return "custom";
-    }
+    };
 
 
     buildOntology = (levelId, ontologyArray = []) => {
@@ -372,13 +374,13 @@ export class LevelStore {
 
     getChildLevels = levelId => this.levels.filter( l => l.parent == levelId);
 
-    getLevelIndicators = levelId => this.indicators.filter( i => i.level == levelId)
+    getLevelIndicators = levelId => this.indicators.filter( i => i.level == levelId);
 
     getDescendantIndicatorIds = (childLevelIds) => {
         const childLevels = this.levels.filter( l => childLevelIds.includes(l.id));
-        let newIndicatorIds = []
+        let newIndicatorIds = [];
         childLevels.forEach( childLevel => {
-            newIndicatorIds = newIndicatorIds.concat(this.indicators.filter( i => i.level == childLevel.id).map( i => i.id))
+            newIndicatorIds = newIndicatorIds.concat(this.indicators.filter( i => i.level == childLevel.id).map( i => i.id));
             let grandChildIds = this.levels.filter( l => l.parent == childLevel.id).map( l => l.id);
             newIndicatorIds = newIndicatorIds.concat(this.getDescendantIndicatorIds(grandChildIds, newIndicatorIds));
         });
