@@ -1,6 +1,15 @@
 from django.template.defaultfilters import slugify
-from factory import DjangoModelFactory, lazy_attribute, LazyAttribute, \
-    SubFactory, post_generation, Sequence, RelatedFactory
+from factory import (
+    DjangoModelFactory,
+    lazy_attribute,
+    LazyAttribute,
+    SubFactory,
+    PostGeneration,
+    post_generation,
+    Sequence,
+    RelatedFactory,
+    Trait
+)
 from .django_models import UserFactory, Site
 from workflow.models import (
     Contact as ContactM,
@@ -23,6 +32,9 @@ from workflow.models import (
     COUNTRY_ROLE_CHOICES
 )
 
+def generate_mc_levels(obj, create, extracted, **kwargs):
+    from factories.indicators_models import LevelTierFactory
+    tiers = LevelTierFactory.build_mc_template(program=obj)
 
 class CountryFactory(DjangoModelFactory):
     class Meta:
@@ -78,9 +90,22 @@ class ProgramFactory(DjangoModelFactory):
         model = ProgramM
         django_get_or_create = ('gaitid',)
 
+    class Params:
+        active = True
+        old_levels = Trait(
+            _using_results_framework=ProgramM.NOT_MIGRATED
+        )
+        has_rf = Trait(
+            generate_levels=PostGeneration(generate_mc_levels)
+        )
+
     name = 'Health and Survival for Syrians in Affected Regions'
     gaitid = Sequence(lambda n: "%0030d" % n)
     country = RelatedFactory(CountryFactory, country='United States', code='US')
+    funding_status = LazyAttribute(lambda o: "funded" if o.active else "Inactive")
+    _using_results_framework = ProgramM.RF_ALWAYS
+    auto_number_indicators = True
+    generate_levels = None
 
     @post_generation
     def indicators(self, create, extracted, **kwargs):
