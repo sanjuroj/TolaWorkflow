@@ -3998,6 +3998,8 @@ function () {
           start = _ref3$start === void 0 ? null : _ref3$start,
           _ref3$end = _ref3.end,
           end = _ref3$end === void 0 ? null : _ref3$end,
+          _ref3$mr = _ref3.mr,
+          mr = _ref3$mr === void 0 ? null : _ref3$mr,
           _ref3$timeperiods = _ref3.timeperiods,
           timeperiods = _ref3$timeperiods === void 0 ? null : _ref3$timeperiods,
           _ref3$targetperiods = _ref3.targetperiods,
@@ -4052,6 +4054,10 @@ function () {
         _this.filterStore.endPeriod = parseInt(end);
       } else if (end_period !== null && !isNaN(Date.parse(end_period))) {
         _this.filterStore.setEndPeriodFromDate(new Date(end_period));
+      }
+
+      if (mr !== null) {
+        _this.filterStore._latchMostRecent = true;
       }
 
       if (timeframe !== null && parseInt(timeframe) == 1) {
@@ -4147,7 +4153,7 @@ function () {
         path: '/iptt_excel/?fullTVA'
       }]
     }];
-    this.goodQueryParams = ['frequency', 'start', 'end', 'levels', 'types', 'sites', 'sectors', 'indicators', 'tiers', 'groupby'];
+    this.goodQueryParams = ['frequency', 'start', 'end', 'levels', 'types', 'sites', 'sectors', 'indicators', 'tiers', 'groupby', 'mr'];
     this.oldQueryParams = ['timeframe', 'numrecentperiods', 'numrecentcount', 'start_period', 'end_period'];
     this.queryParams = '?' + this.goodQueryParams.concat(this.oldQueryParams).join('&');
     this.filterStore = filterStore;
@@ -4216,6 +4222,11 @@ function () {
           }
         }
       });
+
+      if (this.filterStore._latchMostRecent && this.filterStore._internalShowAll) {
+        queryString.push(['mr', 1]);
+      }
+
       return {
         program: programId,
         report_type: reportType,
@@ -5016,4 +5027,4 @@ function () {
 /***/ })
 
 },[["mYfJ","runtime","vendors"]]]);
-//# sourceMappingURL=iptt_report-2900f45f1f1653b7a892.js.map
+//# sourceMappingURL=iptt_report-040035bcc10b341743c7.js.map
