@@ -317,25 +317,12 @@ export class LevelCardExpanded extends React.Component {
     };
 
     cancelEdit = () => {
-        // Need to just clear the form if only the root level card is being cancelled.
-        let cancelFunc = () => this.props.rootStore.levelStore.cancelEdit(this.props.level.id);
         if (this.props.rootStore.levelStore.levels.length == 1 && this.props.level.id == "new"){
-            cancelFunc = this.clearData;
-        }
-        if (this.dataHasChanged) {
-            create_no_rationale_changeset_notice({
-                /* # Translators: This is part of a confirmation prompt that is triggered by clicking on a cancel button.  */
-                message_text: gettext("Are you sure you want to continue?"),
-                /* # Translators:  This is a warning provided to the user when they try to cancel the editing of something they have already modified.  */
-                preamble: gettext(`Changes to this ${this.props.levelProps.tierName} will not be saved`),
-                on_submit: () => cancelFunc(),
-                type: "notice"
-            })
+            this.clearData();
         }
         else{
-            cancelFunc()
+            this.props.rootStore.levelStore.cancelEdit(this.props.level.id);
         }
-
     };
 
     clearData = () => {
