@@ -13,7 +13,10 @@ class FilterStore {
     routes = [
         {
             name: 'logframe',
-            path: '/:programId<\\d+>/logframe/?groupby'
+            path: '/:programId<\\d+>/logframe/?groupby',
+            defaultParams: {
+                'groupby': 1
+            }
         }
     ];
 

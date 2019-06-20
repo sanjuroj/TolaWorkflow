@@ -1105,7 +1105,7 @@ class Indicator(SafeDeleteModel):
 
     @property
     def number_display(self):
-        if self.results_framework and self.program.auto_number_indicators and self.level and self.level.leveltier:
+        if self.results_framework and self.auto_number_indicators and self.level and self.level.leveltier:
             return "{0} {1}{2}".format(
                 self.leveltier_name, self.level.display_ontology, self.level_order_display
             )

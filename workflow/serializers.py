@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from django.shortcuts import reverse
+from django.db import models
 
 from workflow.models import Program, Documentation, ProjectAgreement
 
@@ -40,8 +41,8 @@ class DocumentListDocumentSerializer(serializers.ModelSerializer):
         ]
 
 class LogframeIndicatorSerializer(serializers.ModelSerializer):
-    number_display = serializers.SerializerMethodField()
     level = serializers.PrimaryKeyRelatedField(read_only=True)
+    level_order_display = serializers.CharField(read_only=True)
     class Meta:
         model = Indicator
         fields = [
@@ -49,14 +50,9 @@ class LogframeIndicatorSerializer(serializers.ModelSerializer):
             'name',
             'means_of_verification',
             'level',
-            'number_display',
-            'old_level',
+            'level_order_display',
+            'level_order',
         ]
-
-    def get_number_display(self, obj):
-        if obj.results_framework and obj.auto_number_indicators:
-            return ''.join([p for p in [obj.level_display_ontology, obj.level_order_display] if p])
-        return obj.number
 
 
 
@@ -73,6 +69,7 @@ class LogframeLevelSerializer(serializers.ModelSerializer):
             'display_name',
             'get_level_depth',
             'ontology',
+            'display_ontology',
             'indicators',
             'assumptions',
             'child_levels'
@@ -87,6 +84,11 @@ class LogframeProgramSerializer(serializers.ModelSerializer):
     levels = LogframeLevelSerializer(many=True, read_only=True)
     indicators = LogframeIndicatorSerializer(source='indicator_set', many=True, read_only=True)
 
+    needed_fields = [
+        'pk',
+        'name',
+        'using_results_framework'
+    ]
     class Meta:
         model = Program
         fields = [
@@ -102,7 +104,9 @@ class LogframeProgramSerializer(serializers.ModelSerializer):
 
     @classmethod
     def load(cls, pk):
-        program = Program.objects.get(pk=pk)
+        program = Program.active.only(
+            *cls._needed_fields
+        ).get(pk=pk)
         return cls(program)
 
     def get_results_framework_url(self, obj):

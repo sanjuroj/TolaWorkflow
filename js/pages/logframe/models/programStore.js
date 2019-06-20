@@ -9,7 +9,7 @@ class Indicator {
         this.level_order = indicatorData.level_order;
         this.level = indicatorData.level || false;
         this.name = indicatorData.name;
-        this.number_display = indicatorData.number_display;
+        this.level_order_display = indicatorData.level_order_display;
         this.means_of_verification = indicatorData.means_of_verification;
     }
 }
@@ -20,10 +20,15 @@ class Level {
         this.display_name = levelData.display_name;
         this.level_depth = levelData.get_level_depth;
         this.ontology = levelData.ontology;
+        this.display_ontology = levelData.display_ontology;
         this.indicators = [];
         if (levelData.indicators && Array.isArray(levelData.indicators)) {
             levelData.indicators.forEach(indicatorPk => this.indicators.push(indicators[indicatorPk]));
         }
+        this.indicators.sort((indicator_a, indicator_b) => {
+            return (indicator_a.level_order < indicator_b.level_order) ? -1
+                        : (indicator_b.level_order < indicator_a.level_order) ? 1 : 0;
+        });
         this.assumptions = levelData.assumptions;
         this.child_levels = levelData.child_levels || [];
         
