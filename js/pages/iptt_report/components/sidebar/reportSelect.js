@@ -1,7 +1,7 @@
 import React from 'react';
 import { observer, inject, computed } from 'mobx-react';
 import { when } from 'mobx';
-import { SingleReactSelect, SingleSelect, DateSelect } from '../../../../components/selectWidgets';
+import { SingleReactSelect, SingleSelect, DateSelect, GroupBySelect } from '../../../../components/selectWidgets';
 
 
 /**  false && <Selectors.PeriodSelect />}
@@ -228,22 +228,11 @@ const EndDateSelect = inject('filterStore')(
  */
 const GroupingSelect = inject('filterStore')(
     observer(({ filterStore }) => {
-        let options = [
-            <option value="1" key={1}>{ filterStore.resultChainFilterLabel }</option>,
-            <option value="2" key={2}>{
-                /* # Translators: refers to grouping the report by the level of the indicator */
-                gettext('by Level')
-            }</option>
-        ];;
-        return <SingleSelect
-                    label={
-                        /* # Translators: menu for selecting how rows are grouped in a report */
-                        gettext('Group indicators')
-                    }
+        return <GroupBySelect
+                    chainLabel={ filterStore.resultChainFilterLabel }
                     disabled={ filterStore.groupByDisabled }
                     value={ filterStore.groupBy }
                     update={ e => { filterStore.groupBy = e.target.value;} }
-                    options={ options }
                 />
     })
 );

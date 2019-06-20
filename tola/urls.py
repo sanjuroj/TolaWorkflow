@@ -29,6 +29,7 @@ from tola import views as tolaviews
 from indicators.views.views_indicators import ProgramPage, old_program_page
 from indicators.views.views_results_framework import (
     LevelViewSet, insert_new_level, save_leveltiers, reorder_indicators, indicator_list)
+from indicators.views import views_program
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -87,6 +88,7 @@ router.register(r'tola_management/country', CountryAdminViewSet, base_name='tola
 router.register(r'tola_management/countryobjective', CountryObjectiveViewset, base_name='tolamanagementcountryobjective')
 router.register(r'tola_management/countrydisaggregation', CountryDisaggregationViewSet, base_name='tolamanagementcountrydisaggregation')
 
+
 urlpatterns = [
                 url(r'^jsi18n/$', JavaScriptCatalog.as_view(), name='javascript-catalog'),
 
@@ -116,6 +118,9 @@ urlpatterns = [
                 # Program page
                 url(r'^program/(?P<program>\d+)/$',
                     ProgramPage.as_view(), name='program_page'),
+
+                url(r'^program/(?P<program>\d+)/logframe/$',
+                    views_program.logframe_view, name='logframe'),
 
                 # Results framework builder
                 url(r'^api/insert_new_level', insert_new_level, name='insert_new_level'),

@@ -18,6 +18,7 @@ module.exports = {
         document_list: './js/pages/document_list/index.js' ,
         iptt_quickstart: './js/pages/iptt_quickstart/index.js',
         iptt_report: './js/pages/iptt_report/index.js',
+        logframe: './js/pages/logframe/index.js',
         results_framework: './js/pages/results_framework/index.js'
     },
 
