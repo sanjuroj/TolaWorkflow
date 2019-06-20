@@ -82,6 +82,7 @@ class IndicatorForm(forms.ModelForm):
         )
         self.fields['program_display'].disabled = True
         self.fields['program_display'].label = _('Program')
+
         # level is here the new "result level" (RF) level option (FK to model Level)
         self.fields['level'].label = _('Result level')
         self.fields['level'].label_from_instance = lambda obj: obj.display_name
@@ -94,7 +95,11 @@ class IndicatorForm(forms.ModelForm):
             self.fields['level'].disabled = True
         else:
             # populate with all levels for the indicator's program:
-            self.fields['level'].queryset = Level.objects.filter(program_id=self.programval)
+            # self.fields['level'].queryset = Level.objects.filter(program_id=self.programval)
+            self.fields['level'].choices = [(l.id, l.display_name) for l in
+                                            Level.sort_by_ontology(Level.objects.filter(program_id=self.programval))]
+
+
         if not self.programval.results_framework or self.programval.auto_number_indicators:
             # in this (the default) case, the number field is removed (values not updated):
             self.fields.pop('number')
