@@ -507,7 +507,7 @@ class IndicatorList extends React.Component {
             // let options = this.props.indicators.map( (entry, index) => <option value={index+1}>{index+1}</option>);
             const tipTemplate = '<div class="tooltip sortable-list__item__tooltip" role="tooltip"><div class="arrow"></div><div class="tooltip-inner"></div></div>';
             const indicator_label =
-                <span data-toggle="tooltip" data-template={tipTemplate} title={indicator.name}>
+                <span data-toggle="tooltip" data-delay={900} data-template={tipTemplate} title={indicator.name}>
                     <span>{indicator.name.replace(/(.{55})..+/, "$1...")}</span>
                 </span>
             return (
