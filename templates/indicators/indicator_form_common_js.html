@@ -733,6 +733,9 @@
     function updateLopTargetDisplay() {
         let targetsSum = computeLopTarget();
         $("#id_span_loptarget").text(targetsSum);
+
+        // also show any validation errors related to a 0 LoP
+        validateComputedLopTarget();
     }
 
     /*
@@ -841,6 +844,7 @@
         }
     }
 
+    // this validates the lop target form field (as opposed to the computed lop target value)
     function validate_loptarget() {
         const lop = $("#id_lop_target");
 
@@ -856,11 +860,11 @@
 
         if (errMsg) {
             lop.addClass('is-invalid');
-            $("#validation_id_lop_target").text(errMsg);
+            showTargetErrors(errMsg);
             return false;
         } else {
             lop.removeClass('is-invalid');
-            $("#validation_id_lop_target").text(" ");
+            clearTargetErrors();
             lop.val(Math.round(lop.val() * 100) / 100);
             return true;
         }
@@ -917,16 +921,37 @@
         });
 
         if (errorFlag) {
-            $("#id_pt_errors").html(`<span class="target-value-error"><small>${getPTMessage()}</small></span>`);
+            showTargetErrors(getPTMessage());
             return false;
+        }
+
+        return true;
+    }
+
+    function validateComputedLopTarget() {
+        // Only check computed LoP target if all the PTs are filled in, otherwise don't bother
+        let allValid = true;
+
+        // validate target values (number fields)
+        $("#periodic_targets_table input[type=number]").each(function(){
+            if ($(this).attr('id').substr(0, 2) == "pt" ) {
+                let val = $(this).val();
+                if (! (val && $.isNumeric(val) && val >= 0)) {
+                    allValid = false;
+                }
+            }
+        });
+
+        if (allValid) {
+            clearTargetErrors();
         }
 
         // If all the inputs exist and are legit, try validating the LoP target now
 
         let computedLop = computeLopTarget();
-        if (computedLop != null && computedLop < 1) {
+        if (allValid && computedLop != null && computedLop < 1) {
             let msg = "{% trans 'The LoP target cannot be zero.'|escapejs %}";
-            $("#id_pt_errors").html(`<span class="target-value-error"><small>${msg}</small></span>`);
+            showTargetErrors(msg);
             return false;
         }
 
@@ -941,6 +966,14 @@
         else {
             return ("{% trans 'Please enter a number with no letters or symbols.'|escapejs %}");
         }
+    }
+
+    function showTargetErrors(msg) {
+        $("#id_pt_errors").html(`<span class="target-value-error"><small>${msg}</small></span>`);
+    }
+
+    function clearTargetErrors() {
+        $("#id_pt_errors").empty();
     }
 
 
@@ -981,6 +1014,10 @@
         }
 
         if (validatePeriodicTargets() === false) {
+            validationsTargetTab = false;
+        }
+
+        if (validateComputedLopTarget() === false) {
             validationsTargetTab = false;
         }
 
@@ -1036,34 +1073,33 @@
     /*
      * On change of events and periodic target numeric values, but NOT LoP only value
      */
-    $("#indicator_modal_content").on("blur", "#periodic_targets_table input[data-periodictarget]", function(e){
+    $("#indicator_modal_content").on("input", "#periodic_targets_table input[data-periodictarget]", function(e){
+        clearTargetErrors();
+
         if ($(this).val() && $(this).val() >= 0) {
             $(this).removeClass('is-invalid');
-            $("#id_pt_errors").text('');
         } else {
             $(this).addClass('is-invalid');
         }
 
         if ($("#id_div_periodic_tables_placeholder input[type=number], input[type=text]").hasClass("is-invalid") ) {
-            $("#id_pt_errors").html(`<span class="target-value-error"><small>${getPTMessage()}</small></span>`);
+            showTargetErrors(getPTMessage());
         }
-
-        // validate LoP is not 0 among other things
-        validatePeriodicTargets();
 
         // Update calculated display
         updateLopTargetDisplay();
     });
 
-    $("#indicator_modal_content").on("blur", "#periodic_targets_table input[type=text]", function(e){
+    $("#indicator_modal_content").on("input", "#periodic_targets_table input[type=text]", function(e){
+        clearTargetErrors();
+
         if ($(this).val()) {
             $(this).removeClass('is-invalid');
-            $("#id_pt_errors").text('');
         } else {
             $(this).addClass('is-invalid');
         }
         if ($("#id_div_periodic_tables_placeholder input[type=text], input[type=number]").hasClass("has-error") ) {
-            $("#id_pt_errors").html(`<span class="target-value-error"><small>${getPTMessage()}</small></span>`);
+            showTargetErrors(getPTMessage());
         }
     });
 
