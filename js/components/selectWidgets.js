@@ -2,6 +2,8 @@ import React from 'react';
 import Select from 'react-select';
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 import { uniqueId } from '../formUtils';
+import { GROUP_BY_CHAIN, GROUP_BY_LEVEL } from '../constants';
+
 
 
 export const SingleReactSelect = ( props ) => {
@@ -72,18 +74,21 @@ export const DateSelect = ( props ) => {
 
 export const SingleSelect = ( props ) => {
     let selectId = uniqueId('react-select');
+    let formGroupClass = props.formGroupClass || "form-row mb-3";
+    let labelClass = props.labelClass || "col-form-label text-uppercase";
+    let selectClass = props.selectClass || "form-control";
     return (
-        <div className="form-row mb-3">
+        <div className={ formGroupClass }>
             <label
                 htmlFor={ selectId }
-                className="col-form-label text-uppercase">
+                className={ labelClass }>
                     { props.label }
             </label>
             <select
                 onChange={ props.update }
                 value={ props.value }
                 id={ selectId }
-                className="form-control"
+                className={ selectClass }
                 disabled={ props.disabled }>
                 { props.options }
             </select>
@@ -179,4 +184,22 @@ export const MultiSelectCheckbox = ( props ) => {
             />
         </div>
     );
+}
+
+export const GroupBySelect = ({ chainLabel, ...selectProps }) => {
+    let options = [
+        <option value={ GROUP_BY_CHAIN } key={1}>{ chainLabel }</option>,
+        <option value={ GROUP_BY_LEVEL } key={2}>{
+            /* # Translators: refers to grouping the report by the level of the indicator */
+            gettext('by Level')
+        }</option>
+    ];;
+    return <SingleSelect
+                label={
+                    /* # Translators: menu for selecting how rows are grouped in a report */
+                    gettext('Group indicators')
+                }
+                options={ options }
+                { ...selectProps }
+            />;
 }
