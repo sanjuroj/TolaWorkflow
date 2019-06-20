@@ -70,10 +70,9 @@ class LogframeLevelSerializer(serializers.ModelSerializer):
         model = Level
         fields = [
             'pk',
-            'name',
             'display_name',
             'get_level_depth',
-            'customsort',
+            'ontology',
             'indicators',
             'assumptions',
             'child_levels'

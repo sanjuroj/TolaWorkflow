@@ -17,8 +17,9 @@ class Indicator {
 class Level {
     constructor(levelData, indicators) {
         this.pk = levelData.pk;
-        this.name = levelData.name;
         this.display_name = levelData.display_name;
+        this.level_depth = levelData.get_level_depth;
+        this.ontology = levelData.ontology;
         this.indicators = [];
         if (levelData.indicators && Array.isArray(levelData.indicators)) {
             levelData.indicators.forEach(indicatorPk => this.indicators.push(indicators[indicatorPk]));
@@ -60,30 +61,18 @@ class ProgramStore {
                     this._levelsByTier.push(levelObj.pk);
                 }
             );
-            this._levelsByTier.sort(( level_a, level_b) => {
-                let level_a_depth = this._levelsByPk[level_a].get_level_depth;
-                let level_b_depth = this._levelsByPk[level_b].get_level_depth;
-                if (level_a_depth < level_b_depth) {
-                    return -1;
-                } else if (level_b_depth < level_a_depth) {
-                    return 1;
-                }
-                let level_a_customsort = this._levelsByPk[level_a].customsort;
-                let level_b_customsort = this._levelsByPk[level_b].customsort;
-                if (level_a_customsort < level_b_customsort) {
-                    return -1;
-                } else if (level_b_customsort < level_a_customsort) {
-                    return 1;
-                }
-                return 0;
+            this._levelsByTier.sort((level_a, level_b) => {
+                return (this._levelsByPk[level_a].level_depth < this._levelsByPk[level_b].level_depth) ? -1
+                            : (this._levelsByPk[level_b].level_depth < this._levelsByPk[level_a].level_depth) ? 1
+                                : (this._levelsByPk[level_a].ontology < this._levelsByPk[level_b].ontology) ? -1
+                                    : (this._levelsByPk[level_b].ontology < this._levelsByPk[level_a].ontology) ? 1 : 0;
             });
             let sortedByChain = [];
             this._levelsByChain.filter(
-                levelpk => this._levelsByPk[levelpk].get_level_depth == 1
+                levelpk => this._levelsByPk[levelpk].level_depth == 1
             ).forEach(
                 levelpk => {
-                    sortedByChain += this.getChildLevels(levelPk);
-                    
+                    sortedByChain = sortedByChain.concat(this.getChildLevels(levelpk));
                 }
             );
             this._levelsByChain = sortedByChain;
@@ -95,18 +84,18 @@ class ProgramStore {
         let levels = [levelpk];
         this._levelsByPk[levelpk].child_levels.forEach(
             child_pk => {
-                levels += this.getChildLevels(child_pk);
+                levels = levels.concat(this.getChildLevels(child_pk));
             }
         );
         return levels;
     }
     
     getLevelsGroupedBy = (grouping) => {
-        if (grouping === GROUP_BY_CHAIN) {
+        if (parseInt(grouping) === GROUP_BY_CHAIN) {
             return this._levelsByChain.map(
                 pk => this._levelsByPk[pk]
             )
-        } else if (grouping === GROUP_BY_LEVEL) {
+        } else if (parseInt(grouping) === GROUP_BY_LEVEL) {
             return this._levelsByTier.map(
                 pk => this._levelsByPk[pk]
             )
