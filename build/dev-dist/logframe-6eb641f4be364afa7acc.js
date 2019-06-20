@@ -201,8 +201,9 @@ var Level = function Level(levelData, indicators) {
   _classCallCheck(this, Level);
 
   this.pk = levelData.pk;
-  this.name = levelData.name;
   this.display_name = levelData.display_name;
+  this.level_depth = levelData.get_level_depth;
+  this.ontology = levelData.ontology;
   this.indicators = [];
 
   if (levelData.indicators && Array.isArray(levelData.indicators)) {
@@ -233,18 +234,18 @@ function () {
       var levels = [levelpk];
 
       _this2._levelsByPk[levelpk].child_levels.forEach(function (child_pk) {
-        levels += _this2.getChildLevels(child_pk);
+        levels = levels.concat(_this2.getChildLevels(child_pk));
       });
 
       return levels;
     };
 
     this.getLevelsGroupedBy = function (grouping) {
-      if (grouping === _constants__WEBPACK_IMPORTED_MODULE_0__["GROUP_BY_CHAIN"]) {
+      if (parseInt(grouping) === _constants__WEBPACK_IMPORTED_MODULE_0__["GROUP_BY_CHAIN"]) {
         return _this2._levelsByChain.map(function (pk) {
           return _this2._levelsByPk[pk];
         });
-      } else if (grouping === _constants__WEBPACK_IMPORTED_MODULE_0__["GROUP_BY_LEVEL"]) {
+      } else if (parseInt(grouping) === _constants__WEBPACK_IMPORTED_MODULE_0__["GROUP_BY_LEVEL"]) {
         return _this2._levelsByTier.map(function (pk) {
           return _this2._levelsByPk[pk];
         });
@@ -281,33 +282,15 @@ function () {
       });
 
       this._levelsByTier.sort(function (level_a, level_b) {
-        var level_a_depth = _this2._levelsByPk[level_a].get_level_depth;
-        var level_b_depth = _this2._levelsByPk[level_b].get_level_depth;
-
-        if (level_a_depth < level_b_depth) {
-          return -1;
-        } else if (level_b_depth < level_a_depth) {
-          return 1;
-        }
-
-        var level_a_customsort = _this2._levelsByPk[level_a].customsort;
-        var level_b_customsort = _this2._levelsByPk[level_b].customsort;
-
-        if (level_a_customsort < level_b_customsort) {
-          return -1;
-        } else if (level_b_customsort < level_a_customsort) {
-          return 1;
-        }
-
-        return 0;
+        return _this2._levelsByPk[level_a].level_depth < _this2._levelsByPk[level_b].level_depth ? -1 : _this2._levelsByPk[level_b].level_depth < _this2._levelsByPk[level_a].level_depth ? 1 : _this2._levelsByPk[level_a].ontology < _this2._levelsByPk[level_b].ontology ? -1 : _this2._levelsByPk[level_b].ontology < _this2._levelsByPk[level_a].ontology ? 1 : 0;
       });
 
       var sortedByChain = [];
 
       this._levelsByChain.filter(function (levelpk) {
-        return _this2._levelsByPk[levelpk].get_level_depth == 1;
+        return _this2._levelsByPk[levelpk].level_depth == 1;
       }).forEach(function (levelpk) {
-        sortedByChain += _this2.getChildLevels(levelPk);
+        sortedByChain = sortedByChain.concat(_this2.getChildLevels(levelpk));
       });
 
       this._levelsByChain = sortedByChain;
@@ -968,4 +951,4 @@ function (_React$Component) {
 /***/ })
 
 },[["+uhY","runtime","vendors"]]]);
-//# sourceMappingURL=logframe-f2e9af61c489397e22b9.js.map
+//# sourceMappingURL=logframe-6eb641f4be364afa7acc.js.map
