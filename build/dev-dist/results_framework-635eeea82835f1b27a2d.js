@@ -807,6 +807,8 @@ function (_React$Component3) {
     key: "componentWillUnmount",
     value: function componentWillUnmount() {
       $('#indicator_modal_div').off('updated.tola.indicator.save');
+      $('#indicator_modal_div').off('deleted.tola.indicator.save');
+      $('#indicator_modal_div').off('created.tola.indicator.save');
     }
   }, {
     key: "render",
@@ -1978,9 +1980,14 @@ function () {
     var _this9 = this;
 
     return function (indicatorId, newLevelId) {
-      _this9.indicators.find(function (i) {
+      var target = _this9.indicators.find(function (i) {
         return i.id == indicatorId;
-      }).level = newLevelId;
+      });
+
+      target.level = newLevelId;
+      target.level_order = _this9.indicators.filter(function (i) {
+        return i.level == newLevelId;
+      }).length - 1;
     };
   }
 })), _class);
@@ -2556,4 +2563,4 @@ var STATUS_CODES = {
 /***/ })
 
 },[["QTZG","runtime","vendors"]]]);
-//# sourceMappingURL=results_framework-6c20e0c815e5a1cf8363.js.map
+//# sourceMappingURL=results_framework-635eeea82835f1b27a2d.js.map

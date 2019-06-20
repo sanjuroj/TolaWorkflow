@@ -9735,6 +9735,9 @@ input[type=radio]:disabled {
   color: #54585a;
   margin-left: 7.5px; }
 
+.level-card--collapsed__actions {
+  min-width: 100px; }
+
 .actions__top, .actions__bottom {
   display: flex;
   justify-content: flex-end; }
@@ -10672,4 +10675,4 @@ a:hover {
 /* Unsorted custom selectors */
 
 
-/*# sourceMappingURL=base-d62408620ec36db6c935.css.map*/
+/*# sourceMappingURL=base-87b567ab9208a594557e.css.map*/
