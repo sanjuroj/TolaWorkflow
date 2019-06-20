@@ -634,29 +634,10 @@ function (_React$Component3) {
     };
 
     _this3.cancelEdit = function () {
-      // Need to just clear the form if only the root level card is being cancelled.
-      var cancelFunc = function cancelFunc() {
-        return _this3.props.rootStore.levelStore.cancelEdit(_this3.props.level.id);
-      };
-
       if (_this3.props.rootStore.levelStore.levels.length == 1 && _this3.props.level.id == "new") {
-        cancelFunc = _this3.clearData;
-      }
-
-      if (_this3.dataHasChanged) {
-        create_no_rationale_changeset_notice({
-          /* # Translators: This is part of a confirmation prompt that is triggered by clicking on a cancel button.  */
-          message_text: gettext("Are you sure you want to continue?"),
-
-          /* # Translators:  This is a warning provided to the user when they try to cancel the editing of something they have already modified.  */
-          preamble: gettext("Changes to this ".concat(_this3.props.levelProps.tierName, " will not be saved")),
-          on_submit: function on_submit() {
-            return cancelFunc();
-          },
-          type: "notice"
-        });
+        _this3.clearData();
       } else {
-        cancelFunc();
+        _this3.props.rootStore.levelStore.cancelEdit(_this3.props.level.id);
       }
     };
 
@@ -2475,4 +2456,4 @@ function (_React$Component2) {
 /***/ })
 
 },[["QTZG","runtime","vendors"]]]);
-//# sourceMappingURL=results_framework-8bc246268d555ef4bec2.js.map
+//# sourceMappingURL=results_framework-9e8bba777266b8b12c6c.js.map
