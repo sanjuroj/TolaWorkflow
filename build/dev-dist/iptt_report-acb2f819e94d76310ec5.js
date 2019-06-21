@@ -2601,6 +2601,20 @@ function () {
         return a.sortIndex - b.sortIndex;
       });
 
+      if (this.groupByDisabled) {
+        indicators = indicators.sort(function (a, b) {
+          if (a.levelpk && b.levelpk) {
+            return a.levelpk < b.levelpk ? -1 : b.levelpk < a.levelpk ? 1 : 0;
+          } else if (a.levelpk) {
+            return -1;
+          } else if (b.levelpk) {
+            return 1;
+          }
+
+          return 0;
+        });
+      }
+
       if (this.reportType === _constants__WEBPACK_IMPORTED_MODULE_1__["TVA"]) {
         indicators = indicators.filter(function (indicator) {
           return indicator.frequency == _this3.frequencyId;
@@ -5016,4 +5030,4 @@ function () {
 /***/ })
 
 },[["mYfJ","runtime","vendors"]]]);
-//# sourceMappingURL=iptt_report-2900f45f1f1653b7a892.js.map
+//# sourceMappingURL=iptt_report-acb2f819e94d76310ec5.js.map
