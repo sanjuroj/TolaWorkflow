@@ -177,6 +177,7 @@ export class LevelCardExpanded extends React.Component {
             name: props.level.name,
             assumptions: props.level.assumptions,
             indicators: props.levelProps.indicators.sort((a, b) => a.level_order - b.level_order),
+            disableForPrompt: false,
 
             get dataHasChanged () {
                 const baseData = this.baseLevelString + JSON.stringify(this.baseIndicators.sort( (a, b) => a.id - b.id));
@@ -198,7 +199,8 @@ export class LevelCardExpanded extends React.Component {
 
             updateIndicatorName (indicatorId, newName) {
                 this.indicators.find( i => i.id == indicatorId).name = newName;
-                this.baseIndicators.find( i => i.id == indicatorId).name = newName
+                this.baseIndicators.find( i => i.id == indicatorId).name = newName;
+                this.props.rootStore.levelStore.updateIndicatorNameInStore(indicatorId, newName);
             }
 
         }, {
@@ -273,8 +275,9 @@ export class LevelCardExpanded extends React.Component {
         // Handle indicator update.  Need to update rootStore and component store so if you close and reopen the card, you still see the new indicator
         $('#indicator_modal_div').on('updated.tola.indicator.save', (e, params) => {
             console.log('params level, props.level, rootstore active card', params.levelId, this.props.level.id, this.props.rootStore.uiStore.activeCard)
-            // This.props.level.id doesn't seem to be updating here, perhaps because the event is attaching a jquery listener
-            // So rootstore props are bing used instead of passed in ones.
+
+            this.updateIndicatorName(params.indicatorId, params.indicatorName);
+
             const currentCardId = this.props.rootStore.uiStore.activeCard;
             if (params.levelId != currentCardId){
                 // Only add the indicator to another level if it wasn't blanked out
@@ -289,11 +292,9 @@ export class LevelCardExpanded extends React.Component {
                 this.deleteIndicator(params.indicatorId);
                 console.log('indicators after', this.props.rootStore.levelStore.indicators.forEach( i => console.log('i2', toJS(i))))
             }
-            else {
-                console.log('params ind id, params name, current name', params.indicatorId, params.indicatorName, this.props.level.name);
-                this.indicators.find( i => i.id == params.indicatorId).name = params.indicatorName;
-                this.props.rootStore.levelStore.updateIndicatorNameInStore(params.indicatorId, params.indicatorName);
-            }
+
+
+
 
             // Need to remount the tooltip so it reflects a potential new name.  It's a big janky, should probably use a react component instead.
             $('*[data-toggle="tooltip"]').tooltip('dispose');
