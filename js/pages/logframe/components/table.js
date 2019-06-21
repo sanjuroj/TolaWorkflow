@@ -13,7 +13,6 @@ const IndicatorCell = ({ indicator, ontology }) => {
         name += ` ${ontology}${indicator.level_order_display}`;
     }
     name += `: ${indicator.name}`;
-    /* { false && ({ gettext('Indicator')}{ indicator.number_display ? ` ${indicator.number_display}:` : '' } { indicator.name })} */
     return (
         <div className="table-cell--text">            
             { name }

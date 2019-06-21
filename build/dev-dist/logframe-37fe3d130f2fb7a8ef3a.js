@@ -844,8 +844,6 @@ var IndicatorCell = function IndicatorCell(_ref2) {
   }
 
   name += ": ".concat(indicator.name);
-  /* { false && ({ gettext('Indicator')}{ indicator.number_display ? ` ${indicator.number_display}:` : '' } { indicator.name })} */
-
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "table-cell--text"
   }, name);
@@ -969,4 +967,4 @@ function (_React$Component) {
 /***/ })
 
 },[["+uhY","runtime","vendors"]]]);
-//# sourceMappingURL=logframe-a23adc5b3b42f2c91949.js.map
+//# sourceMappingURL=logframe-37fe3d130f2fb7a8ef3a.js.map
