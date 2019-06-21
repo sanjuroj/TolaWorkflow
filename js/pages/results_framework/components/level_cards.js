@@ -288,8 +288,7 @@ export class LevelCardExpanded extends React.Component {
 
             this.updateIndicatorName(params.indicatorId, params.indicatorName);
 
-            const currentCardId = this.props.rootStore.uiStore.activeCard;
-            if (params.levelId != currentCardId){
+            if (params.levelId != this.props.rootStore.uiStore.activeCard){
                 // Only add the indicator to another level if it wasn't blanked out
                 if (params.levelId){
                     this.props.rootStore.levelStore.moveIndicatorInStore(params.indicatorId, params.levelId)
