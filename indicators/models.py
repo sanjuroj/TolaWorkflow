@@ -702,11 +702,11 @@ class Indicator(SafeDeleteModel):
 
     OLD_LEVELS = [
         (1, 'Goal'),
-        (2, 'Output'),
+        (2, 'Impact'),
         (3, 'Outcome'),
-        (4, 'Activity'),
-        (5, 'Impact'),
-        (6, 'Intermediate Outcome')
+        (4, 'Intermediate Outcome'),
+        (5, 'Output'),
+        (6, 'Activity')
     ]
 
 
