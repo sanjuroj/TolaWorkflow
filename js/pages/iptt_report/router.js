@@ -43,7 +43,7 @@ export default class ipttRouter {
         }
     ];
     this.goodQueryParams = ['frequency', 'start', 'end', 'levels', 'types', 'sites',    
-                            'sectors', 'indicators', 'tiers', 'groupby'];
+                            'sectors', 'indicators', 'tiers', 'groupby', 'mr'];
     this.oldQueryParams = ['timeframe', 'numrecentperiods', 'numrecentcount', 'start_period', 'end_period'];
     this.queryParams = '?' + (this.goodQueryParams.concat(this.oldQueryParams)).join('&');
     this.filterStore = filterStore;
@@ -75,6 +75,7 @@ export default class ipttRouter {
         frequency = null,
         start = null,
         end = null,
+        mr = null,
         timeperiods = null,
         targetperiods = null,
         timeframe = null,
@@ -113,6 +114,9 @@ export default class ipttRouter {
             this.filterStore.endPeriod = parseInt(end);
         } else if (end_period !== null && !isNaN(Date.parse(end_period))) {
             this.filterStore.setEndPeriodFromDate(new Date(end_period));
+        }
+        if (mr !== null) {
+            this.filterStore._latchMostRecent = true;
         }
         if (timeframe !== null && parseInt(timeframe) == 1) {
             this.filterStore.showAll = true;
@@ -234,6 +238,9 @@ export default class ipttRouter {
                 }
             }
         );
+        if (this.filterStore._latchMostRecent && this.filterStore._internalShowAll) {
+            queryString.push(['mr',  1]);
+        }
         return {
             program: programId,
             report_type: reportType,
@@ -247,6 +254,7 @@ export default class ipttRouter {
     
     @computed get excelUrl() {
         if (this.filterStore.frequencyId) {
+            
             return this.router.buildUrl('ipttAPI.ipttExcel',
                                          {...this.routeParams,
                                          reportType: this.reportType,
