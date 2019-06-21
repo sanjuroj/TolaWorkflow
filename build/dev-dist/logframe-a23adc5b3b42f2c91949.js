@@ -115,7 +115,7 @@ var SubTitleRow = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inject"])('dat
     update: function update(e) {
       filterStore.setGroupBy(e.target.value);
     },
-    labelClass: "col-form-label",
+    labelClass: "col-form-label text-append-colon",
     formGroupClass: "form-row inline-select"
   }));
 }));
@@ -191,27 +191,29 @@ var Indicator = function Indicator(indicatorData) {
   this.level_order = indicatorData.level_order;
   this.level = indicatorData.level || false;
   this.name = indicatorData.name;
-  this.number_display = indicatorData.number_display;
+  this.level_order_display = indicatorData.level_order_display;
   this.means_of_verification = indicatorData.means_of_verification;
 };
 
-var Level = function Level(levelData, indicators) {
-  var _this = this;
-
+var Level = function Level(levelData) {
   _classCallCheck(this, Level);
 
   this.pk = levelData.pk;
   this.display_name = levelData.display_name;
-  this.level_depth = levelData.get_level_depth;
+  this.level_depth = levelData.level_depth;
   this.ontology = levelData.ontology;
+  this.display_ontology = levelData.display_ontology;
   this.indicators = [];
 
   if (levelData.indicators && Array.isArray(levelData.indicators)) {
-    levelData.indicators.forEach(function (indicatorPk) {
-      return _this.indicators.push(indicators[indicatorPk]);
+    this.indicators = levelData.indicators.map(function (indicatorData) {
+      return new Indicator(indicatorData);
     });
   }
 
+  this.indicators.sort(function (indicator_a, indicator_b) {
+    return indicator_a.level_order < indicator_b.level_order ? -1 : indicator_b.level_order < indicator_a.level_order ? 1 : 0;
+  });
   this.assumptions = levelData.assumptions;
   this.child_levels = levelData.child_levels || [];
 };
@@ -220,21 +222,20 @@ var ProgramStore =
 /*#__PURE__*/
 function () {
   function ProgramStore(programData) {
-    var _this2 = this;
+    var _this = this;
 
     _classCallCheck(this, ProgramStore);
 
     this._levelsByPk = {};
     this._levelsByChain = [];
     this._levelsByTier = [];
-    this._indicatorsByPk = {};
-    this._unassignedIndicatorPks = [];
+    this._unassignedIndicators = [];
 
     this.getChildLevels = function (levelpk) {
       var levels = [levelpk];
 
-      _this2._levelsByPk[levelpk].child_levels.forEach(function (child_pk) {
-        levels = levels.concat(_this2.getChildLevels(child_pk));
+      _this._levelsByPk[levelpk].child_levels.forEach(function (child_pk) {
+        levels = levels.concat(_this.getChildLevels(child_pk));
       });
 
       return levels;
@@ -242,16 +243,16 @@ function () {
 
     this.getLevelsGroupedBy = function (grouping) {
       if (parseInt(grouping) === _constants__WEBPACK_IMPORTED_MODULE_0__["GROUP_BY_CHAIN"]) {
-        return _this2._levelsByChain.map(function (pk) {
-          return _this2._levelsByPk[pk];
+        return _this._levelsByChain.map(function (pk) {
+          return _this._levelsByPk[pk];
         });
       } else if (parseInt(grouping) === _constants__WEBPACK_IMPORTED_MODULE_0__["GROUP_BY_LEVEL"]) {
-        return _this2._levelsByTier.map(function (pk) {
-          return _this2._levelsByPk[pk];
+        return _this._levelsByTier.map(function (pk) {
+          return _this._levelsByPk[pk];
         });
       }
 
-      return Object.values(_this2._levelsByPk);
+      return Object.values(_this._levelsByPk);
     };
 
     this.name = programData.name;
@@ -260,37 +261,32 @@ function () {
     this.program_page_url = programData.program_page_url;
     this.rf_chain_sort_label = this.results_framework ? programData.rf_chain_sort_label : false;
 
-    if (programData.indicators && Array.isArray(programData.indicators)) {
-      programData.indicators.forEach(function (indicatorData) {
-        var indicator = new Indicator(indicatorData);
-        _this2._indicatorsByPk[indicator.pk] = indicator;
-
-        if (!indicator.level) {
-          _this2._unassignedIndicatorPks.push(indicator.pk);
-        }
+    if (programData.unassigned_indicators && Array.isArray(programData.unassigned_indicators)) {
+      this._unassignedIndicators = programData.unassigned_indicators.map(function (indicatorData) {
+        return new Indicator(indicatorData);
       });
     }
 
     if (programData.levels && Array.isArray(programData.levels)) {
       programData.levels.forEach(function (level) {
-        var levelObj = new Level(level, _this2._indicatorsByPk);
-        _this2._levelsByPk[levelObj.pk] = levelObj;
+        var levelObj = new Level(level);
+        _this._levelsByPk[levelObj.pk] = levelObj;
 
-        _this2._levelsByChain.push(levelObj.pk);
+        _this._levelsByChain.push(levelObj.pk);
 
-        _this2._levelsByTier.push(levelObj.pk);
+        _this._levelsByTier.push(levelObj.pk);
       });
 
       this._levelsByTier.sort(function (level_a, level_b) {
-        return _this2._levelsByPk[level_a].level_depth < _this2._levelsByPk[level_b].level_depth ? -1 : _this2._levelsByPk[level_b].level_depth < _this2._levelsByPk[level_a].level_depth ? 1 : _this2._levelsByPk[level_a].ontology < _this2._levelsByPk[level_b].ontology ? -1 : _this2._levelsByPk[level_b].ontology < _this2._levelsByPk[level_a].ontology ? 1 : 0;
+        return _this._levelsByPk[level_a].level_depth < _this._levelsByPk[level_b].level_depth ? -1 : _this._levelsByPk[level_b].level_depth < _this._levelsByPk[level_a].level_depth ? 1 : _this._levelsByPk[level_a].ontology < _this._levelsByPk[level_b].ontology ? -1 : _this._levelsByPk[level_b].ontology < _this._levelsByPk[level_a].ontology ? 1 : 0;
       });
 
       var sortedByChain = [];
 
       this._levelsByChain.filter(function (levelpk) {
-        return _this2._levelsByPk[levelpk].level_depth == 1;
+        return _this._levelsByPk[levelpk].level_depth == 1;
       }).forEach(function (levelpk) {
-        sortedByChain = sortedByChain.concat(_this2.getChildLevels(levelpk));
+        sortedByChain = sortedByChain.concat(_this.getChildLevels(levelpk));
       });
 
       this._levelsByChain = sortedByChain;
@@ -300,15 +296,11 @@ function () {
   _createClass(ProgramStore, [{
     key: "unassignedIndicators",
     get: function get() {
-      var _this3 = this;
-
-      if (!this._unassignedIndicatorPks || this._unassignedIndicatorPks.length == 0) {
+      if (!this._unassignedIndicators || this._unassignedIndicators.length == 0) {
         return [];
       }
 
-      return this._unassignedIndicatorPks.map(function (pk) {
-        return _this3._indicatorsByPk[pk];
-      });
+      return this._unassignedIndicators;
     }
   }]);
 
@@ -652,7 +644,13 @@ function () {
 
     this.routes = [{
       name: 'logframe',
-      path: '/:programId<\\d+>/logframe/?groupby'
+      path: '/:programId<\\d+>/logframe/?groupby',
+      defaultParams: {
+        'groupby': 1
+      }
+    }, {
+      name: 'logframe-excel',
+      path: '/:programId<\\d+>/logframe_excel/?groupby'
     }];
 
     this.updateState = function (_ref) {
@@ -699,7 +697,11 @@ function () {
   }, {
     key: "excelUrl",
     get: function get() {
-      return false;
+      var _this$router$getState2 = this.router.getState(),
+          name = _this$router$getState2.name,
+          params = _this$router$getState2.params;
+
+      return this.router.buildUrl('logframe-excel', params);
     }
   }]);
 
@@ -833,10 +835,20 @@ var LevelNameCell = function LevelNameCell(_ref) {
 };
 
 var IndicatorCell = function IndicatorCell(_ref2) {
-  var indicator = _ref2.indicator;
+  var indicator = _ref2.indicator,
+      ontology = _ref2.ontology;
+  var name = gettext('Indicator');
+
+  if (ontology || indicator.level_order_display) {
+    name += " ".concat(ontology).concat(indicator.level_order_display);
+  }
+
+  name += ": ".concat(indicator.name);
+  /* { false && ({ gettext('Indicator')}{ indicator.number_display ? ` ${indicator.number_display}:` : '' } { indicator.name })} */
+
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "table-cell--text"
-  }, gettext('Indicator'), indicator.number_display ? " ".concat(indicator.number_display, ":") : '', " ", indicator.name);
+  }, name);
 };
 
 var MeansCell = function MeansCell(_ref3) {
@@ -847,16 +859,19 @@ var MeansCell = function MeansCell(_ref3) {
 };
 
 var IndicatorCells = function IndicatorCells(_ref4) {
-  var indicators = _ref4.indicators;
+  var indicators = _ref4.indicators,
+      ontology = _ref4.ontology;
 
-  if (!indicators) {
+  if (!indicators || indicators.length == 0) {
     return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-      className: "table-cell-inner-row colspan-2 table-cell "
+      className: "table-cell-column colspan-2"
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: "table-cell-inner-row table-cell-inner-row--empty"
     }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
       className: "table-cell--text table-cell--empty"
     }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
       className: "table-cell--text table-cell--empty"
-    }));
+    })));
   }
 
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -867,6 +882,7 @@ var IndicatorCells = function IndicatorCells(_ref4) {
       key: idx
     }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(IndicatorCell, {
       indicator: indicator,
+      ontology: ontology,
       key: "ind".concat(idx)
     }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(MeansCell, {
       indicator: indicator,
@@ -889,7 +905,8 @@ var LevelRow = function LevelRow(_ref6) {
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(LevelNameCell, {
     name: level.display_name
   }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(IndicatorCells, {
-    indicators: level.indicators
+    indicators: level.indicators,
+    ontology: level.display_ontology
   }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(AssumptionsCell, {
     assumptions: level.assumptions
   }));
@@ -936,6 +953,7 @@ function (_React$Component) {
         return {
           display_name: gettext('Indicators unassigned to  a results framework level'),
           indicators: this.props.dataStore.unassignedIndicators,
+          ontology: false,
           assumptions: null
         };
       }
@@ -951,4 +969,4 @@ function (_React$Component) {
 /***/ })
 
 },[["+uhY","runtime","vendors"]]]);
-//# sourceMappingURL=logframe-6eb641f4be364afa7acc.js.map
+//# sourceMappingURL=logframe-a23adc5b3b42f2c91949.js.map

@@ -231,6 +231,9 @@ class Level(models.Model):
         Assume one root node - assert if multiple roots found
         Levels not part of the tree will not be returned
         """
+        if not levels:
+            return levels
+
         # A root node has parent_id is None, or a parent_id not present in the list (sub-tree)
         level_ids = set(l.id for l in levels)
         root_nodes = [l for l in levels if l.parent_id is None or l.parent_id not in level_ids]
@@ -1141,7 +1144,7 @@ class Indicator(SafeDeleteModel):
 
     @property
     def number_display(self):
-        if self.results_framework and self.program.auto_number_indicators and self.level and self.level.leveltier:
+        if self.results_framework and self.auto_number_indicators and self.level and self.level.leveltier:
             return "{0} {1}{2}".format(
                 self.leveltier_name, self.level.display_ontology, self.level_order_display
             )

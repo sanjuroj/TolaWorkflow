@@ -82,3 +82,7 @@
     // there MUST be a BS selector like this
     float: right;
 }
+
+.text-append-colon::after {
+    content: ":";
+}

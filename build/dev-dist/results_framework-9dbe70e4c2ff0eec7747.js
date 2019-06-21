@@ -807,8 +807,6 @@ function (_React$Component3) {
     key: "componentWillUnmount",
     value: function componentWillUnmount() {
       $('#indicator_modal_div').off('updated.tola.indicator.save');
-      $('#indicator_modal_div').off('deleted.tola.indicator.save');
-      $('#indicator_modal_div').off('created.tola.indicator.save');
     }
   }, {
     key: "render",
@@ -1515,6 +1513,8 @@ function () {
       if (levelId == "new") {
         if (levelToSave.parent == "root") {
           _this.saveLevelTiersToDB();
+
+          $('#logframe_link').show();
         }
 
         delete levelToSave.id;
@@ -1980,14 +1980,9 @@ function () {
     var _this9 = this;
 
     return function (indicatorId, newLevelId) {
-      var target = _this9.indicators.find(function (i) {
+      _this9.indicators.find(function (i) {
         return i.id == indicatorId;
-      });
-
-      target.level = newLevelId;
-      target.level_order = _this9.indicators.filter(function (i) {
-        return i.level == newLevelId;
-      }).length - 1;
+      }).level = newLevelId;
     };
   }
 })), _class);
@@ -2563,4 +2558,4 @@ var STATUS_CODES = {
 /***/ })
 
 },[["QTZG","runtime","vendors"]]]);
-//# sourceMappingURL=results_framework-635eeea82835f1b27a2d.js.map
+//# sourceMappingURL=results_framework-9dbe70e4c2ff0eec7747.js.map

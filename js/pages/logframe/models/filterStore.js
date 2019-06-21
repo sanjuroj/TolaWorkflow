@@ -13,7 +13,14 @@ class FilterStore {
     routes = [
         {
             name: 'logframe',
-            path: '/:programId<\\d+>/logframe/?groupby'
+            path: '/:programId<\\d+>/logframe/?groupby',
+            defaultParams: {
+                'groupby': 1
+            }
+        },
+        {
+            name: 'logframe-excel',
+            path: '/:programId<\\d+>/logframe_excel/?groupby'
         }
     ];
 
@@ -49,7 +56,8 @@ class FilterStore {
     }
     
     @computed get excelUrl() {
-        return false;
+        let { name, params } = this.router.getState();
+        return this.router.buildUrl('logframe-excel', params);
     }
 }
 

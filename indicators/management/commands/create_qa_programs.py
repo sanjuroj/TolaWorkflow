@@ -47,8 +47,10 @@ class Command(BaseCommand):
         country, created = Country.objects.get_or_create(
             country='Tolaland', defaults={
                 'latitude': 21.4, 'longitude': -158, 'zoom': 6, 'organization': org, 'code': 'TO'})
-        for super in TolaUser.objects.filter(user__is_superuser=True):
-            CountryAccess.objects.get_or_create(country=country, tolauser=super, role='basic_admin')
+        for super_user in TolaUser.objects.filter(user__is_superuser=True):
+            ca, _CountryAccess.objects.get_or_create(country=country, tolauser=super_user)
+            ca.role = 'basic_admin'
+            ca.save()
 
 
         if options['clean_tolaland']:

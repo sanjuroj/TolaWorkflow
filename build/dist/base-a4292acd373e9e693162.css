@@ -9735,9 +9735,6 @@ input[type=radio]:disabled {
   color: #54585a;
   margin-left: 7.5px; }
 
-.level-card--collapsed__actions {
-  min-width: 100px; }
-
 .actions__top, .actions__bottom {
   display: flex;
   justify-content: flex-end; }
@@ -10420,6 +10417,9 @@ td.iptt-level-row, td.ip-level-row {
 .float-right {
   float: right; }
 
+.text-append-colon::after {
+  content: ":"; }
+
 @media print {
   a[href]:after {
     content: none; } }
@@ -10674,5 +10674,3 @@ a:hover {
 
 /* Unsorted custom selectors */
 
-
-/*# sourceMappingURL=base-87b567ab9208a594557e.css.map*/

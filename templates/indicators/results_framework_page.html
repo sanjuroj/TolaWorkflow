@@ -16,7 +16,9 @@
 
 {% block header_extras %}
 {# Translators: "Logframe" is the Mercy Corps term for a "Logical Framework," a hierarchical system that makes explicit the results framework and ties it to indicators and results #}
-<a href="{# TODO #}" class="btn btn-link text-nowrap"><i class="fas fa-table"></i>{% trans "Logframe" %}</a>
+<div id="logframe_link" style="{% if program.levels.count == 0 %}display:none;{% endif %}">
+    <a href="{% url 'logframe' program=program.pk %}" class="btn btn-link text-nowrap"><i class="fas fa-table"></i>{% trans "View logframe" %}</a>
+</div>
 {% endblock %}
 
 {% block content %}
