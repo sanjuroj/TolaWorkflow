@@ -93,6 +93,7 @@
     "dependencies": {
         "@babel/polyfill": "^7.2.5",
         "axios": "^0.18.0",
+        "react-autosize-textarea": "^7.0.0",
         "react-bootstrap-table-next": "^2.0.0",
         "react-multiselect-checkboxes": "^0.1.1",
         "react-paginate": "^6.2.0",
