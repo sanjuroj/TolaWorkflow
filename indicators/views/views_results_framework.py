@@ -24,10 +24,12 @@ class ResultsFrameworkBuilder(ListView):
 
     def get(self, request, *args, **kwargs):
         # TODO:  put in a try block
-        program = Program.objects.get(pk=int(self.kwargs['program_id']))
+        program = Program.objects.prefetch_related('level_tiers').get(pk=int(self.kwargs['program_id']))
         role = request.user.tola_user.program_role(program.id)
 
-        if request.user.is_anonymous or not role:
+        if request.user.is_anonymous \
+                or not role \
+                or (role in ['low', 'medium'] and program.level_tiers.count() == 0):
             return HttpResponseRedirect('/')
 
         tiers = LevelTier.objects.filter(program=program)

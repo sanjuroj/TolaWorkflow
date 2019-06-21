@@ -66,7 +66,6 @@ export class LevelCardCollapsed extends React.Component {
         }
 
         // Prepare the indicator links for the indicator popover
-
         let allIndicatorLinks = [];
 
         // Get indicator ids linked to this level and create a hyperlink for a filtered IPTT.
