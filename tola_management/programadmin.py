@@ -59,10 +59,37 @@ from .permissions import (
 )
 
 def get_audit_log_workbook(ws, program):
+
+    # helper for indicator name column
+    def _indicator_name(indicator):
+        if indicator.results_aware_number:
+            return '{} {}: {}'.format(
+                _('Indicator'),
+                indicator.results_aware_number,
+                indicator.name,
+            )
+        else:
+            return '{}: {}'.format(
+                _('Indicator'),
+                indicator.name,
+            )
+
+    # helper for result level column
+    def _result_level(indicator):
+        if indicator.leveltier_name and indicator.level_display_ontology:
+            return '{} {}'.format(
+                indicator.leveltier_name,
+                indicator.level_display_ontology,
+            )
+        elif indicator.leveltier_name:
+            return indicator.leveltier_name
+        else:
+            return ''
+
     header = [
         Cell(ws, value=_("Date and Time")),
         # Translators: Number of the indicator being shown
-        Cell(ws, value=_('No.')),
+        Cell(ws, value=_('Result Level')),
         Cell(ws, value=_('Indicator')),
         Cell(ws, value=_('User')),
         Cell(ws, value=_('Organization')),
@@ -126,8 +153,8 @@ def get_audit_log_workbook(ws, program):
 
         xl_row = [
             Cell(ws, value=row.date),
-            Cell(ws, value=row.indicator.number_display if row.indicator else _('N/A')),
-            Cell(ws, value=row.indicator.name if row.indicator else _('N/A')),
+            Cell(ws, value=_result_level(row.indicator) if row.indicator else _('N/A')),
+            Cell(ws, value=_indicator_name(row.indicator) if row.indicator else _('N/A')),
             Cell(ws, value=row.user.name),
             Cell(ws, value=row.organization.name),
             Cell(ws, value=row.pretty_change_type),
