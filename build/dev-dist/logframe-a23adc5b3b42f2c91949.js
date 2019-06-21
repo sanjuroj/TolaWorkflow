@@ -195,21 +195,19 @@ var Indicator = function Indicator(indicatorData) {
   this.means_of_verification = indicatorData.means_of_verification;
 };
 
-var Level = function Level(levelData, indicators) {
-  var _this = this;
-
+var Level = function Level(levelData) {
   _classCallCheck(this, Level);
 
   this.pk = levelData.pk;
   this.display_name = levelData.display_name;
-  this.level_depth = levelData.get_level_depth;
+  this.level_depth = levelData.level_depth;
   this.ontology = levelData.ontology;
   this.display_ontology = levelData.display_ontology;
   this.indicators = [];
 
   if (levelData.indicators && Array.isArray(levelData.indicators)) {
-    levelData.indicators.forEach(function (indicatorPk) {
-      return _this.indicators.push(indicators[indicatorPk]);
+    this.indicators = levelData.indicators.map(function (indicatorData) {
+      return new Indicator(indicatorData);
     });
   }
 
@@ -224,21 +222,20 @@ var ProgramStore =
 /*#__PURE__*/
 function () {
   function ProgramStore(programData) {
-    var _this2 = this;
+    var _this = this;
 
     _classCallCheck(this, ProgramStore);
 
     this._levelsByPk = {};
     this._levelsByChain = [];
     this._levelsByTier = [];
-    this._indicatorsByPk = {};
-    this._unassignedIndicatorPks = [];
+    this._unassignedIndicators = [];
 
     this.getChildLevels = function (levelpk) {
       var levels = [levelpk];
 
-      _this2._levelsByPk[levelpk].child_levels.forEach(function (child_pk) {
-        levels = levels.concat(_this2.getChildLevels(child_pk));
+      _this._levelsByPk[levelpk].child_levels.forEach(function (child_pk) {
+        levels = levels.concat(_this.getChildLevels(child_pk));
       });
 
       return levels;
@@ -246,16 +243,16 @@ function () {
 
     this.getLevelsGroupedBy = function (grouping) {
       if (parseInt(grouping) === _constants__WEBPACK_IMPORTED_MODULE_0__["GROUP_BY_CHAIN"]) {
-        return _this2._levelsByChain.map(function (pk) {
-          return _this2._levelsByPk[pk];
+        return _this._levelsByChain.map(function (pk) {
+          return _this._levelsByPk[pk];
         });
       } else if (parseInt(grouping) === _constants__WEBPACK_IMPORTED_MODULE_0__["GROUP_BY_LEVEL"]) {
-        return _this2._levelsByTier.map(function (pk) {
-          return _this2._levelsByPk[pk];
+        return _this._levelsByTier.map(function (pk) {
+          return _this._levelsByPk[pk];
         });
       }
 
-      return Object.values(_this2._levelsByPk);
+      return Object.values(_this._levelsByPk);
     };
 
     this.name = programData.name;
@@ -264,37 +261,32 @@ function () {
     this.program_page_url = programData.program_page_url;
     this.rf_chain_sort_label = this.results_framework ? programData.rf_chain_sort_label : false;
 
-    if (programData.indicators && Array.isArray(programData.indicators)) {
-      programData.indicators.forEach(function (indicatorData) {
-        var indicator = new Indicator(indicatorData);
-        _this2._indicatorsByPk[indicator.pk] = indicator;
-
-        if (!indicator.level) {
-          _this2._unassignedIndicatorPks.push(indicator.pk);
-        }
+    if (programData.unassigned_indicators && Array.isArray(programData.unassigned_indicators)) {
+      this._unassignedIndicators = programData.unassigned_indicators.map(function (indicatorData) {
+        return new Indicator(indicatorData);
       });
     }
 
     if (programData.levels && Array.isArray(programData.levels)) {
       programData.levels.forEach(function (level) {
-        var levelObj = new Level(level, _this2._indicatorsByPk);
-        _this2._levelsByPk[levelObj.pk] = levelObj;
+        var levelObj = new Level(level);
+        _this._levelsByPk[levelObj.pk] = levelObj;
 
-        _this2._levelsByChain.push(levelObj.pk);
+        _this._levelsByChain.push(levelObj.pk);
 
-        _this2._levelsByTier.push(levelObj.pk);
+        _this._levelsByTier.push(levelObj.pk);
       });
 
       this._levelsByTier.sort(function (level_a, level_b) {
-        return _this2._levelsByPk[level_a].level_depth < _this2._levelsByPk[level_b].level_depth ? -1 : _this2._levelsByPk[level_b].level_depth < _this2._levelsByPk[level_a].level_depth ? 1 : _this2._levelsByPk[level_a].ontology < _this2._levelsByPk[level_b].ontology ? -1 : _this2._levelsByPk[level_b].ontology < _this2._levelsByPk[level_a].ontology ? 1 : 0;
+        return _this._levelsByPk[level_a].level_depth < _this._levelsByPk[level_b].level_depth ? -1 : _this._levelsByPk[level_b].level_depth < _this._levelsByPk[level_a].level_depth ? 1 : _this._levelsByPk[level_a].ontology < _this._levelsByPk[level_b].ontology ? -1 : _this._levelsByPk[level_b].ontology < _this._levelsByPk[level_a].ontology ? 1 : 0;
       });
 
       var sortedByChain = [];
 
       this._levelsByChain.filter(function (levelpk) {
-        return _this2._levelsByPk[levelpk].level_depth == 1;
+        return _this._levelsByPk[levelpk].level_depth == 1;
       }).forEach(function (levelpk) {
-        sortedByChain = sortedByChain.concat(_this2.getChildLevels(levelpk));
+        sortedByChain = sortedByChain.concat(_this.getChildLevels(levelpk));
       });
 
       this._levelsByChain = sortedByChain;
@@ -304,15 +296,11 @@ function () {
   _createClass(ProgramStore, [{
     key: "unassignedIndicators",
     get: function get() {
-      var _this3 = this;
-
-      if (!this._unassignedIndicatorPks || this._unassignedIndicatorPks.length == 0) {
+      if (!this._unassignedIndicators || this._unassignedIndicators.length == 0) {
         return [];
       }
 
-      return this._unassignedIndicatorPks.map(function (pk) {
-        return _this3._indicatorsByPk[pk];
-      });
+      return this._unassignedIndicators;
     }
   }]);
 
@@ -981,4 +969,4 @@ function (_React$Component) {
 /***/ })
 
 },[["+uhY","runtime","vendors"]]]);
-//# sourceMappingURL=logframe-e3b4c45524504082df27.js.map
+//# sourceMappingURL=logframe-a23adc5b3b42f2c91949.js.map
