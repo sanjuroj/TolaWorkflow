@@ -9,6 +9,7 @@ import { SingleReactSelect } from "../../../components/selectWidgets";
 import { AddIndicatorButton, UpdateIndicatorButton } from '../../../components/indicatorModalComponents';
 import {sortableContainer, sortableElement, sortableHandle} from 'react-sortable-hoc';
 import HelpPopover from "../../../components/helpPopover";
+import TextareaAutosize from 'react-autosize-textarea';
 
 
 
@@ -66,7 +67,6 @@ export class LevelCardCollapsed extends React.Component {
         }
 
         // Prepare the indicator links for the indicator popover
-
         let allIndicatorLinks = [];
 
         // Get indicator ids linked to this level and create a hyperlink for a filtered IPTT.
@@ -388,24 +388,26 @@ export class LevelCardExpanded extends React.Component {
                 </div>
                 <form className="level-card--expanded__form" onSubmit={this.saveLevel}>
                     <div className="form-group">
-                        <textarea
+                        <TextareaAutosize
                             className="form-control"
                             id={`level-name-${this.props.level.id}`}
                             name="name"
                             value={this.name || ""}
                             autoComplete="off"
+                            rows={3}
                             onChange={this.onFormChange}
                         />
                     </div>
                     <div className="form-group">
                             <label htmlFor="assumptions">Assumptions</label>
-                        <textarea
+                        <TextareaAutosize
                             className="form-control"
                             id="level-assumptions"
                             disabled={this.name? "" : "disabled"}
                             name="assumptions"
                             autoComplete="off"
                             value={this.assumptions || ""}
+                            rows={3}
                             onChange={this.onFormChange}/>
                     </div>
                     {indicatorSection}
