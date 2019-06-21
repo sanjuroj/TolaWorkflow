@@ -287,8 +287,10 @@ class ProgramAuditLogIndicatorSerializer(ModelSerializer):
     class Meta:
         model = Indicator
         fields = (
-            'number_display',
-            'name'
+            'name',
+            'leveltier_name',
+            'level_display_ontology',
+            'results_aware_number',
         )
 
 class ProgramAuditLogSerializer(ModelSerializer):
