@@ -748,7 +748,30 @@ export default class FilterStore {
     }
     
     filterIndicators(indicatorSet, skip = false) {
-        let indicators = indicatorSet.sort((a, b) => a.sortIndex - b.sortIndex);    
+        let indicators = indicatorSet.sort((a, b) => a.sortIndex - b.sortIndex);
+        if (this.groupByDisabled) {
+            indicators = indicators.sort((a, b) => {
+                if (a.levelpk && b.levelpk) {
+                    if (a.levelpk != b.levelpk) {
+                        return (a.levelpk < b.levelpk) ? -1 
+                                : (b.levelpk < a.levelpk) ? 1 : 0;
+                    } else if (a.old_number && b.old_number) {
+                        return (a.old_number < b.old_number) ? -1
+                            : (b.old_number < a.old_number) ? 1 : 0;
+                    } else if (a.old_number) {
+                        return -1;
+                    } else if (b.old_numbeR) {
+                        return 1;
+                    }
+                    return 0;
+                } else if (a.levelpk) {
+                    return -1;
+                } else if (b.levelpk) {
+                    return 1;
+                } 
+                return 0;
+            });
+        }
         
         if (this.reportType === TVA) {
             indicators = indicators.filter(

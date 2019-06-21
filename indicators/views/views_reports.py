@@ -246,6 +246,7 @@ def indicators_to_iptt(indicator_qs, frequency, tva, results_framework, program_
         else:
             indicator_data['level'] = indicator.old_level
             indicator_data['levelpk'] = {name: pk for (pk, name) in Indicator.OLD_LEVELS}.get(indicator.old_level)
+
         if frequency != Indicator.LOP:
             values_count = getattr(indicator, 'frequency_{0}_count'.format(frequency))
             if tva:

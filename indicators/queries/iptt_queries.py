@@ -16,8 +16,20 @@ from django.db.models.functions import Concat
 from django.utils.functional import cached_property
 
 class IPTTIndicatorQueryset(models.QuerySet, IndicatorSortingQSMixin):
-    def with_annotations(self):
+    def with_prefetch(self):
         qs = self.all()
+        qs = qs.select_related(
+            'level'
+        ).prefetch_related(
+            'result_set',
+            'result_set__site',
+            'indicator_type',
+            'program__level_tiers'
+        )
+        return qs
+
+    def with_annotations(self):
+        qs = self.with_prefetch()
         # add lop_target_calculated annotation (not used yet, but will replace deprecated lop_target value):
         qs = qs.annotate(lop_target_calculated=utils.indicator_lop_target_calculated_annotation())
         # add lop_actual annotation
@@ -110,9 +122,11 @@ class TVAManager(models.Manager):
     def get_queryset(self):
         return TVAIPTTQueryset(self.model, using=self._db).filter(deleted__isnull=True).with_logframe_sorting().with_annotations()
 
+
 class TimeperiodsManager(models.Manager):
     def get_queryset(self):
         return TimeperiodsIPTTQueryset(self.model, using=self._db).filter(deleted__isnull=True).with_logframe_sorting().with_annotations()
+
 
 class IPTTIndicator(Indicator):
     SEPARATOR = '/' # this is used by CSV output as a default joiner for multiple values

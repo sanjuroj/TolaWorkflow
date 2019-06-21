@@ -31,6 +31,7 @@ class Indicator {
     constructor(indicatorJSON, program) {
         this.pk = parseInt(indicatorJSON.pk);
         this.number = indicatorJSON.number || indicatorJSON.old_number;
+        this.old_number = indicatorJSON.old_number;
         this.name = indicatorJSON.name;
         this.unitOfMeasure = indicatorJSON.unitOfMeasure;
         this.directionOfChange = indicatorJSON.directionOfChange;
