@@ -341,6 +341,7 @@ function () {
     this.reportData = (_this$reportData = {}, _defineProperty(_this$reportData, _constants__WEBPACK_IMPORTED_MODULE_1__["TIMEPERIODS"], {}), _defineProperty(_this$reportData, _constants__WEBPACK_IMPORTED_MODULE_1__["TVA"], {}), _this$reportData);
     this.pk = parseInt(indicatorJSON.pk);
     this.number = indicatorJSON.number || indicatorJSON.old_number;
+    this.old_number = indicatorJSON.old_number;
     this.name = indicatorJSON.name;
     this.unitOfMeasure = indicatorJSON.unitOfMeasure;
     this.directionOfChange = indicatorJSON.directionOfChange;
@@ -2604,7 +2605,17 @@ function () {
       if (this.groupByDisabled) {
         indicators = indicators.sort(function (a, b) {
           if (a.levelpk && b.levelpk) {
-            return a.levelpk < b.levelpk ? -1 : b.levelpk < a.levelpk ? 1 : 0;
+            if (a.levelpk != b.levelpk) {
+              return a.levelpk < b.levelpk ? -1 : b.levelpk < a.levelpk ? 1 : 0;
+            } else if (a.old_number && b.old_number) {
+              return a.old_number < b.old_number ? -1 : b.old_number < a.old_number ? 1 : 0;
+            } else if (a.old_number) {
+              return -1;
+            } else if (b.old_numbeR) {
+              return 1;
+            }
+
+            return 0;
           } else if (a.levelpk) {
             return -1;
           } else if (b.levelpk) {
@@ -4012,6 +4023,8 @@ function () {
           start = _ref3$start === void 0 ? null : _ref3$start,
           _ref3$end = _ref3.end,
           end = _ref3$end === void 0 ? null : _ref3$end,
+          _ref3$mr = _ref3.mr,
+          mr = _ref3$mr === void 0 ? null : _ref3$mr,
           _ref3$timeperiods = _ref3.timeperiods,
           timeperiods = _ref3$timeperiods === void 0 ? null : _ref3$timeperiods,
           _ref3$targetperiods = _ref3.targetperiods,
@@ -4066,6 +4079,10 @@ function () {
         _this.filterStore.endPeriod = parseInt(end);
       } else if (end_period !== null && !isNaN(Date.parse(end_period))) {
         _this.filterStore.setEndPeriodFromDate(new Date(end_period));
+      }
+
+      if (mr !== null) {
+        _this.filterStore._latchMostRecent = true;
       }
 
       if (timeframe !== null && parseInt(timeframe) == 1) {
@@ -4161,7 +4178,7 @@ function () {
         path: '/iptt_excel/?fullTVA'
       }]
     }];
-    this.goodQueryParams = ['frequency', 'start', 'end', 'levels', 'types', 'sites', 'sectors', 'indicators', 'tiers', 'groupby'];
+    this.goodQueryParams = ['frequency', 'start', 'end', 'levels', 'types', 'sites', 'sectors', 'indicators', 'tiers', 'groupby', 'mr'];
     this.oldQueryParams = ['timeframe', 'numrecentperiods', 'numrecentcount', 'start_period', 'end_period'];
     this.queryParams = '?' + this.goodQueryParams.concat(this.oldQueryParams).join('&');
     this.filterStore = filterStore;
@@ -4230,6 +4247,11 @@ function () {
           }
         }
       });
+
+      if (this.filterStore._latchMostRecent && this.filterStore._internalShowAll) {
+        queryString.push(['mr', 1]);
+      }
+
       return {
         program: programId,
         report_type: reportType,
@@ -5030,4 +5052,4 @@ function () {
 /***/ })
 
 },[["mYfJ","runtime","vendors"]]]);
-//# sourceMappingURL=iptt_report-acb2f819e94d76310ec5.js.map
+//# sourceMappingURL=iptt_report-fb8884183c8285f3c386.js.map
