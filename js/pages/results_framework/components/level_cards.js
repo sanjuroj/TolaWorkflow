@@ -40,7 +40,7 @@ export class LevelCardCollapsed extends React.Component {
             /* # Translators:  This is a confirmation prompt that is triggered by clicking on a delete button. The code is a reference to the specific item being deleted.  Only one item can be deleted at a time. */
             message_text: `Are you sure you want to delete ${levelTitle}?`,
             on_submit: () => this.props.rootStore.levelStore.deleteLevelFromDB(this.props.level.id),
-            on_cancel: () => this.props.rootStore.uiStore.disableForPrompt(false)
+            on_cancel: () => this.props.rootStore.uiStore.setDisableForPrompt(false)
         })
     };
 

@@ -448,7 +448,7 @@ function (_React$Component2) {
           return _this.props.rootStore.levelStore.deleteLevelFromDB(_this.props.level.id);
         },
         on_cancel: function on_cancel() {
-          return _this.props.rootStore.uiStore.disableForPrompt(false);
+          return _this.props.rootStore.uiStore.setDisableForPrompt(false);
         }
       });
     };
@@ -2572,4 +2572,4 @@ var STATUS_CODES = {
 /***/ })
 
 },[["QTZG","runtime","vendors"]]]);
-//# sourceMappingURL=results_framework-7e1c34851cc54011f8f7.js.map
+//# sourceMappingURL=results_framework-c3e17729d085d8970688.js.map
