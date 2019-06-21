@@ -539,8 +539,24 @@ class IndicatorSortingQSMixin(object):
         logframe_re2 = r'^[[:space:]]*[0-9]+[[.period.]][0-9]+([[.period.]][0-9]+)?([[.period.]][0-9]+)?[[:space:]]*$'
         logframe_re3 = r'^[[:space:]]*[0-9]+[[.period.]][0-9]+[[.period.]][0-9]+([[.period.]][0-9]+)?[[:space:]]*$'
         logframe_re4 = r'^[[:space:]]*[0-9]+[[.period.]][0-9]+[[.period.]][0-9]+[[.period.]][0-9]+[[:space:]]*$'
-
+        old_level_whens = [
+            models.When(
+                old_level=level_name,
+                then=level_pk
+            ) for (level_pk, level_name) in Indicator.OLD_LEVELS
+        ] + [
+            models.When(
+                old_level__isnull=True,
+                then=99
+            ),
+        ]
+        old_level_lookup_annotation = models.Case(
+            *old_level_whens,
+            default=99,
+            output_field=models.IntegerField()
+        )
         qs = self.annotate(
+            old_level_pk=old_level_lookup_annotation,
             logsort_type=models.Case(
                 models.When(
                     level_id__isnull=False,
