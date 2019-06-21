@@ -550,16 +550,21 @@ class IndicatorSortingQSMixin(object):
                 then=99
             ),
         ]
-        old_level_lookup_annotation = models.Case(
-            *old_level_whens,
-            default=99,
-            output_field=models.IntegerField()
-        )
         qs = self.annotate(
-            old_level_pk=old_level_lookup_annotation,
+            old_level_pk=models.Case(
+                *old_level_whens,
+                default=99,
+                output_field=models.IntegerField()
+            ),
             logsort_type=models.Case(
                 models.When(
-                    level_id__isnull=False,
+                    models.Q(
+                        models.Q(
+                            models.Q(program___using_results_framework=Program.MIGRATED) |
+                            models.Q(program___using_results_framework=Program.RF_ALWAYS)
+                        ) &
+                        models.Q(level_id__isnull=False)
+                    ),
                     then=0
                 ),
                 models.When(

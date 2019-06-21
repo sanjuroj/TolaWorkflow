@@ -79,6 +79,7 @@ class IndicatorSerializer(serializers.ModelSerializer):
     target_period_last_end_date = serializers.DateField()
     level = LevelSerializer(read_only=True)
     lop_target_active = serializers.FloatField()
+    old_level_pk = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Indicator
@@ -89,6 +90,7 @@ class IndicatorSerializer(serializers.ModelSerializer):
             'number',
             'level',
             'old_level',
+            'old_level_pk',
             'level_order',
             'unit_of_measure',
             'unit_of_measure_type',
