@@ -166,13 +166,9 @@ export class LevelStore {
         siblingsToReorder.forEach( sib => sib.customsort+=1);
         // add new Level to the various Store components
         this.levels.push(newLevel);
-        console.group('create new level from parent');
-        console.log('indicators in store')
-        this.levels.forEach (l => console.log(toJS(l)));
         this.rootStore.uiStore.activeCard = "new";
         this.rootStore.uiStore.hasVisibleChildren.push(newLevel.parent)
-        console.log('active card=', this.rootStore.uiStore.activeCard)
-        console.groupEnd()
+
     };
 
 
@@ -396,6 +392,7 @@ export class UIStore {
 
     @observable activeCard;
     @observable hasVisibleChildren = [];
+    @observable disableForPrompt;
     activeCardNeedsConfirm = "";
 
     constructor (rootStore) {
@@ -403,6 +400,7 @@ export class UIStore {
         this.hasVisibleChildren = this.rootStore.levelStore.levels.map(l => l.id)
         this.activeCardNeedsConfirm = false;
         this.activeCard = null;
+        this.disableForPrompt = false;
     }
 
     @computed get tierLockStatus () {
@@ -423,10 +421,9 @@ export class UIStore {
     editCard = (levelId) => {
         const cancelledLevelId = this.activeCard;
         if (this.activeCardNeedsConfirm) {
-            console.log('in edit, needed confirm, levelId=', levelId, )
+            this.disableForPrompt = true;
             $(`#level-card-${this.activeCard}`)[0].scrollIntoView({behavior:"smooth"});
             const oldTierName = this.rootStore.levelStore.levelProperties[this.activeCard].tierName;
-            $(".edit-button").prop("disabled", true);
             create_no_rationale_changeset_notice({
                 /* # Translators:  This is a confirmation prompt that is triggered by clicking on a cancel button.  */
                 message_text: gettext("Are you sure you want to continue?"),
@@ -445,9 +442,9 @@ export class UIStore {
 
     @action
     onLeaveConfirm = (levelId, cancelledLevelId) => {
+        this.disableForPrompt = false;
         this.rootStore.levelStore.cancelEdit(cancelledLevelId);
         this.activeCardNeedsConfirm = false;
-        $(".edit-button").prop("disabled", false);
         this.activeCard = levelId;
         // Need to use set timeout to ensure that scrolling loses the race with components reacting to the new position of the open card.
         setTimeout(
@@ -457,7 +454,7 @@ export class UIStore {
     };
 
     onLeaveCancel = () => {
-        $(".edit-button").prop("disabled", false);
+        this.disableForPrompt = false;
     };
 
     @action
