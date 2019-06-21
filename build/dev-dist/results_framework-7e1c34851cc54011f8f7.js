@@ -565,7 +565,7 @@ function (_React$Component2) {
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "actions__top btn-row"
       }, this.props.levelProps.canDelete && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
-        disabled: this.props.rootStore.uiStore.disableForPrompt,
+        disabled: this.props.rootStore.uiStore.disableForPrompt || this.props.rootStore.uiStore.activeCard,
         className: "btn btn-sm btn-link btn-danger",
         onClick: this.deleteLevel
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
@@ -2572,4 +2572,4 @@ var STATUS_CODES = {
 /***/ })
 
 },[["QTZG","runtime","vendors"]]]);
-//# sourceMappingURL=results_framework-6f574d375732c7026e63.js.map
+//# sourceMappingURL=results_framework-7e1c34851cc54011f8f7.js.map
