@@ -219,6 +219,8 @@ export class LevelStore {
                 })
             })
             .catch(error => console.log('error', error))
+
+        this.rootStore.uiStore.setDisableForPrompt(false);
     };
 
 
@@ -421,7 +423,7 @@ export class UIStore {
     editCard = (levelId) => {
         const cancelledLevelId = this.activeCard;
         if (this.activeCardNeedsConfirm) {
-            this.disableForPrompt = true;
+            this.setDisableForPrompt(true);
             $(`#level-card-${this.activeCard}`)[0].scrollIntoView({behavior:"smooth"});
             const oldTierName = this.rootStore.levelStore.levelProperties[this.activeCard].tierName;
             create_no_rationale_changeset_notice({
@@ -431,7 +433,7 @@ export class UIStore {
                 preamble: gettext(`Changes to this ${oldTierName} will not be saved`),
                 type: "notice",
                 on_submit: () => this.onLeaveConfirm(levelId, cancelledLevelId),
-                on_cancel: this.onLeaveCancel,
+                on_cancel: () => this.setDisableForPrompt(false),
             })
         }
         else {
@@ -442,7 +444,7 @@ export class UIStore {
 
     @action
     onLeaveConfirm = (levelId, cancelledLevelId) => {
-        this.disableForPrompt = false;
+        this.setDisableForPrompt(false);
         this.rootStore.levelStore.cancelEdit(cancelledLevelId);
         this.activeCardNeedsConfirm = false;
         this.activeCard = levelId;
@@ -453,8 +455,9 @@ export class UIStore {
         );
     };
 
-    onLeaveCancel = () => {
-        this.disableForPrompt = false;
+    @action
+    setDisableForPrompt = (value) => {
+        this.disableForPrompt = value;
     };
 
     @action

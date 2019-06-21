@@ -34,12 +34,14 @@ export class LevelTitle extends React.Component {
 export class LevelCardCollapsed extends React.Component {
 
     deleteLevel = () => {
+        this.props.rootStore.uiStore.setDisableForPrompt(true);
         const levelTitle = this.props.levelProps.tierName + " " + this.props.levelProps.ontologyLabel;
         create_no_rationale_changeset_notice({
             /* # Translators:  This is a confirmation prompt that is triggered by clicking on a delete button. The code is a reference to the specific item being deleted.  Only one item can be deleted at a time. */
             message_text: `Are you sure you want to delete ${levelTitle}?`,
-            on_submit: () => this.props.rootStore.levelStore.deleteLevelFromDB(this.props.level.id)});
-
+            on_submit: () => this.props.rootStore.levelStore.deleteLevelFromDB(this.props.level.id),
+            on_cancel: () => this.props.rootStore.uiStore.disableForPrompt(false)
+        })
     };
 
     editLevel = () => {
