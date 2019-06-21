@@ -94,6 +94,35 @@ const CollapseAllButton = observer(
     }
 );
 
+const IndicatorNameSpan = ({indicator}) => {
+    if (! indicator) {
+        return <span>{gettext('N/A')}</span>
+    }
+
+    if (indicator.results_aware_number) {
+        return <span>
+            <strong>{gettext('Indicator')} {indicator.results_aware_number}:</strong> {indicator.name}
+        </span>
+    } else {
+        return <span>
+            <strong>{gettext('Indicator')}:</strong> {indicator.name}
+        </span>
+    }
+};
+
+const ResultLevel = ({indicator}) => {
+    if (! indicator) {
+        return <span>{gettext('N/A')}</span>
+    }
+
+    if (indicator.leveltier_name && indicator.level_display_ontology)
+        return `${indicator.leveltier_name} ${indicator.level_display_ontology}`;
+    else if (indicator.leveltier_name)
+        return indicator.leveltier_name;
+    else
+        return '';
+};
+
 export const IndexView = observer(
     ({store}) => {
         return <div id="audit-log-index-view">
@@ -110,7 +139,7 @@ export const IndexView = observer(
                 </div>
                 <div className="controls__buttons">
                     <a className="btn btn-secondary btn-sm" href={`/api/tola_management/program/${store.program_id}/export_audit_log`}>
-                        <i className="fas fa-download"></i>
+                        <i className="fas fa-download" />
                         {gettext("Excel")}
                     </a>
                 </div>
@@ -122,7 +151,7 @@ export const IndexView = observer(
                         <thead>
                             <tr>
                                 <th className="text-nowrap">{gettext("Date and time")}</th>
-                                <th className="text-nowrap">{gettext("No.")}</th>
+                                <th className="text-nowrap">{gettext("Result Level")}</th>
                                 <th className="text-nowrap">{gettext("Indicator")}</th>
                                 <th className="text-nowrap">{gettext("User")}</th>
                                 <th className="text-nowrap">{gettext("Organization")}</th>
@@ -139,8 +168,8 @@ export const IndexView = observer(
                                     <td className="text-action">
                                         <FontAwesomeIcon icon={is_expanded ? 'caret-down' : 'caret-right'} />&nbsp;{data.date}
                                     </td>
-                                    <td>{(data.indicator) ? data.indicator.number_display : gettext('N/A')}</td>
-                                    <td>{(data.indicator) ? data.indicator.name : gettext('N/A')}</td>
+                                    <td><ResultLevel indicator={data.indicator} /></td>
+                                    <td>{<IndicatorNameSpan indicator={data.indicator} />}</td>
                                     <td>{data.user}</td>
                                     <td>{data.organization}</td>
                                     <td className="text-nowrap">{data.pretty_change_type}</td>
