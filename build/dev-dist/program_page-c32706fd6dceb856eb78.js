@@ -586,7 +586,9 @@ function () {
     key: "sortIndicators",
     value: function sortIndicators(oldStyleLevels, sortByChain, indicators) {
       if (oldStyleLevels) {
-        return indicators;
+        return indicators.slice().sort(function (a, b) {
+          return a.old_level_pk < b.old_level_pk ? -1 : a.old_level_pk < b.old_level_pk ? 1 : 0;
+        });
       } else if (!sortByChain) {
         return indicators.slice().sort(function (a, b) {
           if (a.level && a.level.level_depth) {
@@ -1696,4 +1698,4 @@ var ProgramMetrics = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])
 /***/ })
 
 },[["aJgA","runtime","vendors"]]]);
-//# sourceMappingURL=program_page-d5880b91ff2c339261b5.js.map
+//# sourceMappingURL=program_page-c32706fd6dceb856eb78.js.map
