@@ -34,12 +34,14 @@ export class LevelTitle extends React.Component {
 export class LevelCardCollapsed extends React.Component {
 
     deleteLevel = () => {
+        this.props.rootStore.uiStore.setDisableForPrompt(true);
         const levelTitle = this.props.levelProps.tierName + " " + this.props.levelProps.ontologyLabel;
         create_no_rationale_changeset_notice({
             /* # Translators:  This is a confirmation prompt that is triggered by clicking on a delete button. The code is a reference to the specific item being deleted.  Only one item can be deleted at a time. */
             message_text: `Are you sure you want to delete ${levelTitle}?`,
-            on_submit: () => this.props.rootStore.levelStore.deleteLevelFromDB(this.props.level.id)});
-
+            on_submit: () => this.props.rootStore.levelStore.deleteLevelFromDB(this.props.level.id),
+            on_cancel: () => this.props.rootStore.uiStore.disableForPrompt(false)
+        })
     };
 
     editLevel = () => {
@@ -51,6 +53,10 @@ export class LevelCardCollapsed extends React.Component {
         $('*[data-toggle="popover"]').popover({
             html: true
         });
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        this.props.levelProps.indicators.forEach( i => console.log(toJS(i)))
     }
 
     buildIPTTUrl = (indicator_ids) => {
@@ -88,10 +94,13 @@ export class LevelCardCollapsed extends React.Component {
         }
 
         // Create IPTT hyperlinks for each individual indicator linked to this level
-        let individualLinks = this.props.levelProps.indicators.map( (indicator, index) => {
-            const ontologyLabel = this.props.levelProps.ontologyLabel + String.fromCharCode(97+index) + ": ";
-            return `<li class="nav-item"><a href=${this.buildIPTTUrl([indicator.id])}>${ontologyLabel}${indicator.name}</a></li>`;
-        });
+        let individualLinks = this.props.levelProps.indicators
+            .sort( (a, b) => a.level_order - b.level_order)
+            .map( (indicator, index) => {
+                const ontologyLabel = this.props.levelProps.ontologyLabel + String.fromCharCode(97 + index) + ": ";
+                return `<li class="nav-item"><a href=${this.buildIPTTUrl([indicator.id])}>${ontologyLabel}${indicator.name}</a></li>`;
+            });
+
         allIndicatorLinks = allIndicatorLinks.concat(individualLinks);
 
 
@@ -369,7 +378,7 @@ export class LevelCardExpanded extends React.Component {
                         tierName={this.props.levelProps.tierName}
                         indicators={this.indicators}
                         disabled={!this.name || this.props.level.id == "new"}
-                        reorderDisabled={this.indicators.length < 2}
+                        reorderDisabled={this.indicators.length < 2 || this.props.rootStore.uiStore.disableForPrompt}
                         changeFunc={this.changeIndicatorOrder}
                         dragEndFunc={this.onDragEnd}/>
         }
@@ -574,9 +583,10 @@ class IndicatorList extends React.Component {
                         ))}
                     </SortableContainer>
                     <div className="sortable-list-actions">
-                        <AddIndicatorButton readonly={ !this.props.level.id || this.props.level.id == 'new' || this.props.disabled }
-                                            programId={ this.props.rootStore.levelStore.program_id }
-                                            levelId={ this.props.level.id }/>
+                        <AddIndicatorButton
+                            readonly={ !this.props.level.id || this.props.level.id == 'new' || this.props.disabled || this.props.rootStore.uiStore.disableForPrompt }
+                            programId={ this.props.rootStore.levelStore.program_id }
+                            levelId={ this.props.level.id }/>
                     </div>
                 </div>
             </div>

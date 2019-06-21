@@ -438,12 +438,17 @@ function (_React$Component2) {
     _this = _possibleConstructorReturn(this, (_getPrototypeOf2 = _getPrototypeOf(LevelCardCollapsed)).call.apply(_getPrototypeOf2, [this].concat(args)));
 
     _this.deleteLevel = function () {
+      _this.props.rootStore.uiStore.setDisableForPrompt(true);
+
       var levelTitle = _this.props.levelProps.tierName + " " + _this.props.levelProps.ontologyLabel;
       create_no_rationale_changeset_notice({
         /* # Translators:  This is a confirmation prompt that is triggered by clicking on a delete button. The code is a reference to the specific item being deleted.  Only one item can be deleted at a time. */
         message_text: "Are you sure you want to delete ".concat(levelTitle, "?"),
         on_submit: function on_submit() {
           return _this.props.rootStore.levelStore.deleteLevelFromDB(_this.props.level.id);
+        },
+        on_cancel: function on_cancel() {
+          return _this.props.rootStore.uiStore.disableForPrompt(false);
         }
       });
     };
@@ -469,6 +474,13 @@ function (_React$Component2) {
       // Enable popovers after update (they break otherwise)
       $('*[data-toggle="popover"]').popover({
         html: true
+      });
+    }
+  }, {
+    key: "componentDidUpdate",
+    value: function componentDidUpdate(prevProps, prevState, snapshot) {
+      this.props.levelProps.indicators.forEach(function (i) {
+        return console.log(Object(mobx__WEBPACK_IMPORTED_MODULE_3__["toJS"])(i));
       });
     }
   }, {
@@ -508,7 +520,9 @@ function (_React$Component2) {
       } // Create IPTT hyperlinks for each individual indicator linked to this level
 
 
-      var individualLinks = this.props.levelProps.indicators.map(function (indicator, index) {
+      var individualLinks = this.props.levelProps.indicators.sort(function (a, b) {
+        return a.level_order - b.level_order;
+      }).map(function (indicator, index) {
         var ontologyLabel = _this2.props.levelProps.ontologyLabel + String.fromCharCode(97 + index) + ": ";
         return "<li class=\"nav-item\"><a href=".concat(_this2.buildIPTTUrl([indicator.id]), ">").concat(ontologyLabel).concat(indicator.name, "</a></li>");
       });
@@ -826,7 +840,7 @@ function (_React$Component3) {
           tierName: this.props.levelProps.tierName,
           indicators: this.indicators,
           disabled: !this.name || this.props.level.id == "new",
-          reorderDisabled: this.indicators.length < 2,
+          reorderDisabled: this.indicators.length < 2 || this.props.rootStore.uiStore.disableForPrompt,
           changeFunc: this.changeIndicatorOrder,
           dragEndFunc: this.onDragEnd
         });
@@ -1102,7 +1116,7 @@ function (_React$Component6) {
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "sortable-list-actions"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_indicatorModalComponents__WEBPACK_IMPORTED_MODULE_8__["AddIndicatorButton"], {
-        readonly: !this.props.level.id || this.props.level.id == 'new' || this.props.disabled,
+        readonly: !this.props.level.id || this.props.level.id == 'new' || this.props.disabled || this.props.rootStore.uiStore.disableForPrompt,
         programId: this.props.rootStore.levelStore.program_id,
         levelId: this.props.level.id
       }))));
@@ -1383,7 +1397,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UIStore", function() { return UIStore; });
 /* harmony import */ var mobx__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! mobx */ "2vnA");
 /* harmony import */ var _api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../api.js */ "XoI5");
-var _class, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _temp, _class3, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _descriptor16, _descriptor17, _descriptor18, _temp2;
+var _class, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _temp, _class3, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _descriptor16, _descriptor17, _descriptor18, _descriptor19, _temp2;
 
 function _initializerDefineProperty(target, property, descriptor, context) { if (!descriptor) return; Object.defineProperty(target, property, { enumerable: descriptor.enumerable, configurable: descriptor.configurable, writable: descriptor.writable, value: descriptor.initializer ? descriptor.initializer.call(context) : void 0 }); }
 
@@ -1486,6 +1500,8 @@ function () {
       }).catch(function (error) {
         return console.log('error', error);
       });
+
+      _this.rootStore.uiStore.setDisableForPrompt(false);
     };
 
     this.saveLevelToDB = function (submitType, levelId, indicatorWasUpdated, formData) {
@@ -1977,8 +1993,6 @@ var UIStore = (_class3 = (_temp2 =
 /*#__PURE__*/
 function () {
   function UIStore(rootStore) {
-    var _this10 = this;
-
     _classCallCheck(this, UIStore);
 
     _initializerDefineProperty(this, "activeCard", _descriptor12, this);
@@ -1993,13 +2007,11 @@ function () {
 
     _initializerDefineProperty(this, "onLeaveConfirm", _descriptor16, this);
 
-    this.onLeaveCancel = function () {
-      _this10.disableForPrompt = false;
-    };
+    _initializerDefineProperty(this, "setDisableForPrompt", _descriptor17, this);
 
-    _initializerDefineProperty(this, "removeActiveCard", _descriptor17, this);
+    _initializerDefineProperty(this, "removeActiveCard", _descriptor18, this);
 
-    _initializerDefineProperty(this, "updateVisibleChildren", _descriptor18, this);
+    _initializerDefineProperty(this, "updateVisibleChildren", _descriptor19, this);
 
     this.rootStore = rootStore;
     this.hasVisibleChildren = this.rootStore.levelStore.levels.map(function (l) {
@@ -2053,17 +2065,18 @@ function () {
   enumerable: true,
   writable: true,
   initializer: function initializer() {
-    var _this11 = this;
+    var _this10 = this;
 
     return function (levelId) {
-      var cancelledLevelId = _this11.activeCard;
+      var cancelledLevelId = _this10.activeCard;
 
-      if (_this11.activeCardNeedsConfirm) {
-        _this11.disableForPrompt = true;
-        $("#level-card-".concat(_this11.activeCard))[0].scrollIntoView({
+      if (_this10.activeCardNeedsConfirm) {
+        _this10.setDisableForPrompt(true);
+
+        $("#level-card-".concat(_this10.activeCard))[0].scrollIntoView({
           behavior: "smooth"
         });
-        var oldTierName = _this11.rootStore.levelStore.levelProperties[_this11.activeCard].tierName;
+        var oldTierName = _this10.rootStore.levelStore.levelProperties[_this10.activeCard].tierName;
         create_no_rationale_changeset_notice({
           /* # Translators:  This is a confirmation prompt that is triggered by clicking on a cancel button.  */
           message_text: gettext("Are you sure you want to continue?"),
@@ -2072,14 +2085,16 @@ function () {
           preamble: gettext("Changes to this ".concat(oldTierName, " will not be saved")),
           type: "notice",
           on_submit: function on_submit() {
-            return _this11.onLeaveConfirm(levelId, cancelledLevelId);
+            return _this10.onLeaveConfirm(levelId, cancelledLevelId);
           },
-          on_cancel: _this11.onLeaveCancel
+          on_cancel: function on_cancel() {
+            return _this10.setDisableForPrompt(false);
+          }
         });
       } else {
-        _this11.activeCard = levelId;
+        _this10.activeCard = levelId;
 
-        _this11.rootStore.levelStore.levels.replace(_this11.rootStore.levelStore.levels.filter(function (l) {
+        _this10.rootStore.levelStore.levels.replace(_this10.rootStore.levelStore.levels.filter(function (l) {
           return l.id != "new";
         }));
       }
@@ -2090,15 +2105,15 @@ function () {
   enumerable: true,
   writable: true,
   initializer: function initializer() {
-    var _this12 = this;
+    var _this11 = this;
 
     return function (levelId, cancelledLevelId) {
-      _this12.disableForPrompt = false;
+      _this11.setDisableForPrompt(false);
 
-      _this12.rootStore.levelStore.cancelEdit(cancelledLevelId);
+      _this11.rootStore.levelStore.cancelEdit(cancelledLevelId);
 
-      _this12.activeCardNeedsConfirm = false;
-      _this12.activeCard = levelId; // Need to use set timeout to ensure that scrolling loses the race with components reacting to the new position of the open card.
+      _this11.activeCardNeedsConfirm = false;
+      _this11.activeCard = levelId; // Need to use set timeout to ensure that scrolling loses the race with components reacting to the new position of the open card.
 
       setTimeout(function () {
         $("#level-card-".concat(levelId))[0].scrollIntoView({
@@ -2107,7 +2122,18 @@ function () {
       }, 100);
     };
   }
-}), _descriptor17 = _applyDecoratedDescriptor(_class3.prototype, "removeActiveCard", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
+}), _descriptor17 = _applyDecoratedDescriptor(_class3.prototype, "setDisableForPrompt", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    var _this12 = this;
+
+    return function (value) {
+      _this12.disableForPrompt = value;
+    };
+  }
+}), _descriptor18 = _applyDecoratedDescriptor(_class3.prototype, "removeActiveCard", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
   configurable: true,
   enumerable: true,
   writable: true,
@@ -2119,7 +2145,7 @@ function () {
       _this13.rootStore.uiStore.activeCardNeedsConfirm = false;
     };
   }
-}), _descriptor18 = _applyDecoratedDescriptor(_class3.prototype, "updateVisibleChildren", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
+}), _descriptor19 = _applyDecoratedDescriptor(_class3.prototype, "updateVisibleChildren", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
   configurable: true,
   enumerable: true,
   writable: true,
@@ -2546,4 +2572,4 @@ var STATUS_CODES = {
 /***/ })
 
 },[["QTZG","runtime","vendors"]]]);
-//# sourceMappingURL=results_framework-64c73c468a783dc7ffba.js.map
+//# sourceMappingURL=results_framework-6f574d375732c7026e63.js.map
