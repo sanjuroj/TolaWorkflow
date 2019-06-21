@@ -116,6 +116,7 @@
 .level-card--collapsed__title {} // unused?
 .level-card--collapsed__actions {
     // contains: actions__*
+    min-width: 100px;
 }
 .actions__top, .actions__bottom {
     display: flex;

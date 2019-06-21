@@ -1,11 +1,9 @@
 import React from 'react';
-import classNames from 'classnames';
 import { observer, inject } from "mobx-react"
 import { toJS } from 'mobx';
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCaretDown, faCaretRight } from '@fortawesome/free-solid-svg-icons'
-import Select from 'react-select';
 import {LevelCardCollapsed, LevelCardExpanded} from "./level_cards";
 
 library.add(faCaretDown, faCaretRight);
@@ -26,10 +24,6 @@ class LevelList extends React.Component {
         }
 
         return renderList.map((elem) => {
-            console.group('in level list');
-            console.log('active card', this.props.rootStore.uiStore.activeCard);
-            console.log('element', toJS(elem));
-            console.groupEnd();
             let card = '';
             if (this.props.rootStore.uiStore.activeCard == elem.id) {
                 card =
