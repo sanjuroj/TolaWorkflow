@@ -137,7 +137,7 @@ export class LevelCardCollapsed extends React.Component {
                     <div className="actions__top btn-row">
                         { this.props.levelProps.canDelete &&
                             <button
-                                disabled={this.props.rootStore.uiStore.disableForPrompt}
+                                disabled={this.props.rootStore.uiStore.disableForPrompt || this.props.rootStore.uiStore.activeCard}
                                 className="btn btn-sm btn-link btn-danger"
                                 onClick={this.deleteLevel}>
                                 <i className="fas fa-trash-alt"></i>{gettext("Delete")}
