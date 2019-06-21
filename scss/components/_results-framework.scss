@@ -116,7 +116,10 @@
 .level-card--collapsed__title {} // unused?
 .level-card--collapsed__actions {
     // contains: actions__*
-    min-width: 100px;
+    min-width: 150px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 .actions__top, .actions__bottom {
     display: flex;

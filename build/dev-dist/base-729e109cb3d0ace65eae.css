@@ -9736,7 +9736,10 @@ input[type=radio]:disabled {
   margin-left: 7.5px; }
 
 .level-card--collapsed__actions {
-  min-width: 100px; }
+  min-width: 150px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; }
 
 .actions__top, .actions__bottom {
   display: flex;
@@ -10678,4 +10681,4 @@ a:hover {
 /* Unsorted custom selectors */
 
 
-/*# sourceMappingURL=base-9ba1f6da0806b93c372a.css.map*/
+/*# sourceMappingURL=base-729e109cb3d0ace65eae.css.map*/
