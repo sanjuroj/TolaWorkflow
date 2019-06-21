@@ -121,6 +121,9 @@ urlpatterns = [
 
                 url(r'^program/(?P<program>\d+)/logframe/$',
                     views_program.logframe_view, name='logframe'),
+                
+                url(r'^program/(?P<program>\d+)/logframe_excel/$',
+                    views_program.logframe_excel_view, name='logframe_excel'),
 
                 # Results framework builder
                 url(r'^api/insert_new_level', insert_new_level, name='insert_new_level'),

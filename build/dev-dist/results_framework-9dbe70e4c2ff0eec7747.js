@@ -1513,6 +1513,8 @@ function () {
       if (levelId == "new") {
         if (levelToSave.parent == "root") {
           _this.saveLevelTiersToDB();
+
+          $('#logframe_link').show();
         }
 
         delete levelToSave.id;
@@ -2556,4 +2558,4 @@ var STATUS_CODES = {
 /***/ })
 
 },[["QTZG","runtime","vendors"]]]);
-//# sourceMappingURL=results_framework-6c20e0c815e5a1cf8363.js.map
+//# sourceMappingURL=results_framework-9dbe70e4c2ff0eec7747.js.map

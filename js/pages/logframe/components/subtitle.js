@@ -13,7 +13,7 @@ const SubTitleRow = inject('dataStore', 'filterStore')(
                         chainLabel={ dataStore.rf_chain_sort_label }
                         value={ filterStore.groupBy }
                         update={ e => { filterStore.setGroupBy(e.target.value); } }
-                        labelClass="col-form-label"
+                        labelClass="col-form-label text-append-colon"
                         formGroupClass="form-row inline-select"
                     />
                 }

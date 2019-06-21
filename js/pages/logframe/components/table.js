@@ -7,10 +7,16 @@ const LevelNameCell = ({ name }) => {
     return <div className="table-cell level-cell">{ name }</div>;
 }
 
-const IndicatorCell = ({ indicator }) => {
+const IndicatorCell = ({ indicator, ontology }) => {
+    let name = gettext('Indicator');
+    if (ontology || indicator.level_order_display) {
+        name += ` ${ontology}${indicator.level_order_display}`;
+    }
+    name += `: ${indicator.name}`;
+    /* { false && ({ gettext('Indicator')}{ indicator.number_display ? ` ${indicator.number_display}:` : '' } { indicator.name })} */
     return (
-        <div className="table-cell--text">
-            { gettext('Indicator')}{ indicator.number_display ? ` ${indicator.number_display}:` : '' } { indicator.name }
+        <div className="table-cell--text">            
+            { name }
         </div>
     );
 }
@@ -23,12 +29,14 @@ const MeansCell = ({ indicator }) => {
     );
 }
 
-const IndicatorCells = ({ indicators }) => {
-    if (!indicators) {
+const IndicatorCells = ({ indicators, ontology }) => {
+    if (!indicators || indicators.length == 0) {
         return (
-            <div className="table-cell-inner-row colspan-2 table-cell ">
-                <div className="table-cell--text table-cell--empty"></div>
-                <div className="table-cell--text table-cell--empty"></div>
+            <div className="table-cell-column colspan-2">
+                <div className="table-cell-inner-row table-cell-inner-row--empty">
+                    <div className="table-cell--text table-cell--empty"></div>
+                    <div className="table-cell--text table-cell--empty"></div>
+                </div>
             </div>
         );
     }
@@ -37,7 +45,7 @@ const IndicatorCells = ({ indicators }) => {
                 {indicators.map((indicator, idx) => {
                     return (
                         <div className="table-cell-inner-row" key={ idx }>
-                            <IndicatorCell indicator={ indicator } key={ `ind${idx}` } />
+                            <IndicatorCell indicator={ indicator } ontology={ ontology } key={ `ind${idx}` } />
                             <MeansCell indicator={ indicator } key={ `means${idx}` } />
                         </div>
                     );
@@ -56,7 +64,7 @@ const LevelRow = ({ level }) => {
     return (
         <div className="logframe--table--row">
             <LevelNameCell name={ level.display_name } />
-            <IndicatorCells indicators={ level.indicators } />
+            <IndicatorCells indicators={ level.indicators } ontology={ level.display_ontology }/>
             <AssumptionsCell assumptions={ level.assumptions } />
         </div>
     );
@@ -84,6 +92,7 @@ class LogframeTable extends React.Component {
             return {
                 display_name: gettext('Indicators unassigned to  a results framework level'),
                 indicators: this.props.dataStore.unassignedIndicators,
+                ontology: false,
                 assumptions: null
             };
         }

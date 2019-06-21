@@ -39,6 +39,7 @@ export class LevelStore {
             this.chosenTierSetKey = this.defaultTemplateKey;
             this.chosenTierSet = this.tierTemplates[this.chosenTierSetKey]['tiers'];
         }
+        
     }
 
     @computed get sortedLevels () {
@@ -238,7 +239,8 @@ export class LevelStore {
         let levelToSave = Object.assign(toJS(targetLevel), formData);
         if (levelId == "new") {
             if (levelToSave.parent == "root") {
-                this.saveLevelTiersToDB()
+                this.saveLevelTiersToDB();
+                $('#logframe_link').show();
             }
             delete levelToSave.id;
 
