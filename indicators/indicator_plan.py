@@ -3,6 +3,7 @@ Data definitions and code related to Indicator Plan table view and XLS export
 """
 from itertools import groupby
 
+from django.db.models import functions, IntegerField
 from django.utils.translation import (
     ugettext,
     ugettext_lazy as _
@@ -240,7 +241,15 @@ def non_rf_indicator_queryset(program_id):
     """
     A QS of indicators to create the indicator plan from
     """
-    return models.Indicator.objects.filter(program_id=program_id).select_related().with_logframe_sorting()
+    return models.Indicator.objects.filter(
+        program_id=program_id
+    ).select_related().with_logframe_sorting().order_by(
+            'old_level_pk',
+            'logsort_type',
+            functions.Cast('logsort_a', IntegerField()),
+            functions.Cast('logsort_b', IntegerField()),
+            functions.Cast('logsort_c', IntegerField()),
+    )
 
 
 def tier_sorted_indicator_queryset(program_id):

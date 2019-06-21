@@ -81,7 +81,13 @@ export class IndicatorStore {
     
     sortIndicators(oldStyleLevels, sortByChain, indicators) {
         if (oldStyleLevels) {
-            return indicators;
+            return indicators.slice().sort(
+                (a, b) => {
+                    return (a.old_level_pk < b.old_level_pk) ? -1
+                            : (a.old_level_pk < b.old_level_pk) ? 1
+                                : 0
+                }
+            );
         } else if (!sortByChain) {
             return indicators.slice().sort(
                 (a, b) => {

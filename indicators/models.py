@@ -539,11 +539,32 @@ class IndicatorSortingQSMixin(object):
         logframe_re2 = r'^[[:space:]]*[0-9]+[[.period.]][0-9]+([[.period.]][0-9]+)?([[.period.]][0-9]+)?[[:space:]]*$'
         logframe_re3 = r'^[[:space:]]*[0-9]+[[.period.]][0-9]+[[.period.]][0-9]+([[.period.]][0-9]+)?[[:space:]]*$'
         logframe_re4 = r'^[[:space:]]*[0-9]+[[.period.]][0-9]+[[.period.]][0-9]+[[.period.]][0-9]+[[:space:]]*$'
-
+        old_level_whens = [
+            models.When(
+                old_level=level_name,
+                then=level_pk
+            ) for (level_pk, level_name) in Indicator.OLD_LEVELS
+        ] + [
+            models.When(
+                old_level__isnull=True,
+                then=99
+            ),
+        ]
         qs = self.annotate(
+            old_level_pk=models.Case(
+                *old_level_whens,
+                default=99,
+                output_field=models.IntegerField()
+            ),
             logsort_type=models.Case(
                 models.When(
-                    level_id__isnull=False,
+                    models.Q(
+                        models.Q(
+                            models.Q(program___using_results_framework=Program.MIGRATED) |
+                            models.Q(program___using_results_framework=Program.RF_ALWAYS)
+                        ) &
+                        models.Q(level_id__isnull=False)
+                    ),
                     then=0
                 ),
                 models.When(
@@ -681,11 +702,11 @@ class Indicator(SafeDeleteModel):
 
     OLD_LEVELS = [
         (1, 'Goal'),
-        (2, 'Output'),
+        (2, 'Impact'),
         (3, 'Outcome'),
-        (4, 'Activity'),
-        (5, 'Impact'),
-        (6, 'Intermediate Outcome')
+        (4, 'Intermediate Outcome'),
+        (5, 'Output'),
+        (6, 'Activity')
     ]
 
 
