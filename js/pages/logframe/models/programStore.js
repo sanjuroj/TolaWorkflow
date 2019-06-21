@@ -15,15 +15,17 @@ class Indicator {
 }
 
 class Level {
-    constructor(levelData, indicators) {
+    constructor(levelData) {
         this.pk = levelData.pk;
         this.display_name = levelData.display_name;
-        this.level_depth = levelData.get_level_depth;
+        this.level_depth = levelData.level_depth;
         this.ontology = levelData.ontology;
         this.display_ontology = levelData.display_ontology;
         this.indicators = [];
         if (levelData.indicators && Array.isArray(levelData.indicators)) {
-            levelData.indicators.forEach(indicatorPk => this.indicators.push(indicators[indicatorPk]));
+            this.indicators = levelData.indicators.map(
+                indicatorData => new Indicator(indicatorData)
+            );
         }
         this.indicators.sort((indicator_a, indicator_b) => {
             return (indicator_a.level_order < indicator_b.level_order) ? -1
@@ -39,8 +41,7 @@ class ProgramStore {
     _levelsByPk = {};
     _levelsByChain = [];
     _levelsByTier = [];
-    _indicatorsByPk = {};
-    _unassignedIndicatorPks = [];
+    _unassignedIndicators = [];
 
     constructor(programData) {
         this.name = programData.name;
@@ -48,19 +49,15 @@ class ProgramStore {
         this.results_framework_url = this.results_framework ? programData.results_framework_url : false;
         this.program_page_url = programData.program_page_url;
         this.rf_chain_sort_label = this.results_framework ? programData.rf_chain_sort_label : false;
-        if (programData.indicators && Array.isArray(programData.indicators)) {
-            programData.indicators.forEach(indicatorData => {
-                let indicator = new Indicator(indicatorData);
-                this._indicatorsByPk[indicator.pk] = indicator;
-                if (!indicator.level) {
-                    this._unassignedIndicatorPks.push(indicator.pk);
-                }
-            });
+        if (programData.unassigned_indicators && Array.isArray(programData.unassigned_indicators)) {
+            this._unassignedIndicators = programData.unassigned_indicators.map(
+                indicatorData => new Indicator(indicatorData)
+            );
         }
         if (programData.levels && Array.isArray(programData.levels)) {
             programData.levels.forEach(
                 level => {
-                    let levelObj = new Level(level, this._indicatorsByPk);
+                    let levelObj = new Level(level);
                     this._levelsByPk[levelObj.pk] = levelObj;
                     this._levelsByChain.push(levelObj.pk);
                     this._levelsByTier.push(levelObj.pk);
@@ -109,12 +106,10 @@ class ProgramStore {
     }
     
     get unassignedIndicators() {
-        if (!this._unassignedIndicatorPks || this._unassignedIndicatorPks.length == 0) {
+        if (!this._unassignedIndicators || this._unassignedIndicators.length == 0) {
             return [];
         }
-        return this._unassignedIndicatorPks.map(
-            pk => this._indicatorsByPk[pk]
-        );
+        return this._unassignedIndicators;
     }
     
 }

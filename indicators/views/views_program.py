@@ -85,15 +85,14 @@ def logframe_excel_view(request, program):
         ws.column_dimensions[openpyxl.utils.get_column_letter(col + 1)].width = 50
     levels = program['levels']
     if request.GET.get('groupby') == "2":
-        sorted_levels = sorted(levels, key=itemgetter('get_level_depth', 'ontology'))
+        sorted_levels = sorted(levels, key=itemgetter('level_depth', 'ontology'))
     else:
         levels_by_pk = {l['pk']: l for l in levels}
         sorted_levels = []
-        for level in [l for l in sorted(levels, key=itemgetter('ontology')) if l['get_level_depth'] == 1]:
+        for level in [l for l in sorted(levels, key=itemgetter('ontology')) if l['level_depth'] == 1]:
             sorted_levels += get_child_levels(level, levels_by_pk)
         levels = sorted_levels
     row = 4
-    indicators_by_pk = {i['pk']: i for i in program['indicators']}
     for level in sorted_levels:
         merge_start = row
         cell = ws.cell(row=row, column=1)
@@ -103,8 +102,7 @@ def logframe_excel_view(request, program):
         cell = ws.cell(row=row, column=4)
         cell.value = clean_unicode(level['assumptions'])
         cell.alignment = TOP_LEFT_ALIGN_WRAP
-        level_indicators = [indicators_by_pk[indicator_pk] for indicator_pk in level['indicators']]
-        for indicator in sorted(level_indicators, key=itemgetter('level_order')):
+        for indicator in sorted(level['indicators'], key=itemgetter('level_order')):
             cell = ws.cell(row=row, column=2)
             value = ugettext('Indicator')
             if indicator['level_order_display'] or level['display_ontology']:
@@ -135,14 +133,13 @@ def logframe_excel_view(request, program):
         cell.border = BORDER_TOP
         cell = ws.cell(row=merge_start, column=4)
         cell.border = BORDER_TOP
-    unassigned_indicators = [i for i in program['indicators'] if not i['level']]
-    if unassigned_indicators:
+    if program['unassigned_indicators']:
         merge_start = row
         cell = ws.cell(row=row, column=1)
         cell.value = ugettext('Indicators unassigned to a results framework level')
         cell.alignment = TOP_LEFT_ALIGN_WRAP
         cell.fill = LEVEL_ROW_FILL
-        for indicator in unassigned_indicators:
+        for indicator in program['unassigned_indicators']:
             cell = ws.cell(row=row, column=2)
             cell.value = u'{}: {}'.format(ugettext('Indicator'), clean_unicode(indicator['name']))
             cell.alignment = TOP_LEFT_ALIGN_WRAP

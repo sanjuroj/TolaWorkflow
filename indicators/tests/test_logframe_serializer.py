@@ -1,11 +1,13 @@
+import unittest
 import datetime
 from django import test
 from django.conf import settings
-from django.db import connection, connections
+from django.db import models
 from factories import (
     workflow_models as w_factories,
     indicators_models as i_factories
 )
+from indicators.models import LevelTier, Level
 from workflow.models import Program
 from workflow.serializers import LogframeProgramSerializer
 
@@ -73,6 +75,7 @@ class TestTransactions(test.TestCase):
         cls.level = level
         cls.indicators = indicators
 
+
     def test_values(self):
         serialized = LogframeProgramSerializer.load(pk=self.program.pk).data
         self.assertEqual(serialized['name'], "Test program name")
@@ -80,12 +83,8 @@ class TestTransactions(test.TestCase):
         self.assertEqual(len(serialized['levels'][0]['indicators']), 0)
         self.assertEqual(len(serialized['levels'][0]['child_levels']), 1)
         self.assertEqual(len(serialized['levels'][1]['indicators']), 2)
-        self.assertEqual(len(serialized['indicators']), 3)
+        self.assertEqual(len(serialized['unassigned_indicators']), 1)
         self.assertEqual(serialized['rf_chain_sort_label'], "by Test Tier 2 chain")
-        level_indicator = [i for i in serialized['indicators'] if i['pk'] == 22][0]
-        self.assertEqual(level_indicator['level_order_display'], 'b')
-        unassigned_indicator = [i for i in serialized['indicators'] if i['pk'] == 23][0]
-        self.assertEqual(unassigned_indicator['level_order_display'], '')
 
     # def test_transactions(self):
     #     with self.settings(DEBUG=True):
