@@ -166,13 +166,9 @@ export class LevelStore {
         siblingsToReorder.forEach( sib => sib.customsort+=1);
         // add new Level to the various Store components
         this.levels.push(newLevel);
-        console.group('create new level from parent');
-        console.log('indicators in store')
-        this.levels.forEach (l => console.log(toJS(l)));
         this.rootStore.uiStore.activeCard = "new";
         this.rootStore.uiStore.hasVisibleChildren.push(newLevel.parent)
-        console.log('active card=', this.rootStore.uiStore.activeCard)
-        console.groupEnd()
+
     };
 
 
@@ -324,7 +320,9 @@ export class LevelStore {
 
     @action
     moveIndicatorInStore = (indicatorId, newLevelId) => {
-        this.indicators.find( i => i.id == indicatorId).level = newLevelId;
+        let target = this.indicators.find( i => i.id == indicatorId);
+        target.level = newLevelId;
+        target.level_order = this.indicators.filter( i => i.level == newLevelId).length -1;
     };
 
     fetchIndicatorsFromDB = (indicatorId=null) => {
@@ -334,7 +332,7 @@ export class LevelStore {
                 this.indicators = response.data;
             }))
             .catch((error) => console.log('There was an error:', error));
-    }
+    };
 
 
     deriveTemplateKey = () => {
@@ -355,7 +353,7 @@ export class LevelStore {
 
         // If this has been reached, the db has stored tiers but they're not a match to a template
         return "custom";
-    }
+    };
 
 
     buildOntology = (levelId, ontologyArray = []) => {
@@ -374,13 +372,13 @@ export class LevelStore {
 
     getChildLevels = levelId => this.levels.filter( l => l.parent == levelId);
 
-    getLevelIndicators = levelId => this.indicators.filter( i => i.level == levelId)
+    getLevelIndicators = levelId => this.indicators.filter( i => i.level == levelId);
 
     getDescendantIndicatorIds = (childLevelIds) => {
         const childLevels = this.levels.filter( l => childLevelIds.includes(l.id));
-        let newIndicatorIds = []
+        let newIndicatorIds = [];
         childLevels.forEach( childLevel => {
-            newIndicatorIds = newIndicatorIds.concat(this.indicators.filter( i => i.level == childLevel.id).map( i => i.id))
+            newIndicatorIds = newIndicatorIds.concat(this.indicators.filter( i => i.level == childLevel.id).map( i => i.id));
             let grandChildIds = this.levels.filter( l => l.parent == childLevel.id).map( l => l.id);
             newIndicatorIds = newIndicatorIds.concat(this.getDescendantIndicatorIds(grandChildIds, newIndicatorIds));
         });
@@ -394,6 +392,7 @@ export class UIStore {
 
     @observable activeCard;
     @observable hasVisibleChildren = [];
+    @observable disableForPrompt;
     activeCardNeedsConfirm = "";
 
     constructor (rootStore) {
@@ -401,6 +400,7 @@ export class UIStore {
         this.hasVisibleChildren = this.rootStore.levelStore.levels.map(l => l.id)
         this.activeCardNeedsConfirm = false;
         this.activeCard = null;
+        this.disableForPrompt = false;
     }
 
     @computed get tierLockStatus () {
@@ -421,10 +421,9 @@ export class UIStore {
     editCard = (levelId) => {
         const cancelledLevelId = this.activeCard;
         if (this.activeCardNeedsConfirm) {
-            console.log('in edit, needed confirm, levelId=', levelId, )
+            this.disableForPrompt = true;
             $(`#level-card-${this.activeCard}`)[0].scrollIntoView({behavior:"smooth"});
             const oldTierName = this.rootStore.levelStore.levelProperties[this.activeCard].tierName;
-            $(".edit-button").prop("disabled", true);
             create_no_rationale_changeset_notice({
                 /* # Translators:  This is a confirmation prompt that is triggered by clicking on a cancel button.  */
                 message_text: gettext("Are you sure you want to continue?"),
@@ -443,9 +442,9 @@ export class UIStore {
 
     @action
     onLeaveConfirm = (levelId, cancelledLevelId) => {
+        this.disableForPrompt = false;
         this.rootStore.levelStore.cancelEdit(cancelledLevelId);
         this.activeCardNeedsConfirm = false;
-        $(".edit-button").prop("disabled", false);
         this.activeCard = levelId;
         // Need to use set timeout to ensure that scrolling loses the race with components reacting to the new position of the open card.
         setTimeout(
@@ -455,7 +454,7 @@ export class UIStore {
     };
 
     onLeaveCancel = () => {
-        $(".edit-button").prop("disabled", false);
+        this.disableForPrompt = false;
     };
 
     @action

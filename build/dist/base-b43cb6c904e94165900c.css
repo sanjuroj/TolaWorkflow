@@ -9735,6 +9735,9 @@ input[type=radio]:disabled {
   color: #54585a;
   margin-left: 7.5px; }
 
+.level-card--collapsed__actions {
+  min-width: 100px; }
+
 .actions__top, .actions__bottom {
   display: flex;
   justify-content: flex-end; }

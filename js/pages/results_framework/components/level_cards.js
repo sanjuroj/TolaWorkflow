@@ -9,6 +9,7 @@ import { SingleReactSelect } from "../../../components/selectWidgets";
 import { AddIndicatorButton, UpdateIndicatorButton } from '../../../components/indicatorModalComponents';
 import {sortableContainer, sortableElement, sortableHandle} from 'react-sortable-hoc';
 import HelpPopover from "../../../components/helpPopover";
+import TextareaAutosize from 'react-autosize-textarea';
 
 
 
@@ -66,7 +67,6 @@ export class LevelCardCollapsed extends React.Component {
         }
 
         // Prepare the indicator links for the indicator popover
-
         let allIndicatorLinks = [];
 
         // Get indicator ids linked to this level and create a hyperlink for a filtered IPTT.
@@ -128,13 +128,17 @@ export class LevelCardCollapsed extends React.Component {
                     <div className="actions__top btn-row">
                         { this.props.levelProps.canDelete &&
                             <button
+                                disabled={this.props.rootStore.uiStore.disableForPrompt}
                                 className="btn btn-sm btn-link btn-danger"
                                 onClick={this.deleteLevel}>
                                 <i className="fas fa-trash-alt"></i>{gettext("Delete")}
                             </button>
                         }
                         {this.props.levelProps.canEdit &&
-                            <button className="btn btn-sm btn-link btn-text edit-button" onClick={this.editLevel}>
+                            <button
+                                disabled={this.props.rootStore.uiStore.disableForPrompt}
+                                className="btn btn-sm btn-link btn-text edit-button"
+                                onClick={this.editLevel}>
                                 <i className="fas fa-edit"/>{gettext("Edit")}
                             </button>
                         }
@@ -148,7 +152,7 @@ export class LevelCardCollapsed extends React.Component {
                             data-html="true"
                             title="Track indicator performance"
                             data-content={indicatorMarkup}
-                            disabled={allIndicatorLinks.length == 0}>
+                            disabled={allIndicatorLinks.length == 0 || this.props.rootStore.uiStore.disableForPrompt}>
                             {indicatorCountText}
                         </button>
                     </div>
@@ -198,7 +202,8 @@ export class LevelCardExpanded extends React.Component {
 
             updateIndicatorName (indicatorId, newName) {
                 this.indicators.find( i => i.id == indicatorId).name = newName;
-                this.baseIndicators.find( i => i.id == indicatorId).name = newName
+                this.baseIndicators.find( i => i.id == indicatorId).name = newName;
+                this.props.rootStore.levelStore.updateIndicatorNameInStore(indicatorId, newName);
             }
 
         }, {
@@ -206,7 +211,6 @@ export class LevelCardExpanded extends React.Component {
             deleteIndicator: action,
             updateIndicatorName: action
         });
-        console.log('constructor indicators', toJS(this.indicators))
     }
 
     onDragEnd = ({oldIndex, newIndex}) => {
@@ -272,27 +276,16 @@ export class LevelCardExpanded extends React.Component {
 
         // Handle indicator update.  Need to update rootStore and component store so if you close and reopen the card, you still see the new indicator
         $('#indicator_modal_div').on('updated.tola.indicator.save', (e, params) => {
-            console.log('params level, props.level, rootstore active card', params.levelId, this.props.level.id, this.props.rootStore.uiStore.activeCard)
-            // This.props.level.id doesn't seem to be updating here, perhaps because the event is attaching a jquery listener
-            // So rootstore props are bing used instead of passed in ones.
+
+            this.updateIndicatorName(params.indicatorId, params.indicatorName);
+
             const currentCardId = this.props.rootStore.uiStore.activeCard;
             if (params.levelId != currentCardId){
                 // Only add the indicator to another level if it wasn't blanked out
-                console.group()
-                console.log('updated indicator params', params)
-                console.log('indicators before', this.props.rootStore.levelStore.indicators.forEach( i => console.log('i', toJS(i))))
-                console.log('this.indicators count', this.indicators.length);
-                console.groupEnd()
                 if (params.levelId){
                     this.props.rootStore.levelStore.moveIndicatorInStore(params.indicatorId, params.levelId)
                 }
                 this.deleteIndicator(params.indicatorId);
-                console.log('indicators after', this.props.rootStore.levelStore.indicators.forEach( i => console.log('i2', toJS(i))))
-            }
-            else {
-                console.log('params ind id, params name, current name', params.indicatorId, params.indicatorName, this.props.level.name);
-                this.indicators.find( i => i.id == params.indicatorId).name = params.indicatorName;
-                this.props.rootStore.levelStore.updateIndicatorNameInStore(params.indicatorId, params.indicatorName);
             }
 
             // Need to remount the tooltip so it reflects a potential new name.  It's a big janky, should probably use a react component instead.
@@ -303,6 +296,8 @@ export class LevelCardExpanded extends React.Component {
 
     componentWillUnmount() {
         $('#indicator_modal_div').off('updated.tola.indicator.save');
+        $('#indicator_modal_div').off('deleted.tola.indicator.save');
+        $('#indicator_modal_div').off('created.tola.indicator.save');
     }
 
     saveLevel = (event) => {
@@ -313,7 +308,6 @@ export class LevelCardExpanded extends React.Component {
             this.indicatorWasReordered,
             {name: this.name,assumptions: this.assumptions,indicators: toJS(this.indicators)}
         )
-
     };
 
     cancelEdit = () => {
@@ -349,9 +343,11 @@ export class LevelCardExpanded extends React.Component {
     };
 
     render(){
-        // Need to reference indicators so it reacts to changes.  Simply passing the observable this.indicators through
-        // to IndicatorList will result in a non-reactive Indicator list form fields.
+        // Need to reference a couple of observed vars so they react to changes.
+        // Simply passing the observables through to a child component or injecting them in
+        // the child component doesn't work.  No doubt that there's a better way to do this.
         const tempIndicators = toJS(this.indicators);
+        const disabledTrigger = this.props.rootStore.uiStore.disableForPrompt;
 
         let indicatorSection = "";
         if (this.props.level.id == "new"){
@@ -392,24 +388,26 @@ export class LevelCardExpanded extends React.Component {
                 </div>
                 <form className="level-card--expanded__form" onSubmit={this.saveLevel}>
                     <div className="form-group">
-                        <textarea
+                        <TextareaAutosize
                             className="form-control"
                             id={`level-name-${this.props.level.id}`}
                             name="name"
                             value={this.name || ""}
                             autoComplete="off"
+                            rows={3}
                             onChange={this.onFormChange}
                         />
                     </div>
                     <div className="form-group">
                             <label htmlFor="assumptions">Assumptions</label>
-                        <textarea
+                        <TextareaAutosize
                             className="form-control"
                             id="level-assumptions"
                             disabled={this.name? "" : "disabled"}
                             name="assumptions"
                             autoComplete="off"
                             value={this.assumptions || ""}
+                            rows={3}
                             onChange={this.onFormChange}/>
                     </div>
                     {indicatorSection}
@@ -432,14 +430,14 @@ export class LevelCardExpanded extends React.Component {
 @inject('rootStore')
 class ButtonBar extends React.Component {
     render() {
-        let disabledText = this.props.nameVal ? "" : "disabled";
+        let isDisabled = !this.props.nameVal || this.props.rootStore.uiStore.disableForPrompt;
 
         // Build the button text with the right sibling level name, then build the button.
         let addAnotherButton = null;
         if (this.props.level.parent != null && this.props.level.parent != "root") {
             {/* # Translators: On a button, with a tiered set of objects, save current object and add another one in the same tier, e.g. "Save and add another Outcome" when the user is editing an Outcome */}
             const buttonText = interpolate(gettext("Save and add another %s"), [this.props.levelProps.tierName])
-            addAnotherButton = <LevelButton disabledText={disabledText} classes="btn-primary" icon='plus-circle' text={buttonText} submitType="saveAndAddSibling"  submitFunc={this.props.submitFunc} />
+            addAnotherButton = <LevelButton disabled={isDisabled} classes="btn-primary" icon='plus-circle' text={buttonText} submitType="saveAndAddSibling"  submitFunc={this.props.submitFunc} />
         }
 
         // Build the button text with the right child level name, then build the button.
@@ -448,14 +446,14 @@ class ButtonBar extends React.Component {
         if (this.props.level.level_depth < tierCount) {
             {/* # Translators: On a button, with a tiered set of objects, save current object and add another one in the next lower tier, e.g. "Save and add another Activity" when the user is editing a Goal */}
             const buttonText = interpolate(gettext("Save and link %s"), [this.props.levelProps.childTierName])
-            addAndLinkButton = <LevelButton disabledText={disabledText} classes="btn btn-primary" icon='stream' text={buttonText} submitType="saveAndAddChild" submitFunc={this.props.submitFunc} />
+            addAndLinkButton = <LevelButton disabled={isDisabled} classes="btn btn-primary" icon='stream' text={buttonText} submitType="saveAndAddChild" submitFunc={this.props.submitFunc} />
         }
         return (
             <div className="button-bar btn-row">
-                <LevelButton disabledText={disabledText} classes="btn-primary" text={gettext("Save and close")} icon='save' submitType="saveOnly" submitFunc={this.props.submitFunc} />
+                <LevelButton disabled={isDisabled} classes="btn-primary" text={gettext("Save and close")} icon='save' submitType="saveOnly" submitFunc={this.props.submitFunc} />
                 {addAnotherButton}
                 {addAndLinkButton}
-                <LevelButton classes="btn btn-reset" text={gettext("Cancel")} submitType="cancel" submitFunc={this.props.cancelFunc} />
+                <LevelButton disabled={isDisabled} classes="btn btn-reset" text={gettext("Cancel")} submitType="cancel" submitFunc={this.props.cancelFunc} />
             </div>
         )
 
@@ -468,7 +466,7 @@ class LevelButton extends React.Component {
         const buttonType = this.props.submitType == "cancel" ? "button" : "submit";
         return (
             <button
-                disabled={this.props.disabledText}
+                disabled={this.props.disabled}
                 type={buttonType}
                 className={this.props.classes + ' level-button btn btn-sm'}
                 onClick={() =>this.props.submitFunc(this.props.submitType)}>
@@ -493,10 +491,8 @@ class IndicatorList extends React.Component {
     }
 
     componentDidUpdate() {
-
         $('*[data-toggle="tooltip"]').tooltip()
     }
-
 
     render() {
 
@@ -525,7 +521,10 @@ class IndicatorList extends React.Component {
                     />
                     <div className="sortable-list__item__actions">
                         { /* # Translators: A label for a button that allows the user to modify the settings of an object */}
-                        <UpdateIndicatorButton readonly={this.props.disabled} label={gettext("Settings")} indicatorId={indicator.id}/>
+                        <UpdateIndicatorButton
+                            readonly={this.props.disabled || this.props.rootStore.uiStore.disableForPrompt}
+                            label={gettext("Settings")}
+                            indicatorId={indicator.id}/>
                     </div>
                 </React.Fragment>
             )
