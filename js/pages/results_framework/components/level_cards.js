@@ -371,7 +371,7 @@ export class LevelCardExpanded extends React.Component {
                         tierName={this.props.levelProps.tierName}
                         indicators={this.indicators}
                         disabled={!this.name || this.props.level.id == "new"}
-                        reorderDisabled={this.indicators.length < 2}
+                        reorderDisabled={this.indicators.length < 2 || this.props.rootStore.uiStore.disableForPrompt}
                         changeFunc={this.changeIndicatorOrder}
                         dragEndFunc={this.onDragEnd}/>
         }
@@ -576,9 +576,10 @@ class IndicatorList extends React.Component {
                         ))}
                     </SortableContainer>
                     <div className="sortable-list-actions">
-                        <AddIndicatorButton readonly={ !this.props.level.id || this.props.level.id == 'new' || this.props.disabled }
-                                            programId={ this.props.rootStore.levelStore.program_id }
-                                            levelId={ this.props.level.id }/>
+                        <AddIndicatorButton
+                            readonly={ !this.props.level.id || this.props.level.id == 'new' || this.props.disabled || this.props.rootStore.uiStore.disableForPrompt }
+                            programId={ this.props.rootStore.levelStore.program_id }
+                            levelId={ this.props.level.id }/>
                     </div>
                 </div>
             </div>
