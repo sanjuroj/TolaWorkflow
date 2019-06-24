@@ -9,7 +9,8 @@ from rest_framework import viewsets
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from indicators.serializers import LevelTierSerializer, LevelSerializer, IndicatorSerializerMinimal
+from indicators.serializers import LevelTierSerializer, LevelSerializer, IndicatorSerializerMinimal, \
+    ProgramObjectiveSerializer
 from indicators.models import Level, LevelTier, Indicator
 from workflow.models import Program
 
@@ -45,6 +46,7 @@ class ResultsFrameworkBuilder(ListView):
             'indicators': IndicatorSerializerMinimal(indicators, many=True).data,
             'levelTiers': LevelTierSerializer(tiers, many=True).data,
             'tierTemplates': LevelTier.TEMPLATES,
+            'programObjectives': ProgramObjectiveSerializer(program.objective_set.all(), many=True).data,
             'accessLevel': role,
         }
 

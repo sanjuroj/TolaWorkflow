@@ -10,6 +10,7 @@ import { AddIndicatorButton, UpdateIndicatorButton } from '../../../components/i
 import {sortableContainer, sortableElement, sortableHandle} from 'react-sortable-hoc';
 import HelpPopover from "../../../components/helpPopover";
 import TextareaAutosize from 'react-autosize-textarea';
+import Select from "react-select"
 
 
 
@@ -25,6 +26,49 @@ export class LevelTitle extends React.Component {
                 space before the colon */}
                 {this.props.ontologyLabel ? " " + this.props.ontologyLabel : null}
             </h3>
+        )
+    }
+}
+
+class ProgramObjectiveImport extends React.Component {
+    onChange = (item) => {
+        this.props.onProgramObjectiveImport(item.value);
+    }
+
+    render() {
+        const programObjectives = this.props.programObjectives;
+
+        // hide if no objectives to import
+        if (programObjectives.length === 0) return null;
+
+        const options = programObjectives.map( entry => {return {value: entry.id, label: entry.name}});
+
+        return (
+            <div className="program-objective-import mb-3">
+                <Select
+                    // # Translators: Take the text of a program objective and import it for editing
+                    placeholder={gettext('Import Program Objective')}
+                    onChange={ this.onChange }
+                    value={ "" }
+                    className="tola-react-select"
+                    options={ options }
+                />
+
+                <a href="#"
+                   className="program-objective-import__icon"
+                   tabIndex="0"
+                   data-html="true"
+                   data-toggle="popover"
+                   data-placement="bottom"
+                   data-trigger="focus"
+                   data-content={
+                       /* # Translators: instructions to users containing some HTML */
+                       gettext("Import text from a Program Objective. <strong class='program-objective-import__popover-strong-text'>Make sure to remove levels and numbers from your text, because they are automatically displayed.</strong>")
+                   }
+                   onClick={e => e.preventDefault()}>
+                    <i className="far fa-question-circle"/>
+                </a>
+            </div>
         )
     }
 }
@@ -353,12 +397,22 @@ export class LevelCardExpanded extends React.Component {
         this.props.rootStore.uiStore.activeCardNeedsConfirm = this.dataHasChanged;
     };
 
+    onProgramObjectiveImport = (programObjectiveId) => {
+        const programObjective = this.props.rootStore.levelStore.programObjectives.find(po => po.id === programObjectiveId);
+
+        if (programObjective != null) {
+            this.name = this.name + programObjective.name;
+            this.assumptions = this.assumptions + programObjective.description;
+        }
+    };
+
     render(){
         // Need to reference a couple of observed vars so they react to changes.
         // Simply passing the observables through to a child component or injecting them in
         // the child component doesn't work.  No doubt that there's a better way to do this.
         const tempIndicators = toJS(this.indicators);
         const disabledTrigger = this.props.rootStore.uiStore.disableForPrompt;
+        const programObjectives = this.props.rootStore.levelStore.programObjectives;
 
         let indicatorSection = "";
         if (this.props.level.id == "new"){
@@ -389,13 +443,14 @@ export class LevelCardExpanded extends React.Component {
 
         return (
             <div className="level-card level-card--expanded" id={`level-card-${this.props.level.id}`}>
-                <div>
+                <div className="d-flex justify-content-between">
                     <LevelTitle
                         tierName={this.props.levelProps.tierName}
                         ontologyLabel={this.props.levelProps.ontologyLabel}
                         classes="level-title--expanded"
                     />
 
+                    <ProgramObjectiveImport programObjectives={programObjectives} onProgramObjectiveImport={this.onProgramObjectiveImport} />
                 </div>
                 <form className="level-card--expanded__form" onSubmit={this.saveLevel}>
                     <div className="form-group">
@@ -410,7 +465,7 @@ export class LevelCardExpanded extends React.Component {
                         />
                     </div>
                     <div className="form-group">
-                            <label htmlFor="assumptions">Assumptions</label>
+                        <label htmlFor="assumptions">{gettext('Assumptions')}</label>
                         <TextareaAutosize
                             className="form-control"
                             id="level-assumptions"

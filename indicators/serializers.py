@@ -5,7 +5,7 @@ from django.utils.translation import ugettext, ugettext_lazy
 from tola.l10n_utils import l10n_date_medium
 
 from workflow.models import Program
-from indicators.models import Indicator, Level, LevelTier, PeriodicTarget
+from indicators.models import Indicator, Level, LevelTier, PeriodicTarget, Objective
 from indicators.queries import IPTTIndicator
 from indicators.export_renderers import (
     FullReportExcelRenderer,
@@ -135,6 +135,21 @@ class ProgramSerializer(serializers.ModelSerializer):
             'results_framework',
         ]
 
+
+##################################
+#    Results Framework Builder   #
+##################################
+
+
+class ProgramObjectiveSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Objective
+        fields = [
+            'id',
+            'name',
+            'description',
+        ]
 
 
 #######################
