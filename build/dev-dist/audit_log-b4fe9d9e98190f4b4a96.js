@@ -203,8 +203,33 @@ var CollapseAllButton = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer
     className: "fas fa-minus-square"
   }), gettext('Collapse all'));
 });
-var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function (_ref10) {
-  var store = _ref10.store;
+
+var IndicatorNameSpan = function IndicatorNameSpan(_ref10) {
+  var indicator = _ref10.indicator;
+
+  if (!indicator) {
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, gettext('N/A'));
+  }
+
+  if (indicator.results_aware_number) {
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, gettext('Indicator'), " ", indicator.results_aware_number, ":"), " ", indicator.name);
+  } else {
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, gettext('Indicator'), ":"), " ", indicator.name);
+  }
+};
+
+var ResultLevel = function ResultLevel(_ref11) {
+  var indicator = _ref11.indicator;
+
+  if (!indicator) {
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, gettext('N/A'));
+  }
+
+  if (indicator.leveltier_name && indicator.level_display_ontology) return "".concat(indicator.leveltier_name, " ").concat(indicator.level_display_ontology);else if (indicator.leveltier_name) return indicator.leveltier_name;else return '';
+};
+
+var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function (_ref12) {
+  var store = _ref12.store;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     id: "audit-log-index-view"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("header", {
@@ -236,7 +261,7 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
     className: "text-nowrap"
   }, gettext("Date and time")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
     className: "text-nowrap"
-  }, gettext("No.")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
+  }, gettext("Result Level")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
     className: "text-nowrap"
   }, gettext("Indicator")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
     className: "text-nowrap"
@@ -263,7 +288,11 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
       className: "text-action"
     }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_3__["FontAwesomeIcon"], {
       icon: is_expanded ? 'caret-down' : 'caret-right'
-    }), "\xA0", data.date), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, data.indicator ? data.indicator.number_display : gettext('N/A')), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, data.indicator ? data.indicator.name : gettext('N/A')), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, data.user), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, data.organization), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
+    }), "\xA0", data.date), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ResultLevel, {
+      indicator: data.indicator
+    })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(IndicatorNameSpan, {
+      indicator: data.indicator
+    })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, data.user), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, data.organization), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
       className: "text-nowrap"
     }, data.pretty_change_type), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null)), is_expanded && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
       className: "changelog__entry__row",
@@ -675,4 +704,4 @@ function () {
 /***/ })
 
 },[["6bbB","runtime","vendors"]]]);
-//# sourceMappingURL=audit_log-85f6578f37de61aeb303.js.map
+//# sourceMappingURL=audit_log-b4fe9d9e98190f4b4a96.js.map
