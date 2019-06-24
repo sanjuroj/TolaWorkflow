@@ -9,6 +9,7 @@
     <div class="periodic-targets">
 
         <h3 class="no-bold">
+            {# Translators: This is a label for a numeric value field. The variable will be replaced with a frequency e.g. quarterly targets  #}
             {% blocktrans with indicator.get_target_frequency_label as get_target_frequency_label %}
             {{ get_target_frequency_label }} targets
             {% endblocktrans %}
@@ -178,6 +179,7 @@
 {% else %}
     <div class="periodic-targets">
         <h3 class="no-bold">
+            {# Translators: This is a label for a numeric value field. The variable will be replaced with a frequency e.g. quarterly targets #}
             {% blocktrans with indicator.get_target_frequency_label as get_target_frequency_label %}
             {{ get_target_frequency_label }} target
             {% endblocktrans %}
