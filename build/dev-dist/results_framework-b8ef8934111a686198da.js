@@ -364,6 +364,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_helpPopover__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../../components/helpPopover */ "4L+s");
 /* harmony import */ var react_autosize_textarea__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! react-autosize-textarea */ "O6Fj");
 /* harmony import */ var react_autosize_textarea__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(react_autosize_textarea__WEBPACK_IMPORTED_MODULE_11__);
+/* harmony import */ var react_select__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! react-select */ "y2Vs");
 var _dec, _class, _temp, _dec2, _class3, _temp2, _dec3, _class5, _dec4, _class6;
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -383,6 +384,7 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
 
 
 
@@ -419,53 +421,123 @@ function (_React$Component) {
 
   return LevelTitle;
 }(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component);
-var LevelCardCollapsed = (_dec = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["inject"])('rootStore'), _dec(_class = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])(_class = (_temp =
+
+var ProgramObjectiveImport =
 /*#__PURE__*/
 function (_React$Component2) {
-  _inherits(LevelCardCollapsed, _React$Component2);
+  _inherits(ProgramObjectiveImport, _React$Component2);
 
-  function LevelCardCollapsed() {
+  function ProgramObjectiveImport() {
     var _getPrototypeOf2;
 
     var _this;
 
-    _classCallCheck(this, LevelCardCollapsed);
+    _classCallCheck(this, ProgramObjectiveImport);
 
     for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
       args[_key] = arguments[_key];
     }
 
-    _this = _possibleConstructorReturn(this, (_getPrototypeOf2 = _getPrototypeOf(LevelCardCollapsed)).call.apply(_getPrototypeOf2, [this].concat(args)));
+    _this = _possibleConstructorReturn(this, (_getPrototypeOf2 = _getPrototypeOf(ProgramObjectiveImport)).call.apply(_getPrototypeOf2, [this].concat(args)));
 
-    _this.deleteLevel = function () {
-      _this.props.rootStore.uiStore.setDisableForPrompt(true);
+    _this.onChange = function (item) {
+      _this.props.onProgramObjectiveImport(item.value);
+    };
 
-      var levelTitle = _this.props.levelProps.tierName + " " + _this.props.levelProps.ontologyLabel;
+    return _this;
+  }
+
+  _createClass(ProgramObjectiveImport, [{
+    key: "render",
+    value: function render() {
+      var programObjectives = this.props.programObjectives; // hide if no objectives to import
+
+      if (programObjectives.length === 0) return null;
+      var options = programObjectives.map(function (entry) {
+        return {
+          value: entry.id,
+          label: entry.name
+        };
+      });
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "program-objective-import mb-3"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_12__["default"] // # Translators: Take the text of a program objective and import it for editing
+      , {
+        placeholder: gettext('Import Program Objective'),
+        onChange: this.onChange,
+        value: "",
+        className: "tola-react-select",
+        options: options
+      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+        href: "#",
+        className: "program-objective-import__icon",
+        tabIndex: "0",
+        "data-html": "true",
+        "data-toggle": "popover",
+        "data-placement": "bottom",
+        "data-trigger": "focus",
+        "data-content":
+        /* # Translators: instructions to users containing some HTML */
+        gettext("Import text from a Program Objective. <strong class='program-objective-import__popover-strong-text'>Make sure to remove levels and numbers from your text, because they are automatically displayed.</strong>"),
+        onClick: function onClick(e) {
+          return e.preventDefault();
+        }
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+        className: "far fa-question-circle"
+      })));
+    }
+  }]);
+
+  return ProgramObjectiveImport;
+}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component);
+
+var LevelCardCollapsed = (_dec = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["inject"])('rootStore'), _dec(_class = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])(_class = (_temp =
+/*#__PURE__*/
+function (_React$Component3) {
+  _inherits(LevelCardCollapsed, _React$Component3);
+
+  function LevelCardCollapsed() {
+    var _getPrototypeOf3;
+
+    var _this2;
+
+    _classCallCheck(this, LevelCardCollapsed);
+
+    for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+      args[_key2] = arguments[_key2];
+    }
+
+    _this2 = _possibleConstructorReturn(this, (_getPrototypeOf3 = _getPrototypeOf(LevelCardCollapsed)).call.apply(_getPrototypeOf3, [this].concat(args)));
+
+    _this2.deleteLevel = function () {
+      _this2.props.rootStore.uiStore.setDisableForPrompt(true);
+
+      var levelTitle = _this2.props.levelProps.tierName + " " + _this2.props.levelProps.ontologyLabel;
       create_no_rationale_changeset_notice({
         /* # Translators:  This is a confirmation prompt that is triggered by clicking on a delete button. The code is a reference to the specific item being deleted.  Only one item can be deleted at a time. */
         message_text: "Are you sure you want to delete ".concat(levelTitle, "?"),
         on_submit: function on_submit() {
-          return _this.props.rootStore.levelStore.deleteLevelFromDB(_this.props.level.id);
+          return _this2.props.rootStore.levelStore.deleteLevelFromDB(_this2.props.level.id);
         },
         on_cancel: function on_cancel() {
-          return _this.props.rootStore.uiStore.setDisableForPrompt(false);
+          return _this2.props.rootStore.uiStore.setDisableForPrompt(false);
         }
       });
     };
 
-    _this.editLevel = function () {
-      _this.props.rootStore.uiStore.editCard(_this.props.level.id);
+    _this2.editLevel = function () {
+      _this2.props.rootStore.uiStore.editCard(_this2.props.level.id);
     };
 
-    _this.buildIPTTUrl = function (indicator_ids) {
-      var url = "/indicators/iptt_report/".concat(_this.props.rootStore.levelStore.program_id, "/timeperiods/?frequency=3&start=0&end=999");
+    _this2.buildIPTTUrl = function (indicator_ids) {
+      var url = "/indicators/iptt_report/".concat(_this2.props.rootStore.levelStore.program_id, "/timeperiods/?frequency=3&start=0&end=999");
       indicator_ids.forEach(function (i) {
         return url += "&indicators=" + i;
       });
       return url;
     };
 
-    return _this;
+    return _this2;
   }
 
   _createClass(LevelCardCollapsed, [{
@@ -487,7 +559,7 @@ function (_React$Component2) {
   }, {
     key: "render",
     value: function render() {
-      var _this2 = this;
+      var _this3 = this;
 
       // the level card shouldn't be displayed if it's parent level is not expandoed (except
       // if the level is the top level one).
@@ -524,8 +596,8 @@ function (_React$Component2) {
       var individualLinks = this.props.levelProps.indicators.sort(function (a, b) {
         return a.level_order - b.level_order;
       }).map(function (indicator, index) {
-        var ontologyLabel = _this2.props.levelProps.ontologyLabel + String.fromCharCode(97 + index) + ": ";
-        return "<li class=\"nav-item\"><a href=".concat(_this2.buildIPTTUrl([indicator.id]), ">").concat(ontologyLabel).concat(indicator.name, "</a></li>");
+        var ontologyLabel = _this3.props.levelProps.ontologyLabel + String.fromCharCode(97 + index) + ": ";
+        return "<li class=\"nav-item\"><a href=".concat(_this3.buildIPTTUrl([indicator.id]), ">").concat(ontologyLabel).concat(indicator.name, "</a></li>");
       });
       allIndicatorLinks = allIndicatorLinks.concat(individualLinks);
       var indicatorMarkup = "<ul class=\"nav flex-column\">".concat(allIndicatorLinks.join("<br>"), "</ul>");
@@ -539,7 +611,7 @@ function (_React$Component2) {
       var expando = null;
 
       if (this.props.levelProps.tierName != Object(mobx__WEBPACK_IMPORTED_MODULE_3__["toJS"])(this.props.rootStore.levelStore.chosenTierSet.slice(-1)[0]) && this.props.rootStore.levelStore.levels.filter(function (l) {
-        return l.parent == _this2.props.level.id;
+        return l.parent == _this3.props.level.id;
       }).length > 0) {
         expando = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_5__["FontAwesomeIcon"], {
           className: "text-action",
@@ -553,7 +625,7 @@ function (_React$Component2) {
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: expando ? "level-card__toggle" : "",
         onClick: function onClick(e) {
-          return _this2.props.rootStore.uiStore.updateVisibleChildren(_this2.props.level.id);
+          return _this3.props.rootStore.uiStore.updateVisibleChildren(_this3.props.level.id);
         }
       }, expando, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
         className: "level-card--collapsed__name"
@@ -596,105 +668,116 @@ function (_React$Component2) {
 }(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component), _temp)) || _class) || _class);
 var LevelCardExpanded = (_dec2 = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["inject"])('rootStore'), _dec2(_class3 = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])(_class3 = (_temp2 =
 /*#__PURE__*/
-function (_React$Component3) {
-  _inherits(LevelCardExpanded, _React$Component3);
+function (_React$Component4) {
+  _inherits(LevelCardExpanded, _React$Component4);
 
   function LevelCardExpanded(props) {
-    var _this3;
+    var _this4;
 
     _classCallCheck(this, LevelCardExpanded);
 
-    _this3 = _possibleConstructorReturn(this, _getPrototypeOf(LevelCardExpanded).call(this, props));
+    _this4 = _possibleConstructorReturn(this, _getPrototypeOf(LevelCardExpanded).call(this, props));
 
-    _this3.onDragEnd = function (_ref) {
+    _this4.onDragEnd = function (_ref) {
       var oldIndex = _ref.oldIndex,
           newIndex = _ref.newIndex;
-      _this3.indicatorWasReordered = true;
-      var indicatorId = _this3.indicators[oldIndex].id;
+      _this4.indicatorWasReordered = true;
+      var indicatorId = _this4.indicators[oldIndex].id;
       var fakeChangeObj = {
         value: newIndex + 1,
         name: newIndex + 1
       };
 
-      _this3.changeIndicatorOrder(indicatorId, fakeChangeObj);
+      _this4.changeIndicatorOrder(indicatorId, fakeChangeObj);
     };
 
-    _this3.changeIndicatorOrder = function (indicatorId, changeObj) {
-      var oldIndex = _this3.indicators.find(function (i) {
+    _this4.changeIndicatorOrder = function (indicatorId, changeObj) {
+      var oldIndex = _this4.indicators.find(function (i) {
         return i.id == indicatorId;
       }).level_order;
 
       var newIndex = changeObj.value - 1;
 
-      var tempIndicators = _this3.indicators.slice();
+      var tempIndicators = _this4.indicators.slice();
 
       tempIndicators.splice(newIndex, 0, tempIndicators.splice(oldIndex, 1)[0]);
       tempIndicators.forEach(function (indicator, index) {
         return indicator.level_order = index;
       });
 
-      _this3.indicators.replace(tempIndicators);
+      _this4.indicators.replace(tempIndicators);
 
-      _this3.props.rootStore.uiStore.activeCardNeedsConfirm = _this3.dataHasChanged;
-      _this3.indicatorWasReordered = true;
+      _this4.props.rootStore.uiStore.activeCardNeedsConfirm = _this4.dataHasChanged;
+      _this4.indicatorWasReordered = true;
     };
 
-    _this3.updateSubmitType = function (newType) {
-      _this3.submitType = newType;
+    _this4.updateSubmitType = function (newType) {
+      _this4.submitType = newType;
     };
 
-    _this3.saveLevel = function (event) {
+    _this4.saveLevel = function (event) {
       event.preventDefault();
 
-      _this3.props.rootStore.levelStore.saveLevelToDB(_this3.submitType, _this3.props.level.id, _this3.indicatorWasReordered, {
-        name: _this3.name,
-        assumptions: _this3.assumptions,
-        indicators: Object(mobx__WEBPACK_IMPORTED_MODULE_3__["toJS"])(_this3.indicators)
+      _this4.props.rootStore.levelStore.saveLevelToDB(_this4.submitType, _this4.props.level.id, _this4.indicatorWasReordered, {
+        name: _this4.name,
+        assumptions: _this4.assumptions,
+        indicators: Object(mobx__WEBPACK_IMPORTED_MODULE_3__["toJS"])(_this4.indicators)
       });
     };
 
-    _this3.cancelEdit = function () {
-      if (_this3.props.rootStore.levelStore.levels.length == 1 && _this3.props.level.id == "new") {
-        _this3.clearData();
+    _this4.cancelEdit = function () {
+      if (_this4.props.rootStore.levelStore.levels.length == 1 && _this4.props.level.id == "new") {
+        _this4.clearData();
       } else {
-        _this3.props.rootStore.levelStore.cancelEdit(_this3.props.level.id);
+        _this4.props.rootStore.levelStore.cancelEdit(_this4.props.level.id);
       }
     };
 
-    _this3.clearData = function () {
-      _this3.name = "";
-      _this3.assumptions = "";
+    _this4.clearData = function () {
+      _this4.name = "";
+      _this4.assumptions = "";
     };
 
-    _this3.onFormChange = function (event) {
+    _this4.onFormChange = function (event) {
       event.preventDefault();
-      _this3[event.target.name] = event.target.value; // Add inline error message if name field is blanked out
+      _this4[event.target.name] = event.target.value; // Add inline error message if name field is blanked out
 
-      if (!_this3.name) {
-        var target = $("#level-name-".concat(_this3.props.level.id));
+      if (!_this4.name) {
+        var target = $("#level-name-".concat(_this4.props.level.id));
         target.addClass("is-invalid");
         /* # Translators: This is a validation message given to the user when the user-editable name field has been deleted or omitted. */
 
-        var feedbackText = "Please provide a name for this ".concat(_this3.props.levelProps.tierName);
-        target.after("<p id=name-feedback-".concat(_this3.props.level.id, " class=\"invalid-feedback\">").concat(feedbackText, "</p>"));
+        var feedbackText = "Please provide a name for this ".concat(_this4.props.levelProps.tierName);
+        target.after("<p id=name-feedback-".concat(_this4.props.level.id, " class=\"invalid-feedback\">").concat(feedbackText, "</p>"));
       } else {
-        $("#level-name-".concat(_this3.props.level.id)).removeClass("is-invalid");
-        $("#name-feedback-".concat(_this3.props.level.id)).remove();
+        $("#level-name-".concat(_this4.props.level.id)).removeClass("is-invalid");
+        $("#name-feedback-".concat(_this4.props.level.id)).remove();
       }
 
-      _this3.props.rootStore.uiStore.activeCardNeedsConfirm = _this3.dataHasChanged;
+      _this4.props.rootStore.uiStore.activeCardNeedsConfirm = _this4.dataHasChanged;
     };
 
-    _this3.submitType = "saveOnly";
-    _this3.indicatorWasReordered = false; // These 'base' vars will allow us to save orignalish data so we know whether to prompt users if they hit cancel.
+    _this4.onProgramObjectiveImport = function (programObjectiveId) {
+      var programObjective = _this4.props.rootStore.levelStore.programObjectives.find(function (po) {
+        return po.id === programObjectiveId;
+      });
+
+      if (programObjective != null) {
+        _this4.name = _this4.name + programObjective.name;
+        _this4.assumptions = _this4.assumptions + programObjective.description;
+      }
+    };
+
+    _this4.submitType = "saveOnly";
+    _this4.indicatorWasReordered = false; // These 'base' vars will allow us to save orignalish data so we know whether to prompt users if they hit cancel.
     // baseIndicators will need to be updated on indicator changes other than reordering since we don't
     // want to warn for e.g. indicator creation, since users can't do anything about that.
 
-    _this3.baseLevelString = JSON.stringify([props.level.name, props.level.assumptions]);
-    _this3.baseIndicators = _this3.props.levelProps.indicators.slice().map(function (i) {
+    _this4.baseLevelString = JSON.stringify([props.level.name, props.level.assumptions]);
+    _this4.baseIndicators = _this4.props.levelProps.indicators.slice().map(function (i) {
       return Object(mobx__WEBPACK_IMPORTED_MODULE_3__["toJS"])(i);
     });
-    Object(mobx__WEBPACK_IMPORTED_MODULE_3__["extendObservable"])(_assertThisInitialized(_assertThisInitialized(_this3)), {
+    Object(mobx__WEBPACK_IMPORTED_MODULE_3__["extendObservable"])(_assertThisInitialized(_assertThisInitialized(_this4)), {
       name: props.level.name,
       assumptions: props.level.assumptions,
       indicators: props.levelProps.indicators.sort(function (a, b) {
@@ -743,7 +826,7 @@ function (_React$Component3) {
       deleteIndicator: mobx__WEBPACK_IMPORTED_MODULE_3__["action"],
       updateIndicatorName: mobx__WEBPACK_IMPORTED_MODULE_3__["action"]
     });
-    return _this3;
+    return _this4;
   }
 
   _createClass(LevelCardExpanded, [{
@@ -758,7 +841,7 @@ function (_React$Component3) {
   }, {
     key: "componentDidMount",
     value: function componentDidMount() {
-      var _this4 = this;
+      var _this5 = this;
 
       // Enable popovers after load (they break otherwise)
       $('*[data-toggle="popover"]').popover({
@@ -769,31 +852,31 @@ function (_React$Component3) {
         var indicatorData = {
           id: params.indicatorId,
           name: params.indicatorName,
-          level: _this4.props.level.id,
-          level_order: _this4.indicators.length
+          level: _this5.props.level.id,
+          level_order: _this5.indicators.length
         };
 
-        _this4.props.rootStore.levelStore.addIndicatorToStore(indicatorData);
+        _this5.props.rootStore.levelStore.addIndicatorToStore(indicatorData);
 
-        _this4.addIndicator(indicatorData);
+        _this5.addIndicator(indicatorData);
       }); // Handle indicator deletion.  Need to update rootStore and component store so if you close and reopen the card, you still see the new indicator
 
       $('#indicator_modal_div').on('deleted.tola.indicator.save', function (e, params) {
-        _this4.props.rootStore.levelStore.deleteIndicatorFromStore(params.indicatorId);
+        _this5.props.rootStore.levelStore.deleteIndicatorFromStore(params.indicatorId);
 
-        _this4.deleteIndicator(params.indicatorId);
+        _this5.deleteIndicator(params.indicatorId);
       }); // Handle indicator update.  Need to update rootStore and component store so if you close and reopen the card, you still see the new indicator
 
       $('#indicator_modal_div').on('updated.tola.indicator.save', function (e, params) {
-        _this4.updateIndicatorName(params.indicatorId, params.indicatorName);
+        _this5.updateIndicatorName(params.indicatorId, params.indicatorName);
 
-        if (params.levelId != _this4.props.rootStore.uiStore.activeCard) {
+        if (params.levelId != _this5.props.rootStore.uiStore.activeCard) {
           // Only add the indicator to another level if it wasn't blanked out
           if (params.levelId) {
-            _this4.props.rootStore.levelStore.moveIndicatorInStore(params.indicatorId, params.levelId);
+            _this5.props.rootStore.levelStore.moveIndicatorInStore(params.indicatorId, params.levelId);
           }
 
-          _this4.deleteIndicator(params.indicatorId);
+          _this5.deleteIndicator(params.indicatorId);
         } // Need to remount the tooltip so it reflects a potential new name.  It's a big janky, should probably use a react component instead.
 
 
@@ -811,13 +894,14 @@ function (_React$Component3) {
   }, {
     key: "render",
     value: function render() {
-      var _this5 = this;
+      var _this6 = this;
 
       // Need to reference a couple of observed vars so they react to changes.
       // Simply passing the observables through to a child component or injecting them in
       // the child component doesn't work.  No doubt that there's a better way to do this.
       var tempIndicators = Object(mobx__WEBPACK_IMPORTED_MODULE_3__["toJS"])(this.indicators);
       var disabledTrigger = this.props.rootStore.uiStore.disableForPrompt;
+      var programObjectives = this.props.rootStore.levelStore.programObjectives;
       var indicatorSection = "";
 
       if (this.props.level.id == "new") {
@@ -828,7 +912,7 @@ function (_React$Component3) {
           disabled: this.name.length > 0 ? false : true,
           className: "btn btn-link btn-lg ",
           onClick: function onClick(e) {
-            _this5.updateSubmitType("saveAndEnableIndicators");
+            _this6.updateSubmitType("saveAndEnableIndicators");
           }
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
           className: "fas fa-plus-circle"
@@ -848,10 +932,15 @@ function (_React$Component3) {
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "level-card level-card--expanded",
         id: "level-card-".concat(this.props.level.id)
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(LevelTitle, {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "d-flex justify-content-between"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(LevelTitle, {
         tierName: this.props.levelProps.tierName,
         ontologyLabel: this.props.levelProps.ontologyLabel,
         classes: "level-title--expanded"
+      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ProgramObjectiveImport, {
+        programObjectives: programObjectives,
+        onProgramObjectiveImport: this.onProgramObjectiveImport
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("form", {
         className: "level-card--expanded__form",
         onSubmit: this.saveLevel
@@ -869,7 +958,7 @@ function (_React$Component3) {
         className: "form-group"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
         htmlFor: "assumptions"
-      }, "Assumptions"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_autosize_textarea__WEBPACK_IMPORTED_MODULE_11___default.a, {
+      }, gettext('Assumptions')), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_autosize_textarea__WEBPACK_IMPORTED_MODULE_11___default.a, {
         className: "form-control",
         id: "level-assumptions",
         disabled: this.name ? "" : "disabled",
@@ -893,8 +982,8 @@ function (_React$Component3) {
 }(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component), _temp2)) || _class3) || _class3);
 var ButtonBar = (_dec3 = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["inject"])('rootStore'), _dec3(_class5 =
 /*#__PURE__*/
-function (_React$Component4) {
-  _inherits(ButtonBar, _React$Component4);
+function (_React$Component5) {
+  _inherits(ButtonBar, _React$Component5);
 
   function ButtonBar() {
     _classCallCheck(this, ButtonBar);
@@ -969,8 +1058,8 @@ function (_React$Component4) {
 
 var LevelButton =
 /*#__PURE__*/
-function (_React$Component5) {
-  _inherits(LevelButton, _React$Component5);
+function (_React$Component6) {
+  _inherits(LevelButton, _React$Component6);
 
   function LevelButton() {
     _classCallCheck(this, LevelButton);
@@ -981,7 +1070,7 @@ function (_React$Component5) {
   _createClass(LevelButton, [{
     key: "render",
     value: function render() {
-      var _this6 = this;
+      var _this7 = this;
 
       var buttonType = this.props.submitType == "cancel" ? "button" : "submit";
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
@@ -989,7 +1078,7 @@ function (_React$Component5) {
         type: buttonType,
         className: this.props.classes + ' level-button btn btn-sm',
         onClick: function onClick() {
-          return _this6.props.submitFunc(_this6.props.submitType);
+          return _this7.props.submitFunc(_this7.props.submitType);
         }
       }, this.props.text);
     }
@@ -1000,8 +1089,8 @@ function (_React$Component5) {
 
 var IndicatorList = (_dec4 = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["inject"])('rootStore'), _dec4(_class6 =
 /*#__PURE__*/
-function (_React$Component6) {
-  _inherits(IndicatorList, _React$Component6);
+function (_React$Component7) {
+  _inherits(IndicatorList, _React$Component7);
 
   function IndicatorList() {
     _classCallCheck(this, IndicatorList);
@@ -1026,7 +1115,7 @@ function (_React$Component6) {
   }, {
     key: "render",
     value: function render() {
-      var _this7 = this;
+      var _this8 = this;
 
       // Create the list of indicators and the dropdowns for setting the indicator order
       var options = this.props.indicators.map(function (entry, index) {
@@ -1046,7 +1135,7 @@ function (_React$Component6) {
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, indicator.name.replace(/(.{55})..+/, "$1...")));
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_selectWidgets__WEBPACK_IMPORTED_MODULE_7__["SingleReactSelect"], {
           update: function update(value) {
-            return _this7.props.changeFunc(indicator.id, value);
+            return _this8.props.changeFunc(indicator.id, value);
           },
           selectId: "ind" + indicator.id,
           labelClasses: " ",
@@ -1058,11 +1147,11 @@ function (_React$Component6) {
           },
           label: indicator_label,
           options: options,
-          disabled: _this7.props.disabled || _this7.props.reorderDisabled
+          disabled: _this8.props.disabled || _this8.props.reorderDisabled
         }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
           className: "sortable-list__item__actions"
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_indicatorModalComponents__WEBPACK_IMPORTED_MODULE_8__["UpdateIndicatorButton"], {
-          readonly: _this7.props.disabled || _this7.props.rootStore.uiStore.disableForPrompt,
+          readonly: _this8.props.disabled || _this8.props.rootStore.uiStore.disableForPrompt,
           label: gettext("Settings"),
           indicatorId: indicator.id
         })));
@@ -1110,7 +1199,7 @@ function (_React$Component6) {
           key: "item-".concat(index),
           index: index,
           value: value,
-          disabled: _this7.props.disabled || _this7.props.reorderDisabled
+          disabled: _this8.props.disabled || _this8.props.reorderDisabled
         });
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "sortable-list-actions"
@@ -1412,16 +1501,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 
 
-var RootStore = function RootStore(program_id, levels, indicators, levelTiers, tierTemplates, accessLevel) {
+var RootStore = function RootStore(program_id, levels, indicators, levelTiers, tierTemplates, programObjectives, accessLevel) {
   _classCallCheck(this, RootStore);
 
-  this.levelStore = new LevelStore(program_id, levels, indicators, levelTiers, tierTemplates, accessLevel, this);
+  this.levelStore = new LevelStore(program_id, levels, indicators, levelTiers, tierTemplates, programObjectives, accessLevel, this);
   this.uiStore = new UIStore(this);
 };
 var LevelStore = (_class = (_temp =
 /*#__PURE__*/
 function () {
-  function LevelStore(program_id, levels, _indicators, levelTiers, tierTemplates, accessLevel, rootStore) {
+  function LevelStore(program_id, levels, _indicators, levelTiers, tierTemplates, programObjectives, accessLevel, rootStore) {
     var _this = this;
 
     _classCallCheck(this, LevelStore);
@@ -1436,6 +1525,7 @@ function () {
 
     this.program_id = void 0;
     this.tierTemplates = void 0;
+    this.programObjectives = void 0;
     this.defaultTemplateKey = "";
     this.customTierSetKey = "";
     this.accessLevel = false;
@@ -1674,6 +1764,7 @@ function () {
     this.defaultTemplateKey = "mc_standard";
     this.customTierSetKey = "custom";
     this.program_id = program_id;
+    this.programObjectives = programObjectives;
     this.accessLevel = accessLevel; // Set the stored tier set key and the values, if they exist.  Use the default if they don't.
 
     if (levelTiers.length > 0) {
@@ -2237,8 +2328,9 @@ var _jsContext = jsContext,
     indicators = _jsContext.indicators,
     levelTiers = _jsContext.levelTiers,
     tierTemplates = _jsContext.tierTemplates,
+    programObjectives = _jsContext.programObjectives,
     accessLevel = _jsContext.accessLevel;
-var rootStore = new _models__WEBPACK_IMPORTED_MODULE_8__["RootStore"](program_id, levels, indicators, levelTiers, tierTemplates, accessLevel);
+var rootStore = new _models__WEBPACK_IMPORTED_MODULE_8__["RootStore"](program_id, levels, indicators, levelTiers, tierTemplates, programObjectives, accessLevel);
 /*
  * React components on page
  */
@@ -2570,4 +2662,4 @@ var STATUS_CODES = {
 /***/ })
 
 },[["QTZG","runtime","vendors"]]]);
-//# sourceMappingURL=results_framework-fe7fa35f42af312a880d.js.map
+//# sourceMappingURL=results_framework-b8ef8934111a686198da.js.map
