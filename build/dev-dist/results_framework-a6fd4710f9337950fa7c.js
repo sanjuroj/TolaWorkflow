@@ -786,9 +786,7 @@ function (_React$Component3) {
       $('#indicator_modal_div').on('updated.tola.indicator.save', function (e, params) {
         _this4.updateIndicatorName(params.indicatorId, params.indicatorName);
 
-        var currentCardId = _this4.props.rootStore.uiStore.activeCard;
-
-        if (params.levelId != currentCardId) {
+        if (params.levelId != _this4.props.rootStore.uiStore.activeCard) {
           // Only add the indicator to another level if it wasn't blanked out
           if (params.levelId) {
             _this4.props.rootStore.levelStore.moveIndicatorInStore(params.indicatorId, params.levelId);
@@ -1531,16 +1529,15 @@ function () {
             _this.levels.replace(response.data['all_data']);
           });
           var newId = response.data["new_level"]["id"];
+          _this.rootStore.uiStore.activeCard = null;
 
           if (submitType == "saveAndEnableIndicators") {
             Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
               _this.rootStore.uiStore.activeCard = newId;
             });
           } else if (submitType == "saveAndAddSibling") {
-            // this.rootStore.uiStore.removeActiveCard();
             _this.createNewLevelFromSibling(newId);
           } else if (submitType == "saveAndAddChild") {
-            // this.rootStore.uiStore.removeActiveCard();
             _this.createNewLevelFromParent(newId);
           }
         }).catch(function (error) {
@@ -2572,4 +2569,4 @@ var STATUS_CODES = {
 /***/ })
 
 },[["QTZG","runtime","vendors"]]]);
-//# sourceMappingURL=results_framework-c3e17729d085d8970688.js.map
+//# sourceMappingURL=results_framework-a6fd4710f9337950fa7c.js.map

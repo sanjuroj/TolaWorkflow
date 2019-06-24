@@ -131,7 +131,7 @@ class Level(models.Model):
     assumptions = models.CharField(_("Assumptions"), max_length=500, blank=True, null=True)
     parent = models.ForeignKey('self', blank=True, null=True, on_delete=models.CASCADE, related_name='child_levels')
     program = models.ForeignKey(Program, blank=True, null=True, on_delete=models.CASCADE, related_name='levels')
-    customsort = models.IntegerField(_("Sort Order"), blank=True, null=True)
+    customsort = models.IntegerField(_("Sort order"), blank=True, null=True)
     create_date = models.DateTimeField(_("Create date"), null=True, blank=True)
     edit_date = models.DateTimeField(_("Edit date"), null=True, blank=True)
 
@@ -274,80 +274,82 @@ class LevelTier(models.Model):
             # Translators: Name of the most commonly used organizational hierarchy of KPIs at Mercy Corps.
             'name': ugettext('Mercy Corps'),
             'tiers': [
-                # Highest level objective of a project.  High level KPIs can be attached here.
+                # Translators: Highest level objective of a project.  High level KPIs can be attached here.
                 ugettext('Goal'),
-                # Below Goals, the 2nd highest organizing level to attach KPIs to.
+                # Translators: Below Goals, the 2nd highest organizing level to attach KPIs to.
                 ugettext('Outcome'),
-                # Below Outcome, the 3rd highest organizing level to attach KPIs to. Noun.
+                # Translators: Below Outcome, the 3rd highest organizing level to attach KPIs to. Noun.
                 ugettext('Output'),
-                # Below Output, the lowest organizing level to attach KPIs to.
+                # Translators: Below Output, the lowest organizing level to attach KPIs to.
                 ugettext('Activity')]},
         'ec': {
             # Translators: The KPI organizational hierarchy used when we work on EC projects.
             'name': ugettext('European Commission (EC)'),
             'tiers': [
-                # Highest level goal of a project.  High level KPIs can be attached here.
+                # Translators: Highest level goal of a project.  High level KPIs can be attached here.
                 ugettext('Overall Objective'),
-                # Below Overall Objective, the 2nd highest organizing level to attach KPIs to.
+                # Translators: Below Overall Objective, the 2nd highest organizing level to attach KPIs to.
                 ugettext('Specific Objective'),
-                # Below Specific Objective, the 3rd highest organizing level to attach KPIs to.
+                # Translators: Below Specific Objective, the 3rd highest organizing level to attach KPIs to.
                 ugettext('Purpose'),
-                # Below Purpose, the 4th highest organizing level to attach KPIs to.
+                # Translators: Below Purpose, the 4th highest organizing level to attach KPIs to.
                 ugettext('Result'),
-                # Below Result, the lowest organizing level to attach KPIs to.
+                # Translators: Below Result, the lowest organizing level to attach KPIs to.
                 ugettext('Activity')]},
         'usaid1': {
             # Translators: The KPI organizational hierarchy used when we work on certain USAID projects.
             'name': ugettext('USAID 1'),
             'tiers': [
-                # Highest level objective of a project.  High level KPIs can be attached here.
+                # Translators: Highest level objective of a project.  High level KPIs can be attached here.
                 ugettext('Goal'),
-                # Below Goal, the 2nd highest organizing level to attach KPIs to.
+                # Translators: Below Goal, the 2nd highest organizing level to attach KPIs to.
                 ugettext('Purpose'),
-                # Below Purpose, the 3rd highest organizing level to attach KPIs to.
+                # Translators: Below Purpose, the 3rd highest organizing level to attach KPIs to.
                 ugettext('Sub-Purpose'),
-                # Below Sub-Purpose, the 4th highest organizing level to attach KPIs to. Noun.
+                # Translators: Below Sub-Purpose, the 4th highest organizing level to attach KPIs to. Noun.
                 ugettext('Output'),
-                # Below Output, the lowest organizing level to attach KPIs to. Noun.
+                # Translators: Below Output, the lowest organizing level to attach KPIs to. Noun.
                 ugettext('Input')]},
         'usaid2': {
             # Translators: The KPI organizational hierarchy used when we work on certain USAID projects.
             'name': ugettext('USAID 2'),
             'tiers': [
-                # Highest level goal of a project.  High level KPIs can be attached here.
+                # Translators: Highest level goal of a project.  High level KPIs can be attached here.
                 ugettext('Strategic Objective'),
-                # Below Strategic Objective, the 2nd highest organizing level to attach KPIs to.
+                # Translators: Below Strategic Objective, the 2nd highest organizing level to attach KPIs to.
                 ugettext('Intermediate Result'),
-                # Below Intermediate Result, the 3rd highest organizing level to attach KPIs to.
+                # Translators: Below Intermediate Result, the 3rd highest organizing level to attach KPIs to.
                 ugettext('Sub-Intermediate Result'),
-                # Below Sub-Intermediate Result, the 4th highest organizing level to attach KPIs to. Noun.
+                # Translators: Below Sub-Intermediate Result, the 4th highest organizing level to attach KPIs to. Noun.
                 ugettext('Output'),
-                # Below Output, the lowest organizing level to attach KPIs to. Noun.
+                # Translators: Below Output, the lowest organizing level to attach KPIs to. Noun.
                 ugettext('Input')]},
         'usaid_ffp': {
             # Translators: The KPI organizational hierarchy used when we work on USAID Food for Peace projects.
             'name': ugettext('USAID FFP'),
             'tiers': [
-                # Highest level bojective of a project.  High level KPIs can be attached here.
+                # Translators: Highest level bojective of a project.  High level KPIs can be attached here.
                 ugettext('Goal'),
-                # Below Goal, the 2nd highest organizing level to attach KPIs to.
+                # Translators: Below Goal, the 2nd highest organizing level to attach KPIs to.
                 ugettext('Purpose'),
-                # Below Purpose, the 3rd highest organizing level to attach KPIs to.
+                # Translators: Below Purpose, the 3rd highest organizing level to attach KPIs to.
                 ugettext('Sub-Purpose'),
-                # Below Sub-Purpose, the 4th highest organizing level to attach KPIs to.
+                # Translators: Below Sub-Purpose, the 4th highest organizing level to attach KPIs to.
                 ugettext('Intermediate Outcome'),
-                # Below Intermediate Outcome, the lowest organizing level to attach KPIs to. Noun.
+                # Translators: Below Intermediate Outcome, the lowest organizing level to attach KPIs to. Noun.
                 ugettext('Output')]},
     }
 
     name = models.CharField(ugettext("Name"), max_length=135, blank=True)
     program = models.ForeignKey(Program, on_delete=models.CASCADE, related_name='level_tiers')
+    # Translators: This is depth of the selected object (a level tier) in a hierarchy of level tier objects
     tier_depth = models.IntegerField(ugettext("Level Tier depth"))
     create_date = models.DateTimeField(ugettext("Create date"), null=True, blank=True)
     edit_date = models.DateTimeField(ugettext("Edit date"), null=True, blank=True)
 
     class Meta:
         ordering = ('tier_depth', )
+        # Translators: Indicators are assigned to Levels.  Levels are organized in a hierarchy of Tiers.
         verbose_name = ugettext("Level Tier")
         unique_together = (('name', 'program'), ('program', 'tier_depth'))
 
@@ -918,6 +920,7 @@ class Indicator(SafeDeleteModel):
 
     old_level = models.CharField(
         max_length=80, null=True, blank=True,
+        # Translators: This is the name of the Level object in the old system of organising levels
         verbose_name=_("Old Level"), help_text=" "
     )
 
@@ -947,6 +950,7 @@ class Indicator(SafeDeleteModel):
         self.edit_date = timezone.now()
         if self.level and self.level.program_id != self.program_id:
             raise ValidationError(
+                # Translators: This is an error message that is returned when a user is trying to assign an indicator to the wrong hierarch of levels.
                 _('Level/Indicator mismatched program IDs ' +
                   '(level %(level_program_id)d and indicator %(indicator_program_id)d)'),
                 code='foreign_key_constraint',

@@ -187,5 +187,6 @@ class LogframeProgramSerializer(serializers.ModelSerializer):
     def get_rf_chain_sort_label(self, obj):
         second_tier = [lt for lt in obj.level_tiers.all() if lt.tier_depth == 2]
         if second_tier:
+            # Translators: see note for %(tier)s chain, this is the same thing
             return _('by %(level_name)s chain') % {'level_name': second_tier[0].name}
         return None

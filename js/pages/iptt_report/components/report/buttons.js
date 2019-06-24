@@ -46,14 +46,16 @@ class PinPopover extends React.Component {
                     return (
                         <div className="form-group">
                             <p><span>
-                                {
-                                    gettext('Success!  This report is now pinned to the program page')
-                                }
+
+                                {/* # Translators: The user has successfully "pinned" a report link to a program page for quick access to the report */}
+                                {gettext('Success!  This report is now pinned to the program page')}
+
                             </span></p>
                             <p><a href={ this.props.filterStore.programPageUrl }>
-                                {
-                                    gettext('Visit the program page now.')
-                                }
+
+                                    {/* # Translators: This is not really an imperative, it's an option that is available once you have pinned a report to a certain web page */}
+                                    {gettext('Visit the program page now.')}
+
                             </a></p>
                         </div>
                     );

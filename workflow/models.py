@@ -545,6 +545,7 @@ class Program(models.Model):
     reporting_period_start = models.DateField(_("Reporting Period Start Date"), null=True, blank=True)
     reporting_period_end = models.DateField(_("Reporting Period End Date"), null=True, blank=True)
     auto_number_indicators = models.BooleanField(
+        # Translators: This is an option that users can select to use the new "results framework" option to organize their indicators.
         _("Auto-number indicators according to the results framework"),
         default=True, blank=False
     )

@@ -248,18 +248,17 @@ export class LevelStore {
                         this.levels.replace(response.data['all_data'])
                     });
                     const newId = response.data["new_level"]["id"];
+                    this.rootStore.uiStore.activeCard = null;
                     if (submitType == "saveAndEnableIndicators") {
                         runInAction( () => {
                            this.rootStore.uiStore.activeCard = newId;
                         });
                     }
                     else if (submitType == "saveAndAddSibling"){
-                        // this.rootStore.uiStore.removeActiveCard();
                         this.createNewLevelFromSibling(newId);
 
                     }
                     else if (submitType == "saveAndAddChild"){
-                        // this.rootStore.uiStore.removeActiveCard();
                         this.createNewLevelFromParent(newId);
 
                     }

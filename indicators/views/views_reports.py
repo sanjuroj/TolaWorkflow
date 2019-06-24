@@ -276,7 +276,9 @@ def indicators_to_iptt(indicator_qs, frequency, tva, results_framework, program_
             second_tier_name = second_leveltier.first().name
         else:
             second_tier_name = ugettext('Outcome')
+        # Translators: This is a filtering option that allows users to select which Level Tier (hierarchy of levels) they want to look at.
         reportData['resultChainFilter'] = ugettext('by %(tier)s chain') % {'tier': second_tier_name}
+        # Translators: This is a filtering option that allows users to select which Level Tier (hierarchy of levels) they want to look at.
         reportData['resultChainHeader'] = ugettext('%(tier)s chains') % {'tier': second_tier_name}
     return reportData
 

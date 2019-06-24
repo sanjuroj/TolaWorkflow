@@ -84,6 +84,7 @@ class IndicatorForm(forms.ModelForm):
         self.fields['program_display'].label = _('Program')
 
         # level is here the new "result level" (RF) level option (FK to model Level)
+        # Translators: This is a form field label that allows users to select which Level object to associate with the Result that's being entered into the form
         self.fields['level'].label = _('Result level')
         self.fields['level'].label_from_instance = lambda obj: obj.display_name
         # in cases where the user was sent here via CREATE from the RF BUILDER screen:
@@ -105,12 +106,10 @@ class IndicatorForm(forms.ModelForm):
             self.fields.pop('number')
         else:
             # in this case the number field gets this special help text (added as a popover):
+            # 
             self.fields['number'].label = _('Display number')
-            self.fields['number'].help_text = _(
-                "This number is displayed in place of the indicator number automatically " +
-                "generated through the results framework.  An admin can turn on auto-numbering " +
-                "in program settings"
-            )
+            # Translators: a "number" in this context is a kind of label.  This is help text to explain why a user is seeing customized numbers instead of auto-generated ones that can derived from the indicator's place in the hierarchy
+            self.fields['number'].help_text = _("This number is displayed in place of the indicator number automatically generated through the results framework.  An admin can turn on auto-numbering in program settings")
         if self.programval.results_framework:
             # no need to update the old_level field if they are using the results framework:
             self.fields.pop('old_level')
@@ -118,12 +117,10 @@ class IndicatorForm(forms.ModelForm):
         else:
             # pre-migration to RF, all fields remain unchanged in this regard (still required):
             self.fields['old_level'].required = True
+            # Translators:  Indicator objects are assigned to Levels, which are in a hierarchy.  We recently changed how we organize Levels. This is a field label for the indicator-associated Level in the old level system
             self.fields['old_level'].label = _('Old indicator level')
-            self.fields['old_level'].help_text = _(
-                "Indicators are currently grouped by an older version of indicator levels. " +
-                "To group indicators according to the results framework, an admin will need " +
-                "to adjust program settings."
-            )
+            # Translators:  We recently changed how we organize Levels. The new system is called the "results framework". This is help text for users to let them know that they can use the new system now.
+            self.fields['old_level'].help_text = _("Indicators are currently grouped by an older version of indicator levels. To group indicators according to the results framework, an admin will need to adjust program settings.")
 
         if not self.request.has_write_access:
             for name, field in self.fields.items():
@@ -156,6 +153,7 @@ class IndicatorForm(forms.ModelForm):
         level = self.cleaned_data['level']
         if level and level.program_id != self.programval.pk:
             raise forms.ValidationError(
+                # Translators: This is an error message that is returned when a user is trying to assign an indicator to the wrong hierarch of levels.
                 _('Level program ID %(l_p_id)d and indicator program ID (%i_p_id)d mismatched'),
                 code='foreign_key_mismatch',
                 params={
@@ -187,7 +185,9 @@ class ResultForm(forms.ModelForm):
         }
         labels = {
             'site': _('Site'),
+            # Translators: This is a result that was actually achieved, versus one that was planned.
             'achieved': _('Actual value'),
+            # Translators: field label that 
             'periodic_target': _('Measure against target'),
             'complete': _('Project'),
             'evidence_url': _('Link to file or folder'),
