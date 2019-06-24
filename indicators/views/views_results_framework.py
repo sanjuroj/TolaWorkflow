@@ -1,5 +1,7 @@
 import logging
 import copy
+
+from django.core.exceptions import ValidationError
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
@@ -9,7 +11,8 @@ from rest_framework import viewsets
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from indicators.serializers import LevelTierSerializer, LevelSerializer, IndicatorSerializerMinimal
+from indicators.serializers import LevelTierSerializer, LevelSerializer, IndicatorSerializerMinimal, \
+    ProgramObjectiveSerializer
 from indicators.models import Level, LevelTier, Indicator
 from workflow.models import Program
 
@@ -45,6 +48,7 @@ class ResultsFrameworkBuilder(ListView):
             'indicators': IndicatorSerializerMinimal(indicators, many=True).data,
             'levelTiers': LevelTierSerializer(tiers, many=True).data,
             'tierTemplates': LevelTier.TEMPLATES,
+            'programObjectives': ProgramObjectiveSerializer(program.objective_set.all(), many=True).data,
             'accessLevel': role,
         }
 
@@ -122,8 +126,14 @@ def insert_new_level(request):
             s_level.customsort += 1
             s_level.save()
 
+    new_level = Level(**level_data)
+
+    try:
+        new_level.full_clean()
+    except ValidationError as e:
+        return Response(e.message_dict, status=400)
+
     # Now the new level can be saved
-    new_level = Level.objects.create(**level_data)
     new_level.save()
 
     # Return all Levels for the program. There shouldn't be so much that it slows things down much.

@@ -2,8 +2,8 @@ import { observable, computed, action, toJS, runInAction, autorun } from "mobx";
 import { api } from "../../api.js"
 
 export class RootStore {
-    constructor (program_id, levels, indicators, levelTiers, tierTemplates, accessLevel) {
-        this.levelStore =  new LevelStore(program_id, levels, indicators, levelTiers, tierTemplates, accessLevel, this);
+    constructor (program_id, levels, indicators, levelTiers, tierTemplates, programObjectives, accessLevel) {
+        this.levelStore =  new LevelStore(program_id, levels, indicators, levelTiers, tierTemplates, programObjectives, accessLevel, this);
         this.uiStore = new UIStore(this);
     }
 }
@@ -15,11 +15,12 @@ export class LevelStore {
     @observable chosenTierSet = [];
     program_id;
     tierTemplates;
+    programObjectives;
     defaultTemplateKey = "";
     customTierSetKey = "";
     accessLevel = false;
 
-    constructor(program_id, levels, indicators, levelTiers, tierTemplates, accessLevel, rootStore) {
+    constructor(program_id, levels, indicators, levelTiers, tierTemplates, programObjectives, accessLevel, rootStore) {
         this.rootStore = rootStore;
         this.levels = levels;
         this.indicators = indicators;
@@ -27,6 +28,7 @@ export class LevelStore {
         this.defaultTemplateKey = "mc_standard";
         this.customTierSetKey = "custom";
         this.program_id = program_id;
+        this.programObjectives = programObjectives;
         this.accessLevel = accessLevel;
 
         // Set the stored tier set key and the values, if they exist.  Use the default if they don't.
