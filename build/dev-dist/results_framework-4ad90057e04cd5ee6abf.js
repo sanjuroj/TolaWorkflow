@@ -953,7 +953,8 @@ function (_React$Component4) {
         value: this.name || "",
         autoComplete: "off",
         rows: 3,
-        onChange: this.onFormChange
+        onChange: this.onFormChange,
+        maxlength: 500
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
@@ -2662,4 +2663,4 @@ var STATUS_CODES = {
 /***/ })
 
 },[["QTZG","runtime","vendors"]]]);
-//# sourceMappingURL=results_framework-b8ef8934111a686198da.js.map
+//# sourceMappingURL=results_framework-4ad90057e04cd5ee6abf.js.map
