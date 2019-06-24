@@ -479,8 +479,9 @@ function (_React$Component2) {
   }, {
     key: "componentDidUpdate",
     value: function componentDidUpdate(prevProps, prevState, snapshot) {
-      this.props.levelProps.indicators.forEach(function (i) {
-        return console.log(Object(mobx__WEBPACK_IMPORTED_MODULE_3__["toJS"])(i));
+      // Enable popovers after update (they break otherwise)
+      $('*[data-toggle="popover"]').popover({
+        html: true
       });
     }
   }, {
@@ -2569,4 +2570,4 @@ var STATUS_CODES = {
 /***/ })
 
 },[["QTZG","runtime","vendors"]]]);
-//# sourceMappingURL=results_framework-a6fd4710f9337950fa7c.js.map
+//# sourceMappingURL=results_framework-fe7fa35f42af312a880d.js.map
