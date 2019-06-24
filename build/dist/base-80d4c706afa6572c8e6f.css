@@ -9778,6 +9778,18 @@ input[type=radio]:disabled {
 .level-title--expanded {
   font-weight: normal; }
 
+.program-objective-import {
+  width: 300px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center; }
+
+.program-objective-import__icon {
+  margin-left: 15px; }
+
+.program-objective-import__popover-strong-text {
+  color: #c8102e; }
+
 .button-bar {
   display: flex;
   margin-top: 15px; }
