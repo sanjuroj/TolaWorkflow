@@ -462,6 +462,7 @@ export class LevelCardExpanded extends React.Component {
                             autoComplete="off"
                             rows={3}
                             onChange={this.onFormChange}
+                            maxlength={500}
                         />
                     </div>
                     <div className="form-group">
