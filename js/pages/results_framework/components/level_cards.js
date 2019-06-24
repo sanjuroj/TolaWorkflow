@@ -56,7 +56,10 @@ export class LevelCardCollapsed extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        this.props.levelProps.indicators.forEach( i => console.log(toJS(i)))
+        // Enable popovers after update (they break otherwise)
+        $('*[data-toggle="popover"]').popover({
+            html: true
+        });
     }
 
     buildIPTTUrl = (indicator_ids) => {
