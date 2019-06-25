@@ -1,5 +1,7 @@
 import logging
 import copy
+
+from django.core.exceptions import ValidationError
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
@@ -124,8 +126,14 @@ def insert_new_level(request):
             s_level.customsort += 1
             s_level.save()
 
+    new_level = Level(**level_data)
+
+    try:
+        new_level.full_clean()
+    except ValidationError as e:
+        return Response(e.message_dict, status=400)
+
     # Now the new level can be saved
-    new_level = Level.objects.create(**level_data)
     new_level.save()
 
     # Return all Levels for the program. There shouldn't be so much that it slows things down much.
