@@ -25,6 +25,7 @@ from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 
+
 @login_required
 @require_POST
 def create_pinned_report(request):
