@@ -401,8 +401,8 @@ export class LevelCardExpanded extends React.Component {
         const programObjective = this.props.rootStore.levelStore.programObjectives.find(po => po.id === programObjectiveId);
 
         if (programObjective != null) {
-            this.name = this.name + programObjective.name;
-            this.assumptions = this.assumptions + programObjective.description;
+            this.name = programObjective.name;
+            this.assumptions = programObjective.description;
         }
     };
 
