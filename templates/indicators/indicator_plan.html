@@ -17,7 +17,7 @@
         </div>
         <div class="subheader__actions d-flex flex-column align-items-end">
             <button type="submit" class="btn btn-sm btn-secondary" onClick="location.href='/indicators/indicator_plan/export/{{ program.id }}/{% if ordering %}?orderby={{ordering}}{% endif %}'"><i class="fas fa-download"></i> Excel {# Excel (brand name) not translated #}</button>
-            {% if ordering %}
+            {% if ordering and program.levels.count > 1 %}
             <form method="GET" action="#" class="form-inline mt-2">
                 <div class="form-group"></div>
                 <label for="orderby_select">{% trans 'Group indicators' %}:</label>

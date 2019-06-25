@@ -14,7 +14,8 @@ const FilterTop = inject('filterStore')(
                 <Selectors.TimeframeRadio />
                 <Selectors.StartDateSelect />
                 <Selectors.EndDateSelect />
-                { filterStore.oldLevels === false &&
+                { (filterStore.oldLevels === false &&
+                   filterStore.resultChainFilterLabel !== false) &&
                     <Selectors.GroupingSelect />
                 }
             </React.Fragment>
