@@ -121,7 +121,7 @@ def indicator_lop_actual_progress_annotation():
             )
         ),
         default=models.Value(None),
-        output_field=models.IntegerField()
+        output_field=models.DecimalField(decimal_places=2)
     )
 
 def indicator_lop_target_progress_annotation():
@@ -201,7 +201,7 @@ def indicator_lop_target_progress_annotation():
             )
         ),
         default=models.Value(None),
-        output_field=models.IntegerField()
+        output_field=models.DecimalField(decimal_places=2)
     )
 
 def indicator_lop_percent_met_progress_annotation():
