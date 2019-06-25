@@ -45,7 +45,9 @@
                 <td class="text-right">
                     <strong>
                         {% if indicator.lop_target_progress %}
-                            {{ indicator.lop_target_progress }}{% if indicator.unit_of_measure_type == 2 %}%{% endif %}
+                            {% with target_progress=indicator.lop_target_progress|floatformat:'-2' %}
+                                {{ target_progress|trailingzero }}{% if indicator.unit_of_measure_type == 2 %}%{% endif %}
+                            {% endwith %}
                         {% else %}
                             —
                         {% endif %}
@@ -54,7 +56,9 @@
                 <td class="text-right">
                     <strong>
                         {% if indicator.lop_actual_progress %}
-                            {{ indicator.lop_actual_progress }}{% if indicator.unit_of_measure_type == 2 %}%{% endif %}
+                            {% with actual_progress=indicator.lop_actual_progress|floatformat:'-2' %}
+                                {{ actual_progress |trailingzero }}{% if indicator.unit_of_measure_type == 2 %}%{% endif %}
+                            {% endwith %}
                         {% else %}
                             —
                         {% endif %}
