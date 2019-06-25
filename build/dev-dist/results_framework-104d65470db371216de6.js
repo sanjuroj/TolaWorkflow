@@ -1045,7 +1045,7 @@ function (_React$Component5) {
         submitType: "saveOnly",
         submitFunc: this.props.submitFunc
       }), addAnotherButton, addAndLinkButton, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(LevelButton, {
-        disabled: isDisabled,
+        disabled: this.props.rootStore.uiStore.disableForPrompt,
         classes: "btn btn-reset",
         text: gettext("Cancel"),
         submitType: "cancel",
@@ -2663,4 +2663,4 @@ var STATUS_CODES = {
 /***/ })
 
 },[["QTZG","runtime","vendors"]]]);
-//# sourceMappingURL=results_framework-4ad90057e04cd5ee6abf.js.map
+//# sourceMappingURL=results_framework-104d65470db371216de6.js.map

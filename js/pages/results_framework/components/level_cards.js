@@ -520,7 +520,7 @@ class ButtonBar extends React.Component {
                 <LevelButton disabled={isDisabled} classes="btn-primary" text={gettext("Save and close")} icon='save' submitType="saveOnly" submitFunc={this.props.submitFunc} />
                 {addAnotherButton}
                 {addAndLinkButton}
-                <LevelButton disabled={isDisabled} classes="btn btn-reset" text={gettext("Cancel")} submitType="cancel" submitFunc={this.props.cancelFunc} />
+                <LevelButton disabled={this.props.rootStore.uiStore.disableForPrompt} classes="btn btn-reset" text={gettext("Cancel")} submitType="cancel" submitFunc={this.props.cancelFunc} />
             </div>
         )
 
