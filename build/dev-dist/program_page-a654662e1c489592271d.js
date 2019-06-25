@@ -242,7 +242,8 @@ function (_React$Component2) {
         isClearable: false,
         placeholder: gettext('None'),
         onChange: this.onSelection
-      }))), !this.props.rootStore.oldStyleLevels && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      }))), // show Group By only if program is on results framework AND has two levels (filter label is not false)
+      !this.props.rootStore.oldStyleLevels && this.props.uiStore.resultChainFilterLabel && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
         className: ""
@@ -1698,4 +1699,4 @@ var ProgramMetrics = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])
 /***/ })
 
 },[["aJgA","runtime","vendors"]]]);
-//# sourceMappingURL=program_page-c32706fd6dceb856eb78.js.map
+//# sourceMappingURL=program_page-a654662e1c489592271d.js.map
