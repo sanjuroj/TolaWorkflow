@@ -137,7 +137,8 @@ class IndicatorFilter extends React.Component{
                     />
                 </div>
             </div>
-            {!this.props.rootStore.oldStyleLevels &&
+            {// show Group By only if program is on results framework AND has two levels (filter label is not false)
+                (!this.props.rootStore.oldStyleLevels && this.props.uiStore.resultChainFilterLabel) &&
             <React.Fragment>
                 <div className="form-group">
                     <label className="">

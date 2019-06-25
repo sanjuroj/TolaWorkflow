@@ -3818,7 +3818,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var FilterTop = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inject"])('filterStore')(Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function (_ref) {
   var filterStore = _ref.filterStore;
-  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_reportSelect__WEBPACK_IMPORTED_MODULE_2__["ProgramSelect"], null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_reportSelect__WEBPACK_IMPORTED_MODULE_2__["FrequencySelect"], null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_reportSelect__WEBPACK_IMPORTED_MODULE_2__["TimeframeRadio"], null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_reportSelect__WEBPACK_IMPORTED_MODULE_2__["StartDateSelect"], null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_reportSelect__WEBPACK_IMPORTED_MODULE_2__["EndDateSelect"], null), filterStore.oldLevels === false && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_reportSelect__WEBPACK_IMPORTED_MODULE_2__["GroupingSelect"], null));
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_reportSelect__WEBPACK_IMPORTED_MODULE_2__["ProgramSelect"], null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_reportSelect__WEBPACK_IMPORTED_MODULE_2__["FrequencySelect"], null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_reportSelect__WEBPACK_IMPORTED_MODULE_2__["TimeframeRadio"], null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_reportSelect__WEBPACK_IMPORTED_MODULE_2__["StartDateSelect"], null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_reportSelect__WEBPACK_IMPORTED_MODULE_2__["EndDateSelect"], null), filterStore.oldLevels === false && filterStore.resultChainFilterLabel !== false && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_reportSelect__WEBPACK_IMPORTED_MODULE_2__["GroupingSelect"], null));
 }));
 
 var FilterMiddle = function FilterMiddle() {
@@ -5052,4 +5052,4 @@ function () {
 /***/ })
 
 },[["mYfJ","runtime","vendors"]]]);
-//# sourceMappingURL=iptt_report-fb8884183c8285f3c386.js.map
+//# sourceMappingURL=iptt_report-80f173bf3a8c8043e1ba.js.map

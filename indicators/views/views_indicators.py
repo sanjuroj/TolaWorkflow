@@ -29,7 +29,9 @@ from django.views.generic.list import ListView
 
 from tola.util import group_excluded
 from indicators.serializers import (
-    IndicatorSerializer, IndicatorSerializerMinimal, ProgramSerializer)
+    IndicatorSerializer,
+    ProgramSerializer
+)
 from indicators.views.view_utils import (
     import_indicator,
     generate_periodic_targets,
@@ -39,10 +41,16 @@ from workflow.models import (
     Program, TolaSites, FormGuidance
 )
 from ..forms import IndicatorForm, ResultForm, PTFormInputsForm
-from ..models import (
-    Indicator, PeriodicTarget, DisaggregationLabel, DisaggregationValue,
-    Result, LevelTier,
-    TolaTable, PinnedReport
+from indicators.models import (
+    Indicator,
+    PeriodicTarget,
+    DisaggregationLabel,
+    DisaggregationValue,
+    Result,
+    LevelTier,
+    Level,
+    TolaTable,
+    PinnedReport
 )
 from indicators.queries import ProgramWithMetrics, ResultsIndicator
 
@@ -1085,7 +1093,7 @@ def indicator_plan(request, program):
     else:
         rows = ip.get_non_rf_rows(ip.non_rf_indicator_queryset(program.pk))
         ordering = False
-        
+
     table_width = 4000 #pixels
     return render(request, "indicators/indicator_plan.html", {
         'program': program,
@@ -1132,11 +1140,14 @@ class ProgramPage(ListView):
                 request, 'indicators/program_setup_incomplete.html', context
                 )
         if unannotated_program.results_framework:
+            level_count = Level.objects.filter(program_id=program_id).count()
             second_leveltier = LevelTier.objects.filter(program_id=program_id, tier_depth=2)
-            if second_leveltier.exists():
+            if level_count > 1 and second_leveltier.exists():
                 second_tier_name = second_leveltier.first().name
-            else:
+            elif level_count > 1:
                 second_tier_name = _('Outcome')
+            else:
+                second_tier_name = None
         else:
             second_tier_name = None
         program = ProgramWithMetrics.program_page.get(pk=program_id)
@@ -1156,7 +1167,7 @@ class ProgramPage(ListView):
             'delete_pinned_report_url': str(reverse_lazy('delete_pinned_report')),
             'program': ProgramSerializer(program).data,
             # Translators: This is a filtering option that allows users to select which Level Tier (hierarchy of levels) they want to look at
-            'result_chain_filter': _('by %(tier)s chain') % {'tier': second_tier_name},
+            'result_chain_filter': _('by %(tier)s chain') % {'tier': second_tier_name} if second_tier_name else False,
             'indicators': IndicatorSerializer(indicators, many=True).data,
             'indicator_on_scope_margin': Indicator.ONSCOPE_MARGIN,
             'readonly': readonly,  # controls "Add indicator" link
