@@ -40,9 +40,14 @@
 
 // component LevelTierPicker
 .leveltier-picker {
-    border: 1px solid $gray-400;
     margin-right: $grid-gutter-width;
     min-width: 20rem;
+}
+.leveltier-picker__panel {
+    border: 1px solid $gray-400;
+}
+.leveltier-picker__change-log-link-box {
+    margin-top: 1rem;
 }
 
 // component Picker

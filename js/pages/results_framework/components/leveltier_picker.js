@@ -117,12 +117,26 @@ class LevelTierList extends React.Component{
     }
 }
 
+const ChangeLogLink = ({programId}) => {
+    const url = `/tola_management/audit_log/${programId}/`;
+
+    return <div className="leveltier-picker__change-log-link-box">
+        <a href={url} className="btn-link">
+            <i className="fas fa-history" /> {gettext('Change log')}
+        </a>
+    </div>
+}
+
 export const LevelTierPicker = inject("rootStore")(observer(function (props) {
 
     return (
         <div id="leveltier-picker" className="leveltier-picker">
-            <Picker />
-            <LevelTierList />
+            <div className="leveltier-picker__panel">
+                <Picker />
+                <LevelTierList />
+            </div>
+
+            <ChangeLogLink programId={props.rootStore.levelStore.program_id} />
         </div>
         /*<div id="alerts2" style={{minHeight:"50px", minWidth:"50px", backgroundColor:"red"}}></div>*/
 

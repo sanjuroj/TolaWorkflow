@@ -242,7 +242,10 @@ export class LevelStore {
                 this.saveLevelTiersToDB();
                 $('#logframe_link').show();
             }
+
+            // Don't need id, since it will be "new", and don't need rationale, since it's a new level.
             delete levelToSave.id;
+            delete levelToSave.rationale;
 
             api.post(`/insert_new_level/`, levelToSave)
                 .then(response => {
