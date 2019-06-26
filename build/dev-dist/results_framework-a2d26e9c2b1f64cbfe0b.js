@@ -467,7 +467,8 @@ function (_React$Component2) {
         onChange: this.onChange,
         value: "",
         className: "tola-react-select",
-        options: options
+        options: options,
+        isDisabled: this.props.isDisabled
       }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
         href: "#",
         className: "program-objective-import__icon",
@@ -576,7 +577,7 @@ function (_React$Component3) {
 
       if (sameLevelIndicatorIds.length > 0) {
         var linkText = "All indicators linked to ".concat(this.props.levelProps.tierName, " ").concat(this.props.levelProps.ontologyLabel);
-        allIndicatorLinks.push("<a href=".concat(this.buildIPTTUrl(sameLevelIndicatorIds), ">").concat(linkText, "</a>"));
+        allIndicatorLinks.push("<li class=\"nav-item level-card--iptt-links\"><a href=".concat(this.buildIPTTUrl(sameLevelIndicatorIds), ">").concat(linkText, "</a></li>"));
       } // Get indicator ids linked to the descendants of this level, add the indicator ids identified
       // above, and create a hyperlink for a filtered IPTT.  Only do this if the level has sublevels.
 
@@ -588,7 +589,7 @@ function (_React$Component3) {
         if (descendantIndicatorIds.length > 0) {
           var _linkText = "All indicators linked to ".concat(this.props.levelProps.tierName, " ").concat(this.props.levelProps.ontologyLabel, " and sub-levels");
 
-          allIndicatorLinks.unshift("<a href=".concat(this.buildIPTTUrl(descendantIndicatorIds), ">").concat(_linkText, "</a>"));
+          allIndicatorLinks.unshift("<li class=\"nav-item level-card--iptt-links\"><a href=".concat(this.buildIPTTUrl(descendantIndicatorIds), ">").concat(_linkText, "</a></li>"));
         }
       } // Create IPTT hyperlinks for each individual indicator linked to this level
 
@@ -597,10 +598,10 @@ function (_React$Component3) {
         return a.level_order - b.level_order;
       }).map(function (indicator, index) {
         var ontologyLabel = _this3.props.levelProps.ontologyLabel + String.fromCharCode(97 + index) + ": ";
-        return "<li class=\"nav-item\"><a href=".concat(_this3.buildIPTTUrl([indicator.id]), ">").concat(ontologyLabel).concat(indicator.name, "</a></li>");
+        return "<li class=\"nav-item level-card--iptt-links\"><a href=".concat(_this3.buildIPTTUrl([indicator.id]), ">").concat(ontologyLabel).concat(indicator.name, "</a></li>");
       });
       allIndicatorLinks = allIndicatorLinks.concat(individualLinks);
-      var indicatorMarkup = "<ul class=\"nav flex-column\">".concat(allIndicatorLinks.join("<br>"), "</ul>");
+      var indicatorMarkup = "<ul class=\"nav flex-column\">".concat(allIndicatorLinks.join(""), "</ul>");
       var iCount = this.props.levelProps.indicators.length;
       /* # Translators: This is a count of indicators associated with another object */
 
@@ -619,6 +620,7 @@ function (_React$Component3) {
         });
       }
 
+      var isDisabled = allIndicatorLinks.length == 0 || this.props.rootStore.uiStore.disableForPrompt;
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "level-card level-card--collapsed",
         id: "level-card-".concat(this.props.level.id)
@@ -651,15 +653,17 @@ function (_React$Component3) {
         className: "fas fa-edit"
       }), gettext("Edit"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "actions__bottom"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
-        className: "btn btn-sm btn-link no-bold",
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+        tabIndex: "0",
+        className: classnames__WEBPACK_IMPORTED_MODULE_1___default()("btn btn-sm btn-link no-bold", {
+          disabled: isDisabled
+        }),
         "data-toggle": "popover",
         "data-trigger": "focus",
         "data-placement": "bottom",
         "data-html": "true",
         title: "Track indicator performance",
-        "data-content": indicatorMarkup,
-        disabled: allIndicatorLinks.length == 0 || this.props.rootStore.uiStore.disableForPrompt
+        "data-content": indicatorMarkup
       }, indicatorCountText))));
     }
   }]);
@@ -922,7 +926,7 @@ function (_React$Component4) {
           level: this.props.level,
           tierName: this.props.levelProps.tierName,
           indicators: this.indicators,
-          disabled: !this.name || this.props.level.id == "new",
+          disabled: !this.name || this.props.level.id == "new" || this.props.rootStore.uiStore.disableForPrompt,
           reorderDisabled: this.indicators.length < 2 || this.props.rootStore.uiStore.disableForPrompt,
           changeFunc: this.changeIndicatorOrder,
           dragEndFunc: this.onDragEnd
@@ -939,6 +943,7 @@ function (_React$Component4) {
         ontologyLabel: this.props.levelProps.ontologyLabel,
         classes: "level-title--expanded"
       }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ProgramObjectiveImport, {
+        isDisabled: this.props.rootStore.uiStore.disableForPrompt,
         programObjectives: programObjectives,
         onProgramObjectiveImport: this.onProgramObjectiveImport
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("form", {
@@ -951,6 +956,7 @@ function (_React$Component4) {
         id: "level-name-".concat(this.props.level.id),
         name: "name",
         value: this.name || "",
+        disabled: this.props.rootStore.uiStore.disableForPrompt,
         autoComplete: "off",
         rows: 3,
         onChange: this.onFormChange,
@@ -962,7 +968,7 @@ function (_React$Component4) {
       }, gettext('Assumptions')), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_autosize_textarea__WEBPACK_IMPORTED_MODULE_11___default.a, {
         className: "form-control",
         id: "level-assumptions",
-        disabled: this.name ? "" : "disabled",
+        disabled: !this.name || this.props.rootStore.uiStore.disableForPrompt,
         name: "assumptions",
         autoComplete: "off",
         value: this.assumptions || "",
@@ -2663,4 +2669,4 @@ var STATUS_CODES = {
 /***/ })
 
 },[["QTZG","runtime","vendors"]]]);
-//# sourceMappingURL=results_framework-b1138f2e89b07df563c9.js.map
+//# sourceMappingURL=results_framework-a2d26e9c2b1f64cbfe0b.js.map

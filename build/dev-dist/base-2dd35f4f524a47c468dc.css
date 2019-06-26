@@ -9745,6 +9745,9 @@ input[type=radio]:disabled {
   display: flex;
   justify-content: flex-end; }
 
+.level-card--iptt-links {
+  margin-bottom: 10px; }
+
 .level-card--expanded {
   background-color: #ccefee;
   border: 1px solid #b5e0df;
@@ -10693,4 +10696,4 @@ a:hover {
 /* Unsorted custom selectors */
 
 
-/*# sourceMappingURL=base-2654b8827839ba5c21b7.css.map*/
+/*# sourceMappingURL=base-2dd35f4f524a47c468dc.css.map*/
