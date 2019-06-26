@@ -359,12 +359,31 @@ export class LevelCardExpanded extends React.Component {
 
     saveLevel = (event) => {
         event.preventDefault();
-        this.props.rootStore.levelStore.saveLevelToDB(
-            this.submitType,
-            this.props.level.id,
-            this.indicatorWasReordered,
-            {name: this.name,assumptions: this.assumptions,indicators: toJS(this.indicators)}
-        )
+        const saveFunc = (rationale) => {
+            this.props.rootStore.levelStore.saveLevelToDB(
+                this.submitType,
+                this.props.level.id,
+                this.indicatorWasReordered,
+                {
+                    name: this.name,
+                    assumptions: this.assumptions,
+                    rationale: rationale,
+                    indicators: toJS(this.indicators)}
+            )};
+
+        const hasIndicators = this.indicators.length > 0;
+        const hasUpdatedAssumptions = this.props.level.assumptions.length > 0 && this.assumptions != this.props.level.assumptions;
+        const hasUpdatedName = this.name != this.props.level.name;
+
+        if ( hasIndicators && (hasUpdatedAssumptions || hasUpdatedName)){
+            create_nondestructive_changeset_notice({
+                on_submit: saveFunc,
+                on_cancel: () => this.props.rootStore.uiStore.setDisableForPrompt(false),
+            });
+        }
+        else {
+            saveFunc('');
+        }
     };
 
     cancelEdit = () => {
