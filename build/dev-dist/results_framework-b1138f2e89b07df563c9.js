@@ -763,8 +763,8 @@ function (_React$Component4) {
       });
 
       if (programObjective != null) {
-        _this4.name = _this4.name + programObjective.name;
-        _this4.assumptions = _this4.assumptions + programObjective.description;
+        _this4.name = programObjective.name;
+        _this4.assumptions = programObjective.description;
       }
     };
 
@@ -954,7 +954,7 @@ function (_React$Component4) {
         autoComplete: "off",
         rows: 3,
         onChange: this.onFormChange,
-        maxlength: 500
+        maxLength: 500
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
@@ -2663,4 +2663,4 @@ var STATUS_CODES = {
 /***/ })
 
 },[["QTZG","runtime","vendors"]]]);
-//# sourceMappingURL=results_framework-104d65470db371216de6.js.map
+//# sourceMappingURL=results_framework-b1138f2e89b07df563c9.js.map
