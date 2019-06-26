@@ -125,6 +125,10 @@
     display: flex;
     justify-content: flex-end;
 }
+// popover links to iptt on collapsed cards
+.level-card--iptt-links {
+    margin-bottom: 10px;
+}
 // component LevelCardExpanded
 .level-card--expanded {
     background-color: $teal-100;

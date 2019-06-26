@@ -52,6 +52,7 @@ class ProgramObjectiveImport extends React.Component {
                     value={ "" }
                     className="tola-react-select"
                     options={ options }
+                    isDisabled={this.props.isDisabled}
                 />
 
                 <a href="#"
@@ -126,7 +127,7 @@ export class LevelCardCollapsed extends React.Component {
         let sameLevelIndicatorIds = this.props.levelProps.indicators.map( i => i.id);
         if (sameLevelIndicatorIds.length > 0) {
             const linkText = `All indicators linked to ${this.props.levelProps.tierName} ${this.props.levelProps.ontologyLabel}`
-            allIndicatorLinks.push(`<a href=${this.buildIPTTUrl(sameLevelIndicatorIds)}>${linkText}</a>`);
+            allIndicatorLinks.push(`<li class="nav-item level-card--iptt-links"><a href=${this.buildIPTTUrl(sameLevelIndicatorIds)}>${linkText}</a></li>`);
         }
 
         // Get indicator ids linked to the descendants of this level, add the indicator ids identified
@@ -136,7 +137,7 @@ export class LevelCardCollapsed extends React.Component {
             descendantIndicatorIds = descendantIndicatorIds.concat(sameLevelIndicatorIds);
             if (descendantIndicatorIds.length > 0) {
                 const linkText = `All indicators linked to ${this.props.levelProps.tierName} ${this.props.levelProps.ontologyLabel} and sub-levels`;
-                allIndicatorLinks.unshift(`<a href=${this.buildIPTTUrl(descendantIndicatorIds)}>${linkText}</a>`);
+                allIndicatorLinks.unshift(`<li class="nav-item level-card--iptt-links"><a href=${this.buildIPTTUrl(descendantIndicatorIds)}>${linkText}</a></li>`);
             }
         }
 
@@ -145,13 +146,13 @@ export class LevelCardCollapsed extends React.Component {
             .sort( (a, b) => a.level_order - b.level_order)
             .map( (indicator, index) => {
                 const ontologyLabel = this.props.levelProps.ontologyLabel + String.fromCharCode(97 + index) + ": ";
-                return `<li class="nav-item"><a href=${this.buildIPTTUrl([indicator.id])}>${ontologyLabel}${indicator.name}</a></li>`;
+                return `<li class="nav-item level-card--iptt-links"><a href=${this.buildIPTTUrl([indicator.id])}>${ontologyLabel}${indicator.name}</a></li>`;
             });
 
         allIndicatorLinks = allIndicatorLinks.concat(individualLinks);
 
 
-        let indicatorMarkup = `<ul class="nav flex-column">${allIndicatorLinks.join("<br>")}</ul>`;
+        let indicatorMarkup = `<ul class="nav flex-column">${allIndicatorLinks.join("")}</ul>`;
         const iCount = this.props.levelProps.indicators.length;
         /* # Translators: This is a count of indicators associated with another object */
         const indicatorCountText = interpolate(ngettext("%s indicator", "%s indicators", iCount), [iCount]);
@@ -165,6 +166,7 @@ export class LevelCardCollapsed extends React.Component {
             expando = <FontAwesomeIcon className="text-action" icon={this.props.rootStore.uiStore.hasVisibleChildren.indexOf(this.props.level.id) >= 0 ? 'caret-down' : 'caret-right'} />
         }
 
+        let isDisabled = allIndicatorLinks.length == 0 || this.props.rootStore.uiStore.disableForPrompt;
         return (
             <div className="level-card level-card--collapsed" id={`level-card-${this.props.level.id}`}>
                 <div
@@ -200,17 +202,17 @@ export class LevelCardCollapsed extends React.Component {
                         }
                     </div>
                     <div className="actions__bottom">
-                        <button
-                            className="btn btn-sm btn-link no-bold"
+                        <a
+                            tabIndex="0"
+                            className={classNames("btn btn-sm btn-link no-bold", {disabled: isDisabled})}
                             data-toggle="popover"
                             data-trigger="focus"
                             data-placement="bottom"
                             data-html="true"
                             title="Track indicator performance"
-                            data-content={indicatorMarkup}
-                            disabled={allIndicatorLinks.length == 0 || this.props.rootStore.uiStore.disableForPrompt}>
+                            data-content={indicatorMarkup}>
                             {indicatorCountText}
-                        </button>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -417,26 +419,26 @@ export class LevelCardExpanded extends React.Component {
         let indicatorSection = "";
         if (this.props.level.id == "new"){
             indicatorSection = <div className="form-group">
-                    <button
+                <button
                     type="submit"
                     disabled={this.name.length > 0 ? false : true}
                     className="btn btn-link btn-lg "
                     onClick={e => {this.updateSubmitType("saveAndEnableIndicators")}}>
                         { /* # Translators: This is button text that allows users to save their work and unlock the ability to add indicators */ }
                         <i className="fas fa-plus-circle"/>{gettext(`Save ${this.props.levelProps.tierName} and add indicators`)}
-                    </button>
-                </div>
+                </button>
+            </div>
 
         }
         else {
             indicatorSection = <IndicatorList
-                        level={this.props.level}
-                        tierName={this.props.levelProps.tierName}
-                        indicators={this.indicators}
-                        disabled={!this.name || this.props.level.id == "new"}
-                        reorderDisabled={this.indicators.length < 2 || this.props.rootStore.uiStore.disableForPrompt}
-                        changeFunc={this.changeIndicatorOrder}
-                        dragEndFunc={this.onDragEnd}/>
+                level={this.props.level}
+                tierName={this.props.levelProps.tierName}
+                indicators={this.indicators}
+                disabled={!this.name || this.props.level.id == "new" || this.props.rootStore.uiStore.disableForPrompt}
+                reorderDisabled={this.indicators.length < 2 || this.props.rootStore.uiStore.disableForPrompt}
+                changeFunc={this.changeIndicatorOrder}
+                dragEndFunc={this.onDragEnd}/>
         }
 
 
@@ -450,7 +452,10 @@ export class LevelCardExpanded extends React.Component {
                         classes="level-title--expanded"
                     />
 
-                    <ProgramObjectiveImport programObjectives={programObjectives} onProgramObjectiveImport={this.onProgramObjectiveImport} />
+                    <ProgramObjectiveImport
+                        isDisabled = {this.props.rootStore.uiStore.disableForPrompt}
+                        programObjectives={programObjectives}
+                        onProgramObjectiveImport={this.onProgramObjectiveImport} />
                 </div>
                 <form className="level-card--expanded__form" onSubmit={this.saveLevel}>
                     <div className="form-group">
@@ -459,6 +464,7 @@ export class LevelCardExpanded extends React.Component {
                             id={`level-name-${this.props.level.id}`}
                             name="name"
                             value={this.name || ""}
+                            disabled={this.props.rootStore.uiStore.disableForPrompt}
                             autoComplete="off"
                             rows={3}
                             onChange={this.onFormChange}
@@ -470,7 +476,7 @@ export class LevelCardExpanded extends React.Component {
                         <TextareaAutosize
                             className="form-control"
                             id="level-assumptions"
-                            disabled={this.name? "" : "disabled"}
+                            disabled={!this.name || this.props.rootStore.uiStore.disableForPrompt}
                             name="assumptions"
                             autoComplete="off"
                             value={this.assumptions || ""}
