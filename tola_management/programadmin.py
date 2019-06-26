@@ -44,8 +44,8 @@ from workflow.models import (
 )
 
 from indicators.models import (
-    Indicator
-)
+    Indicator,
+    Level)
 
 from .models import (
     ProgramAdminAuditLog,
@@ -320,9 +320,18 @@ class ProgramAuditLogIndicatorSerializer(ModelSerializer):
             'results_aware_number',
         )
 
+class ProgramAuditLogLevelSerializer(ModelSerializer):
+    class Meta:
+        model = Level
+        fields = (
+            'name',
+            'display_ontology',
+        )
+
 class ProgramAuditLogSerializer(ModelSerializer):
     id = IntegerField(allow_null=True, required=False)
     indicator = ProgramAuditLogIndicatorSerializer()
+    level = ProgramAuditLogLevelSerializer()
     user = CharField(source='user.name', read_only=True)
     organization = CharField(source='organization.name', read_only=True)
     date = DateTimeField(format="%Y-%m-%d %H:%M:%S")
@@ -339,6 +348,7 @@ class ProgramAuditLogSerializer(ModelSerializer):
             'rationale',
             'diff_list',
             'pretty_change_type',
+            'level',
         )
 
 class ProgramAdminAuditLogSerializer(ModelSerializer):

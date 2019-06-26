@@ -43,6 +43,12 @@ const IndicatorChangeset = ({data, name, pretty_name}) => {
     }
 }
 
+const ResultLevelChangeset = ({data, name, pretty_name}) => {
+    return <div className="change__field">
+        <strong>{pretty_name}:</strong> {(data !== null && data !== undefined)?data.toString():gettext('N/A')}
+    </div>
+}
+
 class ChangesetEntry extends React.Component {
     renderType(type, data, name, pretty_name) {
         switch(type) {
@@ -58,6 +64,9 @@ class ChangesetEntry extends React.Component {
                 break
             case 'program_dates_changed':
                 return <ProgramDatesChangeset data={data} name={name} pretty_name={pretty_name} />
+                break
+            case 'level_changed':
+                return <ResultLevelChangeset data={data} name={name} pretty_name={pretty_name} />
                 break
         }
     }
@@ -110,17 +119,20 @@ const IndicatorNameSpan = ({indicator}) => {
     }
 };
 
-const ResultLevel = ({indicator}) => {
-    if (! indicator) {
-        return <span>{gettext('N/A')}</span>
+const ResultLevel = ({indicator, level}) => {
+    if (indicator) {
+
+        if (indicator.leveltier_name && indicator.level_display_ontology)
+            return `${indicator.leveltier_name} ${indicator.level_display_ontology}`;
+        else if (indicator.leveltier_name)
+            return indicator.leveltier_name;
     }
 
-    if (indicator.leveltier_name && indicator.level_display_ontology)
-        return `${indicator.leveltier_name} ${indicator.level_display_ontology}`;
-    else if (indicator.leveltier_name)
-        return indicator.leveltier_name;
-    else
-        return '';
+    if (level) {
+        return `${level.name} ${level.display_ontology}`;
+    }
+
+    return <span>{gettext('N/A')}</span>
 };
 
 export const IndexView = observer(
@@ -168,7 +180,7 @@ export const IndexView = observer(
                                     <td className="text-action">
                                         <FontAwesomeIcon icon={is_expanded ? 'caret-down' : 'caret-right'} />&nbsp;{data.date}
                                     </td>
-                                    <td><ResultLevel indicator={data.indicator} /></td>
+                                    <td><ResultLevel indicator={data.indicator} level={data.level} /></td>
                                     <td>{<IndicatorNameSpan indicator={data.indicator} />}</td>
                                     <td>{data.user}</td>
                                     <td>{data.organization}</td>

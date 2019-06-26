@@ -2,6 +2,7 @@ import logging
 import copy
 
 from django.core.exceptions import ValidationError
+from django.db import transaction
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
@@ -15,6 +16,7 @@ from rest_framework.response import Response
 from indicators.serializers import LevelTierSerializer, LevelSerializer, IndicatorSerializerMinimal, \
     ProgramObjectiveSerializer
 from indicators.models import Level, LevelTier, Indicator
+from tola_management.models import ProgramAuditLog
 from workflow.models import Program
 
 
@@ -64,6 +66,39 @@ class LevelViewSet (viewsets.ModelViewSet):
 
     serializer_class = LevelSerializer
     queryset = Level.objects.all()
+
+    def update(self, request, pk=None):
+        # Pull rationale string outside of model serializer, since not part of model
+        rationale_str = request.data.get('rationale', '')
+        instance = self.get_object()
+        old_level_fields = self.get_object().logged_fields
+
+        with transaction.atomic():
+            # update Level
+
+            serializer = self.get_serializer(instance, data=request.data, partial=False)
+            serializer.is_valid(raise_exception=True)
+
+            serializer.save()
+
+            # log changes
+
+            ProgramAuditLog.log_result_level_updated(
+                self.request.user,
+                instance,
+                old_level_fields,
+                instance.logged_fields,
+                rationale_str,
+            )
+
+        # DRF stuff
+
+        if getattr(instance, '_prefetched_objects_cache', None):
+            # If 'prefetch_related' has been applied to a queryset, we need to
+            # forcibly invalidate the prefetch cache on the instance.
+            instance._prefetched_objects_cache = {}
+
+        return Response(serializer.data)
 
     def destroy(self, request, pk=None):
         instance = self.get_object()

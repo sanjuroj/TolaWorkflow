@@ -261,6 +261,14 @@ class Level(models.Model):
 
         return return_levels
 
+    @property
+    def logged_fields(self):
+        """Fields logged by program audit log"""
+        return {
+            "name": self.name.strip(),
+            "assumptions": self.assumptions.strip(),
+        }
+
 
 class LevelAdmin(admin.ModelAdmin):
     list_display = ('name')
