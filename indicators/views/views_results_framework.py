@@ -5,6 +5,7 @@ from django.core.exceptions import ValidationError
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 from django.views.generic.list import ListView
 
 from rest_framework import viewsets
@@ -20,6 +21,7 @@ from workflow.models import Program
 logger = logging.getLogger('__name__')
 
 # TODO: add security
+@method_decorator(login_required, name='dispatch')
 class ResultsFrameworkBuilder(ListView):
     model = Level
     template_name = 'indicators/results_framework_page.html'
@@ -30,9 +32,7 @@ class ResultsFrameworkBuilder(ListView):
         program = Program.objects.prefetch_related('level_tiers').get(pk=int(self.kwargs['program_id']))
         role = request.user.tola_user.program_role(program.id)
 
-        if request.user.is_anonymous \
-                or not role \
-                or (role in ['low', 'medium'] and program.level_tiers.count() == 0):
+        if not role or (role in ['low', 'medium'] and program.level_tiers.count() == 0):
             return HttpResponseRedirect('/')
 
         tiers = LevelTier.objects.filter(program=program)
