@@ -3865,13 +3865,14 @@ var IPTTFilterForm = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inject"])('
 /*!*********************************!*\
   !*** ./js/general_utilities.js ***!
   \*********************************/
-/*! exports provided: flattenArray, ensureNumericArray */
+/*! exports provided: flattenArray, ensureNumericArray, reloadPageIfCached */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "flattenArray", function() { return flattenArray; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ensureNumericArray", function() { return ensureNumericArray; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "reloadPageIfCached", function() { return reloadPageIfCached; });
 function flattenArray(arr) {
   var depth = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
 
@@ -3912,6 +3913,25 @@ function ensureNumericArray(value) {
   }
 
   return false;
+}
+/*
+ * Are we loading a cached page? If so, reload to avoid displaying stale indicator data
+ * See ticket #1423
+ */
+
+
+function reloadPageIfCached() {
+  // moving the cache check to after page load as firefox calculates transfer size at the end
+  $(function () {
+    var isCached = window.performance.getEntriesByType("navigation")[0].transferSize === 0; //adding a second check to ensure that if for whatever reason teh transfersize reads wrong, we don't reload on
+    //a reload:
+
+    var isReload = window.performance.getEntriesByType("navigation")[0].type === "reload";
+
+    if (isCached && !isReload) {
+      window.location.reload();
+    }
+  });
 }
 
 
@@ -5052,4 +5072,4 @@ function () {
 /***/ })
 
 },[["mYfJ","runtime","vendors"]]]);
-//# sourceMappingURL=iptt_report-80f173bf3a8c8043e1ba.js.map
+//# sourceMappingURL=iptt_report-854031c5674c26352261.js.map
