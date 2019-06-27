@@ -48,7 +48,7 @@ class Command(BaseCommand):
             country='Tolaland', defaults={
                 'latitude': 21.4, 'longitude': -158, 'zoom': 6, 'organization': org, 'code': 'TO'})
         for super_user in TolaUser.objects.filter(user__is_superuser=True):
-            ca, _CountryAccess.objects.get_or_create(country=country, tolauser=super_user)
+            ca, created = CountryAccess.objects.get_or_create(country=country, tolauser=super_user)
             ca.role = 'basic_admin'
             ca.save()
 

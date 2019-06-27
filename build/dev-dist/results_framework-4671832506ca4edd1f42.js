@@ -1648,7 +1648,9 @@ function () {
         return level.id == levelId;
       });
 
+      var level_label = "".concat(_this.levelProperties[levelId].tierName, " ").concat(_this.levelProperties[levelId].ontologyLabel);
       var levelToSave = Object.assign(Object(mobx__WEBPACK_IMPORTED_MODULE_0__["toJS"])(targetLevel), formData);
+      var levelDataWasUpdated = _this.rootStore.uiStore.activeCardNeedsConfirm;
 
       if (levelId == "new") {
         if (levelToSave.parent == "root") {
@@ -1663,6 +1665,16 @@ function () {
         _api_js__WEBPACK_IMPORTED_MODULE_1__["api"].post("/insert_new_level/", levelToSave).then(function (response) {
           Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
             _this.levels.replace(response.data['all_data']);
+          });
+          success_notice({
+            message_text: gettext("".concat(level_label, " saved.")),
+            addClass: 'program-page__rationale-form',
+            stack: {
+              dir1: 'up',
+              dir2: 'right',
+              firstpos1: 20,
+              firstpos2: 20
+            }
           });
           var newId = response.data["new_level"]["id"];
           _this.rootStore.uiStore.activeCard = null;
@@ -1681,6 +1693,19 @@ function () {
         });
       } else {
         _api_js__WEBPACK_IMPORTED_MODULE_1__["api"].put("/level/".concat(levelId, "/"), levelToSave).then(function (response) {
+          if (levelDataWasUpdated || indicatorWasUpdated) {
+            success_notice({
+              message_text: gettext("".concat(level_label, " updated.")),
+              addClass: 'program-page__rationale-form',
+              stack: {
+                dir1: 'up',
+                dir2: 'right',
+                firstpos1: 20,
+                firstpos2: 20
+              }
+            });
+          }
+
           Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
             Object.assign(targetLevel, response.data);
           });
@@ -2787,4 +2812,4 @@ var STATUS_CODES = {
 /***/ })
 
 },[["QTZG","runtime","vendors"]]]);
-//# sourceMappingURL=results_framework-00a42ef32cca50ec3d42.js.map
+//# sourceMappingURL=results_framework-4671832506ca4edd1f42.js.map

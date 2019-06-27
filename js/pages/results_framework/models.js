@@ -173,7 +173,6 @@ export class LevelStore {
 
     };
 
-
     @action
     createFirstLevel = () => {
         // Using "root" for parent id so the Django view can distinguish between top tier level and 2nd tier level
@@ -236,7 +235,9 @@ export class LevelStore {
 
         // Now process the save differently depending on if it's a new level or a pre-existing one.
         let targetLevel = this.levels.find(level => level.id == levelId);
+        const level_label = `${this.levelProperties[levelId].tierName} ${this.levelProperties[levelId].ontologyLabel}`;
         let levelToSave = Object.assign(toJS(targetLevel), formData);
+        const levelDataWasUpdated = this.rootStore.uiStore.activeCardNeedsConfirm;
         if (levelId == "new") {
             if (levelToSave.parent == "root") {
                 this.saveLevelTiersToDB();
@@ -252,6 +253,18 @@ export class LevelStore {
                     runInAction(() => {
                         this.levels.replace(response.data['all_data'])
                     });
+
+                    success_notice({
+                        message_text: gettext(`${level_label} saved.`),
+                        addClass: 'program-page__rationale-form',
+                        stack: {
+                            dir1: 'up',
+                            dir2: 'right',
+                            firstpos1: 20,
+                            firstpos2: 20,
+                        }
+                    });
+
                     const newId = response.data["new_level"]["id"];
                     this.rootStore.uiStore.activeCard = null;
                     if (submitType == "saveAndEnableIndicators") {
@@ -273,6 +286,18 @@ export class LevelStore {
         } else {
             api.put(`/level/${levelId}/`, levelToSave)
                 .then(response => {
+                    if (levelDataWasUpdated || indicatorWasUpdated) {
+                        success_notice({
+                            message_text: gettext(`${level_label} updated.`),
+                            addClass: 'program-page__rationale-form',
+                            stack: {
+                                dir1: 'up',
+                                dir2: 'right',
+                                firstpos1: 20,
+                                firstpos2: 20,
+                            }
+                        });
+                    }
                     runInAction( () => {
                         Object.assign(targetLevel, response.data);
                     });
@@ -339,7 +364,6 @@ export class LevelStore {
             }))
             .catch((error) => console.log('There was an error:', error));
     };
-
 
     deriveTemplateKey = () => {
         // Check each tier set in the templates to see if the tier order and content are exactly the same
