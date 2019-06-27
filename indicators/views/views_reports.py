@@ -290,7 +290,8 @@ class IPTTQuickstart(LoginRequiredMixin, TemplateView):
     def get(self, request, *args, **kwargs):
         js_context = {
             'programs': get_program_filter_data(request),
-            'iptt_url': '/indicators/iptt_report/'
+            'iptt_url': '/indicators/iptt_report/',
+            'initial_selected_program_id': request.GET.get('program_id'),
         }
         return self.render_to_response({'js_context': js_context})
 
