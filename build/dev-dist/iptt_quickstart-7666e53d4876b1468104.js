@@ -385,9 +385,7 @@ function (_React$Component) {
     key: "render",
     value: function render() {
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "form-row mb-3"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "col-sm-4"
+        className: "form-group d-lg-flex pb-4"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-check form-check-inline pt-1"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
@@ -399,9 +397,7 @@ function (_React$Component) {
         onChange: this.props.rootStore.setShowAll
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
         className: "form-check-label"
-      }, gettext('Show all')))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "col-sm-4 p-0"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      }, gettext('Show all'))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-check form-check-inline pt-1"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
         className: "form-check-input"
@@ -412,9 +408,7 @@ function (_React$Component) {
         onChange: this.props.rootStore.setMostRecent
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
         className: "form-check-label"
-      }, gettext('Most recent')))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "col-sm-4"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+      }, gettext('Most recent'))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         type: "number",
         className: "form-control",
         value: this.props.rootStore.mostRecentCountDisplay,
@@ -840,4 +834,4 @@ function () {
 /***/ })
 
 },[["+aul","runtime","vendors"]]]);
-//# sourceMappingURL=iptt_quickstart-48a0a1eb0c9c4dc07376.js.map
+//# sourceMappingURL=iptt_quickstart-7666e53d4876b1468104.js.map
