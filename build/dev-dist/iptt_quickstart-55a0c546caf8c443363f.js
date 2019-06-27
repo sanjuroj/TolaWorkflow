@@ -334,6 +334,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "q1tI");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! mobx-react */ "okNM");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! classnames */ "TSYQ");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_2__);
 var _dec, _class, _temp;
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -353,6 +355,7 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
 
 
 
@@ -385,36 +388,38 @@ function (_React$Component) {
     key: "render",
     value: function render() {
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "form-row mb-3"
+        className: "form-group d-lg-flex pb-4"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "col-sm-4"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "form-check form-check-inline pt-1"
+        className: classnames__WEBPACK_IMPORTED_MODULE_2___default()('form-check', 'form-check-inline', 'pt-1', 'pr-2', {
+          'form-check-inline--is-disabled': this.props.rootStore.periodCountDisabled
+        })
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
         className: "form-check-input"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         type: "radio",
         checked: this.props.rootStore.showAll,
         disabled: this.props.rootStore.periodCountDisabled,
-        onChange: this.props.rootStore.setShowAll
+        onChange: this.props.rootStore.setShowAll,
+        id: "id_targetperiods-timeframe_0"
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
-        className: "form-check-label"
-      }, gettext('Show all')))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "col-sm-4 p-0"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "form-check form-check-inline pt-1"
+        className: "form-check-label",
+        htmlFor: "id_targetperiods-timeframe_0"
+      }, gettext('Show all'))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: classnames__WEBPACK_IMPORTED_MODULE_2___default()('form-check', 'form-check-inline', 'pt-1', {
+          'form-check-inline--is-disabled': this.props.rootStore.periodCountDisabled
+        })
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
         className: "form-check-input"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         type: "radio",
         checked: this.props.rootStore.mostRecent,
         disabled: this.props.rootStore.periodCountDisabled,
-        onChange: this.props.rootStore.setMostRecent
+        onChange: this.props.rootStore.setMostRecent,
+        id: "id_targetperiods-timeframe_1"
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
-        className: "form-check-label"
-      }, gettext('Most recent')))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "col-sm-4"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+        className: "form-check-label",
+        htmlFor: "id_targetperiods-timeframe_1"
+      }, gettext('Most recent'))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         type: "number",
         className: "form-control",
         value: this.props.rootStore.mostRecentCountDisplay,
@@ -512,7 +517,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return QSRootStore; });
 /* harmony import */ var mobx__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! mobx */ "2vnA");
 /* harmony import */ var _program_models__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./program_models */ "CozX");
-var _class, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _temp;
+var _class, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _temp;
 
 function _initializerDefineProperty(target, property, descriptor, context) { if (!descriptor) return; Object.defineProperty(target, property, { enumerable: descriptor.enumerable, configurable: descriptor.configurable, writable: descriptor.writable, value: descriptor.initializer ? descriptor.initializer.call(context) : void 0 }); }
 
@@ -552,25 +557,23 @@ function () {
 
     _classCallCheck(this, QSRootStore);
 
-    _initializerDefineProperty(this, "reportType", _descriptor, this);
+    _initializerDefineProperty(this, "tvaProgramId", _descriptor, this);
 
-    _initializerDefineProperty(this, "tvaProgramId", _descriptor2, this);
+    _initializerDefineProperty(this, "timeperiodsProgramId", _descriptor2, this);
 
-    _initializerDefineProperty(this, "timeperiodsProgramId", _descriptor3, this);
+    _initializerDefineProperty(this, "frequencyId", _descriptor3, this);
 
-    _initializerDefineProperty(this, "frequencyId", _descriptor4, this);
+    _initializerDefineProperty(this, "showAll", _descriptor4, this);
 
-    _initializerDefineProperty(this, "showAll", _descriptor5, this);
+    _initializerDefineProperty(this, "mostRecent", _descriptor5, this);
 
-    _initializerDefineProperty(this, "mostRecent", _descriptor6, this);
+    _initializerDefineProperty(this, "mostRecentCount", _descriptor6, this);
 
-    _initializerDefineProperty(this, "mostRecentCount", _descriptor7, this);
+    _initializerDefineProperty(this, "setMostRecent", _descriptor7, this);
 
-    _initializerDefineProperty(this, "setMostRecent", _descriptor8, this);
+    _initializerDefineProperty(this, "setMostRecentCount", _descriptor8, this);
 
-    _initializerDefineProperty(this, "setMostRecentCount", _descriptor9, this);
-
-    _initializerDefineProperty(this, "setShowAll", _descriptor10, this);
+    _initializerDefineProperty(this, "setShowAll", _descriptor9, this);
 
     this.programStore = new _program_models__WEBPACK_IMPORTED_MODULE_1__["default"](this, contextData.programs);
     this.periodLabels = {
@@ -590,6 +593,8 @@ function () {
         _this.setFrequency(null);
       }
     });
+    this.setTVAProgram(contextData.initial_selected_program_id);
+    this.setTimeperiodsProgram(contextData.initial_selected_program_id);
   }
   /* options for program selection in TIMEPERIODS form */
 
@@ -603,7 +608,6 @@ function () {
         this.tvaProgramId = null;
       } else {
         this.tvaProgramId = id;
-        this.reportType = TVA;
       }
     }
     /* SET tva program to the designated ID, and make the report type Timeperiods */
@@ -615,7 +619,6 @@ function () {
         this.timeperiodsProgramId = null;
       } else {
         this.timeperiodsProgramId = id;
-        this.reportType = TIMEPERIODS;
       }
     }
     /* SET frequency in TVA form */
@@ -656,7 +659,7 @@ function () {
     get: function get() {
       var _this2 = this;
 
-      if (this.reportType !== TVA || this.tvaProgramId === null) {
+      if (this.tvaProgramId === null) {
         return [BLANK_OPTION];
       }
 
@@ -672,7 +675,7 @@ function () {
   }, {
     key: "selectedTVAProgram",
     get: function get() {
-      if (this.reportType !== TVA || this.tvaProgramId === null) {
+      if (this.tvaProgramId === null) {
         return BLANK_OPTION;
       }
 
@@ -686,7 +689,7 @@ function () {
   }, {
     key: "selectedTimeperiodsProgram",
     get: function get() {
-      if (this.reportType !== TIMEPERIODS || this.timeperiodsProgramId === null) {
+      if (this.timeperiodsProgramId === null) {
         return BLANK_OPTION;
       }
 
@@ -700,7 +703,7 @@ function () {
   }, {
     key: "selectedFrequency",
     get: function get() {
-      if (this.reportType !== TVA || this.tvaProgramId === null || this.frequencyId === null) {
+      if (this.tvaProgramId === null || this.frequencyId === null) {
         return BLANK_OPTION;
       }
 
@@ -714,7 +717,7 @@ function () {
   }, {
     key: "periodCountDisabled",
     get: function get() {
-      return this.reportType !== TVA || this.tvaProgramId === null || [3, 4, 5, 6, 7].indexOf(this.frequencyId) == -1;
+      return this.tvaProgramId === null || [3, 4, 5, 6, 7].indexOf(this.frequencyId) == -1;
     }
     /* GET most recent display - only show value if most recent is selected */
 
@@ -730,7 +733,7 @@ function () {
   }, {
     key: "tvaURL",
     get: function get() {
-      if (this.reportType === TVA && this.tvaProgramId !== null && this.frequencyId !== null) {
+      if (this.tvaProgramId !== null && this.frequencyId !== null) {
         var url = "".concat(this.iptt_url).concat(this.tvaProgramId, "/targetperiods/?frequency=").concat(this.frequencyId);
 
         if (this.frequencyId == 1 || this.frequencyId == 2) {
@@ -747,7 +750,7 @@ function () {
   }, {
     key: "timeperiodsURL",
     get: function get() {
-      if (this.reportType === TIMEPERIODS && this.timeperiodsProgramId !== null) {
+      if (this.timeperiodsProgramId !== null) {
         return "".concat(this.iptt_url).concat(this.timeperiodsProgramId, "/timeperiods/") + "?frequency=7&timeframe=2&numrecentcount=2";
       }
 
@@ -756,56 +759,49 @@ function () {
   }]);
 
   return QSRootStore;
-}(), _temp), (_descriptor = _applyDecoratedDescriptor(_class.prototype, "reportType", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}(), _temp), (_descriptor = _applyDecoratedDescriptor(_class.prototype, "tvaProgramId", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return null;
   }
-}), _descriptor2 = _applyDecoratedDescriptor(_class.prototype, "tvaProgramId", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor2 = _applyDecoratedDescriptor(_class.prototype, "timeperiodsProgramId", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return null;
   }
-}), _descriptor3 = _applyDecoratedDescriptor(_class.prototype, "timeperiodsProgramId", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor3 = _applyDecoratedDescriptor(_class.prototype, "frequencyId", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return null;
   }
-}), _descriptor4 = _applyDecoratedDescriptor(_class.prototype, "frequencyId", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
-  configurable: true,
-  enumerable: true,
-  writable: true,
-  initializer: function initializer() {
-    return null;
-  }
-}), _descriptor5 = _applyDecoratedDescriptor(_class.prototype, "showAll", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor4 = _applyDecoratedDescriptor(_class.prototype, "showAll", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return true;
   }
-}), _descriptor6 = _applyDecoratedDescriptor(_class.prototype, "mostRecent", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor5 = _applyDecoratedDescriptor(_class.prototype, "mostRecent", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return false;
   }
-}), _descriptor7 = _applyDecoratedDescriptor(_class.prototype, "mostRecentCount", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor6 = _applyDecoratedDescriptor(_class.prototype, "mostRecentCount", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
-    return 2;
+    return '';
   }
-}), _applyDecoratedDescriptor(_class.prototype, "frequencyOptions", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "frequencyOptions"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "selectedTVAProgram", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "selectedTVAProgram"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "selectedTimeperiodsProgram", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "selectedTimeperiodsProgram"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "selectedFrequency", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "selectedFrequency"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "periodCountDisabled", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "periodCountDisabled"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "mostRecentCountDisplay", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "mostRecentCountDisplay"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "setTVAProgram", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "setTVAProgram"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "setTimeperiodsProgram", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "setTimeperiodsProgram"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "setFrequency", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "setFrequency"), _class.prototype), _descriptor8 = _applyDecoratedDescriptor(_class.prototype, "setMostRecent", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
+}), _applyDecoratedDescriptor(_class.prototype, "frequencyOptions", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "frequencyOptions"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "selectedTVAProgram", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "selectedTVAProgram"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "selectedTimeperiodsProgram", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "selectedTimeperiodsProgram"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "selectedFrequency", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "selectedFrequency"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "periodCountDisabled", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "periodCountDisabled"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "mostRecentCountDisplay", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "mostRecentCountDisplay"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "setTVAProgram", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "setTVAProgram"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "setTimeperiodsProgram", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "setTimeperiodsProgram"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "setFrequency", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "setFrequency"), _class.prototype), _descriptor7 = _applyDecoratedDescriptor(_class.prototype, "setMostRecent", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
   configurable: true,
   enumerable: true,
   writable: true,
@@ -815,9 +811,10 @@ function () {
     return function () {
       _this3.showAll = false;
       _this3.mostRecent = true;
+      _this3.mostRecentCount = '';
     };
   }
-}), _descriptor9 = _applyDecoratedDescriptor(_class.prototype, "setMostRecentCount", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
+}), _descriptor8 = _applyDecoratedDescriptor(_class.prototype, "setMostRecentCount", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
   configurable: true,
   enumerable: true,
   writable: true,
@@ -831,7 +828,7 @@ function () {
       _this4.mostRecentCount = count;
     };
   }
-}), _descriptor10 = _applyDecoratedDescriptor(_class.prototype, "setShowAll", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
+}), _descriptor9 = _applyDecoratedDescriptor(_class.prototype, "setShowAll", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
   configurable: true,
   enumerable: true,
   writable: true,
@@ -841,6 +838,7 @@ function () {
     return function () {
       _this5.mostRecent = false;
       _this5.showAll = true;
+      _this5.mostRecentCount = '';
     };
   }
 }), _applyDecoratedDescriptor(_class.prototype, "tvaURL", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "tvaURL"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "timeperiodsURL", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "timeperiodsURL"), _class.prototype)), _class);
@@ -849,4 +847,4 @@ function () {
 /***/ })
 
 },[["+aul","runtime","vendors"]]]);
-//# sourceMappingURL=iptt_quickstart-e0ac3155884806c09905.js.map
+//# sourceMappingURL=iptt_quickstart-55a0c546caf8c443363f.js.map

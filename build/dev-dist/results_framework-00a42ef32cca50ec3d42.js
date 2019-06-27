@@ -193,11 +193,29 @@ function (_React$Component3) {
 
   return LevelTierList;
 }(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component)) || _class3) || _class3);
+
+var ChangeLogLink = function ChangeLogLink(_ref) {
+  var programId = _ref.programId;
+  var url = "/tola_management/audit_log/".concat(programId, "/");
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    className: "leveltier-picker__change-log-link-box"
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+    href: url,
+    className: "btn-link"
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+    className: "fas fa-history"
+  }), " ", gettext('Change log')));
+};
+
 var LevelTierPicker = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inject"])("rootStore")(Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function (props) {
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     id: "leveltier-picker",
     className: "leveltier-picker"
-  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Picker, null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(LevelTierList, null))
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    className: "leveltier-picker__panel"
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Picker, null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(LevelTierList, null)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ChangeLogLink, {
+    programId: props.rootStore.levelStore.program_id
+  }))
   /*<div id="alerts2" style={{minHeight:"50px", minWidth:"50px", backgroundColor:"red"}}></div>*/
   ;
 }));
@@ -722,11 +740,29 @@ function (_React$Component4) {
     _this4.saveLevel = function (event) {
       event.preventDefault();
 
-      _this4.props.rootStore.levelStore.saveLevelToDB(_this4.submitType, _this4.props.level.id, _this4.indicatorWasReordered, {
-        name: _this4.name,
-        assumptions: _this4.assumptions,
-        indicators: Object(mobx__WEBPACK_IMPORTED_MODULE_3__["toJS"])(_this4.indicators)
-      });
+      var saveFunc = function saveFunc(rationale) {
+        _this4.props.rootStore.levelStore.saveLevelToDB(_this4.submitType, _this4.props.level.id, _this4.indicatorWasReordered, {
+          name: _this4.name,
+          assumptions: _this4.assumptions,
+          rationale: rationale,
+          indicators: Object(mobx__WEBPACK_IMPORTED_MODULE_3__["toJS"])(_this4.indicators)
+        });
+      };
+
+      var hasIndicators = _this4.indicators.length > 0;
+      var hasUpdatedAssumptions = _this4.props.level.assumptions.length > 0 && _this4.assumptions != _this4.props.level.assumptions;
+      var hasUpdatedName = _this4.name != _this4.props.level.name;
+
+      if (hasIndicators && (hasUpdatedAssumptions || hasUpdatedName)) {
+        create_nondestructive_changeset_notice({
+          on_submit: saveFunc,
+          on_cancel: function on_cancel() {
+            return _this4.props.rootStore.uiStore.setDisableForPrompt(false);
+          }
+        });
+      } else {
+        saveFunc('');
+      }
     };
 
     _this4.cancelEdit = function () {
@@ -751,7 +787,7 @@ function (_React$Component4) {
         target.addClass("is-invalid");
         /* # Translators: This is a validation message given to the user when the user-editable name field has been deleted or omitted. */
 
-        var feedbackText = "Please provide a name for this ".concat(_this4.props.levelProps.tierName);
+        var feedbackText = gettext('Please complete this field.');
         target.after("<p id=name-feedback-".concat(_this4.props.level.id, " class=\"invalid-feedback\">").concat(feedbackText, "</p>"));
       } else {
         $("#level-name-".concat(_this4.props.level.id)).removeClass("is-invalid");
@@ -1619,9 +1655,11 @@ function () {
           _this.saveLevelTiersToDB();
 
           $('#logframe_link').show();
-        }
+        } // Don't need id, since it will be "new", and don't need rationale, since it's a new level.
+
 
         delete levelToSave.id;
+        delete levelToSave.rationale;
         _api_js__WEBPACK_IMPORTED_MODULE_1__["api"].post("/insert_new_level/", levelToSave).then(function (response) {
           Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
             _this.levels.replace(response.data['all_data']);
@@ -2313,9 +2351,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _eventbus__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../eventbus */ "qtBC");
 /* harmony import */ var router5__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! router5 */ "wgi2");
 /* harmony import */ var router5_plugin_browser__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! router5-plugin-browser */ "0pHI");
-/* harmony import */ var _components_level_list__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./components/level_list */ "t8du");
-/* harmony import */ var _components_leveltier_picker__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./components/leveltier_picker */ "/l02");
-/* harmony import */ var _models__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./models */ "FtQq");
+/* harmony import */ var _general_utilities__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../general_utilities */ "WtQ/");
+/* harmony import */ var _components_level_list__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./components/level_list */ "t8du");
+/* harmony import */ var _components_leveltier_picker__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./components/leveltier_picker */ "/l02");
+/* harmony import */ var _models__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./models */ "FtQq");
+
 
 
 
@@ -2337,14 +2377,92 @@ var _jsContext = jsContext,
     tierTemplates = _jsContext.tierTemplates,
     programObjectives = _jsContext.programObjectives,
     accessLevel = _jsContext.accessLevel;
-var rootStore = new _models__WEBPACK_IMPORTED_MODULE_8__["RootStore"](program_id, levels, indicators, levelTiers, tierTemplates, programObjectives, accessLevel);
+var rootStore = new _models__WEBPACK_IMPORTED_MODULE_9__["RootStore"](program_id, levels, indicators, levelTiers, tierTemplates, programObjectives, accessLevel);
 /*
  * React components on page
  */
 
 react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render(react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(mobx_react__WEBPACK_IMPORTED_MODULE_2__["Provider"], {
   rootStore: rootStore
-}, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_leveltier_picker__WEBPACK_IMPORTED_MODULE_7__["LevelTierPicker"], null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_level_list__WEBPACK_IMPORTED_MODULE_6__["LevelListPanel"], null))), document.querySelector('#level-builder-react-component'));
+}, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_leveltier_picker__WEBPACK_IMPORTED_MODULE_8__["LevelTierPicker"], null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_level_list__WEBPACK_IMPORTED_MODULE_7__["LevelListPanel"], null))), document.querySelector('#level-builder-react-component'));
+Object(_general_utilities__WEBPACK_IMPORTED_MODULE_6__["reloadPageIfCached"])();
+
+/***/ }),
+
+/***/ "WtQ/":
+/*!*********************************!*\
+  !*** ./js/general_utilities.js ***!
+  \*********************************/
+/*! exports provided: flattenArray, ensureNumericArray, reloadPageIfCached */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "flattenArray", function() { return flattenArray; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ensureNumericArray", function() { return ensureNumericArray; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "reloadPageIfCached", function() { return reloadPageIfCached; });
+function flattenArray(arr) {
+  var depth = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
+
+  if (depth == 5) {
+    return arr;
+  }
+
+  var flattened = [];
+  arr.forEach(function (item) {
+    if (Array.isArray(item)) {
+      flattened = flattened.concat(flattenArray(item, depth + 1));
+    } else {
+      flattened.push(item);
+    }
+  });
+  return flattened;
+}
+
+function ensureNumericArray(value) {
+  if (!Array.isArray(value)) {
+    value = parseInt(value);
+
+    if (value && !isNaN(value)) {
+      return [value];
+    }
+
+    return false;
+  }
+
+  var arr = value.map(function (x) {
+    return parseInt(x);
+  }).filter(function (x) {
+    return !isNaN(x);
+  });
+
+  if (arr && Array.isArray(arr) && arr.length > 0) {
+    return arr;
+  }
+
+  return false;
+}
+/*
+ * Are we loading a cached page? If so, reload to avoid displaying stale indicator data
+ * See ticket #1423
+ */
+
+
+function reloadPageIfCached() {
+  // moving the cache check to after page load as firefox calculates transfer size at the end
+  $(function () {
+    var isCached = window.performance.getEntriesByType("navigation")[0].transferSize === 0; //adding a second check to ensure that if for whatever reason teh transfersize reads wrong, we don't reload on
+    //a reload:
+
+    var isReload = window.performance.getEntriesByType("navigation")[0].type === "reload";
+
+    if (isCached && !isReload) {
+      window.location.reload();
+    }
+  });
+}
+
+
 
 /***/ }),
 
@@ -2669,4 +2787,4 @@ var STATUS_CODES = {
 /***/ })
 
 },[["QTZG","runtime","vendors"]]]);
-//# sourceMappingURL=results_framework-a2d26e9c2b1f64cbfe0b.js.map
+//# sourceMappingURL=results_framework-00a42ef32cca50ec3d42.js.map

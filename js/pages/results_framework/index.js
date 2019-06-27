@@ -4,7 +4,7 @@ import { Provider } from "mobx-react"
 import eventBus from '../../eventbus';
 import createRouter from 'router5';
 import browserPlugin from 'router5-plugin-browser';
-
+import {reloadPageIfCached} from '../../general_utilities';
 import {LevelListPanel} from './components/level_list';
 import {LevelTierPicker} from './components/leveltier_picker';
 import {RootStore} from './models';
@@ -29,3 +29,5 @@ ReactDOM.render(
     document.querySelector('#level-builder-react-component'));
 
 
+
+reloadPageIfCached();

@@ -17,13 +17,12 @@ const BLANK_OPTION = {
 const _gettext = (typeof gettext !== 'undefined') ?  gettext : (s) => s;
 
 export default class QSRootStore {
-    @observable reportType = null;
     @observable tvaProgramId = null;
     @observable timeperiodsProgramId = null;
     @observable frequencyId = null;
     @observable showAll = true;
     @observable mostRecent = false;
-    @observable mostRecentCount = 2;
+    @observable mostRecentCount = '';
 
     constructor(contextData) {
         this.programStore = new QSProgramStore(this, contextData.programs);
@@ -46,6 +45,9 @@ export default class QSRootStore {
                 }
             }
         )
+
+        this.setTVAProgram(contextData.initial_selected_program_id);
+        this.setTimeperiodsProgram(contextData.initial_selected_program_id);
     }
     
     /* options for program selection in TIMEPERIODS form */
@@ -64,7 +66,7 @@ export default class QSRootStore {
     
     /* options for frequency selection in TVA form (must be TVA program, only shows that program's frequencies */
     @computed get frequencyOptions() {
-        if (this.reportType !== TVA || this.tvaProgramId === null) {
+        if (this.tvaProgramId === null) {
             return [BLANK_OPTION];
         }
         return this.programStore.getProgram(this.tvaProgramId)
@@ -74,7 +76,7 @@ export default class QSRootStore {
     
     /* GET select option (value/label) for selected Program in TVA form */
     @computed get selectedTVAProgram() {
-        if (this.reportType !== TVA || this.tvaProgramId === null) {
+        if (this.tvaProgramId === null) {
             return BLANK_OPTION;
         }
         return {
@@ -84,7 +86,7 @@ export default class QSRootStore {
     
     /* GET select option (value/label) for selected Program in Timeperiods form */
     @computed get selectedTimeperiodsProgram() {
-        if (this.reportType !== TIMEPERIODS || this.timeperiodsProgramId === null) {
+        if (this.timeperiodsProgramId === null) {
             return BLANK_OPTION;
         }
         return {
@@ -95,7 +97,7 @@ export default class QSRootStore {
     
     /* GET select option (value/label) for selected Frequency in TVA form */
     @computed get selectedFrequency() {
-        if (this.reportType !== TVA || this.tvaProgramId === null || this.frequencyId === null) {
+        if (this.tvaProgramId === null || this.frequencyId === null) {
             return BLANK_OPTION;
         }
         return {
@@ -106,7 +108,7 @@ export default class QSRootStore {
     
     /* Whether to disable the most recent and show all radio buttons */
     @computed get periodCountDisabled() {
-        return this.reportType !== TVA || this.tvaProgramId === null || [3, 4, 5, 6, 7].indexOf(this.frequencyId) == -1;
+        return this.tvaProgramId === null || [3, 4, 5, 6, 7].indexOf(this.frequencyId) == -1;
     }
     
     /* GET most recent display - only show value if most recent is selected */
@@ -123,7 +125,6 @@ export default class QSRootStore {
             this.tvaProgramId = null;
         } else {
             this.tvaProgramId = id;
-            this.reportType = TVA;
         }
     }
     
@@ -133,7 +134,6 @@ export default class QSRootStore {
             this.timeperiodsProgramId = null;
         } else {
             this.timeperiodsProgramId = id;
-            this.reportType = TIMEPERIODS;
         }
     }
     
@@ -146,6 +146,7 @@ export default class QSRootStore {
     @action setMostRecent = ()  => {
         this.showAll = false;
         this.mostRecent = true;
+        this.mostRecentCount = '';
     }
 
     @action setMostRecentCount = (count) => {
@@ -157,10 +158,11 @@ export default class QSRootStore {
     @action setShowAll = () => {
         this.mostRecent = false;
         this.showAll = true;
+        this.mostRecentCount = '';
     }
     
     @computed get tvaURL() {
-        if (this.reportType === TVA && this.tvaProgramId !== null && this.frequencyId !== null) {
+        if (this.tvaProgramId !== null && this.frequencyId !== null) {
             let url = `${this.iptt_url}${this.tvaProgramId}/targetperiods/?frequency=${this.frequencyId}`;
             if (this.frequencyId == 1 || this.frequencyId == 2) {
                 return url;
@@ -173,7 +175,7 @@ export default class QSRootStore {
     }
     
     @computed get timeperiodsURL() {
-        if (this.reportType === TIMEPERIODS && this.timeperiodsProgramId !== null) {
+        if (this.timeperiodsProgramId !== null) {
             return `${this.iptt_url}${this.timeperiodsProgramId}/timeperiods/` +
                     `?frequency=7&timeframe=2&numrecentcount=2`;
         }

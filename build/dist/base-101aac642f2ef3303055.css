@@ -9042,17 +9042,17 @@ span[data-toggle="popover"]:hover {
   .periodic-targets__sum__value.input-symbol-percent {
     padding: 0; }
 
-.periodic-target .input-value {
+.periodic-target .input-value, .lop-only-target .input-value {
   padding-right: 10px;
   text-align: right;
   width: 150px;
   display: table-cell; }
-  .periodic-target .input-value .input-text {
+  .periodic-target .input-value .input-text, .lop-only-target .input-value .input-text {
     padding-right: 2px;
     text-align: left;
     box-shadow: none;
     display: table-cell; }
-  .periodic-target .input-value .controls input::placeholder {
+  .periodic-target .input-value .controls input::placeholder, .lop-only-target .input-value .controls input::placeholder {
     color: #b8babd; }
 
 .results-table__wrapper {
@@ -9679,9 +9679,14 @@ input[type=radio]:disabled {
   margin-left: 90px; }
 
 .leveltier-picker {
-  border: 1px solid #d2d5d9;
   margin-right: 30px;
   min-width: 20rem; }
+
+.leveltier-picker__panel {
+  border: 1px solid #d2d5d9; }
+
+.leveltier-picker__change-log-link-box {
+  margin-top: 1rem; }
 
 .leveltier-picker__selectbox {
   background-color: #ccefee;

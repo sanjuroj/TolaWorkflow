@@ -510,6 +510,83 @@ function mediumDateFormatStr(date) {
 
 /***/ }),
 
+/***/ "WtQ/":
+/*!*********************************!*\
+  !*** ./js/general_utilities.js ***!
+  \*********************************/
+/*! exports provided: flattenArray, ensureNumericArray, reloadPageIfCached */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "flattenArray", function() { return flattenArray; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ensureNumericArray", function() { return ensureNumericArray; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "reloadPageIfCached", function() { return reloadPageIfCached; });
+function flattenArray(arr) {
+  var depth = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
+
+  if (depth == 5) {
+    return arr;
+  }
+
+  var flattened = [];
+  arr.forEach(function (item) {
+    if (Array.isArray(item)) {
+      flattened = flattened.concat(flattenArray(item, depth + 1));
+    } else {
+      flattened.push(item);
+    }
+  });
+  return flattened;
+}
+
+function ensureNumericArray(value) {
+  if (!Array.isArray(value)) {
+    value = parseInt(value);
+
+    if (value && !isNaN(value)) {
+      return [value];
+    }
+
+    return false;
+  }
+
+  var arr = value.map(function (x) {
+    return parseInt(x);
+  }).filter(function (x) {
+    return !isNaN(x);
+  });
+
+  if (arr && Array.isArray(arr) && arr.length > 0) {
+    return arr;
+  }
+
+  return false;
+}
+/*
+ * Are we loading a cached page? If so, reload to avoid displaying stale indicator data
+ * See ticket #1423
+ */
+
+
+function reloadPageIfCached() {
+  // moving the cache check to after page load as firefox calculates transfer size at the end
+  $(function () {
+    var isCached = window.performance.getEntriesByType("navigation")[0].transferSize === 0; //adding a second check to ensure that if for whatever reason teh transfersize reads wrong, we don't reload on
+    //a reload:
+
+    var isReload = window.performance.getEntriesByType("navigation")[0].type === "reload";
+
+    if (isCached && !isReload) {
+      window.location.reload();
+    }
+  });
+}
+
+
+
+/***/ }),
+
 /***/ "YVM2":
 /*!*****************************************!*\
   !*** ./js/pages/program_page/models.js ***!
@@ -912,8 +989,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_indicator_list__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./components/indicator_list */ "KPAS");
 /* harmony import */ var _components_program_metrics__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./components/program_metrics */ "rE5y");
 /* harmony import */ var _models__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./models */ "YVM2");
-/* harmony import */ var _pinned_reports__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./pinned_reports */ "DaGC");
-/* harmony import */ var _pinned_reports__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(_pinned_reports__WEBPACK_IMPORTED_MODULE_8__);
+/* harmony import */ var _general_utilities__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../general_utilities */ "WtQ/");
+/* harmony import */ var _pinned_reports__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./pinned_reports */ "DaGC");
+/* harmony import */ var _pinned_reports__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(_pinned_reports__WEBPACK_IMPORTED_MODULE_9__);
+
 
 
 
@@ -1144,22 +1223,7 @@ _eventbus__WEBPACK_IMPORTED_MODULE_2__["default"].on('nav-select-indicator-to-fi
     'indicator_id': selectedIndicatorId
   });
 });
-/*
- * Are we loading a cached page? If so, reload to avoid displaying stale indicator data
- * See ticket #1423
- */
-// moving the cache check to after page load as firefox calculates transfer size at the end
-
-$(function () {
-  var isCached = window.performance.getEntriesByType("navigation")[0].transferSize === 0; //adding a second check to ensure that if for whatever reason teh transfersize reads wrong, we don't reload on
-  //a reload:
-
-  var isReload = window.performance.getEntriesByType("navigation")[0].type === "reload";
-
-  if (isCached && !isReload) {
-    window.location.reload();
-  }
-});
+Object(_general_utilities__WEBPACK_IMPORTED_MODULE_8__["reloadPageIfCached"])();
 
 /***/ }),
 
@@ -1699,4 +1763,4 @@ var ProgramMetrics = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])
 /***/ })
 
 },[["aJgA","runtime","vendors"]]]);
-//# sourceMappingURL=program_page-a654662e1c489592271d.js.map
+//# sourceMappingURL=program_page-f736f248c375a80109c3.js.map
