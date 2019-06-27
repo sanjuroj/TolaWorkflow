@@ -82,14 +82,21 @@ class LevelViewSet (viewsets.ModelViewSet):
             serializer.save()
 
             # log changes
+            new_level_fields = instance.logged_fields
 
-            ProgramAuditLog.log_result_level_updated(
-                self.request.user,
-                instance,
-                old_level_fields,
-                instance.logged_fields,
-                rationale_str,
-            )
+            # only log changes if indicators attached and not just adding assumption text
+            has_indicators = instance.indicator_set.exists()
+            diff_fields = set(old_level_fields.items()) - set(new_level_fields.items())
+            only_added_assumptions = len(diff_fields) == 1 and diff_fields.pop() == ('assumptions', '')
+
+            if has_indicators and not only_added_assumptions:
+                ProgramAuditLog.log_result_level_updated(
+                    self.request.user,
+                    instance,
+                    old_level_fields,
+                    new_level_fields,
+                    rationale_str,
+                )
 
         # DRF stuff
 
