@@ -512,7 +512,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return QSRootStore; });
 /* harmony import */ var mobx__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! mobx */ "2vnA");
 /* harmony import */ var _program_models__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./program_models */ "CozX");
-var _class, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _temp;
+var _class, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _temp;
 
 function _initializerDefineProperty(target, property, descriptor, context) { if (!descriptor) return; Object.defineProperty(target, property, { enumerable: descriptor.enumerable, configurable: descriptor.configurable, writable: descriptor.writable, value: descriptor.initializer ? descriptor.initializer.call(context) : void 0 }); }
 
@@ -552,25 +552,23 @@ function () {
 
     _classCallCheck(this, QSRootStore);
 
-    _initializerDefineProperty(this, "reportType", _descriptor, this);
+    _initializerDefineProperty(this, "tvaProgramId", _descriptor, this);
 
-    _initializerDefineProperty(this, "tvaProgramId", _descriptor2, this);
+    _initializerDefineProperty(this, "timeperiodsProgramId", _descriptor2, this);
 
-    _initializerDefineProperty(this, "timeperiodsProgramId", _descriptor3, this);
+    _initializerDefineProperty(this, "frequencyId", _descriptor3, this);
 
-    _initializerDefineProperty(this, "frequencyId", _descriptor4, this);
+    _initializerDefineProperty(this, "showAll", _descriptor4, this);
 
-    _initializerDefineProperty(this, "showAll", _descriptor5, this);
+    _initializerDefineProperty(this, "mostRecent", _descriptor5, this);
 
-    _initializerDefineProperty(this, "mostRecent", _descriptor6, this);
+    _initializerDefineProperty(this, "mostRecentCount", _descriptor6, this);
 
-    _initializerDefineProperty(this, "mostRecentCount", _descriptor7, this);
+    _initializerDefineProperty(this, "setMostRecent", _descriptor7, this);
 
-    _initializerDefineProperty(this, "setMostRecent", _descriptor8, this);
+    _initializerDefineProperty(this, "setMostRecentCount", _descriptor8, this);
 
-    _initializerDefineProperty(this, "setMostRecentCount", _descriptor9, this);
-
-    _initializerDefineProperty(this, "setShowAll", _descriptor10, this);
+    _initializerDefineProperty(this, "setShowAll", _descriptor9, this);
 
     this.programStore = new _program_models__WEBPACK_IMPORTED_MODULE_1__["default"](this, contextData.programs);
     this.periodLabels = {
@@ -590,6 +588,8 @@ function () {
         _this.setFrequency(null);
       }
     });
+    this.setTVAProgram(contextData.initial_selected_program_id);
+    this.setTimeperiodsProgram(contextData.initial_selected_program_id);
   }
   /* options for program selection in TIMEPERIODS form */
 
@@ -603,7 +603,6 @@ function () {
         this.tvaProgramId = null;
       } else {
         this.tvaProgramId = id;
-        this.reportType = TVA;
       }
     }
     /* SET tva program to the designated ID, and make the report type Timeperiods */
@@ -615,7 +614,6 @@ function () {
         this.timeperiodsProgramId = null;
       } else {
         this.timeperiodsProgramId = id;
-        this.reportType = TIMEPERIODS;
       }
     }
     /* SET frequency in TVA form */
@@ -656,7 +654,7 @@ function () {
     get: function get() {
       var _this2 = this;
 
-      if (this.reportType !== TVA || this.tvaProgramId === null) {
+      if (this.tvaProgramId === null) {
         return [BLANK_OPTION];
       }
 
@@ -672,7 +670,7 @@ function () {
   }, {
     key: "selectedTVAProgram",
     get: function get() {
-      if (this.reportType !== TVA || this.tvaProgramId === null) {
+      if (this.tvaProgramId === null) {
         return BLANK_OPTION;
       }
 
@@ -686,7 +684,7 @@ function () {
   }, {
     key: "selectedTimeperiodsProgram",
     get: function get() {
-      if (this.reportType !== TIMEPERIODS || this.timeperiodsProgramId === null) {
+      if (this.timeperiodsProgramId === null) {
         return BLANK_OPTION;
       }
 
@@ -700,7 +698,7 @@ function () {
   }, {
     key: "selectedFrequency",
     get: function get() {
-      if (this.reportType !== TVA || this.tvaProgramId === null || this.frequencyId === null) {
+      if (this.tvaProgramId === null || this.frequencyId === null) {
         return BLANK_OPTION;
       }
 
@@ -714,7 +712,7 @@ function () {
   }, {
     key: "periodCountDisabled",
     get: function get() {
-      return this.reportType !== TVA || this.tvaProgramId === null || [3, 4, 5, 6, 7].indexOf(this.frequencyId) == -1;
+      return this.tvaProgramId === null || [3, 4, 5, 6, 7].indexOf(this.frequencyId) == -1;
     }
     /* GET most recent display - only show value if most recent is selected */
 
@@ -730,7 +728,7 @@ function () {
   }, {
     key: "tvaURL",
     get: function get() {
-      if (this.reportType === TVA && this.tvaProgramId !== null && this.frequencyId !== null) {
+      if (this.tvaProgramId !== null && this.frequencyId !== null) {
         var url = "".concat(this.iptt_url).concat(this.tvaProgramId, "/targetperiods/?frequency=").concat(this.frequencyId);
 
         if (this.frequencyId == 1 || this.frequencyId == 2) {
@@ -747,7 +745,7 @@ function () {
   }, {
     key: "timeperiodsURL",
     get: function get() {
-      if (this.reportType === TIMEPERIODS && this.timeperiodsProgramId !== null) {
+      if (this.timeperiodsProgramId !== null) {
         return "".concat(this.iptt_url).concat(this.timeperiodsProgramId, "/timeperiods/") + "?frequency=7&timeframe=2&numrecentcount=2";
       }
 
@@ -756,56 +754,49 @@ function () {
   }]);
 
   return QSRootStore;
-}(), _temp), (_descriptor = _applyDecoratedDescriptor(_class.prototype, "reportType", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}(), _temp), (_descriptor = _applyDecoratedDescriptor(_class.prototype, "tvaProgramId", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return null;
   }
-}), _descriptor2 = _applyDecoratedDescriptor(_class.prototype, "tvaProgramId", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor2 = _applyDecoratedDescriptor(_class.prototype, "timeperiodsProgramId", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return null;
   }
-}), _descriptor3 = _applyDecoratedDescriptor(_class.prototype, "timeperiodsProgramId", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor3 = _applyDecoratedDescriptor(_class.prototype, "frequencyId", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return null;
   }
-}), _descriptor4 = _applyDecoratedDescriptor(_class.prototype, "frequencyId", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
-  configurable: true,
-  enumerable: true,
-  writable: true,
-  initializer: function initializer() {
-    return null;
-  }
-}), _descriptor5 = _applyDecoratedDescriptor(_class.prototype, "showAll", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor4 = _applyDecoratedDescriptor(_class.prototype, "showAll", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return true;
   }
-}), _descriptor6 = _applyDecoratedDescriptor(_class.prototype, "mostRecent", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor5 = _applyDecoratedDescriptor(_class.prototype, "mostRecent", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return false;
   }
-}), _descriptor7 = _applyDecoratedDescriptor(_class.prototype, "mostRecentCount", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor6 = _applyDecoratedDescriptor(_class.prototype, "mostRecentCount", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return 2;
   }
-}), _applyDecoratedDescriptor(_class.prototype, "frequencyOptions", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "frequencyOptions"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "selectedTVAProgram", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "selectedTVAProgram"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "selectedTimeperiodsProgram", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "selectedTimeperiodsProgram"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "selectedFrequency", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "selectedFrequency"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "periodCountDisabled", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "periodCountDisabled"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "mostRecentCountDisplay", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "mostRecentCountDisplay"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "setTVAProgram", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "setTVAProgram"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "setTimeperiodsProgram", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "setTimeperiodsProgram"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "setFrequency", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "setFrequency"), _class.prototype), _descriptor8 = _applyDecoratedDescriptor(_class.prototype, "setMostRecent", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
+}), _applyDecoratedDescriptor(_class.prototype, "frequencyOptions", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "frequencyOptions"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "selectedTVAProgram", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "selectedTVAProgram"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "selectedTimeperiodsProgram", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "selectedTimeperiodsProgram"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "selectedFrequency", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "selectedFrequency"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "periodCountDisabled", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "periodCountDisabled"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "mostRecentCountDisplay", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "mostRecentCountDisplay"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "setTVAProgram", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "setTVAProgram"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "setTimeperiodsProgram", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "setTimeperiodsProgram"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "setFrequency", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], Object.getOwnPropertyDescriptor(_class.prototype, "setFrequency"), _class.prototype), _descriptor7 = _applyDecoratedDescriptor(_class.prototype, "setMostRecent", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
   configurable: true,
   enumerable: true,
   writable: true,
@@ -817,7 +808,7 @@ function () {
       _this3.mostRecent = true;
     };
   }
-}), _descriptor9 = _applyDecoratedDescriptor(_class.prototype, "setMostRecentCount", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
+}), _descriptor8 = _applyDecoratedDescriptor(_class.prototype, "setMostRecentCount", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
   configurable: true,
   enumerable: true,
   writable: true,
@@ -831,7 +822,7 @@ function () {
       _this4.mostRecentCount = count;
     };
   }
-}), _descriptor10 = _applyDecoratedDescriptor(_class.prototype, "setShowAll", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
+}), _descriptor9 = _applyDecoratedDescriptor(_class.prototype, "setShowAll", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
   configurable: true,
   enumerable: true,
   writable: true,
@@ -849,4 +840,4 @@ function () {
 /***/ })
 
 },[["+aul","runtime","vendors"]]]);
-//# sourceMappingURL=iptt_quickstart-e0ac3155884806c09905.js.map
+//# sourceMappingURL=iptt_quickstart-48a0a1eb0c9c4dc07376.js.map
