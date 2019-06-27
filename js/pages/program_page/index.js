@@ -7,6 +7,7 @@ import browserPlugin from 'router5-plugin-browser';
 import {IndicatorList} from './components/indicator_list';
 import {ProgramMetrics} from './components/program_metrics';
 import {ProgramPageStore, ProgramPageUIStore, IndicatorFilterType} from './models';
+import {reloadPageIfCached} from '../../general_utilities';
 
 import './pinned_reports';
 
@@ -230,17 +231,5 @@ eventBus.on('nav-select-indicator-to-filter', (selectedIndicatorId) => {
 });
 
 
-/*
- * Are we loading a cached page? If so, reload to avoid displaying stale indicator data
- * See ticket #1423
- */
-// moving the cache check to after page load as firefox calculates transfer size at the end
-$(function() {
-    let isCached = window.performance.getEntriesByType("navigation")[0].transferSize === 0;
-    //adding a second check to ensure that if for whatever reason teh transfersize reads wrong, we don't reload on
-    //a reload:
-    let isReload = window.performance.getEntriesByType("navigation")[0].type === "reload";
-    if (isCached && !isReload) {        
-        window.location.reload();
-    }
-});
+
+reloadPageIfCached();
