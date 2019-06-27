@@ -120,6 +120,15 @@ var IndicatorChangeset = function IndicatorChangeset(_ref5) {
   }
 };
 
+var ResultLevelChangeset = function ResultLevelChangeset(_ref8) {
+  var data = _ref8.data,
+      name = _ref8.name,
+      pretty_name = _ref8.pretty_name;
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    className: "change__field"
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, pretty_name, ":"), " ", data !== null && data !== undefined ? data.toString() : gettext('N/A'));
+};
+
 var ChangesetEntry =
 /*#__PURE__*/
 function (_React$Component) {
@@ -162,6 +171,14 @@ function (_React$Component) {
             pretty_name: pretty_name
           });
           break;
+
+        case 'level_changed':
+          return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ResultLevelChangeset, {
+            data: data,
+            name: name,
+            pretty_name: pretty_name
+          });
+          break;
       }
     }
   }, {
@@ -179,8 +196,8 @@ function (_React$Component) {
   return ChangesetEntry;
 }(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component);
 
-var ExpandAllButton = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function (_ref8) {
-  var store = _ref8.store;
+var ExpandAllButton = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function (_ref9) {
+  var store = _ref9.store;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
     className: "btn btn-medium text-action btn-sm",
     onClick: function onClick() {
@@ -191,8 +208,8 @@ var ExpandAllButton = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"]
     className: "fas fa-plus-square"
   }), gettext('Expand all'));
 });
-var CollapseAllButton = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function (_ref9) {
-  var store = _ref9.store;
+var CollapseAllButton = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function (_ref10) {
+  var store = _ref10.store;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
     className: "btn btn-medium text-action btn-sm",
     onClick: function onClick() {
@@ -204,8 +221,8 @@ var CollapseAllButton = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer
   }), gettext('Collapse all'));
 });
 
-var IndicatorNameSpan = function IndicatorNameSpan(_ref10) {
-  var indicator = _ref10.indicator;
+var IndicatorNameSpan = function IndicatorNameSpan(_ref11) {
+  var indicator = _ref11.indicator;
 
   if (!indicator) {
     return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, gettext('N/A'));
@@ -218,18 +235,23 @@ var IndicatorNameSpan = function IndicatorNameSpan(_ref10) {
   }
 };
 
-var ResultLevel = function ResultLevel(_ref11) {
-  var indicator = _ref11.indicator;
+var ResultLevel = function ResultLevel(_ref12) {
+  var indicator = _ref12.indicator,
+      level = _ref12.level;
 
-  if (!indicator) {
-    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, gettext('N/A'));
+  if (indicator) {
+    if (indicator.leveltier_name && indicator.level_display_ontology) return "".concat(indicator.leveltier_name, " ").concat(indicator.level_display_ontology);else if (indicator.leveltier_name) return indicator.leveltier_name;
   }
 
-  if (indicator.leveltier_name && indicator.level_display_ontology) return "".concat(indicator.leveltier_name, " ").concat(indicator.level_display_ontology);else if (indicator.leveltier_name) return indicator.leveltier_name;else return '';
+  if (level) {
+    return "".concat(level.name, " ").concat(level.display_ontology);
+  }
+
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, gettext('N/A'));
 };
 
-var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function (_ref12) {
-  var store = _ref12.store;
+var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function (_ref13) {
+  var store = _ref13.store;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     id: "audit-log-index-view"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("header", {
@@ -289,7 +311,8 @@ var IndexView = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(func
     }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_3__["FontAwesomeIcon"], {
       icon: is_expanded ? 'caret-down' : 'caret-right'
     }), "\xA0", data.date), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ResultLevel, {
-      indicator: data.indicator
+      indicator: data.indicator,
+      level: data.level
     })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(IndicatorNameSpan, {
       indicator: data.indicator
     })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, data.user), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, data.organization), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
@@ -704,4 +727,4 @@ function () {
 /***/ })
 
 },[["6bbB","runtime","vendors"]]]);
-//# sourceMappingURL=audit_log-b4fe9d9e98190f4b4a96.js.map
+//# sourceMappingURL=audit_log-481c23a7620a6111262a.js.map

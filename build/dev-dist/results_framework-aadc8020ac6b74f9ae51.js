@@ -193,11 +193,29 @@ function (_React$Component3) {
 
   return LevelTierList;
 }(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component)) || _class3) || _class3);
+
+var ChangeLogLink = function ChangeLogLink(_ref) {
+  var programId = _ref.programId;
+  var url = "/tola_management/audit_log/".concat(programId, "/");
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    className: "leveltier-picker__change-log-link-box"
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+    href: url,
+    className: "btn-link"
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+    className: "fas fa-history"
+  }), " ", gettext('Change log')));
+};
+
 var LevelTierPicker = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inject"])("rootStore")(Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(function (props) {
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     id: "leveltier-picker",
     className: "leveltier-picker"
-  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Picker, null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(LevelTierList, null))
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    className: "leveltier-picker__panel"
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Picker, null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(LevelTierList, null)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ChangeLogLink, {
+    programId: props.rootStore.levelStore.program_id
+  }))
   /*<div id="alerts2" style={{minHeight:"50px", minWidth:"50px", backgroundColor:"red"}}></div>*/
   ;
 }));
@@ -722,11 +740,29 @@ function (_React$Component4) {
     _this4.saveLevel = function (event) {
       event.preventDefault();
 
-      _this4.props.rootStore.levelStore.saveLevelToDB(_this4.submitType, _this4.props.level.id, _this4.indicatorWasReordered, {
-        name: _this4.name,
-        assumptions: _this4.assumptions,
-        indicators: Object(mobx__WEBPACK_IMPORTED_MODULE_3__["toJS"])(_this4.indicators)
-      });
+      var saveFunc = function saveFunc(rationale) {
+        _this4.props.rootStore.levelStore.saveLevelToDB(_this4.submitType, _this4.props.level.id, _this4.indicatorWasReordered, {
+          name: _this4.name,
+          assumptions: _this4.assumptions,
+          rationale: rationale,
+          indicators: Object(mobx__WEBPACK_IMPORTED_MODULE_3__["toJS"])(_this4.indicators)
+        });
+      };
+
+      var hasIndicators = _this4.indicators.length > 0;
+      var hasUpdatedAssumptions = _this4.props.level.assumptions.length > 0 && _this4.assumptions != _this4.props.level.assumptions;
+      var hasUpdatedName = _this4.name != _this4.props.level.name;
+
+      if (hasIndicators && (hasUpdatedAssumptions || hasUpdatedName)) {
+        create_nondestructive_changeset_notice({
+          on_submit: saveFunc,
+          on_cancel: function on_cancel() {
+            return _this4.props.rootStore.uiStore.setDisableForPrompt(false);
+          }
+        });
+      } else {
+        saveFunc('');
+      }
     };
 
     _this4.cancelEdit = function () {
@@ -1619,9 +1655,11 @@ function () {
           _this.saveLevelTiersToDB();
 
           $('#logframe_link').show();
-        }
+        } // Don't need id, since it will be "new", and don't need rationale, since it's a new level.
+
 
         delete levelToSave.id;
+        delete levelToSave.rationale;
         _api_js__WEBPACK_IMPORTED_MODULE_1__["api"].post("/insert_new_level/", levelToSave).then(function (response) {
           Object(mobx__WEBPACK_IMPORTED_MODULE_0__["runInAction"])(function () {
             _this.levels.replace(response.data['all_data']);
@@ -2669,4 +2707,4 @@ var STATUS_CODES = {
 /***/ })
 
 },[["QTZG","runtime","vendors"]]]);
-//# sourceMappingURL=results_framework-a2d26e9c2b1f64cbfe0b.js.map
+//# sourceMappingURL=results_framework-aadc8020ac6b74f9ae51.js.map
