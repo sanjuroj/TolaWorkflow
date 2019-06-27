@@ -188,16 +188,16 @@
         <div class="" id="periodic-targets-tablediv">
             <table class="table table-sm periodic-targets__table" id="periodic_targets_table">
                 <tbody>
-                    <tr class="table-secondary">
+                    <tr class="table-secondary lop-only-target">
                         <td class="periodic-targets__sum text-left">
                             <strong>{% trans "Life of Program (LoP) target" %}</strong>
                         </td>
                         <td class="periodic-targets__sum text-right">
-                            <span id="span_id_lop_target">
+                            <span id="span_id_lop_target" class="{% if indicator.unit_of_measure_type == 2 %}input-symbol-percent{% endif %}">
                                 <input type="number"
                                        name="lop_target"
                                        id="id_lop_target"
-                                       class="form-control text-right"
+                                       class="form-control input-value"
                                        min="1"
                                        {% if readonly %}disabled="disabled"{% endif %}
                                     {% if indicator.lop_target != None %}
