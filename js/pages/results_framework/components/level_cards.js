@@ -408,7 +408,7 @@ export class LevelCardExpanded extends React.Component {
             const target = $(`#level-name-${this.props.level.id}`);
             target.addClass("is-invalid");
             /* # Translators: This is a validation message given to the user when the user-editable name field has been deleted or omitted. */
-            let feedbackText = `Please provide a name for this ${this.props.levelProps.tierName}`;
+            let feedbackText = gettext('Please complete this field');
             target.after(`<p id=name-feedback-${this.props.level.id} class="invalid-feedback">${feedbackText}</p>`);
         }
         else{
