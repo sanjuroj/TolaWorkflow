@@ -787,7 +787,7 @@ function (_React$Component4) {
         target.addClass("is-invalid");
         /* # Translators: This is a validation message given to the user when the user-editable name field has been deleted or omitted. */
 
-        var feedbackText = gettext('Please complete this field');
+        var feedbackText = gettext('Please complete this field.');
         target.after("<p id=name-feedback-".concat(_this4.props.level.id, " class=\"invalid-feedback\">").concat(feedbackText, "</p>"));
       } else {
         $("#level-name-".concat(_this4.props.level.id)).removeClass("is-invalid");
@@ -2787,4 +2787,4 @@ var STATUS_CODES = {
 /***/ })
 
 },[["QTZG","runtime","vendors"]]]);
-//# sourceMappingURL=results_framework-ead7cc378c9dc0752588.js.map
+//# sourceMappingURL=results_framework-00a42ef32cca50ec3d42.js.map
