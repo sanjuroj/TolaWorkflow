@@ -1,5 +1,6 @@
 import logging
 import copy
+import json
 
 from django.core.exceptions import ValidationError
 from django.db import transaction
@@ -13,8 +14,8 @@ from rest_framework import viewsets
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from indicators.serializers import LevelTierSerializer, LevelSerializer, IndicatorSerializerMinimal, \
-    ProgramObjectiveSerializer
+from indicators.serializers import (
+    LevelTierSerializer, LevelSerializer, IndicatorSerializerMinimal, ProgramObjectiveSerializer)
 from indicators.models import Level, LevelTier, Indicator
 from tola_management.models import ProgramAuditLog
 from workflow.models import Program
