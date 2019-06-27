@@ -22,7 +22,7 @@ export default class QSRootStore {
     @observable frequencyId = null;
     @observable showAll = true;
     @observable mostRecent = false;
-    @observable mostRecentCount = 2;
+    @observable mostRecentCount = '';
 
     constructor(contextData) {
         this.programStore = new QSProgramStore(this, contextData.programs);
@@ -146,6 +146,7 @@ export default class QSRootStore {
     @action setMostRecent = ()  => {
         this.showAll = false;
         this.mostRecent = true;
+        this.mostRecentCount = '';
     }
 
     @action setMostRecentCount = (count) => {
@@ -157,6 +158,7 @@ export default class QSRootStore {
     @action setShowAll = () => {
         this.mostRecent = false;
         this.showAll = true;
+        this.mostRecentCount = '';
     }
     
     @computed get tvaURL() {
