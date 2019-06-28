@@ -631,10 +631,10 @@ class IndicatorList extends React.Component {
         /* # Translators: Popover for help link, tell user how to disassociate an Indicator from the Level they are currently editing. */
         const popOverContent=gettext('To remove an indicator: Click “Settings”, where you can reassign the indicator to a different level or delete it.');
 
-        const isProgramMigrated = this.props.rootStore.levelStore.isProgramMigrated;
-        const popOverStr = isProgramMigrated ? migratedProgramPopOverContent + '<br><br>' + popOverContent : popOverContent;
+        const usingResultsFramework = this.props.rootStore.levelStore.usingResultsFramework;
+        const popOverStr = !usingResultsFramework ? migratedProgramPopOverContent + '<br><br>' + popOverContent : popOverContent;
 
-        if (this.props.indicators.length > 0 || isProgramMigrated) {
+        if (this.props.indicators.length > 0 || !usingResultsFramework) {
             order = "Order";
             helpLink =
                 <HelpPopover
