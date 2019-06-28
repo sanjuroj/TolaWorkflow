@@ -1202,14 +1202,19 @@ function (_React$Component7) {
 
       var order = null;
       var helpLink = null;
-      /* # Translators: Popover for help link, tell user how to diassociate an Indicator from the Level they are currently editing. */
+      var migratedProgramPopOverContent =
+      /* # Translators: Popover for help link telling users how to associate an Indicator not yet linked to a Level */
+      gettext('To link an already saved indicator to your results framework: Open the indicator from the program page and use the “Result level” menu on the Summary tab.');
+      /* # Translators: Popover for help link, tell user how to disassociate an Indicator from the Level they are currently editing. */
 
       var popOverContent = gettext('To remove an indicator: Click “Settings”, where you can reassign the indicator to a different level or delete it.');
+      var isProgramMigrated = this.props.rootStore.levelStore.isProgramMigrated;
+      var popOverStr = isProgramMigrated ? migratedProgramPopOverContent + '<br><br>' + popOverContent : popOverContent;
 
-      if (this.props.indicators.length > 0) {
+      if (this.props.indicators.length > 0 || isProgramMigrated) {
         order = "Order";
         helpLink = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_helpPopover__WEBPACK_IMPORTED_MODULE_10__["default"], {
-          content: popOverContent,
+          content: popOverStr,
           placement: "bottom"
         });
       }
@@ -1544,16 +1549,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 
 
-var RootStore = function RootStore(program_id, levels, indicators, levelTiers, tierTemplates, programObjectives, accessLevel) {
+var RootStore = function RootStore(program_id, levels, indicators, levelTiers, tierTemplates, programObjectives, accessLevel, isProgramMigrated) {
   _classCallCheck(this, RootStore);
 
-  this.levelStore = new LevelStore(program_id, levels, indicators, levelTiers, tierTemplates, programObjectives, accessLevel, this);
+  this.levelStore = new LevelStore(program_id, levels, indicators, levelTiers, tierTemplates, programObjectives, accessLevel, isProgramMigrated, this);
   this.uiStore = new UIStore(this);
 };
 var LevelStore = (_class = (_temp =
 /*#__PURE__*/
 function () {
-  function LevelStore(program_id, levels, _indicators, levelTiers, tierTemplates, programObjectives, accessLevel, rootStore) {
+  function LevelStore(program_id, levels, _indicators, levelTiers, tierTemplates, programObjectives, accessLevel, isProgramMigrated, rootStore) {
     var _this = this;
 
     _classCallCheck(this, LevelStore);
@@ -1572,6 +1577,7 @@ function () {
     this.defaultTemplateKey = "";
     this.customTierSetKey = "";
     this.accessLevel = false;
+    this.isProgramMigrated = false;
     this.monitorHeaderLink = Object(mobx__WEBPACK_IMPORTED_MODULE_0__["autorun"])(function (reaction) {
       var headerSpan = $("#rf_builder_header");
       var linkedFlag = headerSpan.children("a").length > 0;
@@ -1847,6 +1853,8 @@ function () {
       this.chosenTierSetKey = this.defaultTemplateKey;
       this.chosenTierSet = this.tierTemplates[this.chosenTierSetKey]['tiers'];
     }
+
+    this.isProgramMigrated = isProgramMigrated;
   }
 
   _createClass(LevelStore, [{
@@ -2401,8 +2409,9 @@ var _jsContext = jsContext,
     levelTiers = _jsContext.levelTiers,
     tierTemplates = _jsContext.tierTemplates,
     programObjectives = _jsContext.programObjectives,
-    accessLevel = _jsContext.accessLevel;
-var rootStore = new _models__WEBPACK_IMPORTED_MODULE_9__["RootStore"](program_id, levels, indicators, levelTiers, tierTemplates, programObjectives, accessLevel);
+    accessLevel = _jsContext.accessLevel,
+    isProgramMigrated = _jsContext.isProgramMigrated;
+var rootStore = new _models__WEBPACK_IMPORTED_MODULE_9__["RootStore"](program_id, levels, indicators, levelTiers, tierTemplates, programObjectives, accessLevel, isProgramMigrated);
 /*
  * React components on page
  */
@@ -2812,4 +2821,4 @@ var STATUS_CODES = {
 /***/ })
 
 },[["QTZG","runtime","vendors"]]]);
-//# sourceMappingURL=results_framework-4671832506ca4edd1f42.js.map
+//# sourceMappingURL=results_framework-74e12bb9094a50333073.js.map
