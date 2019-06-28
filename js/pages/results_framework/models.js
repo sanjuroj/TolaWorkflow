@@ -2,8 +2,8 @@ import { observable, computed, action, toJS, runInAction, autorun } from "mobx";
 import { api } from "../../api.js"
 
 export class RootStore {
-    constructor (program_id, levels, indicators, levelTiers, tierTemplates, programObjectives, accessLevel) {
-        this.levelStore =  new LevelStore(program_id, levels, indicators, levelTiers, tierTemplates, programObjectives, accessLevel, this);
+    constructor (program_id, levels, indicators, levelTiers, tierTemplates, programObjectives, accessLevel, isProgramMigrated) {
+        this.levelStore =  new LevelStore(program_id, levels, indicators, levelTiers, tierTemplates, programObjectives, accessLevel, isProgramMigrated, this);
         this.uiStore = new UIStore(this);
     }
 }
@@ -19,8 +19,9 @@ export class LevelStore {
     defaultTemplateKey = "";
     customTierSetKey = "";
     accessLevel = false;
+    isProgramMigrated = false;
 
-    constructor(program_id, levels, indicators, levelTiers, tierTemplates, programObjectives, accessLevel, rootStore) {
+    constructor(program_id, levels, indicators, levelTiers, tierTemplates, programObjectives, accessLevel, isProgramMigrated, rootStore) {
         this.rootStore = rootStore;
         this.levels = levels;
         this.indicators = indicators;
@@ -41,6 +42,8 @@ export class LevelStore {
             this.chosenTierSetKey = this.defaultTemplateKey;
             this.chosenTierSet = this.tierTemplates[this.chosenTierSetKey]['tiers'];
         }
+
+        this.isProgramMigrated = isProgramMigrated;
         
     }
 

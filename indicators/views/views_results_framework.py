@@ -53,6 +53,7 @@ class ResultsFrameworkBuilder(ListView):
             'tierTemplates': LevelTier.TEMPLATES,
             'programObjectives': ProgramObjectiveSerializer(program.objective_set.all(), many=True).data,
             'accessLevel': role,
+            'isProgramMigrated': program._using_results_framework == Program.MIGRATED,
         }
 
         context_data = {
