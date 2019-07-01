@@ -4,15 +4,17 @@ from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext
 from django.http import HttpResponse
 from django.shortcuts import render
+
+from indicators.xls_export_utils import TAN, apply_title_styling, apply_label_styling, update_borders
 from workflow.serializers import LogframeProgramSerializer
 from tola_management.permissions import has_program_read_access
 
 
 TITLE_FONT = openpyxl.styles.Font(size=18)
 HEADER_FONT = openpyxl.styles.Font(bold=True)
-HEADER_FILL = openpyxl.styles.PatternFill('solid', 'EEEEEE')
+HEADER_FILL = openpyxl.styles.PatternFill('solid', TAN)
 TOP_LEFT_ALIGN_WRAP = openpyxl.styles.Alignment(horizontal='left', vertical='top', wrap_text=True)
-LEVEL_ROW_FILL = openpyxl.styles.PatternFill('solid', 'CCCCCC')
+LEVEL_ROW_FILL = openpyxl.styles.PatternFill('solid', TAN)
 BLACK_BORDER = openpyxl.styles.Side(border_style="thin", color="000000")
 BORDER_TOP = openpyxl.styles.Border(top=BLACK_BORDER)
 
@@ -20,13 +22,14 @@ def add_title_cell(ws, row, column, value):
     cell = ws.cell(row=row, column=column)
     cell.value = value
     cell.font = TITLE_FONT
+    apply_title_styling(cell)
     return cell
 
 def add_header_cell(ws, row, column, value):
     cell = ws.cell(row=row, column=column)
     cell.value = value.upper()
-    cell.font = HEADER_FONT
-    cell.fill = HEADER_FILL
+    apply_label_styling(cell)
+    ws.row_dimensions[row].height = 30
     return cell
 
 def get_child_levels(level, levels_by_pk):
@@ -65,12 +68,12 @@ def logframe_excel_view(request, program):
     wb = openpyxl.Workbook()
     wb.remove(wb.active)
     ws = wb.create_sheet(ugettext('Logframe'))
-    add_title_cell(ws, 1, 1, ugettext('Logframe'))
+    add_title_cell(ws, 1, 1, clean_unicode(program['name']))
     ws.merge_cells(
         start_row=1, end_row=1,
         start_column=1, end_column=4
     )
-    add_title_cell(ws, 2, 1, clean_unicode(program['name']))
+    add_title_cell(ws, 2, 1, ugettext('Logframe'))
     ws.merge_cells(
         start_row=2, end_row=2,
         start_column=1, end_column=4
