@@ -657,7 +657,7 @@ function (_React$Component) {
         className: "no-bold"
       }, user.name ? user.name + ': ' : '', gettext("Programs and Roles"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("sup", null, "   ", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
         target: "_blank",
-        href: "https://learn.mercycorps.org/site/tola/index.php/TOLA:Section_05/en#5.4_User_Roles_Matrix_.28Program_Permissions.29"
+        href: "https://learn.mercycorps.org/index.php/TOLA:Section_05/en#5.4_User_Roles_Matrix_.28Program_Permissions.29"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
         "aria-label": gettext('More information on Program Roles'),
         className: "far fa-question-circle"
@@ -4352,4 +4352,4 @@ function (_React$Component) {
 /***/ })
 
 },[["9KAa","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_user-8466dcc9b65315c252bc.js.map
+//# sourceMappingURL=tola_management_user-3f195f60331509f00ff4.js.map
