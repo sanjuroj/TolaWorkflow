@@ -7,8 +7,14 @@ from django.db import transaction
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
+from django.utils import translation
 from django.utils.decorators import method_decorator
+from django.utils.functional import Promise
+from django.utils.encoding import force_text
+from django.core.serializers.json import DjangoJSONEncoder
+
 from django.views.generic.list import ListView
+
 
 from rest_framework import viewsets
 from rest_framework.decorators import api_view
@@ -45,12 +51,19 @@ class ResultsFrameworkBuilder(ListView):
         # the program name in the header should be plain text or a link.
         indicators = Indicator.objects.filter(program=program, deleted__isnull=True)
 
+        translated_templates = json.dumps(LevelTier.get_templates(), cls=LazyEncoder)
+        old_lang = translation.get_language()
+        translation.activate('en')
+        untranslated_templates = json.dumps(LevelTier.get_templates(), cls=LazyEncoder)
+        translation.activate(old_lang)
+
         js_context = {
             'program_id': program.id,
             'levels': LevelSerializer(levels, many=True).data,
             'indicators': IndicatorSerializerMinimal(indicators, many=True).data,
             'levelTiers': LevelTierSerializer(tiers, many=True).data,
-            'tierTemplates': LevelTier.TEMPLATES,
+            'tierTemplates': translated_templates,
+            'englishTemplates': untranslated_templates,
             'programObjectives': ProgramObjectiveSerializer(program.objective_set.all(), many=True).data,
             'accessLevel': role,
             'usingResultsFramework': program.results_framework,
@@ -62,6 +75,14 @@ class ResultsFrameworkBuilder(ListView):
             'js_context': js_context,
         }
         return render(request, self.template_name, context_data)
+
+
+class LazyEncoder(DjangoJSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, Promise):
+            return force_text(obj)
+        return super(LazyEncoder, self).default(obj)
+
 
 # TODO: add security
 class LevelViewSet (viewsets.ModelViewSet):
@@ -194,12 +215,12 @@ def save_leveltiers(request):
         return HttpResponseRedirect('/')
 
     for n, tier in enumerate(request.data['tiers']):
-        tierObj = LevelTier.objects.create(
+        tier_obj = LevelTier.objects.create(
             program=program,
             tier_depth=n+1,
             name=tier
         )
-        tierObj.save()
+        tier_obj.save()
     return Response({"message": "success"})
 
 # TODO: add security
@@ -211,7 +232,7 @@ def reorder_indicators(request):
     if request.user.is_anonymous or len(program_ids) > 1 or role != 'high':
         return HttpResponseRedirect('/')
 
-    level_order_map = {i['id']:i['level_order'] for i in request.data}
+    level_order_map = {i['id']: i['level_order'] for i in request.data}
     for indicator in Indicator.objects.filter(id__in=level_order_map.keys()):
         indicator.level_order = level_order_map[indicator.id]
         indicator.save()
@@ -225,8 +246,8 @@ def indicator_list(request, program_id):
     if not request.user.tola_user.program_role(program.id):
         return Response({"message": "Request failed"}, status=400)
 
-    filterNameMap = {'levelId': 'level_id', 'indicatorId': 'pk'}
-    filters = {filterNameMap[key]: request.GET.get(key) for key in filterNameMap.keys() if request.GET.get(key, None)}
+    filter_name_map = {'levelId': 'level_id', 'indicatorId': 'pk'}
+    filters = {filter_name_map[key]: request.GET.get(key) for key in filter_name_map.keys() if request.GET.get(key, None)}
 
     indicators = Indicator.objects.filter(program=program, **filters)
 

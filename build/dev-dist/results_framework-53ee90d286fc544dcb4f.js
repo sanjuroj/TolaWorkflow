@@ -1549,16 +1549,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 
 
-var RootStore = function RootStore(program_id, levels, indicators, levelTiers, tierTemplates, programObjectives, accessLevel, usingResultsFramework) {
+var RootStore = function RootStore(program_id, levels, indicators, levelTiers, tierTemplates, englishTemplates, programObjectives, accessLevel, usingResultsFramework) {
   _classCallCheck(this, RootStore);
 
-  this.levelStore = new LevelStore(program_id, levels, indicators, levelTiers, tierTemplates, programObjectives, accessLevel, usingResultsFramework, this);
+  this.levelStore = new LevelStore(program_id, levels, indicators, levelTiers, tierTemplates, englishTemplates, programObjectives, accessLevel, usingResultsFramework, this);
   this.uiStore = new UIStore(this);
 };
 var LevelStore = (_class = (_temp =
 /*#__PURE__*/
 function () {
-  function LevelStore(program_id, levels, _indicators, levelTiers, tierTemplates, programObjectives, accessLevel, usingResultsFramework, rootStore) {
+  function LevelStore(program_id, levels, _indicators, levelTiers, tierTemplates, englishTemplates, programObjectives, accessLevel, usingResultsFramework, rootStore) {
     var _this = this;
 
     _classCallCheck(this, LevelStore);
@@ -1605,9 +1605,15 @@ function () {
 
     this.saveLevelTiersToDB = function () {
       var tier_data = {
-        program_id: _this.program_id,
-        tiers: _this.chosenTierSet
+        program_id: _this.program_id
       };
+
+      if (_this.chosenTierSetKey === "custom") {
+        tier_data.tiers = _this.chosenTierSet;
+      } else {
+        tier_data.tiers = _this.englishTierTemlates[_this.chosenTierSetKey]['tiers'];
+      }
+
       _api_js__WEBPACK_IMPORTED_MODULE_1__["api"].post("/save_leveltiers/", tier_data).then(function (response) {}).catch(function (error) {
         return console.log('error', error);
       });
@@ -1758,18 +1764,18 @@ function () {
       });
     };
 
-    this.deriveTemplateKey = function () {
+    this.deriveTemplateKey = function (origLevelTiers) {
       // Check each tier set in the templates to see if the tier order and content are exactly the same
       // If they are, return the template key
-      var levelTierStr = JSON.stringify(Object(mobx__WEBPACK_IMPORTED_MODULE_0__["toJS"])(_this.chosenTierSet));
+      var levelTierStr = JSON.stringify(Object(mobx__WEBPACK_IMPORTED_MODULE_0__["toJS"])(origLevelTiers));
 
-      for (var templateKey in _this.tierTemplates) {
+      for (var templateKey in _this.englishTierTemlates) {
         // not an eligable template if the key is inherited or if the lengths of the tier sets don't match.
-        if (!_this.tierTemplates.hasOwnProperty(templateKey) || _this.chosenTierSet.length != _this.tierTemplates[templateKey]['tiers'].length) {
+        if (!_this.englishTierTemlates.hasOwnProperty(templateKey) || origLevelTiers.length != _this.englishTierTemlates[templateKey]['tiers'].length) {
           continue;
         }
 
-        var templateValuesStr = JSON.stringify(_this.tierTemplates[templateKey]['tiers']);
+        var templateValuesStr = JSON.stringify(_this.englishTierTemlates[templateKey]['tiers']);
 
         if (levelTierStr == templateValuesStr) {
           return templateKey;
@@ -1777,7 +1783,7 @@ function () {
       } // If this has been reached, the db has stored tiers but they're not a match to a template
 
 
-      return "custom";
+      return _this.customTierSetKey;
     };
 
     this.buildOntology = function (levelId) {
@@ -1836,7 +1842,8 @@ function () {
     this.rootStore = rootStore;
     this.levels = levels;
     this.indicators = _indicators;
-    this.tierTemplates = tierTemplates;
+    this.tierTemplates = JSON.parse(tierTemplates);
+    this.englishTierTemlates = JSON.parse(englishTemplates);
     this.defaultTemplateKey = "mc_standard";
     this.customTierSetKey = "custom";
     this.program_id = program_id;
@@ -1844,11 +1851,18 @@ function () {
     this.accessLevel = accessLevel; // Set the stored tier set key and the values, if they exist.  Use the default if they don't.
 
     if (levelTiers.length > 0) {
-      // deriveTemplateKey relies on chosenTierSet to be populated, so need to set it first.
-      this.chosenTierSet = levelTiers.map(function (t) {
+      var origLevelTiers = levelTiers.map(function (t) {
         return t.name;
       });
-      this.chosenTierSetKey = this.deriveTemplateKey(levelTiers);
+      this.chosenTierSetKey = this.deriveTemplateKey(origLevelTiers);
+
+      if (this.chosenTierSetKey == this.customTierSetKey) {
+        this.chosenTierSet = levelTiers.map(function (t) {
+          return t.name;
+        });
+      } else {
+        this.chosenTierSet = this.tierTemplates[this.chosenTierSetKey]['tiers'];
+      }
     } else {
       this.chosenTierSetKey = this.defaultTemplateKey;
       this.chosenTierSet = this.tierTemplates[this.chosenTierSetKey]['tiers'];
@@ -1939,7 +1953,10 @@ function () {
     key: "chosenTierSetName",
     get: function get() {
       if (this.chosenTierSetKey == this.customTierSetKey) {
-        return "Custom";
+        {
+          /* # Translators: This signifies that the user has build their own level hierarchy instead of using one of the pre-defined ones */
+        }
+        return gettext("Custom");
       } else {
         return this.tierTemplates[this.chosenTierSetKey]['name'];
       }
@@ -2408,10 +2425,11 @@ var _jsContext = jsContext,
     indicators = _jsContext.indicators,
     levelTiers = _jsContext.levelTiers,
     tierTemplates = _jsContext.tierTemplates,
+    englishTemplates = _jsContext.englishTemplates,
     programObjectives = _jsContext.programObjectives,
     accessLevel = _jsContext.accessLevel,
     usingResultsFramework = _jsContext.usingResultsFramework;
-var rootStore = new _models__WEBPACK_IMPORTED_MODULE_9__["RootStore"](program_id, levels, indicators, levelTiers, tierTemplates, programObjectives, accessLevel, usingResultsFramework);
+var rootStore = new _models__WEBPACK_IMPORTED_MODULE_9__["RootStore"](program_id, levels, indicators, levelTiers, tierTemplates, englishTemplates, programObjectives, accessLevel, usingResultsFramework);
 /*
  * React components on page
  */
@@ -2821,4 +2839,4 @@ var STATUS_CODES = {
 /***/ })
 
 },[["QTZG","runtime","vendors"]]]);
-//# sourceMappingURL=results_framework-cb29593ec1865fc393fa.js.map
+//# sourceMappingURL=results_framework-53ee90d286fc544dcb4f.js.map
