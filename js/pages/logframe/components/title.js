@@ -21,20 +21,20 @@ const TitleBar = inject('dataStore')(
     ({ dataStore }) => {
         return (
         <React.Fragment>
-            <span className="logframe--header">
-                <h1>{
-                    // # Translators: short for "Logistical Framework"
-                    gettext('Logframe')
-                }</h1>
-                { dataStore.results_framework &&
-                <a href={ dataStore.results_framework_url }>
-                    <i className="fas fa-sitemap"></i>
-                    {
-                        gettext('View results framework')
-                    }
-                </a>
-                }
-            </span>
+            <div className="logframe--header">
+                <h1 className="page-title h2">
+                    <a href={ dataStore.program_page_url }>{ dataStore.name }:</a>
+                    &nbsp;
+                    <span className="font-weight-normal text-muted text-nowrap">
+                        {
+                            // # Translators: short for "Logistical Framework"
+                            gettext('Logframe')
+                        }
+                        &nbsp;
+                        <small><i class="fas fa-table"></i></small>
+                    </span>
+                </h1>
+            </div>
             <ExcelButton />
         </React.Fragment>
         );
