@@ -1350,3 +1350,21 @@ def api_indicator_view(request, indicator, program):
         .annotate(target_period_last_end_date=Max('periodictargets__end_date')).get(pk=indicator.pk)
 
     return JsonResponse(IndicatorSerializer(indicator).data)
+
+
+@login_required
+@has_program_read_access
+def api_indicators_list(request, program):
+    """
+    API call for refreshing a list of indicators on the program page
+    """
+    program = ProgramWithMetrics.program_page.get(pk=program)
+    program.indicator_filters = {}
+
+    indicators = program.annotated_indicators \
+        .annotate(target_period_last_end_date=Max('periodictargets__end_date')).select_related('level')
+
+    return JsonResponse({
+        # 'program': ProgramSerializer(program).data,
+        'indicators': IndicatorSerializer(indicators, many=True).data,
+    })
