@@ -66,6 +66,7 @@ class ResultsFrameworkBuilder(ListView):
             'englishTemplates': untranslated_templates,
             'programObjectives': ProgramObjectiveSerializer(program.objective_set.all(), many=True).data,
             'accessLevel': role,
+            'usingResultsFramework': program.results_framework,
         }
 
         context_data = {

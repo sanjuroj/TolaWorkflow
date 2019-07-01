@@ -2,8 +2,8 @@ import { observable, computed, action, toJS, runInAction, autorun } from "mobx";
 import { api } from "../../api.js"
 
 export class RootStore {
-    constructor (program_id, levels, indicators, levelTiers, tierTemplates, englishTemplates, programObjectives, accessLevel) {
-        this.levelStore =  new LevelStore(program_id, levels, indicators, levelTiers, tierTemplates, englishTemplates, programObjectives, accessLevel, this);
+    constructor (program_id, levels, indicators, levelTiers, tierTemplates, programObjectives, accessLevel, usingResultsFramework) {
+        this.levelStore =  new LevelStore(program_id, levels, indicators, levelTiers, tierTemplates, programObjectives, accessLevel, usingResultsFramework, this);
         this.uiStore = new UIStore(this);
     }
 }
@@ -19,8 +19,9 @@ export class LevelStore {
     defaultTemplateKey = "";
     customTierSetKey = "";
     accessLevel = false;
+    usingResultsFramework;
 
-    constructor(program_id, levels, indicators, levelTiers, tierTemplates, englishTemplates, programObjectives, accessLevel, rootStore) {
+    constructor(program_id, levels, indicators, levelTiers, tierTemplates, programObjectives, accessLevel, usingResultsFramework, rootStore) {
         this.rootStore = rootStore;
         this.levels = levels;
         this.indicators = indicators;
@@ -47,6 +48,9 @@ export class LevelStore {
             this.chosenTierSetKey = this.defaultTemplateKey;
             this.chosenTierSet = this.tierTemplates[this.chosenTierSetKey]['tiers'];
         }
+
+        this.usingResultsFramework = usingResultsFramework;
+
     }
 
     @computed get sortedLevels () {

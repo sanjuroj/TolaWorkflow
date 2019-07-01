@@ -625,13 +625,20 @@ class IndicatorList extends React.Component {
         // Conditionally set the other elements that are only visible when there are indicators
         let order = null;
         let helpLink = null;
-        /* # Translators: Popover for help link, tell user how to diassociate an Indicator from the Level they are currently editing. */
+        const migratedProgramPopOverContent =
+            /* # Translators: Popover for help link telling users how to associate an Indicator not yet linked to a Level */
+            gettext('To link an already saved indicator to your results framework: Open the indicator from the program page and use the “Result level” menu on the Summary tab.');
+        /* # Translators: Popover for help link, tell user how to disassociate an Indicator from the Level they are currently editing. */
         const popOverContent=gettext('To remove an indicator: Click “Settings”, where you can reassign the indicator to a different level or delete it.');
-        if (this.props.indicators.length > 0) {
+
+        const usingResultsFramework = this.props.rootStore.levelStore.usingResultsFramework;
+        const popOverStr = !usingResultsFramework ? migratedProgramPopOverContent + '<br><br>' + popOverContent : popOverContent;
+
+        if (this.props.indicators.length > 0 || !usingResultsFramework) {
             order = "Order";
             helpLink =
                 <HelpPopover
-                    content={popOverContent}
+                    content={popOverStr}
                     placement="bottom"/>
         }
         return(
