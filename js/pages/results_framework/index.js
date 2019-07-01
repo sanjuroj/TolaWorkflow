@@ -12,8 +12,8 @@ import {RootStore} from './models';
 /*
  * Model/Store setup
  */
-const {program_id, levels, indicators, levelTiers, tierTemplates, programObjectives, accessLevel} = jsContext;
-const rootStore = new RootStore(program_id, levels, indicators, levelTiers, tierTemplates, programObjectives, accessLevel);
+const {program_id, levels, indicators, levelTiers, tierTemplates, englishTemplates, programObjectives, accessLevel} = jsContext;
+const rootStore = new RootStore(program_id, levels, indicators, levelTiers, tierTemplates, englishTemplates, programObjectives, accessLevel);
 
 /*
  * React components on page
