@@ -83,7 +83,7 @@ var TitleBar = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inject"])('dataSt
     className: "font-weight-normal text-muted text-nowrap"
   }, // # Translators: short for "Logistical Framework"
   gettext('Logframe'), "\xA0", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("small", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
-    class: "fas fa-table"
+    className: "fas fa-table"
   }))))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ExcelButton, null));
 });
 /* harmony default export */ __webpack_exports__["default"] = (TitleBar);
@@ -871,6 +871,13 @@ var AssumptionsCell = function AssumptionsCell(_ref4) {
 
 var LevelSet = function LevelSet(_ref5) {
   var level = _ref5.level;
+
+  if (level.indicators.length === 0) {
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", {
+      className: "logframe__level-set"
+    });
+  }
+
   var firstIndicator = level.indicators[0];
   var otherIndicators = level.indicators.slice(1);
   var rowCount = level.indicators.length;
@@ -958,4 +965,4 @@ function (_React$Component) {
 /***/ })
 
 },[["+uhY","runtime","vendors"]]]);
-//# sourceMappingURL=logframe-32554884443d05acb2f7.js.map
+//# sourceMappingURL=logframe-fca7869cbd5479939da9.js.map
