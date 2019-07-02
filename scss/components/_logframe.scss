@@ -25,7 +25,10 @@ $logframe-table-padding: 3px;
     font-weight: bold;
 }
 .logframe__level-set {
-    border-bottom: 2px solid red;
+    border-bottom: 2px solid $gray-400;
+    &:last-child {
+        border-bottom: none;
+    }
 }
 .logframe__cell--indicator {}
 .logframe__cell--means {}

@@ -47,7 +47,7 @@ const LevelSet = ({ level }) => {
     const otherIndicators = level.indicators.slice(1);
     const rowCount  = level.indicators.length;
     return (
-        <tbody>
+        <tbody className="logframe__level-set">
             <tr>
                 <LevelNameCell name={ level.display_name } rowCount={ rowCount } />
                 <IndicatorCell indicator={ firstIndicator } ontology={ level.ontology } />
