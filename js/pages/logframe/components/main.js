@@ -8,9 +8,9 @@ const LogframeApp = () => {
     return (
         <React.Fragment>
             <SubTitleRow />
-            <div className="logframe--table--wrapper">
+            <table className="logframe--table--wrapper table table-sm table-bordered bg-white text-small">
                 <LogframeTable />
-            </div>
+            </table>
         </React.Fragment>
     );
 }

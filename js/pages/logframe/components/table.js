@@ -3,8 +3,8 @@ import { computed } from 'mobx';
 import { observer, inject } from 'mobx-react';
 import HeaderRow from './headers';
 
-const LevelNameCell = ({ name }) => {
-    return <div className="table-cell level-cell">{ name }</div>;
+const LevelNameCell = ({ name, rowCount }) => {
+    return <td className="table-cell level-cell" rowSpan={ rowCount }>{ name }</td>;
 }
 
 const IndicatorCell = ({ indicator, ontology }) => {
@@ -14,59 +14,61 @@ const IndicatorCell = ({ indicator, ontology }) => {
     }
     name += `: ${indicator.name}`;
     return (
-        <div className="table-cell--text">            
+        <td className="table-cell--text">
             { name }
-        </div>
+        </td>
     );
 }
 
 const MeansCell = ({ indicator }) => {
     return (
-        <div className="table-cell--text">
+        <td className="table-cell--text">
             { indicator.means_of_verification }
-        </div>
+        </td>
     );
 }
 
 const IndicatorCells = ({ indicators, ontology }) => {
-    if (!indicators || indicators.length == 0) {
-        return (
-            <div className="table-cell-column colspan-2">
-                <div className="table-cell-inner-row table-cell-inner-row--empty">
-                    <div className="table-cell--text table-cell--empty"></div>
-                    <div className="table-cell--text table-cell--empty"></div>
-                </div>
-            </div>
-        );
-    }
     return (
-            <div className="table-cell-column colspan-2">
-                {indicators.map((indicator, idx) => {
+                indicators.map((indicator, idx) => {
                     return (
-                        <div className="table-cell-inner-row" key={ idx }>
+                        <tr key={ idx }>
                             <IndicatorCell indicator={ indicator } ontology={ ontology } key={ `ind${idx}` } />
                             <MeansCell indicator={ indicator } key={ `means${idx}` } />
-                        </div>
+                        </tr>
                     );
                 })
-                }
-            </div>
+
         );
 }
 
-const AssumptionsCell = ({ assumptions }) => {
-    return <div className="table-cell">{ assumptions }</div>
+const AssumptionsCell = ({ assumptions, rowCount }) => {
+    return <td className="table-cell" rowSpan={ rowCount }>{ assumptions }</td>
 }
 
 
-const LevelRow = ({ level }) => {
+const LevelSet = ({ level }) => {
+    const firstIndicator = level.indicators[0];
+    const otherIndicators = level.indicators.slice(1);
+    const rowCount  = level.indicators.length;
     return (
-        <div className="logframe--table--row">
-            <LevelNameCell name={ level.display_name } />
-            <IndicatorCells indicators={ level.indicators } ontology={ level.display_ontology }/>
-            <AssumptionsCell assumptions={ level.assumptions } />
-        </div>
-    );
+        <tbody>
+            <tr>
+                <LevelNameCell name={ level.display_name } rowCount={ rowCount } />
+                <IndicatorCell indicator={ firstIndicator } ontology={ level.ontology } />
+                <MeansCell indicator={ firstIndicator } />
+                <AssumptionsCell assumptions={ level.assumptions } rowCount={ rowCount } />
+            </tr>
+            { otherIndicators.map((indicator, idx) => {
+                return (
+                    <tr key={ idx } >
+                        <IndicatorCell indicator={ indicator } ontology={ level.ontology } key={ `ind${idx}` } />
+                        <MeansCell indicator={ indicator } key={ `means${idx}` } />
+                    </tr>
+                )
+            })}
+        </tbody>
+    )
 }
 
 
@@ -76,7 +78,7 @@ class LogframeTable extends React.Component {
     constructor(props) {
         super(props);
     }
-    
+
     @computed
     get levels() {
         if (this.props.dataStore.results_framework) {
@@ -84,7 +86,7 @@ class LogframeTable extends React.Component {
         }
         return [];
     }
-    
+
     @computed
     get unassignedLevel() {
         if (this.props.dataStore.unassignedIndicators.length > 0) {
@@ -97,13 +99,13 @@ class LogframeTable extends React.Component {
         }
         return false;
     }
-    
+
     render() {
         return (
             <React.Fragment>
                 <HeaderRow headers={ this.props.filterStore.headerColumns } />
-                { this.levels.map((level, idx) => <LevelRow level={ level } key={ idx } />) }
-                { this.unassignedLevel && <LevelRow level={ this.unassignedLevel } /> }
+                { this.levels.map((level, idx) => <LevelSet level={ level } key={ idx } />) }
+                { this.unassignedLevel && <LevelSet level={ this.unassignedLevel } /> }
             </React.Fragment>
         );
     }
