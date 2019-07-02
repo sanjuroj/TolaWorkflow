@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-02 13:23-0700\n"
+"POT-Creation-Date: 2019-07-02 16:56-0700\n"
 "PO-Revision-Date: 2019-06-30 17:22-0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -303,7 +303,7 @@ msgstr "No."
 
 #. Translators: Column header for indicator Name column */
 #: js/pages/iptt_report/components/report/tableHeader.js:51
-#: js/pages/logframe/components/table.js:11
+#: js/pages/logframe/components/table.js:15
 #: js/pages/program_page/components/indicator_list.js:198
 #: js/pages/tola_management_pages/audit_log/views.js:113
 #: js/pages/tola_management_pages/audit_log/views.js:117
@@ -431,18 +431,18 @@ msgstr "Fin"
 msgid "Show/Hide Filters"
 msgstr "Mostrar/Ocultar filtros"
 
-#: js/pages/logframe/components/table.js:92
+#: js/pages/logframe/components/subtitle.js:14
+msgid "View results framework"
+msgstr "Ver sistema de resultados"
+
+#: js/pages/logframe/components/table.js:93
 msgid "Indicators unassigned to  a results framework level"
 msgstr "Indicadores sin asignar a un nivel del sistema de resultados"
 
 #. Translators: short for "Logistical Framework"
-#: js/pages/logframe/components/title.js:27
+#: js/pages/logframe/components/title.js:31
 msgid "Logframe"
 msgstr "Marco Lógico"
-
-#: js/pages/logframe/components/title.js:33
-msgid "View results framework"
-msgstr "Ver sistema de resultados"
 
 #: js/pages/logframe/models/filterStore.js:33
 msgid "Result level"
