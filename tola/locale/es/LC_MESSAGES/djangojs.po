@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-06-21 17:36-0700\n"
-"PO-Revision-Date: 2019-05-09 08:24-0700\n"
+"PO-Revision-Date: 2019-06-30 17:22-0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: es\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.2.1\n"
+"X-Generator: Poedit 2.2.3\n"
 
 #: js/base.js:327 js/base.js:328
 msgid ""
@@ -72,8 +72,6 @@ msgid "Reason for change"
 msgstr "Justificación para el cambio"
 
 #: js/base.js:599
-#, fuzzy
-#| msgid "Success"
 msgid "Success!"
 msgstr "¡Éxito!"
 
@@ -111,30 +109,22 @@ msgid "Add indicator"
 msgstr "Agregar indicador"
 
 #: js/components/selectWidgets.js:130
-#, fuzzy
-#| msgid "No available programs"
 msgid "None available"
-msgstr "No hay programas disponibles"
+msgstr "Ninguno disponible"
 
 #: js/components/selectWidgets.js:140 js/components/selectWidgets.js:144
-#, fuzzy
-#| msgid "None Selected"
 msgid "None selected"
 msgstr "Ninguno/a Seleccionado"
 
 #. Translators: refers to grouping the report by the level of the indicator */
 #: js/components/selectWidgets.js:194 js/pages/program_page/models.js:246
-#, fuzzy
-#| msgid "Level"
 msgid "by Level"
-msgstr "Nivel"
+msgstr "por Nivel"
 
 #. Translators: menu for selecting how rows are grouped in a report */
 #: js/components/selectWidgets.js:200
-#, fuzzy
-#| msgid "Program indicators"
 msgid "Group indicators"
-msgstr "Indicadores de programa"
+msgstr "Agrupar indicadores"
 
 #: js/pages/document_list/components/document_list.js:59
 msgid "Filter by program"
@@ -179,8 +169,6 @@ msgid "Showing rows %(fromCount)s to %(toCount)s of %(totalCount)s"
 msgstr "Mostrando filas %(fromCount)s a %(toCount)s de %(totalCount)s"
 
 #: js/pages/iptt_quickstart/components/buttons.js:15
-#, fuzzy
-#| msgid "View Report"
 msgid "View report"
 msgstr "Ver informe"
 
@@ -191,16 +179,12 @@ msgstr "Objetivos periódicos frente a datos reales"
 
 #. Translators: label on a form that describes the report it will display */
 #: js/pages/iptt_quickstart/components/main.js:24
-#, fuzzy
-#| msgid ""
-#| "View results organized by target period for indicators that share the "
-#| "same target frequency."
 msgid ""
 "View results organized by target period for indicators that share the same "
 "target frequency"
 msgstr ""
 "Ver los resultados organizados por período objetivo para los indicadores que "
-"comparten la misma frecuencia objetivo."
+"comparten la misma frecuencia objetivo"
 
 #. Translators: description of a report type, showing only recent updates */
 #: js/pages/iptt_quickstart/components/main.js:37
@@ -209,16 +193,12 @@ msgstr "Progreso reciente para todos los indicadores"
 
 #. Translators: label on a form describing the report it will display */
 #: js/pages/iptt_quickstart/components/main.js:41
-#, fuzzy
-#| msgid ""
-#| "View the most recent two months of results. (You can customize your time "
-#| "periods.) This report does not include periodic targets."
 msgid ""
 "View the most recent two months of results. (You can customize your time "
 "periods.) This report does not include periodic targets"
 msgstr ""
 "Ver los últimos dos meses de resultados. (Puede personalizar sus períodos de "
-"tiempo). Este informe no incluye objetivos periódicos."
+"tiempo). Este informe no incluye objetivos periódicos"
 
 #. Translators: option to show all periods for the report */
 #: js/pages/iptt_quickstart/components/radios.js:22
@@ -251,11 +231,8 @@ msgstr "Periodos objetivo"
 
 #. Translators: The user has successfully "pinned" a report link to a program page for quick access to the report */}
 #: js/pages/iptt_report/components/report/buttons.js:51
-#, fuzzy
-#| msgid "Success! This report is now pinned to the program page."
 msgid "Success!  This report is now pinned to the program page"
-msgstr ""
-"¡Satisfactorio! Este informe ahora se encuentra en la página del programa."
+msgstr "¡Éxito! Este informe ahora está anclado en la página del programa"
 
 #. Translators: This is not really an imperative, it's an option that is available once you have pinned a report to a certain web page */}
 #: js/pages/iptt_report/components/report/buttons.js:57
@@ -264,26 +241,20 @@ msgstr "Visitar la página del programa ahora."
 
 #: js/pages/iptt_report/components/report/buttons.js:67
 msgid "Something went wrong when attempting to pin this report"
-msgstr ""
+msgstr "Algo salió mal al intentar anclar este informe"
 
 #. Translators: a field where users can name their newly created report */
 #: js/pages/iptt_report/components/report/buttons.js:79
-#, fuzzy
-#| msgid "Report Name"
 msgid "Report name"
-msgstr "Nombre del Informe"
+msgstr "Nombre del informe"
 
 #: js/pages/iptt_report/components/report/buttons.js:92
-#, fuzzy
-#| msgid "Pin To Program Page"
 msgid "Pin to program page"
-msgstr "Afiler a la página del programa"
+msgstr "Anclar a la página del programa"
 
 #: js/pages/iptt_report/components/report/buttons.js:101
-#, fuzzy
-#| msgid "Pending"
 msgid "Sending"
-msgstr "Pendiente"
+msgstr "Enviando"
 
 #. Translators: a button that lets a user "pin" (verb) a report to their home page */
 #: js/pages/iptt_report/components/report/buttons.js:136
@@ -293,14 +264,12 @@ msgstr "Fijar"
 #. Translators: a download button for a report containing just the data currently displayed */
 #: js/pages/iptt_report/components/report/buttons.js:164
 msgid "Current view"
-msgstr ""
+msgstr "Vista actual"
 
 #. Translators: a download button for a report containing all available data */
 #: js/pages/iptt_report/components/report/buttons.js:170
-#, fuzzy
-#| msgid "GAIT program dates"
 msgid "All program data"
-msgstr "Fechas del programa GAIT"
+msgstr "Todos los datos del programa"
 
 #: js/pages/iptt_report/components/report/header.js:11
 msgid "Indicator Performance Tracking Table"
@@ -320,12 +289,10 @@ msgstr "Real"
 #. Translators: Column header for a percent-met column */
 #: js/pages/iptt_report/components/report/headerCells.js:80
 msgid "% met"
-msgstr ""
+msgstr "% cumplido"
 
 #. Translators: header for a group of columns showing totals over the life of the program */
 #: js/pages/iptt_report/components/report/tableHeader.js:20
-#, fuzzy
-#| msgid "Life of Program"
 msgid "Life of program"
 msgstr "Vida del programa"
 
@@ -357,10 +324,8 @@ msgstr "Unidad de medida"
 
 #. Translators: Column header for "direction of change" column (increasing/decreasing) */
 #: js/pages/iptt_report/components/report/tableHeader.js:70
-#, fuzzy
-#| msgid "Change Type"
 msgid "Change"
-msgstr "Tipo de Cambio"
+msgstr "Cambio"
 
 #. Translators: Column header, stands for "Cumulative"/"Non-cumulative" */
 #: js/pages/iptt_report/components/report/tableHeader.js:76
@@ -369,10 +334,8 @@ msgstr "C / NC"
 
 #. Translators: Column header, numeric or percentage type indicator */
 #: js/pages/iptt_report/components/report/tableHeader.js:82
-#, fuzzy
-#| msgid "# / %%"
 msgid "# / %"
-msgstr "# / %%"
+msgstr "# / %"
 
 #. Translators: Column header */
 #: js/pages/iptt_report/components/report/tableHeader.js:87
@@ -392,8 +355,6 @@ msgid "N/A"
 msgstr "N/A"
 
 #: js/pages/iptt_report/components/report/tableRows.js:120
-#, fuzzy
-#| msgid "Is Cumulative"
 msgid "Cumulative"
 msgstr "Acumulativo"
 
@@ -403,28 +364,22 @@ msgstr "No acumulativo"
 
 #: js/pages/iptt_report/components/report/tableRows.js:173
 #: js/pages/iptt_report/models/filterStore.js:699
-#, fuzzy
-#| msgid "Indicators missing results"
 msgid "Indicators unassigned to a results framework level"
-msgstr "Indicadores sin resultados"
+msgstr "Indicadores sin asignar a un nivel del sistema de resultados"
 
 #. Translators: Labels a set of filters to select which data to show */
 #: js/pages/iptt_report/components/sidebar/filterForm.js:45
-#, fuzzy
-#| msgid "No options"
 msgid "Report Options"
-msgstr "Sin opciones"
+msgstr "Opciones del Informe"
 
 #. Translators: clears all filters set on a report */
 #: js/pages/iptt_report/components/sidebar/filterForm.js:56
 msgid "Clear filters"
-msgstr ""
+msgstr "Limpiar filtros"
 
 #: js/pages/iptt_report/components/sidebar/filterForm.js:65
-#, fuzzy
-#| msgid "Change Type"
 msgid "Change log"
-msgstr "Tipo de Cambio"
+msgstr "Registro de cambios"
 
 #: js/pages/iptt_report/components/sidebar/reportFilter.js:32
 msgid "Levels"
@@ -460,51 +415,43 @@ msgstr "Períodos de tiempo"
 
 #. Translators: menu for selecting the start date for a report */
 #: js/pages/iptt_report/components/sidebar/reportSelect.js:196
-#, fuzzy
-#| msgid "Start Date"
 msgid "Start"
-msgstr "Fecha de inicio"
+msgstr "Inicio"
 
 #. Translators: menu for selecting the end date for a report */
 #: js/pages/iptt_report/components/sidebar/reportSelect.js:215
-#, fuzzy
-#| msgid "and"
 msgid "End"
-msgstr "y"
+msgstr "Fin"
 
 #. Translators: A toggle button that hides a sidebar of filter options */
 #: js/pages/iptt_report/components/sidebar/sidebar.js:14
 msgid "Show/Hide Filters"
-msgstr ""
+msgstr "Mostrar/Ocultar filtros"
 
 #: js/pages/logframe/components/table.js:92
 msgid "Indicators unassigned to  a results framework level"
-msgstr ""
+msgstr "Indicadores sin asignar a un nivel del sistema de resultados"
 
 #. Translators: short for "Logistical Framework"
 #: js/pages/logframe/components/title.js:27
 msgid "Logframe"
-msgstr ""
+msgstr "Marco Lógico"
 
 #: js/pages/logframe/components/title.js:33
 msgid "View results framework"
-msgstr ""
+msgstr "Ver sistema de resultados"
 
 #: js/pages/logframe/models/filterStore.js:33
-#, fuzzy
-#| msgid "Result deleted"
 msgid "Result level"
-msgstr "Resultado eliminado"
+msgstr "Nivel del resultado"
 
 #: js/pages/logframe/models/filterStore.js:35
-#, fuzzy
-#| msgid "Means of Verification"
 msgid "Means of verification"
 msgstr "Medios de verificación"
 
 #: js/pages/logframe/models/filterStore.js:36
 msgid "Assumptions"
-msgstr ""
+msgstr "Suposiciones"
 
 #. Translators: The number of indicators that do not have targets defined on them
 #: js/pages/program_page/components/indicator_list.js:22
@@ -571,10 +518,8 @@ msgid "None"
 msgstr "Ninguno"
 
 #: js/pages/program_page/components/indicator_list.js:144
-#, fuzzy
-#| msgid "Program indicators"
 msgid "Group indicators:"
-msgstr "Indicadores de programa"
+msgstr "Indicadores de grupo:"
 
 #: js/pages/program_page/components/indicator_list.js:318
 msgid ""
@@ -732,22 +677,19 @@ msgstr ""
 
 #. Translators: On a button, with a tiered set of objects, save current object and add another one in the same tier, e.g. "Save and add another Outcome" when the user is editing an Outcome */}
 #: js/pages/results_framework/components/level_cards.js:447
-#, fuzzy, python-format
-#| msgid "Save and Add Another"
+#, python-format
 msgid "Save and add another %s"
-msgstr "Guardar y Agregar otro"
+msgstr "Guardar y agregar otro %s"
 
 #. Translators: On a button, with a tiered set of objects, save current object and add another one in the next lower tier, e.g. "Save and add another Activity" when the user is editing a Goal */}
 #: js/pages/results_framework/components/level_cards.js:456
 #, python-format
 msgid "Save and link %s"
-msgstr ""
+msgstr "Guardar y vincular %s"
 
 #: js/pages/results_framework/components/level_cards.js:461
-#, fuzzy
-#| msgid "Save and Add Another"
 msgid "Save and close"
-msgstr "Guardar y Agregar otro"
+msgstr "Guardar y cerrar"
 
 #: js/pages/results_framework/components/level_cards.js:534
 #: js/pages/results_framework/components/level_cards.js:569
@@ -762,6 +704,8 @@ msgid ""
 "To remove an indicator: Click “Settings”, where you can reassign the "
 "indicator to a different level or delete it."
 msgstr ""
+"Para eliminar un indicador haga clic en \"Configuración\", donde puede "
+"reasignar el indicador a un nivel diferente o eliminarlo."
 
 #: js/pages/results_framework/components/leveltier_picker.js:30
 msgid ""
@@ -770,6 +714,11 @@ msgid ""
 "saved levels first must be deleted.  A level can be deleted when it has no "
 "sub-levels and no linked indicators."
 msgstr ""
+"<span class=\"text-danger\"><strong>La plantilla de sistema de resultados no "
+"se puede cambiar después de guardar los niveles.</strong></span> Para "
+"cambiar las plantillas, primero se deben eliminar todos los niveles "
+"guardados.  Un nivel se puede eliminar cuando no tiene subniveles ni "
+"indicadores vinculados."
 
 #: js/pages/results_framework/components/leveltier_picker.js:39
 msgid ""
@@ -777,12 +726,14 @@ msgid ""
 "carefully!</strong></span> Once you begin building your framework, it will "
 "not be possible to change templates without first deleting all saved levels."
 msgstr ""
+"<span class=\"text-danger\"><strong>¡Elija la plantilla de sistema de "
+"resultados con cuidado!</strong></span> Una vez que comience a crear su "
+"sistema de resultados, no será posible cambiar las plantillas sin eliminar "
+"primero todos los niveles guardados."
 
 #: js/pages/results_framework/components/leveltier_picker.js:58
-#, fuzzy
-#| msgid "Result created"
 msgid "Results framework template"
-msgstr "Resultado creado"
+msgstr "Plantilla de sistema de resultados"
 
 #. Translators: this refers to an imperative verb on a button ("Apply filters")*/}
 #: js/pages/results_framework/components/leveltier_picker.js:91
@@ -981,10 +932,8 @@ msgstr "Logrado"
 
 #. Translators: This is a section header for when a user is creating a new strategic objective for a country */ }
 #: js/pages/tola_management_pages/country/components/edit_objectives.js:73
-#, fuzzy
-#| msgid "Strategic Objectives"
 msgid "New Strategic Objective"
-msgstr "Objetivos estratégicos"
+msgstr "Objetivo estratégico Nuevo"
 
 #: js/pages/tola_management_pages/country/components/edit_objectives.js:79
 msgid "Short name"
@@ -1197,51 +1146,49 @@ msgid "Fund Code"
 msgstr "Código del fondo"
 
 #: js/pages/tola_management_pages/program/components/program_settings.js:64
-#, fuzzy
-#| msgid "Indicator type"
 msgid "Indicator numbering"
-msgstr "Tipo de indicador"
+msgstr "Numeración del indicador"
 
 #. Translators: Auto-number meaning the system will do this automatically
 #: js/pages/tola_management_pages/program/components/program_settings.js:78
-#, fuzzy
-#| msgid "Short Form (recommended)"
 msgid "Auto-number indicators (recommended)"
-msgstr "Formulario corto (recomendado)"
+msgstr "Numerar indicadores automáticamente (recomendado)"
 
 #: js/pages/tola_management_pages/program/components/program_settings.js:80
 msgid ""
 "Indicator numbers are automatically determined by their results framework "
 "assignments."
 msgstr ""
+"Los números de indicador se determinan automáticamente por sus asignaciones "
+"del sistema de resultados."
 
 #: js/pages/tola_management_pages/program/components/program_settings.js:94
 msgid "Manually number indicators"
-msgstr ""
+msgstr "Numerar indicadores manualmente"
 
 #: js/pages/tola_management_pages/program/components/program_settings.js:95
 msgid ""
 "If your donor requires a special numbering convention, you can enter a "
 "custom number for each indicator."
 msgstr ""
+"Si su donante requiere una convención de numeración especial, puede "
+"introducir un número personalizado para cada indicador."
 
 #: js/pages/tola_management_pages/program/components/program_settings.js:96
 msgid ""
 "Manually entered numbers do not affect the order in which indicators are "
 "listed; they are purely for display purposes."
 msgstr ""
+"Los números introducidos manualmente no afectan el orden en que se muestran "
+"los indicadores; su único fin es ser mostrados."
 
 #: js/pages/tola_management_pages/program/components/program_settings.js:101
-#, fuzzy
-#| msgid "Indicator plan"
 msgid "Indicator grouping"
-msgstr "Plan de indicadores"
+msgstr "Agrupación de indicadores"
 
 #: js/pages/tola_management_pages/program/components/program_settings.js:112
-#, fuzzy
-#| msgid "of indicators have reported results"
 msgid "Group indicators according to the results framework"
-msgstr "de los indicadores han reportado resultados"
+msgstr "Agrupar indicadores de acuerdo con el sistema de resultados"
 
 #: js/pages/tola_management_pages/program/components/program_settings.js:114
 msgid ""
@@ -1250,6 +1197,11 @@ msgid ""
 "and view indicators grouped by results framework levels instead.  This "
 "setting affects the program page, indicator plan, and IPTT reports."
 msgstr ""
+"Después de establecer un sistema de resultados para este programa y "
+"asignarle indicadores, seleccione esta opción para retirar los niveles de "
+"indicador originales y ver los indicadores agrupados por niveles del sistema "
+"de resultados en su lugar.  Esta configuración afecta a la página del "
+"programa, al plan de indicadores y a los informes IPTT."
 
 #: js/pages/tola_management_pages/program/models.js:189
 msgid "Successfully saved"
