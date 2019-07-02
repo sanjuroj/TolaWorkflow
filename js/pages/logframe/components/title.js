@@ -31,7 +31,7 @@ const TitleBar = inject('dataStore')(
                             gettext('Logframe')
                         }
                         &nbsp;
-                        <small><i class="fas fa-table"></i></small>
+                        <small><i className="fas fa-table"></i></small>
                     </span>
                 </h1>
             </div>

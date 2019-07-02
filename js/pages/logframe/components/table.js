@@ -43,6 +43,10 @@ const AssumptionsCell = ({ assumptions, rowCount }) => {
 
 
 const LevelSet = ({ level }) => {
+    if (level.indicators.length ===0) {
+        return <tbody className="logframe__level-set" />
+    }
+
     const firstIndicator = level.indicators[0];
     const otherIndicators = level.indicators.slice(1);
     const rowCount  = level.indicators.length;
