@@ -22,6 +22,7 @@ export class IndicatorStore {
         this.updateIndicator = this.updateIndicator.bind(this);
         this.removeIndicator = this.removeIndicator.bind(this);
         this.filterIndicators = this.filterIndicators.bind(this);
+        this.setIndicators = this.setIndicators.bind(this);
     }
 
     @action
@@ -32,6 +33,11 @@ export class IndicatorStore {
         } else {
             this.indicators.push(indicator);
         }
+    }
+
+    @action
+    setIndicators(indicators) {
+        this.indicators = indicators;
     }
 
     @action

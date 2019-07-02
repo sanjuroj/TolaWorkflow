@@ -57,8 +57,13 @@ eventBus.on('reload-indicator', indicatorId => {
     $.get(`/indicators/api/indicator/${indicatorId}`, rootStore.indicatorStore.updateIndicator);
 });
 
+// reload all indicators json obj
+eventBus.on('reload-all-indicators', programId => {
+    $.get(`/indicators/api/indicators/${programId}`, (data) => rootStore.indicatorStore.setIndicators(data.indicators));
+});
+
 // remove an indicator from the list
-eventBus.on('indicator-deleted', rootStore.indicatorStore.removeIndicator);
+//eventBus.on('indicator-deleted', rootStore.indicatorStore.removeIndicator);
 
 // close all expanded indicators in the table
 eventBus.on('close-all-indicators', () => {
@@ -150,8 +155,9 @@ $('#indicator_modal_div').on('created.tola.indicator.save', (e, params) => {
 // when indicator update modal form completes a save or change to periodic targets
 $('#indicator_modal_div').on('updated.tola.indicator.save', (e, params) => {
     let indicatorId = params.indicatorId;
+    let programId = params.programId;
 
-    eventBus.emit('reload-indicator', indicatorId);
+    eventBus.emit('reload-all-indicators', programId);
 
     if (rootStore.resultsMap.has(indicatorId)) {
         eventBus.emit('load-indicator-results', indicatorId);
@@ -160,7 +166,7 @@ $('#indicator_modal_div').on('updated.tola.indicator.save', (e, params) => {
 
 // when indicator is deleted from modal
 $('#indicator_modal_div').on('deleted.tola.indicator.save', (e, params) => {
-    eventBus.emit('indicator-deleted', params.indicatorId);
+    eventBus.emit('reload-all-indicators', params.programId);
 });
 
 // When "add results" modal is closed, the targets data needs refreshing

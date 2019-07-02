@@ -2,8 +2,8 @@ import { observable, computed, action, toJS, runInAction, autorun } from "mobx";
 import { api } from "../../api.js"
 
 export class RootStore {
-    constructor (program_id, levels, indicators, levelTiers, tierTemplates, programObjectives, accessLevel, usingResultsFramework) {
-        this.levelStore =  new LevelStore(program_id, levels, indicators, levelTiers, tierTemplates, programObjectives, accessLevel, usingResultsFramework, this);
+    constructor (program_id, levels, indicators, levelTiers, tierTemplates, englishTemplates, programObjectives, accessLevel, usingResultsFramework) {
+        this.levelStore =  new LevelStore(program_id, levels, indicators, levelTiers, tierTemplates, englishTemplates, programObjectives, accessLevel, usingResultsFramework, this);
         this.uiStore = new UIStore(this);
     }
 }
@@ -21,11 +21,12 @@ export class LevelStore {
     accessLevel = false;
     usingResultsFramework;
 
-    constructor(program_id, levels, indicators, levelTiers, tierTemplates, programObjectives, accessLevel, usingResultsFramework, rootStore) {
+    constructor(program_id, levels, indicators, levelTiers, tierTemplates, englishTemplates, programObjectives, accessLevel, usingResultsFramework, rootStore) {
         this.rootStore = rootStore;
         this.levels = levels;
         this.indicators = indicators;
-        this.tierTemplates = tierTemplates;
+        this.tierTemplates = JSON.parse(tierTemplates);
+        this.englishTierTemlates = JSON.parse(englishTemplates);
         this.defaultTemplateKey = "mc_standard";
         this.customTierSetKey = "custom";
         this.program_id = program_id;
@@ -34,9 +35,14 @@ export class LevelStore {
 
         // Set the stored tier set key and the values, if they exist.  Use the default if they don't.
         if (levelTiers.length > 0) {
-            // deriveTemplateKey relies on chosenTierSet to be populated, so need to set it first.
-            this.chosenTierSet = levelTiers.map( t => t.name);
-            this.chosenTierSetKey = this.deriveTemplateKey(levelTiers);
+            const origLevelTiers = levelTiers.map( t => t.name)
+            this.chosenTierSetKey = this.deriveTemplateKey(origLevelTiers);
+            if (this.chosenTierSetKey == this.customTierSetKey) {
+                this.chosenTierSet = levelTiers.map(t => t.name);
+            }
+            else{
+                this.chosenTierSet = this.tierTemplates[this.chosenTierSetKey]['tiers']
+            }
         }
         else {
             this.chosenTierSetKey = this.defaultTemplateKey;
@@ -44,7 +50,7 @@ export class LevelStore {
         }
 
         this.usingResultsFramework = usingResultsFramework;
-        
+
     }
 
     @computed get sortedLevels () {
@@ -78,7 +84,8 @@ export class LevelStore {
 
     @computed get chosenTierSetName () {
         if (this.chosenTierSetKey == this.customTierSetKey){
-            return "Custom"
+            {/* # Translators: This signifies that the user has build their own level hierarchy instead of using one of the pre-defined ones */}
+            return gettext("Custom")
         }
         else {
             return this.tierTemplates[this.chosenTierSetKey]['name']
@@ -193,7 +200,13 @@ export class LevelStore {
     };
 
     saveLevelTiersToDB = () => {
-        const tier_data = {program_id: this.program_id, tiers: this.chosenTierSet};
+        const tier_data = {program_id: this.program_id};
+        if (this.chosenTierSetKey === "custom") {
+            tier_data.tiers = this.chosenTierSet;
+        }
+        else {
+            tier_data.tiers = this.englishTierTemlates[this.chosenTierSetKey]['tiers']
+        }
         api.post(`/save_leveltiers/`, tier_data)
             .then(response => {
             })
@@ -368,24 +381,24 @@ export class LevelStore {
             .catch((error) => console.log('There was an error:', error));
     };
 
-    deriveTemplateKey = () => {
+    deriveTemplateKey = (origLevelTiers) => {
         // Check each tier set in the templates to see if the tier order and content are exactly the same
         // If they are, return the template key
-        const levelTierStr = JSON.stringify(toJS(this.chosenTierSet));
-        for (let templateKey in this.tierTemplates){
+        const levelTierStr = JSON.stringify(toJS(origLevelTiers));
+        for (let templateKey in this.englishTierTemlates){
             // not an eligable template if the key is inherited or if the lengths of the tier sets don't match.
-            if (!this.tierTemplates.hasOwnProperty(templateKey) ||
-                this.chosenTierSet.length != this.tierTemplates[templateKey]['tiers'].length) {
+            if (!this.englishTierTemlates.hasOwnProperty(templateKey) ||
+                origLevelTiers.length != this.englishTierTemlates[templateKey]['tiers'].length) {
                 continue;
             }
-            const templateValuesStr = JSON.stringify(this.tierTemplates[templateKey]['tiers']);
+            const templateValuesStr = JSON.stringify(this.englishTierTemlates[templateKey]['tiers']);
             if (levelTierStr == templateValuesStr) {
                 return templateKey;
             }
         }
 
         // If this has been reached, the db has stored tiers but they're not a match to a template
-        return "custom";
+        return this.customTierSetKey;
     };
 
 
