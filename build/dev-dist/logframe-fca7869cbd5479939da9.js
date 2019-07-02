@@ -73,14 +73,18 @@ var ExcelButton = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inject"])('fil
 });
 var TitleBar = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inject"])('dataStore')(function (_ref2) {
   var dataStore = _ref2.dataStore;
-  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "logframe--header"
-  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h1", null, // # Translators: short for "Logistical Framework"
-  gettext('Logframe')), dataStore.results_framework && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
-    href: dataStore.results_framework_url
-  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
-    className: "fas fa-sitemap"
-  }), gettext('View results framework'))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ExcelButton, null));
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h1", {
+    className: "page-title h2"
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+    href: dataStore.program_page_url
+  }, dataStore.name, ":"), "\xA0", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+    className: "font-weight-normal text-muted text-nowrap"
+  }, // # Translators: short for "Logistical Framework"
+  gettext('Logframe'), "\xA0", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("small", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+    className: "fas fa-table"
+  }))))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ExcelButton, null));
 });
 /* harmony default export */ __webpack_exports__["default"] = (TitleBar);
 
@@ -106,10 +110,12 @@ var SubTitleRow = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inject"])('dat
   var dataStore = _ref.dataStore,
       filterStore = _ref.filterStore;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "logframe--subheader"
-  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
-    href: dataStore.program_page_url
-  }, dataStore.name)), dataStore.results_framework && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_selectWidgets__WEBPACK_IMPORTED_MODULE_2__["GroupBySelect"], {
+    className: "logframe__subheader"
+  }, dataStore.results_framework && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+    href: dataStore.results_framework_url
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+    className: "fas fa-sitemap"
+  }), "\xA0", gettext('View results framework')), dataStore.results_framework && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_selectWidgets__WEBPACK_IMPORTED_MODULE_2__["GroupBySelect"], {
     chainLabel: dataStore.rf_chain_sort_label,
     value: filterStore.groupBy,
     update: function update(e) {
@@ -138,25 +144,21 @@ __webpack_require__.r(__webpack_exports__);
 
 var HeaderCell = function HeaderCell(_ref) {
   var label = _ref.label;
-  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "table-cell"
-  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
-    className: "spacer-span"
-  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
-    className: "table-cell__text"
-  }, label));
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
+    className: "text-nowrap"
+  }, label);
 };
 
 var HeaderRow = function HeaderRow(_ref2) {
   var headers = _ref2.headers;
-  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "logframe--table--row logframe--table--row__header"
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("thead", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
+    className: "logframe__table__header"
   }, headers.map(function (label, idx) {
     return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(HeaderCell, {
       label: label,
       key: idx
     });
-  }));
+  })));
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (HeaderRow);
@@ -331,8 +333,8 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var LogframeApp = function LogframeApp() {
-  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_subtitle__WEBPACK_IMPORTED_MODULE_2__["default"], null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "logframe--table--wrapper"
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_subtitle__WEBPACK_IMPORTED_MODULE_2__["default"], null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("table", {
+    className: "logframe__table table table-sm table-bordered bg-white text-small"
   }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_table__WEBPACK_IMPORTED_MODULE_3__["default"], null)));
 };
 
@@ -828,9 +830,11 @@ function _applyDecoratedDescriptor(target, property, decorators, descriptor, con
 
 
 var LevelNameCell = function LevelNameCell(_ref) {
-  var name = _ref.name;
-  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "table-cell level-cell"
+  var name = _ref.name,
+      rowCount = _ref.rowCount;
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
+    className: "logframe__cell--level",
+    rowSpan: rowCount
   }, name);
 };
 
@@ -844,69 +848,63 @@ var IndicatorCell = function IndicatorCell(_ref2) {
   }
 
   name += ": ".concat(indicator.name);
-  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "table-cell--text"
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
+    className: "logframe__cell--indicator"
   }, name);
 };
 
 var MeansCell = function MeansCell(_ref3) {
   var indicator = _ref3.indicator;
-  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "table-cell--text"
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
+    className: "logframe__cell--means"
   }, indicator.means_of_verification);
 };
 
-var IndicatorCells = function IndicatorCells(_ref4) {
-  var indicators = _ref4.indicators,
-      ontology = _ref4.ontology;
+var AssumptionsCell = function AssumptionsCell(_ref4) {
+  var assumptions = _ref4.assumptions,
+      rowCount = _ref4.rowCount;
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
+    className: "logframe__cell--assumptions",
+    rowSpan: rowCount
+  }, assumptions);
+};
 
-  if (!indicators || indicators.length == 0) {
-    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-      className: "table-cell-column colspan-2"
-    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-      className: "table-cell-inner-row table-cell-inner-row--empty"
-    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-      className: "table-cell--text table-cell--empty"
-    }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-      className: "table-cell--text table-cell--empty"
-    })));
+var LevelSet = function LevelSet(_ref5) {
+  var level = _ref5.level;
+
+  if (level.indicators.length === 0) {
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", {
+      className: "logframe__level-set"
+    });
   }
 
-  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "table-cell-column colspan-2"
-  }, indicators.map(function (indicator, idx) {
-    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-      className: "table-cell-inner-row",
+  var firstIndicator = level.indicators[0];
+  var otherIndicators = level.indicators.slice(1);
+  var rowCount = level.indicators.length;
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", {
+    className: "logframe__level-set"
+  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(LevelNameCell, {
+    name: level.display_name,
+    rowCount: rowCount
+  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(IndicatorCell, {
+    indicator: firstIndicator,
+    ontology: level.ontology
+  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(MeansCell, {
+    indicator: firstIndicator
+  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(AssumptionsCell, {
+    assumptions: level.assumptions,
+    rowCount: rowCount
+  })), otherIndicators.map(function (indicator, idx) {
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
       key: idx
     }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(IndicatorCell, {
       indicator: indicator,
-      ontology: ontology,
+      ontology: level.ontology,
       key: "ind".concat(idx)
     }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(MeansCell, {
       indicator: indicator,
       key: "means".concat(idx)
     }));
-  }));
-};
-
-var AssumptionsCell = function AssumptionsCell(_ref5) {
-  var assumptions = _ref5.assumptions;
-  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "table-cell"
-  }, assumptions);
-};
-
-var LevelRow = function LevelRow(_ref6) {
-  var level = _ref6.level;
-  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "logframe--table--row"
-  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(LevelNameCell, {
-    name: level.display_name
-  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(IndicatorCells, {
-    indicators: level.indicators,
-    ontology: level.display_ontology
-  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(AssumptionsCell, {
-    assumptions: level.assumptions
   }));
 };
 
@@ -927,11 +925,11 @@ function (_React$Component) {
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_headers__WEBPACK_IMPORTED_MODULE_3__["default"], {
         headers: this.props.filterStore.headerColumns
       }), this.levels.map(function (level, idx) {
-        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(LevelRow, {
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(LevelSet, {
           level: level,
           key: idx
         });
-      }), this.unassignedLevel && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(LevelRow, {
+      }), this.unassignedLevel && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(LevelSet, {
         level: this.unassignedLevel
       }));
     }
@@ -967,4 +965,4 @@ function (_React$Component) {
 /***/ })
 
 },[["+uhY","runtime","vendors"]]]);
-//# sourceMappingURL=logframe-37fe3d130f2fb7a8ef3a.js.map
+//# sourceMappingURL=logframe-fca7869cbd5479939da9.js.map
