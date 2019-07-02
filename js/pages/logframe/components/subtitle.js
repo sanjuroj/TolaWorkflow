@@ -6,7 +6,7 @@ import { GroupBySelect } from '../../../components/selectWidgets';
 const SubTitleRow = inject('dataStore', 'filterStore')(
     observer(({ dataStore, filterStore }) => {
         return (
-            <div className="logframe--subheader">
+            <div className="logframe__subheader">
                 { dataStore.results_framework &&
                     <a href={ dataStore.results_framework_url }>
                         <i className="fas fa-sitemap"></i>&nbsp;

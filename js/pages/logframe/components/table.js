@@ -4,7 +4,11 @@ import { observer, inject } from 'mobx-react';
 import HeaderRow from './headers';
 
 const LevelNameCell = ({ name, rowCount }) => {
-    return <td className="table-cell level-cell" rowSpan={ rowCount }>{ name }</td>;
+    return (
+        <td className="logframe__cell--level" rowSpan={ rowCount }>
+            { name }
+        </td>
+    )
 }
 
 const IndicatorCell = ({ indicator, ontology }) => {
@@ -14,7 +18,7 @@ const IndicatorCell = ({ indicator, ontology }) => {
     }
     name += `: ${indicator.name}`;
     return (
-        <td className="table-cell--text">
+        <td className="logframe__cell--indicator">
             { name }
         </td>
     );
@@ -22,28 +26,19 @@ const IndicatorCell = ({ indicator, ontology }) => {
 
 const MeansCell = ({ indicator }) => {
     return (
-        <td className="table-cell--text">
+        <td className="logframe__cell--means">
             { indicator.means_of_verification }
         </td>
     );
 }
 
-const IndicatorCells = ({ indicators, ontology }) => {
-    return (
-                indicators.map((indicator, idx) => {
-                    return (
-                        <tr key={ idx }>
-                            <IndicatorCell indicator={ indicator } ontology={ ontology } key={ `ind${idx}` } />
-                            <MeansCell indicator={ indicator } key={ `means${idx}` } />
-                        </tr>
-                    );
-                })
-
-        );
-}
 
 const AssumptionsCell = ({ assumptions, rowCount }) => {
-    return <td className="table-cell" rowSpan={ rowCount }>{ assumptions }</td>
+    return (
+        <td className="logframe__cell--assumptions" rowSpan={ rowCount }>
+            { assumptions }
+        </td>
+    )
 }
 
 

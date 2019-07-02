@@ -1,15 +1,8 @@
 $logframe-table-padding: 3px;
 
-.logframe--content {
-    margin-left: 20px;
-    margin-right: 20px;
+.logframe__header {
 }
-.logframe--header > * {
-    display: inline-block;
-    margin-top: 10px;
-    margin-right: 30px;
-}
-.logframe--subheader {
+.logframe__subheader {
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
@@ -21,76 +14,16 @@ $logframe-table-padding: 3px;
         flex-shrink: 0;
     }
 }
-.logframe--table--wrapper {
+.logframe__table {
     margin-top: 10px;
-    width: 100%;
-    overflow-x: auto;
 }
-.logframe--table--row {
-    display: flex;
-    flex-wrap: nowrap;
-    height: 100%;
-    .table-cell {
-        flex: 1 0 25%;
-        border-bottom: 1px solid $gray-500;
-        border-right: 1px solid $gray-500;
-        min-width: 320px;
-        padding: $logframe-table-padding;
-    }
-    .table-cell:first-child {
-        border-left: 1px solid $gray-500;
-    }
-    &:nth-child(2) > .table-cell {
-        border-top: none;
-    }
-    .table-cell-column {
-        display: flex;
-        flex: 2 0 50%;
-        flex-direction: column;
-        justify-content: stretch;
-        border-bottom: 1px solid $gray-500;
-        .table-cell-inner-row {
-            display: flex;
-            flex-grow: 1;
-            flex-direction: row;
-            border-top: 1px solid $gray-400;
-            &:first-child {
-                border-top: 0;
-            }
-            .table-cell--text {
-                height: auto;
-                width: 105%;
-                padding: 0 4px;
-                border-right: 1px solid $gray-500;
-            }
-        }
-    }
-    .table-cell.table-cell-inner-row:nth-child(2) {
-        border-top: 0;
-    }
-    .level-cell {
-        background-color: $gray-300;
-        font-weight: 600;
-    }
-    
+.logframe__table__header {
+    // background-color: $table-head-bg;
 }
-.logframe--table--row__header {
-    background-color: $table-head-bg;
-    .table-cell {
-        span {
-            padding-left: 5px;
-            min-height: 1.3rem;
-        }
-        display: flex;
-        border: 1px solid $gray-700;
-        border-left: none;
-        flex-direction: column;
-        justify-content: flex-end;
-        text-transform: uppercase;
-        color: $table-head-color;
-        font-weight: bold;
-    }
-    .table-cell:first-child {
-        border-left: 1px solid $gray-700;
-    }
+.logframe__cell--level {
+    background-color: $gray-200;
+    font-weight: bold;
 }
+.logframe__cell--indicator {}
+.logframe__cell--means {}
+.logframe__cell--assumptions {}
