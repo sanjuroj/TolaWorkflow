@@ -194,7 +194,7 @@ class Level(models.Model):
     def display_name(self):
         """ this returns the level's "name" as displayed on IPTT i.e. Goal: name or Output 1.1: Name"""
         return u'{tier}{ontology}: {name}'.format(
-            tier=self.leveltier.name if self.leveltier else '',
+            tier=_(self.leveltier.name) if self.leveltier else '',
             ontology=' {}'.format(self.display_ontology) if self.display_ontology else '',
             name=self.name
         )
@@ -1148,7 +1148,7 @@ class Indicator(SafeDeleteModel):
     @property
     def leveltier_name(self):
         if self.level and self.level.leveltier:
-            return self.level.leveltier.name
+            return _(self.level.leveltier.name)
         elif self.level is None and self.old_level:
             return self.old_level
         return None
