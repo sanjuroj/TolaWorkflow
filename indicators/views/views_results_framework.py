@@ -8,6 +8,7 @@ from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.utils import translation
+from django.utils.translation import ugettext_lazy as _
 from django.utils.decorators import method_decorator
 from django.utils.functional import Promise
 from django.utils.encoding import force_text
@@ -139,25 +140,28 @@ class LevelViewSet (viewsets.ModelViewSet):
         if request.user.is_anonymous or role != 'high':
             return HttpResponseRedirect('/')
 
-        self.perform_destroy(instance)
         try:
-            levels_to_shift = Level.objects \
-                .filter(program=program, parent=parent) \
-                .order_by('customsort')
-            for i, s_level in enumerate(levels_to_shift):
-                s_level.customsort = i + 1
-                s_level.save()
+            with transaction.atomic():
+                self.perform_destroy(instance)
 
-            all_levels = Level.objects.filter(program=instance.program)
+                levels_to_shift = Level.objects \
+                    .filter(program=program, parent=parent) \
+                    .order_by('customsort')
+                for i, s_level in enumerate(levels_to_shift):
+                    s_level.customsort = i + 1
+                    s_level.save()
 
-            # Need to delete the leveltiers associated with the program when the last level is deleted.
-            if len(all_levels) == 0:
-                for tier in LevelTier.objects.filter(program=program):
-                    tier.delete()
-            return Response(LevelSerializer(all_levels, many=True).data)
+                all_levels = Level.objects.filter(program=instance.program)
+
+                # Need to delete the leveltiers associated with the program when the last level is deleted.
+                if len(all_levels) == 0:
+                    for tier in LevelTier.objects.filter(program=program):
+                        tier.delete()
         except Exception as e:
             logger.error(e)
-            return render(request, '500.html', status=500)
+            return JsonResponse({'message': _('Your request could not be processed.')}, status=400)
+
+        return Response(LevelSerializer(all_levels, many=True).data)
 
 
 # TODO: add security
@@ -213,14 +217,20 @@ def save_leveltiers(request):
     role = request.user.tola_user.program_role(program.id)
     if request.user.is_anonymous or role != 'high':
         return HttpResponseRedirect('/')
+    try:
+        with transaction.atomic():
+            for n, tier in enumerate(request.data['tiers']):
+                tier_obj = LevelTier.objects.create(
+                    program=program,
+                    tier_depth=n+1,
+                    name=tier
+                )
 
-    for n, tier in enumerate(request.data['tiers']):
-        tier_obj = LevelTier.objects.create(
-            program=program,
-            tier_depth=n+1,
-            name=tier
-        )
-        tier_obj.save()
+            tier_obj.save()
+    except Exception as e:
+        logger.error(e)
+        return JsonResponse({'message': _('Your request could not be processed.')}, status=400)
+
     return Response({"message": "success"})
 
 # TODO: add security
@@ -233,9 +243,16 @@ def reorder_indicators(request):
         return HttpResponseRedirect('/')
 
     level_order_map = {i['id']: i['level_order'] for i in request.data}
-    for indicator in Indicator.objects.filter(id__in=level_order_map.keys()):
-        indicator.level_order = level_order_map[indicator.id]
-        indicator.save()
+    try:
+        with transaction.atomic():
+            for indicator in Indicator.objects.filter(id__in=level_order_map.keys()):
+                indicator.level_order = level_order_map[indicator.id]
+                indicator.save()
+    except Exception as e:
+        logger.error(e)
+        # Translators: Error message when a user request could not be saved to the DB.
+        return JsonResponse({'message': _('Your request could not be processed.')}, status=400)
+
     return Response({"message": "success"})
 
 
@@ -244,7 +261,7 @@ def indicator_list(request, program_id):
 
     program = Program.objects.get(pk=program_id)
     if not request.user.tola_user.program_role(program.id):
-        return Response({"message": "Request failed"}, status=400)
+        return JsonResponse({'message': _('Your request could not be processed.')}, status=400)
 
     filter_name_map = {'levelId': 'level_id', 'indicatorId': 'pk'}
     filters = {filter_name_map[key]: request.GET.get(key) for key in filter_name_map.keys() if request.GET.get(key, None)}

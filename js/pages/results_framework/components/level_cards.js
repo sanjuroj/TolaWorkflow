@@ -444,7 +444,7 @@ export class LevelCardExpanded extends React.Component {
                     className="btn btn-link btn-lg "
                     onClick={e => {this.updateSubmitType("saveAndEnableIndicators")}}>
                         { /* # Translators: This is button text that allows users to save their work and unlock the ability to add indicators */ }
-                        <i className="fas fa-plus-circle"/>{gettext(`Save ${this.props.levelProps.tierName} and add indicators`)}
+                        <i className="fas fa-plus-circle"/>{interpolate(gettext("Save %s and add indicators"), [this.props.levelProps.tierName])}
                 </button>
             </div>
 
@@ -645,7 +645,7 @@ class IndicatorList extends React.Component {
             <div className={`level-card--indicator-links${this.props.disabled ? " disabled" : ""}`}>
                 <div className="indicator-links__header">
                     { /* # Translators: Title for a section that lists the Indicators associated with whatever this.props.tiername is. */}
-                    <h4>{gettext(`Indicators linked to this ${this.props.tierName}`)}</h4>
+                    <h4>{interpolate(gettext("Indicators linked to this %s"), [this.props.tierName])}</h4>
                     <div>{helpLink}</div>
                 </div>
                 <div className="sortable-list-group">
