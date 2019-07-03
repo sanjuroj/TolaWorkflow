@@ -223,9 +223,10 @@ export class LevelStore {
                     this.createFirstLevel()
                 }
 
-                // Translators: Notification to user that the deletion command that they issued was successful
+
                 success_notice({
-                    message_text: gettext(`${level_label} was deleted.`),
+                    /* # Translators: Notification to user that the deletion command that they issued was successful */
+                    message_text: interpolate(gettext("%s was deleted."), [level_label]),
                     addClass: 'program-page__rationale-form',
                     stack: {
                         dir1: 'up',
@@ -271,7 +272,8 @@ export class LevelStore {
                     });
 
                     success_notice({
-                        message_text: gettext(`${level_label} saved.`),
+                        // # Translators: This is a confirmation message that confirms that change has been successfully saved to the DB.
+                        message_text: interpolate(gettext("%s saved."), [level_label]),
                         addClass: 'program-page__rationale-form',
                         stack: {
                             dir1: 'up',
@@ -304,7 +306,8 @@ export class LevelStore {
                 .then(response => {
                     if (levelDataWasUpdated || indicatorWasUpdated) {
                         success_notice({
-                            message_text: gettext(`${level_label} updated.`),
+                            // # Translators:  Confirmation message that user-supplied updates were successfully applied.
+                            message_text: interpolate(gettext("%s updated."), [level_label]),
                             addClass: 'program-page__rationale-form',
                             stack: {
                                 dir1: 'up',
@@ -474,7 +477,7 @@ export class UIStore {
                 /* # Translators:  This is a confirmation prompt that is triggered by clicking on a cancel button.  */
                 message_text: gettext("Are you sure you want to continue?"),
                 /* # Translators:  This is a warning provided to the user when they try to cancel the editing of something they have already modified.  */
-                preamble: gettext(`Changes to this ${oldTierName} will not be saved`),
+                preamble: interpolate(gettext("Changes to this %s will not be saved"), [oldTierName]),
                 type: "notice",
                 on_submit: () => this.onLeaveConfirm(levelId, cancelledLevelId),
                 on_cancel: () => this.setDisableForPrompt(false),
