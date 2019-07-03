@@ -1167,7 +1167,7 @@ class ProgramPage(ListView):
             'delete_pinned_report_url': str(reverse_lazy('delete_pinned_report')),
             'program': ProgramSerializer(program).data,
             # Translators: This is a filtering option that allows users to select which Level Tier (hierarchy of levels) they want to look at
-            'result_chain_filter': _('by %(tier)s chain') % {'tier': second_tier_name.encode('utf8')} if second_tier_name else False,
+            'result_chain_filter': _('by %(tier)s chain') % {'tier': _(second_tier_name).encode('utf8')} if second_tier_name else False,
             'indicators': IndicatorSerializer(indicators, many=True).data,
             'indicator_on_scope_margin': Indicator.ONSCOPE_MARGIN,
             'readonly': readonly,  # controls "Add indicator" link
