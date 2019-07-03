@@ -1490,6 +1490,103 @@ msgstr "Ajouter un utilisateur"
 msgid "Super Admin"
 msgstr "Super-administrateur"
 
+#. Translators: Highest level objective of a project.  High level KPIs can be attached here.
+#: indicators/models.py:291 indicators/models.py:317 indicators/models.py:345
+msgid "Goal"
+msgstr "Objectif"
+
+#. Translators: Below Goals, the 2nd highest organizing level to attach KPIs to.
+#: indicators/models.py:293 indicators/views/views_indicators.py:1148
+#: indicators/views/views_reports.py:279
+msgid "Outcome"
+msgstr "Résultat"
+
+#. Translators: Below Outcome, the 3rd highest organizing level to attach KPIs to. Noun.
+#. Translators: Below Sub-Purpose, the 4th highest organizing level to attach KPIs to. Noun.
+#. Translators: Below Sub-Intermediate Result, the 4th highest organizing level to attach KPIs to. Noun.
+#. Translators: Below Intermediate Outcome, the lowest organizing level to attach KPIs to. Noun.
+#: indicators/models.py:295 indicators/models.py:323 indicators/models.py:337
+#: indicators/models.py:353
+msgid "Output"
+msgstr "Rendement"
+
+#. Translators: Below Output, the lowest organizing level to attach KPIs to.
+#. Translators: Below Result, the lowest organizing level to attach KPIs to.
+#: indicators/models.py:297 indicators/models.py:311
+msgid "Activity"
+msgstr "Activité"
+
+#. Translators: The KPI organizational hierarchy used when we work on EC projects.
+#: indicators/models.py:300
+msgid "European Commission (EC)"
+msgstr "Commission européenne (CE)"
+
+#. Translators: Highest level goal of a project.  High level KPIs can be attached here.
+#: indicators/models.py:303
+msgid "Overall Objective"
+msgstr "Objectif global"
+
+#. Translators: Below Overall Objective, the 2nd highest organizing level to attach KPIs to.
+#: indicators/models.py:305
+msgid "Specific Objective"
+msgstr "Objectif spécifique"
+
+#. Translators: Below Specific Objective, the 3rd highest organizing level to attach KPIs to.
+#. Translators: Below Goal, the 2nd highest organizing level to attach KPIs to.
+#: indicators/models.py:307 indicators/models.py:319 indicators/models.py:347
+msgid "Purpose"
+msgstr "But"
+
+#. Translators: Below Purpose, the 4th highest organizing level to attach KPIs to.
+#: indicators/models.py:309 templates/indicators/result_form_modal.html:118
+msgid "Result"
+msgstr "Résultat"
+
+#. Translators: The KPI organizational hierarchy used when we work on certain USAID projects.
+#: indicators/models.py:314
+msgid "USAID 1"
+msgstr "USAID 1"
+
+#. Translators: Below Purpose, the 3rd highest organizing level to attach KPIs to.
+#: indicators/models.py:321 indicators/models.py:349
+msgid "Sub-Purpose"
+msgstr "But secondaire"
+
+#. Translators: Below Output, the lowest organizing level to attach KPIs to. Noun.
+#: indicators/models.py:325 indicators/models.py:339
+msgid "Input"
+msgstr "Données"
+
+#. Translators: The KPI organizational hierarchy used when we work on certain USAID projects.
+#: indicators/models.py:328
+msgid "USAID 2"
+msgstr "USAID 2"
+
+#. Translators: Highest level goal of a project.  High level KPIs can be attached here.
+#: indicators/models.py:331
+msgid "Strategic Objective"
+msgstr "Objectif stratégique"
+
+#. Translators: Below Strategic Objective, the 2nd highest organizing level to attach KPIs to.
+#: indicators/models.py:333
+msgid "Intermediate Result"
+msgstr "Résultat intermédiaire"
+
+#. Translators: Below Intermediate Result, the 3rd highest organizing level to attach KPIs to.
+#: indicators/models.py:335
+msgid "Sub-Intermediate Result"
+msgstr "Résultat intermédiaire inférieur"
+
+#. Translators: The KPI organizational hierarchy used when we work on USAID Food for Peace projects.
+#: indicators/models.py:342
+msgid "USAID FFP"
+msgstr "USAID FFP"
+
+#. Translators: Below Sub-Purpose, the 4th highest organizing level to attach KPIs to.
+#: indicators/models.py:351
+msgid "Intermediate Outcome"
+msgstr "Résultat intermédiaire"
+
 #~ msgid ""
 #~ "If we make these changes, %s data record will no longer be associated "
 #~ "with the Life of Program target, and will need to be reassigned to a new "
