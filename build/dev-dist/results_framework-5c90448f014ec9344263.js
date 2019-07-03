@@ -956,7 +956,7 @@ function (_React$Component4) {
           }
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
           className: "fas fa-plus-circle"
-        }), gettext("Save ".concat(this.props.levelProps.tierName, " and add indicators"))));
+        }), interpolate(gettext("Save %s and add indicators"), [this.props.levelProps.tierName])));
       } else {
         indicatorSection = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(IndicatorList, {
           level: this.props.level,
@@ -1223,7 +1223,7 @@ function (_React$Component7) {
         className: "level-card--indicator-links".concat(this.props.disabled ? " disabled" : "")
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "indicator-links__header"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", null, gettext("Indicators linked to this ".concat(this.props.tierName))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, helpLink)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", null, interpolate(gettext("Indicators linked to this %s"), [this.props.tierName])), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, helpLink)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "sortable-list-group"
       }, this.props.indicators.length > 0 ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "sortable-list-header"
@@ -1628,11 +1628,11 @@ function () {
 
         if (_this.levels.length == 0) {
           _this.createFirstLevel();
-        } // Translators: Notification to user that the deletion command that they issued was successful
-
+        }
 
         success_notice({
-          message_text: gettext("".concat(level_label, " was deleted.")),
+          /* # Translators: Notification to user that the deletion command that they issued was successful */
+          message_text: interpolate(gettext("%s was deleted."), [level_label]),
           addClass: 'program-page__rationale-form',
           stack: {
             dir1: 'up',
@@ -1679,7 +1679,8 @@ function () {
             _this.levels.replace(response.data['all_data']);
           });
           success_notice({
-            message_text: gettext("".concat(level_label, " saved.")),
+            // # Translators: This is a confirmation message that confirms that change has been successfully saved to the DB.
+            message_text: interpolate(gettext("%s saved."), [level_label]),
             addClass: 'program-page__rationale-form',
             stack: {
               dir1: 'up',
@@ -1707,7 +1708,8 @@ function () {
         _api_js__WEBPACK_IMPORTED_MODULE_1__["api"].put("/level/".concat(levelId, "/"), levelToSave).then(function (response) {
           if (levelDataWasUpdated || indicatorWasUpdated) {
             success_notice({
-              message_text: gettext("".concat(level_label, " updated.")),
+              // # Translators:  Confirmation message that user-supplied updates were successfully applied.
+              message_text: interpolate(gettext("%s updated."), [level_label]),
               addClass: 'program-page__rationale-form',
               stack: {
                 dir1: 'up',
@@ -2266,7 +2268,7 @@ function () {
           message_text: gettext("Are you sure you want to continue?"),
 
           /* # Translators:  This is a warning provided to the user when they try to cancel the editing of something they have already modified.  */
-          preamble: gettext("Changes to this ".concat(oldTierName, " will not be saved")),
+          preamble: interpolate(gettext("Changes to this %s will not be saved"), [oldTierName]),
           type: "notice",
           on_submit: function on_submit() {
             return _this10.onLeaveConfirm(levelId, cancelledLevelId);
@@ -2839,4 +2841,4 @@ var STATUS_CODES = {
 /***/ })
 
 },[["QTZG","runtime","vendors"]]]);
-//# sourceMappingURL=results_framework-53ee90d286fc544dcb4f.js.map
+//# sourceMappingURL=results_framework-5c90448f014ec9344263.js.map
