@@ -2,6 +2,7 @@ import React from 'react';
 import { computed } from 'mobx';
 import { observer, inject } from 'mobx-react';
 import HeaderRow from './headers';
+import { trimOntology } from '../../../level_utils'
 
 const LevelNameCell = ({ name, rowCount }) => {
     return (
@@ -14,7 +15,7 @@ const LevelNameCell = ({ name, rowCount }) => {
 const IndicatorCell = ({ indicator, ontology }) => {
     let name = gettext('Indicator');
     if (ontology || indicator.level_order_display) {
-        name += ` ${ontology}${indicator.level_order_display}`;
+        name += ` ${trimOntology(ontology)}${indicator.level_order_display}`;
     }
     name += `: ${indicator.name}`;
     return (

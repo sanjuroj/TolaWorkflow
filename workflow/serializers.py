@@ -120,9 +120,11 @@ class LogframeLevelSerializer(serializers.ModelSerializer):
     def get_ontology(self, obj):
         target = obj
         ontology = []
-        while self.get_parent(target) is not None:
+        while True:
             ontology = [str(target.customsort)] + ontology
             target = self.get_parent(target)
+            if not target:
+                break
         tier_count = len(obj.program.level_tiers.all())
         missing_tiers = tier_count - self.get_level_depth(obj)
         ontology += missing_tiers * ['0']
