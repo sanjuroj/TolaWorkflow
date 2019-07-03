@@ -265,6 +265,7 @@ def chain_sorted_indicator_queryset(program_id):
     """RF program with the "sort by outcome chain" option (default) picked queryset"""
     levels = []
     top_tier = models.Level.objects.filter(program_id=program_id, parent__isnull=True)
+    levels += list(top_tier)
     for level in top_tier:
         levels += level.get_children()
     return levels
