@@ -170,8 +170,8 @@ def logframe_excel_view(request, program):
         cell = ws.cell(row=merge_start, column=4)
         cell.border = BORDER_TOP
     response = HttpResponse(content_type="application/ms-excel")
-    response['Content-Disposition'] = 'attachment; filename="{}"'.format(
-        '{} - {}.xlsx'.format(program['name'], ugettext('Logframe'))
+    response['Content-Disposition'] = u'attachment; filename="{}"'.format(
+        u'{} - {}.xlsx'.format(program['name'], ugettext('Logframe'))
     )
     wb.save(response)
     return response
