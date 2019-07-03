@@ -9,6 +9,17 @@ from indicators.models import Indicator
 
 EM_DASH = u'–'
 
+
+def force_unicode(value):
+    """
+    Some values can be of type str, unicode, or django.utils.functional.__proxy__
+    Force these 3 types to just be `unicode` for exporting to XLS
+    """
+    if type(value) == str:
+        return value.decode('utf-8')
+    return unicode(value)
+
+
 class ExcelRendererBase(object):
     """Set of utility functions for rendering a serialized IPTT into an Excel export"""
 
@@ -101,7 +112,7 @@ class ExcelRendererBase(object):
             ]:
             if header:
                 cell = sheet.cell(row=row, column=col)
-                cell.value = unicode(header)
+                cell.value = force_unicode(header)
                 cell.font = self.HEADER_FONT
                 cell.alignment = self.CENTER_ALIGN
                 if period.tva:
@@ -262,7 +273,7 @@ class ExcelRendererBase(object):
 
     def render(self):
         response = HttpResponse(content_type='application/ms-excel')
-        response['Content-Disposition'] = 'attachment; filename="{}"'.format(self.serializer.filename)
+        response['Content-Disposition'] = u'attachment; filename="{}"'.format(self.serializer.filename)
         self.wb.save(response)
         return response
 

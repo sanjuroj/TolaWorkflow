@@ -682,7 +682,7 @@ class IPTTExcelRendererBase(object):
             return u'{} – {}'.format(self.program_data['reporting_period_start'],
                                      self.program_data['reporting_period_end'])
         periods = self.get_periods(self.frequency)
-        return u'{} – {}'.format(periods[0].start_display, periods[-1].end_display)
+        return u'{} – {}'.format(periods[0].start_display.decode('utf-8'), periods[-1].end_display.decode('utf-8'))
 
     @property
     def all_periods_for_frequency(self):
