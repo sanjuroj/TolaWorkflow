@@ -351,8 +351,16 @@ var target_with_results_text = function target_with_results_text(numResults) {
 
 window.target_with_results_text = target_with_results_text;
 
+var lop_to_non_lop_with_results_text = function lop_to_non_lop_with_results_text(numResults) {
+  return interpolate(ngettext('If we make these changes, %s data record will no longer be associated with the Life of Program target, and will need to be reassigned to a new target.\n\n Proceed anyway?', 'If we make these changes, %s data records will no longer be associated with the Life of Program target, and will need to be reassigned to new targets.\n\n Proceed anyway?', numResults), [numResults]);
+};
+
+window.lop_to_non_lop_with_results_text = lop_to_non_lop_with_results_text;
+
 var create_changeset_notice = function create_changeset_notice() {
   var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+      _ref$message_text = _ref.message_text,
+      message_text = _ref$message_text === void 0 ? DEFAULT_NONDESTRUCTIVE_MESSAGE : _ref$message_text,
       _ref$on_submit = _ref.on_submit,
       on_submit = _ref$on_submit === void 0 ? function () {} : _ref$on_submit,
       _ref$on_cancel = _ref.on_cancel,
@@ -384,8 +392,8 @@ var create_changeset_notice = function create_changeset_notice() {
       'overlayClose': true,
       'dir1': 'right',
       'dir2': 'up',
-      'firstpos1': 20,
-      'firstpos2': 20,
+      'firstpos1': 0,
+      'firstpos2': 0,
       'context': context
     },
     modules: {
@@ -465,6 +473,8 @@ window.create_destructive_changeset_notice = function () {
       on_submit = _ref2$on_submit === void 0 ? function () {} : _ref2$on_submit,
       _ref2$on_cancel = _ref2.on_cancel,
       on_cancel = _ref2$on_cancel === void 0 ? function () {} : _ref2$on_cancel,
+      _ref2$is_indicator = _ref2.is_indicator,
+      is_indicator = _ref2$is_indicator === void 0 ? false : _ref2$is_indicator,
       _ref2$confirm_text = _ref2.confirm_text,
       confirm_text = _ref2$confirm_text === void 0 ? gettext('Ok') : _ref2$confirm_text,
       _ref2$cancel_text = _ref2.cancel_text,
@@ -491,6 +501,7 @@ window.create_destructive_changeset_notice = function () {
     message_text: message_text,
     on_submit: on_submit,
     on_cancel: on_cancel,
+    is_indicator: is_indicator,
     confirm_text: confirm_text,
     cancel_text: cancel_text,
     type: 'error',
@@ -508,6 +519,8 @@ window.create_nondestructive_changeset_notice = function () {
       on_submit = _ref3$on_submit === void 0 ? function () {} : _ref3$on_submit,
       _ref3$on_cancel = _ref3.on_cancel,
       on_cancel = _ref3$on_cancel === void 0 ? function () {} : _ref3$on_cancel,
+      _ref3$is_indicator = _ref3.is_indicator,
+      is_indicator = _ref3$is_indicator === void 0 ? false : _ref3$is_indicator,
       _ref3$confirm_text = _ref3.confirm_text,
       confirm_text = _ref3$confirm_text === void 0 ? gettext('Ok') : _ref3$confirm_text,
       _ref3$cancel_text = _ref3.cancel_text,
@@ -524,6 +537,7 @@ window.create_nondestructive_changeset_notice = function () {
     message_text: message_text,
     on_submit: on_submit,
     on_cancel: on_cancel,
+    is_indicator: is_indicator,
     confirm_text: confirm_text,
     cancel_text: cancel_text,
     type: 'notice',
@@ -540,14 +554,14 @@ window.create_no_rationale_changeset_notice = function () {
       on_submit = _ref4$on_submit === void 0 ? function () {} : _ref4$on_submit,
       _ref4$on_cancel = _ref4.on_cancel,
       on_cancel = _ref4$on_cancel === void 0 ? function () {} : _ref4$on_cancel,
+      _ref4$is_indicator = _ref4.is_indicator,
+      is_indicator = _ref4$is_indicator === void 0 ? false : _ref4$is_indicator,
       _ref4$confirm_text = _ref4.confirm_text,
       confirm_text = _ref4$confirm_text === void 0 ? gettext('Ok') : _ref4$confirm_text,
       _ref4$cancel_text = _ref4.cancel_text,
       cancel_text = _ref4$cancel_text === void 0 ? gettext('Cancel') : _ref4$cancel_text,
       _ref4$context = _ref4.context,
       context = _ref4$context === void 0 ? null : _ref4$context,
-      _ref4$type = _ref4.type,
-      type = _ref4$type === void 0 ? 'error' : _ref4$type,
       _ref4$preamble = _ref4.preamble,
       preamble = _ref4$preamble === void 0 ? false : _ref4$preamble;
 
@@ -565,46 +579,15 @@ window.create_no_rationale_changeset_notice = function () {
     message_text: message_text,
     on_submit: on_submit,
     on_cancel: on_cancel,
+    is_indicator: is_indicator,
     confirm_text: confirm_text,
     cancel_text: cancel_text,
-    type: type,
+    type: 'error',
     inner: inner,
     context: context,
     rationale_required: false,
     showCloser: true
   });
-};
-
-var createPnotifyAlert = function createPnotifyAlert(passedInConfig) {
-  var config = {
-    textTrusted: true,
-    icon: false,
-    width: '350px',
-    hide: true,
-    delay: 2000,
-    type: 'alert'
-  };
-  Object.assign(config, passedInConfig);
-  var faClass = "fa-exclamation-triangle";
-
-  if (config.type == "success") {
-    faClass = "fa-check-circle";
-  }
-
-  var inner = "\n        <div class=\"row\">\n            <div class=\"col\">\n                <h2><i class=\"fas ".concat(faClass, "\"></i> ").concat(gettext("Success!"), "</h2>\n            </div>\n        </div>\n        <div class=\"row\">\n            <div class=\"col\">\n                <span class='text-success'>\n                    ").concat(config.preamble, "\n                </span>\n            </div>\n        </div>\n        <div class=\"row\">\n            <div class=\"col\">\n                <span>\n                    ").concat(config.message_text, "\n                </span>\n            </div>\n        </div>\n    ");
-  config.text = $("<div><form action=\"\" method=\"post\" class=\"form container\">".concat(inner, "</form></div>")).html();
-  PNotify.alert(config);
-};
-
-window.success_notice = function (userConfig) {
-  var config = {
-    message_text: "Update successful.",
-    preamble: "",
-    animation: "fade",
-    type: "success"
-  };
-  Object.assign(config, userConfig);
-  createPnotifyAlert(config);
 };
 /*
  * Take a jquery element and scroll the to the bottom of said element
@@ -626,4 +609,4 @@ window.scrollToBottom = scrollToBottom;
 /***/ })
 
 },[["YqHn","runtime","vendors"]]]);
-//# sourceMappingURL=base-baa5b4feca37aaf92cb7.js.map
+//# sourceMappingURL=base-5df2bd77f26bb34f70f7.js.map
