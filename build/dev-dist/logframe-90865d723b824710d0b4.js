@@ -600,6 +600,26 @@ function uniqueId() {
 
 /***/ }),
 
+/***/ "IzLX":
+/*!***************************!*\
+  !*** ./js/level_utils.js ***!
+  \***************************/
+/*! exports provided: trimOntology */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "trimOntology", function() { return trimOntology; });
+// Returns a trimmed level ontology for display purposes
+function trimOntology(ontologyStr) {
+  var ontologyArray = ontologyStr.split(".");
+  return ontologyArray.slice(1).filter(function (i) {
+    return i > 0;
+  }).join(".");
+}
+
+/***/ }),
+
 /***/ "ctBi":
 /*!*************************************************!*\
   !*** ./js/pages/logframe/models/filterStore.js ***!
@@ -802,6 +822,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var mobx__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! mobx */ "2vnA");
 /* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! mobx-react */ "okNM");
 /* harmony import */ var _headers__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./headers */ "4Bkq");
+/* harmony import */ var _level_utils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../level_utils */ "IzLX");
 var _dec, _class, _class2;
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -829,6 +850,7 @@ function _applyDecoratedDescriptor(target, property, decorators, descriptor, con
 
 
 
+
 var LevelNameCell = function LevelNameCell(_ref) {
   var name = _ref.name,
       rowCount = _ref.rowCount;
@@ -844,7 +866,7 @@ var IndicatorCell = function IndicatorCell(_ref2) {
   var name = gettext('Indicator');
 
   if (ontology || indicator.level_order_display) {
-    name += " ".concat(ontology).concat(indicator.level_order_display);
+    name += " ".concat(Object(_level_utils__WEBPACK_IMPORTED_MODULE_4__["trimOntology"])(ontology)).concat(indicator.level_order_display);
   }
 
   name += ": ".concat(indicator.name);
@@ -965,4 +987,4 @@ function (_React$Component) {
 /***/ })
 
 },[["+uhY","runtime","vendors"]]]);
-//# sourceMappingURL=logframe-fca7869cbd5479939da9.js.map
+//# sourceMappingURL=logframe-90865d723b824710d0b4.js.map
