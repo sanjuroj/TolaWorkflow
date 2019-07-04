@@ -499,7 +499,7 @@ class Command(BaseCommand):
 
     def create_levels(self, program_id, level_data):
         fixture_data = deepcopy(level_data)
-        tier_labels = LevelTier.TEMPLATES['mc_standard']['tiers']
+        tier_labels = LevelTier.get_templates()['mc_standard']['tiers']
         for i, tier in enumerate(tier_labels):
             t = LevelTier(name=tier, tier_depth=i+1, program_id=program_id)
             t.save()
