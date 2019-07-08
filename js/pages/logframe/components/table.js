@@ -13,6 +13,12 @@ const LevelNameCell = ({ name, rowCount }) => {
 }
 
 const IndicatorCell = ({ indicator, ontology }) => {
+    if (indicator == null){
+      return (
+        <td className="logframe__cell--indicator">
+        </td>
+    );
+    }
     let name = gettext('Indicator');
     if (ontology || indicator.level_order_display) {
         name += ` ${trimOntology(ontology)}${indicator.level_order_display}`;
@@ -26,6 +32,12 @@ const IndicatorCell = ({ indicator, ontology }) => {
 }
 
 const MeansCell = ({ indicator }) => {
+    if (indicator == null) {
+      return (
+        <td className="logframe__cell--means">
+        </td>
+    );
+    }
     return (
         <td className="logframe__cell--means">
             { indicator.means_of_verification }
@@ -44,12 +56,9 @@ const AssumptionsCell = ({ assumptions, rowCount }) => {
 
 
 const LevelSet = ({ level }) => {
-    if (level.indicators.length ===0) {
-        return <tbody className="logframe__level-set" />
-    }
 
-    const firstIndicator = level.indicators[0];
-    const otherIndicators = level.indicators.slice(1);
+    const firstIndicator = level.indicators[0] || null;
+    const otherIndicators = level.indicators.slice(1) || null;
     const rowCount  = level.indicators.length;
     return (
         <tbody className="logframe__level-set">
