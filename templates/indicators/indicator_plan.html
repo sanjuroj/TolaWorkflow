@@ -28,7 +28,7 @@
         {% if ordering and program.levels.count > 1 %}
         <form method="GET" action="#" class="form-inline mt-2">
             <div class="form-group"></div>
-            <label for="orderby_select">{% trans 'Group indicators' %}:</label>
+            <label for="orderby_select">{% trans 'Group indicators' %}:&nbsp;</label>
             <div class="controls">
                 <select class="select form-control" id="orderby_select" name="orderby" onchange="this.form.submit()">
                     <option value="1" {% if ordering == 1 %}selected{% endif %}>{{ program.rf_chain_sort_label }}</option>
