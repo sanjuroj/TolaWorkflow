@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-02 16:56-0700\n"
-"PO-Revision-Date: 2019-06-27 13:36-0700\n"
+"POT-Creation-Date: 2019-07-08 16:00-0700\n"
+"PO-Revision-Date: 2019-07-08 16:06-0700\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -122,6 +122,93 @@ msgstr "par niveau"
 #: js/components/selectWidgets.js:200
 msgid "Group indicators"
 msgstr "Regrouper les indicateurs"
+
+#: js/level_utils.js:17
+msgid "Mercy Corps"
+msgstr "Mercy Corps"
+
+#: js/level_utils.js:19 js/level_utils.js:41 js/level_utils.js:57
+msgid "Goal"
+msgstr "Objectif"
+
+#: js/level_utils.js:20 js/level_utils.js:27
+msgid "Outcome"
+msgstr "Résultat"
+
+#: js/level_utils.js:21 js/level_utils.js:28 js/level_utils.js:44
+#: js/level_utils.js:52 js/level_utils.js:61
+msgid "Output"
+msgstr "Rendement"
+
+#: js/level_utils.js:22 js/level_utils.js:37
+#, fuzzy
+#| msgid "Active"
+msgid "Activity"
+msgstr "Actif"
+
+#: js/level_utils.js:24
+msgid "Department for International Development (DFID)"
+msgstr ""
+
+#: js/level_utils.js:26
+msgid "Impact"
+msgstr ""
+
+#: js/level_utils.js:29 js/level_utils.js:45 js/level_utils.js:53
+msgid "Input"
+msgstr "Données"
+
+#: js/level_utils.js:31
+msgid "European Commission (EC)"
+msgstr "Commission européenne (CE)"
+
+#: js/level_utils.js:33
+msgid "Overall Objective"
+msgstr "Objectif global"
+
+#: js/level_utils.js:34
+msgid "Specific Objective"
+msgstr "Objectif spécifique"
+
+#: js/level_utils.js:35 js/level_utils.js:42 js/level_utils.js:58
+msgid "Purpose"
+msgstr "But"
+
+#: js/level_utils.js:36
+msgid "Result"
+msgstr "Résultat"
+
+#: js/level_utils.js:39
+msgid "USAID 1"
+msgstr "USAID 1"
+
+#: js/level_utils.js:43 js/level_utils.js:59
+msgid "Sub-Purpose"
+msgstr "But secondaire"
+
+#: js/level_utils.js:47
+msgid "USAID 2"
+msgstr "USAID 1"
+
+#: js/level_utils.js:49
+msgid "Strategic Objective"
+msgstr "Objectif stratégique"
+
+#: js/level_utils.js:50
+msgid "Intermediate Result"
+msgstr "Résultat intermédiaire"
+
+#: js/level_utils.js:51
+msgid "Sub-Intermediate Result"
+msgstr "Résultat intermédiaire inférieur"
+
+#: js/level_utils.js:55
+msgid "USAID FFP"
+msgstr "USAID FFP"
+
+#: js/level_utils.js:60
+msgid "Intermediate Outcome"
+msgstr "Résultat intermédiaire"
 
 #: js/pages/document_list/components/document_list.js:59
 msgid "Filter by program"
@@ -301,7 +388,7 @@ msgstr "Nº"
 
 #. Translators: Column header for indicator Name column */
 #: js/pages/iptt_report/components/report/tableHeader.js:51
-#: js/pages/logframe/components/table.js:15
+#: js/pages/logframe/components/table.js:16
 #: js/pages/program_page/components/indicator_list.js:198
 #: js/pages/tola_management_pages/audit_log/views.js:113
 #: js/pages/tola_management_pages/audit_log/views.js:117
@@ -433,7 +520,7 @@ msgstr "Afficher/Masquer les filtres"
 msgid "View results framework"
 msgstr "Afficher le cadre de résultats"
 
-#: js/pages/logframe/components/table.js:93
+#: js/pages/logframe/components/table.js:94
 msgid "Indicators unassigned to  a results framework level"
 msgstr "Indicateurs non affectés à un niveau de cadre de résultats"
 
@@ -680,7 +767,7 @@ msgstr ""
 #. Translators: Take the text of a program objective and import it for editing
 #: js/pages/results_framework/components/level_cards.js:50
 msgid "Import Program Objective"
-msgstr ""
+msgstr "Importer l’objectif du programme"
 
 #. Translators: instructions to users containing some HTML */
 #: js/pages/results_framework/components/level_cards.js:67
@@ -689,18 +776,21 @@ msgid ""
 "import__popover-strong-text'>Make sure to remove levels and numbers from "
 "your text, because they are automatically displayed.</strong>"
 msgstr ""
+"Importez le texte provenant d’un objectif de programme. <strong "
+"class=‘program-objective-import__popover-strong-text’>Les niveaux et les "
+"nombres s’affichent automatiquement, n’oubliez donc pas de les supprimer.</"
+"strong>"
 
 #. Translators: This is a validation message given to the user when the user-editable name field has been deleted or omitted. */
 #: js/pages/results_framework/components/level_cards.js:411
 msgid "Please complete this field."
-msgstr ""
+msgstr "Veuillez remplir ce champ."
 
 #. Translators: This is button text that allows users to save their work and unlock the ability to add indicators */ }
 #: js/pages/results_framework/components/level_cards.js:447
-#, fuzzy, python-format
-#| msgid "Save and add another %s"
+#, python-format
 msgid "Save %s and add indicators"
-msgstr "Enregistrer et ajouter plus de %s"
+msgstr "Enregistrer %s et ajouter des indicateurs"
 
 #. Translators: On a button, with a tiered set of objects, save current object and add another one in the same tier, e.g. "Save and add another Outcome" when the user is editing an Outcome */}
 #: js/pages/results_framework/components/level_cards.js:531
@@ -732,6 +822,9 @@ msgid ""
 "indicator from the program page and use the “Result level” menu on the "
 "Summary tab."
 msgstr ""
+"Pour lier un indicateur déjà enregistré à votre cadre de résultats : ouvrez "
+"l’indicateur depuis la page du programme, et rendez-vous dans le menu "
+"« Niveau de résultat », à partir de l’onglet Sommaire."
 
 #. Translators: Popover for help link, tell user how to disassociate an Indicator from the Level they are currently editing. */
 #: js/pages/results_framework/components/level_cards.js:632
@@ -745,10 +838,9 @@ msgstr ""
 
 #. Translators: Title for a section that lists the Indicators associated with whatever this.props.tiername is. */}
 #: js/pages/results_framework/components/level_cards.js:648
-#, fuzzy, python-format
-#| msgid "Indicators missing targets"
+#, python-format
 msgid "Indicators linked to this %s"
-msgstr "﻿Indicateurs avec cibles manquantes"
+msgstr "Indicateurs liés à %s"
 
 #: js/pages/results_framework/components/leveltier_picker.js:30
 msgid ""
@@ -792,25 +884,25 @@ msgstr "Appliquer"
 #. Translators: This signifies that the user has build their own level hierarchy instead of using one of the pre-defined ones */}
 #: js/pages/results_framework/models.js:88
 msgid "Custom"
-msgstr ""
+msgstr "Personnalisé"
 
 #. Translators: Notification to user that the deletion command that they issued was successful */
 #: js/pages/results_framework/models.js:229
 #, python-format
 msgid "%s was deleted."
-msgstr ""
+msgstr "%s a été supprimée."
 
 #. Translators: This is a confirmation message that confirms that change has been successfully saved to the DB.
 #: js/pages/results_framework/models.js:276
 #, python-format
 msgid "%s saved."
-msgstr ""
+msgstr "%s enregistrée."
 
 #. Translators:  Confirmation message that user-supplied updates were successfully applied.
 #: js/pages/results_framework/models.js:310
 #, python-format
 msgid "%s updated."
-msgstr ""
+msgstr "%s mis à jour."
 
 #. Translators:  This is a confirmation prompt that is triggered by clicking on a cancel button.  */
 #: js/pages/results_framework/models.js:478
@@ -822,7 +914,7 @@ msgstr "Voulez-vous vraiment continuer ?"
 #: js/pages/results_framework/models.js:480
 #, python-format
 msgid "Changes to this %s will not be saved"
-msgstr ""
+msgstr "Les modifications apportées à %s n’ont pas été enregistrées"
 
 #: js/pages/tola_management_pages/audit_log/views.js:14
 msgid "Disaggregated values changed"
@@ -855,8 +947,6 @@ msgid "Date and time"
 msgstr "Date et heure"
 
 #: js/pages/tola_management_pages/audit_log/views.js:166
-#, fuzzy
-#| msgid "Result level"
 msgid "Result Level"
 msgstr "Niveau de résultat"
 
@@ -1232,7 +1322,7 @@ msgstr "Numérotation de l’indicateur"
 #. Translators: Auto-number meaning the system will do this automatically
 #: js/pages/tola_management_pages/program/components/program_settings.js:78
 msgid "Auto-number indicators (recommended)"
-msgstr "Numération automatique des indicateurs (recommandé)"
+msgstr "Numérotation automatique des indicateurs (recommandé)"
 
 #: js/pages/tola_management_pages/program/components/program_settings.js:80
 msgid ""
@@ -1489,103 +1579,6 @@ msgstr "Ajouter un utilisateur"
 #: js/pages/tola_management_pages/user/views.js:332
 msgid "Super Admin"
 msgstr "Super-administrateur"
-
-#. Translators: Highest level objective of a project.  High level KPIs can be attached here.
-#: indicators/models.py:291 indicators/models.py:317 indicators/models.py:345
-msgid "Goal"
-msgstr "Objectif"
-
-#. Translators: Below Goals, the 2nd highest organizing level to attach KPIs to.
-#: indicators/models.py:293 indicators/views/views_indicators.py:1148
-#: indicators/views/views_reports.py:279
-msgid "Outcome"
-msgstr "Résultat"
-
-#. Translators: Below Outcome, the 3rd highest organizing level to attach KPIs to. Noun.
-#. Translators: Below Sub-Purpose, the 4th highest organizing level to attach KPIs to. Noun.
-#. Translators: Below Sub-Intermediate Result, the 4th highest organizing level to attach KPIs to. Noun.
-#. Translators: Below Intermediate Outcome, the lowest organizing level to attach KPIs to. Noun.
-#: indicators/models.py:295 indicators/models.py:323 indicators/models.py:337
-#: indicators/models.py:353
-msgid "Output"
-msgstr "Rendement"
-
-#. Translators: Below Output, the lowest organizing level to attach KPIs to.
-#. Translators: Below Result, the lowest organizing level to attach KPIs to.
-#: indicators/models.py:297 indicators/models.py:311
-msgid "Activity"
-msgstr "Activité"
-
-#. Translators: The KPI organizational hierarchy used when we work on EC projects.
-#: indicators/models.py:300
-msgid "European Commission (EC)"
-msgstr "Commission européenne (CE)"
-
-#. Translators: Highest level goal of a project.  High level KPIs can be attached here.
-#: indicators/models.py:303
-msgid "Overall Objective"
-msgstr "Objectif global"
-
-#. Translators: Below Overall Objective, the 2nd highest organizing level to attach KPIs to.
-#: indicators/models.py:305
-msgid "Specific Objective"
-msgstr "Objectif spécifique"
-
-#. Translators: Below Specific Objective, the 3rd highest organizing level to attach KPIs to.
-#. Translators: Below Goal, the 2nd highest organizing level to attach KPIs to.
-#: indicators/models.py:307 indicators/models.py:319 indicators/models.py:347
-msgid "Purpose"
-msgstr "But"
-
-#. Translators: Below Purpose, the 4th highest organizing level to attach KPIs to.
-#: indicators/models.py:309 templates/indicators/result_form_modal.html:118
-msgid "Result"
-msgstr "Résultat"
-
-#. Translators: The KPI organizational hierarchy used when we work on certain USAID projects.
-#: indicators/models.py:314
-msgid "USAID 1"
-msgstr "USAID 1"
-
-#. Translators: Below Purpose, the 3rd highest organizing level to attach KPIs to.
-#: indicators/models.py:321 indicators/models.py:349
-msgid "Sub-Purpose"
-msgstr "But secondaire"
-
-#. Translators: Below Output, the lowest organizing level to attach KPIs to. Noun.
-#: indicators/models.py:325 indicators/models.py:339
-msgid "Input"
-msgstr "Données"
-
-#. Translators: The KPI organizational hierarchy used when we work on certain USAID projects.
-#: indicators/models.py:328
-msgid "USAID 2"
-msgstr "USAID 2"
-
-#. Translators: Highest level goal of a project.  High level KPIs can be attached here.
-#: indicators/models.py:331
-msgid "Strategic Objective"
-msgstr "Objectif stratégique"
-
-#. Translators: Below Strategic Objective, the 2nd highest organizing level to attach KPIs to.
-#: indicators/models.py:333
-msgid "Intermediate Result"
-msgstr "Résultat intermédiaire"
-
-#. Translators: Below Intermediate Result, the 3rd highest organizing level to attach KPIs to.
-#: indicators/models.py:335
-msgid "Sub-Intermediate Result"
-msgstr "Résultat intermédiaire inférieur"
-
-#. Translators: The KPI organizational hierarchy used when we work on USAID Food for Peace projects.
-#: indicators/models.py:342
-msgid "USAID FFP"
-msgstr "USAID FFP"
-
-#. Translators: Below Sub-Purpose, the 4th highest organizing level to attach KPIs to.
-#: indicators/models.py:351
-msgid "Intermediate Outcome"
-msgstr "Résultat intermédiaire"
 
 #~ msgid ""
 #~ "If we make these changes, %s data record will no longer be associated "

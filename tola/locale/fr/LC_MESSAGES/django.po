@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-07-02 16:55-0700\n"
-"PO-Revision-Date: 2019-06-27 13:36-0700\n"
+"PO-Revision-Date: 2019-07-04 14:45+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -1273,7 +1273,7 @@ msgstr "chaînes %(tier)s"
 #: indicators/views/views_results_framework.py:254
 #: indicators/views/views_results_framework.py:264
 msgid "Your request could not be processed."
-msgstr ""
+msgstr "Votre requête n’a pu être traitée."
 
 #: templates/400.html:9 templates/404.html:9
 msgid "This is not the page you were looking for, you may be lost."
@@ -2814,15 +2814,7 @@ msgstr ""
 
 #. Translators: Explains how performance is categorized as close to the target or not close to the target
 #: templates/indicators/tags/target-percent-met.html:19
-#, fuzzy, python-format
-#| msgid ""
-#| "\n"
-#| "            <p><strong>The actual value is %(percent_met)s%% of the "
-#| "target value.</strong> An indicator is on track if the result is no less "
-#| "than 85%% of the target and no more than 115%% of the target.</p>\n"
-#| "            <p><em>Remember to consider your direction of change when "
-#| "thinking about whether the indicator is on track.</em></p>\n"
-#| "            "
+#, python-format
 msgid ""
 "\n"
 "                <p><strong>The actual value is %(percent_met)s%% of the "
@@ -2833,11 +2825,11 @@ msgid ""
 "                "
 msgstr ""
 "\n"
-"            <p><strong>La valeur réelle est %(percent_met)s%% de la valeur "
-"ciblée.</strong> Un indicateur est en bonne voie si le résultat n’est ni "
-"moins que 85%% de la cible, ni plus que 115%% de la cible. </p>\n"
-"            <p><em>N’oubliez pas de considérer la direction du changement "
-"souhaité lorsque vous réfléchissez sur le statut d’un indicateur.</em></p>\n"
+"            <p><strong>La valeur réelle représente %(percent_met)s%% de la "
+"valeur ciblée.</strong> Un indicateur est en bonne voie si le résultat n’est "
+"ni inférieur à 85%% de la cible, ni supérieur à 115%% de la cible. </p>\n"
+"            <p><em>Pensez à prendre en compte la direction du changement "
+"souhaité lorsque vous réfléchissez au statut d’un indicateur.</em></p>\n"
 "            "
 
 #: templates/registration/invalid_okta_user.html:6
@@ -3655,10 +3647,8 @@ msgid "Program Dates Changed"
 msgstr "Dates du programme modifiées"
 
 #: tola_management/models.py:237
-#, fuzzy
-#| msgid "Result Changed"
 msgid "Result Level Changed"
-msgstr "Résultat modifié"
+msgstr "Niveau de résultat modifié"
 
 #: tola_management/models.py:244
 msgid "Percentage"
@@ -3714,8 +3704,6 @@ msgstr "Date et heure"
 
 #. Translators: Number of the indicator being shown
 #: tola_management/programadmin.py:92
-#, fuzzy
-#| msgid "Result level"
 msgid "Result Level"
 msgstr "Niveau de résultat"
 

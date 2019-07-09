@@ -280,6 +280,10 @@ class LevelTier(models.Model):
     def TEMPLATES(self):
         return self.get_templates()
 
+    #####!!!!!!!!!!! IMPORTANT!!    !!!!!!!!!!!#####
+    # If you update these templates, make sure you update the template in /js/level_utils.js.  They need to be in
+    # some .js file so that the translation strings get picked up in the djangojs.po/mo file and provided to the
+    # front-end.
     @classmethod
     def get_templates(cls):
         return {
@@ -295,6 +299,18 @@ class LevelTier(models.Model):
                     _('Output'),
                     # Translators: Below Output, the lowest organizing level to attach KPIs to.
                     _('Activity')]},
+            'dfid': {
+                # Translators: Name of the most commonly used organizational hierarchy of KPIs at Mercy Corps.
+                'name': _('Department for International Development (DFID)'),
+                'tiers': [
+                    # Translators: Highest level objective of a project.  High level KPIs can be attached here.
+                    _('Impact'),
+                    # Translators: Below Goals, the 2nd highest organizing level to attach KPIs to.
+                    _('Outcome'),
+                    # Translators: Below Outcome, the 3rd highest organizing level to attach KPIs to. Noun.
+                    _('Output'),
+                    # Translators: Below Output, the lowest organizing level to attach KPIs to.
+                    _('Input')]},
             'ec': {
                 # Translators: The KPI organizational hierarchy used when we work on EC projects.
                 'name': _('European Commission (EC)'),
