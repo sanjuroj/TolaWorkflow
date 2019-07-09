@@ -617,6 +617,39 @@ function trimOntology(ontologyStr) {
     return i > 0;
   }).join(".");
 }
+/*************  IMPORTANT!!!!!
+ * Thee templates need to be in a .js file so the translation machinery picks them up and puts them into the
+ * translated strings provided to the front-end.  If you make changes here, make sure to also make them
+ * in the LevelTier model in indicators/models.py.  No need to duplicate the translator comments.
+ */
+
+var rf_templates = {
+  'mc_standard': {
+    // Translators: Name of the most commonly used organizational hierarchy of KPIs at Mercy Corps.
+    'name': gettext('Mercy Corps'),
+    'tiers': [gettext('Goal'), gettext('Outcome'), gettext('Output'), gettext('Activity')]
+  },
+  'dfid': {
+    'name': gettext('Department for International Development (DFID)'),
+    'tiers': [gettext('Impact'), gettext('Outcome'), gettext('Output'), gettext('Input')]
+  },
+  'ec': {
+    'name': gettext('European Commission (EC)'),
+    'tiers': [gettext('Overall Objective'), gettext('Specific Objective'), gettext('Purpose'), gettext('Result'), gettext('Activity')]
+  },
+  'usaid1': {
+    'name': gettext('USAID 1'),
+    'tiers': [gettext('Goal'), gettext('Purpose'), gettext('Sub-Purpose'), gettext('Output'), gettext('Input')]
+  },
+  'usaid2': {
+    'name': gettext('USAID 2'),
+    'tiers': [gettext('Strategic Objective'), gettext('Intermediate Result'), gettext('Sub-Intermediate Result'), gettext('Output'), gettext('Input')]
+  },
+  'usaid_ffp': {
+    'name': gettext('USAID FFP'),
+    'tiers': [gettext('Goal'), gettext('Purpose'), gettext('Sub-Purpose'), gettext('Intermediate Outcome'), gettext('Output')]
+  }
+};
 
 /***/ }),
 
@@ -863,13 +896,6 @@ var LevelNameCell = function LevelNameCell(_ref) {
 var IndicatorCell = function IndicatorCell(_ref2) {
   var indicator = _ref2.indicator,
       ontology = _ref2.ontology;
-
-  if (indicator == null) {
-    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
-      className: "logframe__cell--indicator"
-    });
-  }
-
   var name = gettext('Indicator');
 
   if (ontology || indicator.level_order_display) {
@@ -884,13 +910,6 @@ var IndicatorCell = function IndicatorCell(_ref2) {
 
 var MeansCell = function MeansCell(_ref3) {
   var indicator = _ref3.indicator;
-
-  if (indicator == null) {
-    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
-      className: "logframe__cell--means"
-    });
-  }
-
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
     className: "logframe__cell--means"
   }, indicator.means_of_verification);
@@ -907,8 +926,15 @@ var AssumptionsCell = function AssumptionsCell(_ref4) {
 
 var LevelSet = function LevelSet(_ref5) {
   var level = _ref5.level;
-  var firstIndicator = level.indicators[0] || null;
-  var otherIndicators = level.indicators.slice(1) || null;
+
+  if (level.indicators.length === 0) {
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", {
+      className: "logframe__level-set"
+    });
+  }
+
+  var firstIndicator = level.indicators[0];
+  var otherIndicators = level.indicators.slice(1);
   var rowCount = level.indicators.length;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", {
     className: "logframe__level-set"
@@ -994,4 +1020,4 @@ function (_React$Component) {
 /***/ })
 
 },[["+uhY","runtime","vendors"]]]);
-//# sourceMappingURL=logframe-b441313187d5233a2938.js.map
+//# sourceMappingURL=logframe-a2b5f5ec216593221cd1.js.map
