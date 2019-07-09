@@ -896,6 +896,13 @@ var LevelNameCell = function LevelNameCell(_ref) {
 var IndicatorCell = function IndicatorCell(_ref2) {
   var indicator = _ref2.indicator,
       ontology = _ref2.ontology;
+
+  if (indicator == null) {
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
+      className: "logframe__cell--indicator"
+    });
+  }
+
   var name = gettext('Indicator');
 
   if (ontology || indicator.level_order_display) {
@@ -910,6 +917,13 @@ var IndicatorCell = function IndicatorCell(_ref2) {
 
 var MeansCell = function MeansCell(_ref3) {
   var indicator = _ref3.indicator;
+
+  if (indicator == null) {
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
+      className: "logframe__cell--means"
+    });
+  }
+
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
     className: "logframe__cell--means"
   }, indicator.means_of_verification);
@@ -926,15 +940,8 @@ var AssumptionsCell = function AssumptionsCell(_ref4) {
 
 var LevelSet = function LevelSet(_ref5) {
   var level = _ref5.level;
-
-  if (level.indicators.length === 0) {
-    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", {
-      className: "logframe__level-set"
-    });
-  }
-
-  var firstIndicator = level.indicators[0];
-  var otherIndicators = level.indicators.slice(1);
+  var firstIndicator = level.indicators[0] || null;
+  var otherIndicators = level.indicators.slice(1) || null;
   var rowCount = level.indicators.length;
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", {
     className: "logframe__level-set"
@@ -1020,4 +1027,4 @@ function (_React$Component) {
 /***/ })
 
 },[["+uhY","runtime","vendors"]]]);
-//# sourceMappingURL=logframe-a2b5f5ec216593221cd1.js.map
+//# sourceMappingURL=logframe-ee3e1bff914e8d4fd080.js.map
