@@ -504,14 +504,15 @@ class IPTTFullReportSerializerMixin:
 
     def annotate_indicators(self, indicators):
         self._all_indicators = indicators
-        indicators_by_frequency = {}
-        for frequency in self.frequencies:
-            frequency_indicators = indicators.filter(target_frequency=frequency)
-            indicators_by_frequency[frequency] = frequency_indicators.with_frequency_annotations(
-                frequency,
-                self.program_data['reporting_period_start'],
-                self.program_data['reporting_period_end']
-            )
+        indicators = indicators.with_frequency_annotations(
+            'all',
+            self.program_data['reporting_period_start'],
+            self.program_data['reporting_period_end']
+        )
+        indicators_by_frequency = {
+            frequency: [
+                indicator for indicator in indicators if indicator.target_frequency == frequency
+                ] for frequency in self.frequencies}
         return indicators_by_frequency
 
 
@@ -522,8 +523,7 @@ class IPTTFullReportSerializerMixin:
     @property
     def blank_level_row(self):
         return [
-            indicator for indicator in self.indicators.filter(
-                level__isnull=True).with_logframe_sorting()
+            indicator for indicator in self.indicators if indicator.level_id is None
             ]
 
     @property
@@ -555,8 +555,8 @@ class IPTTFullReportSerializerMixin:
         for frequency in self.frequencies:
             level_rows[frequency] = []
             for level in sorted_levels:
-                indicators = [indicator for indicator in self._indicators.get(frequency).filter(level=level)]
-                if indicators:
+                indicators = [indicator for indicator in self._indicators.get(frequency) if indicator.level_id == level.pk]
+                if indicators or level.parent is None:
                     level_rows[frequency].append({
                         'level': level,
                         'indicators': indicators

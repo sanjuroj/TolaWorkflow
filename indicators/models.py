@@ -155,6 +155,10 @@ class Level(models.Model):
             depth = self.parent.get_level_depth(depth)
         return depth
 
+    @cached_property
+    def level_depth(self):
+        return self.get_level_depth()
+
     @property
     def ontology(self):
         target = self
@@ -185,12 +189,12 @@ class Level(models.Model):
         # TODO: What if their level hierarchy is deeper than the leveltier set that they pick
         tiers = self.program.level_tiers.order_by('tier_depth')
         try:
-            tier = tiers[self.get_level_depth()-1]
+            tier = tiers[self.level_depth-1]
         except IndexError:
             tier = None
         return tier
 
-    @property
+    @cached_property
     def display_name(self):
         """ this returns the level's "name" as displayed on IPTT i.e. Goal: name or Output 1.1: Name"""
         return u'{tier}{ontology}: {name}'.format(
@@ -1161,7 +1165,7 @@ class Indicator(SafeDeleteModel):
     def cached_data_count(self):
         return self.result_set.count()
 
-    @property
+    @cached_property
     def leveltier_name(self):
         if self.level and self.level.leveltier:
             return _(self.level.leveltier.name)
@@ -1175,16 +1179,16 @@ class Indicator(SafeDeleteModel):
             return self.level.display_ontology
         return None
 
-    @property
+    @cached_property
     def leveltier_depth(self):
-        if self.level and self.level.leveltier:
-            return self.level.get_level_depth()
+        if self.level:
+            return self.level.level_depth
         return None
 
     @property
     def level_pk(self):
         if self.level:
-            return self.level.pk
+            return self.level_id
         return None
 
     @property
@@ -1196,7 +1200,7 @@ class Indicator(SafeDeleteModel):
             return string.lowercase[self.level_order/26 - 1] + string.lowercase[self.level_order % 26]
         return ''
 
-    @property
+    @cached_property
     def number_display(self):
         if self.results_framework and self.auto_number_indicators and self.level and self.level.leveltier:
             return "{0} {1}{2}".format(
