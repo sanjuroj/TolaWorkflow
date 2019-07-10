@@ -847,7 +847,11 @@ export default class FilterStore {
             } else {
                 levelPks = new Set(this.filteredIndicators.map(indicator => indicator.levelpk));
             }
-            levels = levels.filter(level => !level._parent || levelPks.has(level.pk));
+            if ((this.levels && this.levels.length > 0) || (this.tiers && this.tiers.length > 0) || (this.indicators && this.indicators.length > 0)) {
+                levels = levels.filter(level => levelPks.has(level.pk));
+            } else {
+                levels = levels.filter(level => !level._parent || levelPks.has(level.pk));
+            }
             if (levels.length == 1 && !levelPks.has(levels[0].pk)) {
                 return [];
             }

@@ -2710,9 +2710,15 @@ function () {
           }));
         }
 
-        levels = levels.filter(function (level) {
-          return !level._parent || levelPks.has(level.pk);
-        });
+        if (this.levels && this.levels.length > 0 || this.tiers && this.tiers.length > 0 || this.indicators && this.indicators.length > 0) {
+          levels = levels.filter(function (level) {
+            return levelPks.has(level.pk);
+          });
+        } else {
+          levels = levels.filter(function (level) {
+            return !level._parent || levelPks.has(level.pk);
+          });
+        }
 
         if (levels.length == 1 && !levelPks.has(levels[0].pk)) {
           return [];
@@ -5072,4 +5078,4 @@ function () {
 /***/ })
 
 },[["mYfJ","runtime","vendors"]]]);
-//# sourceMappingURL=iptt_report-854031c5674c26352261.js.map
+//# sourceMappingURL=iptt_report-33b94f8c364ccc210cf5.js.map
