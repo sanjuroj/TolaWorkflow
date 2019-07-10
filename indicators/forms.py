@@ -128,8 +128,10 @@ class IndicatorForm(forms.ModelForm):
         countries = getCountry(self.request.user)
         self.fields['disaggregation'].queryset = DisaggregationType.objects\
             .filter(country__in=countries, standard=False)
-
-        self.fields['objectives'].queryset = Objective.objects.filter(program__id__in=[self.programval.id])
+        if self.programval._using_results_framework == Program.NOT_MIGRATED and Objective.objects.filter(program_id=self.programval.id).exists():
+            self.fields['objectives'].queryset = Objective.objects.filter(program__id__in=[self.programval.id])
+        else:
+            self.fields.pop('objectives')
         self.fields['strategic_objectives'].queryset = StrategicObjective.objects.filter(country__in=countries)
         self.fields['approved_by'].queryset = TolaUser.objects.filter(country__in=countries).distinct()
         self.fields['approval_submitted_by'].queryset = TolaUser.objects.filter(country__in=countries).distinct()
