@@ -340,7 +340,7 @@ function () {
     this.sortIndex = null;
     this.reportData = (_this$reportData = {}, _defineProperty(_this$reportData, _constants__WEBPACK_IMPORTED_MODULE_1__["TIMEPERIODS"], {}), _defineProperty(_this$reportData, _constants__WEBPACK_IMPORTED_MODULE_1__["TVA"], {}), _this$reportData);
     this.pk = parseInt(indicatorJSON.pk);
-    this.number = indicatorJSON.number || indicatorJSON.old_number;
+    this.number = indicatorJSON.number;
     this.old_number = indicatorJSON.old_number;
     this.name = indicatorJSON.name;
     this.unitOfMeasure = indicatorJSON.unitOfMeasure;
@@ -5091,4 +5091,4 @@ function () {
 /***/ })
 
 },[["mYfJ","runtime","vendors"]]]);
-//# sourceMappingURL=iptt_report-a50e577f90820ab2bfce.js.map
+//# sourceMappingURL=iptt_report-3568c995bc51719c97df.js.map
