@@ -25,8 +25,10 @@
                 {% if program.levels.first %}{# show RF link for all users, if RF is already built #}
                 {# Translators: a link to the results framework #}
                 <li><a href="{% url 'results_framework_builder' program.id %}"><i class="fas fa-sitemap"></i> {% trans "Results framework" %}</a></li>
-                {# Translators: a link to the logistical framework model #}
-                <li><a href="{% url 'logframe' program.id %}"><i class="fas fa-table"></i> {% trans "Logframe" %}</a></li>
+                    {% if program.results_framework %} {# Only show Logframe if they have also switched to RF level indicator grouping #}
+                        {# Translators: a link to the logistical framework model #}
+                        <li><a href="{% url 'logframe' program.id %}"><i class="fas fa-table"></i> {% trans "Logframe" %}</a></li>
+                    {% endif %}
                 {% elif not readonly %}{# otherwise prompt high-level users to create RF #}
                 {# Translators: a prompt to create the results framework #}
                 <li><a href="{% url 'results_framework_builder' program.id %}"><i class="fas fa-sitemap"></i> {% trans "Create results framework" %}</a></li>
