@@ -268,7 +268,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return ProgramStore; });
 /* harmony import */ var mobx__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! mobx */ "2vnA");
 /* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../constants */ "v38i");
-var _class, _temp, _class3, _class4, _temp2, _class6, _temp3, _class8, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _descriptor16, _descriptor17, _temp4, _class10, _descriptor18, _descriptor19, _descriptor20, _temp5;
+var _class, _temp, _class3, _temp2, _class5, _temp3, _class7, _temp4, _class9, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _descriptor16, _descriptor17, _temp5, _class11, _descriptor18, _descriptor19, _descriptor20, _temp6;
 
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
 
@@ -399,7 +399,7 @@ function () {
   }, {
     key: "levelName",
     get: function get() {
-      return this.level ? this.level.name : null;
+      return this.level ? this.level.old ? this.level.displayName : this.level.name : null;
     }
   }, {
     key: "cumulative",
@@ -420,10 +420,12 @@ function () {
     this.program = null;
     this.pk = null;
     this.name = null;
+    this.displayName = null;
     this._sort = null;
     this.program = program;
     this.pk = parseInt(levelJSON.pk);
     this.name = levelJSON.name;
+    this.displayName = levelJSON.display_name;
     this._sort = parseInt(levelJSON.sort);
   }
 
@@ -440,15 +442,25 @@ function () {
 
   return Level;
 }(), _temp), (_applyDecoratedDescriptor(_class.prototype, "indicators", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class.prototype, "indicators"), _class.prototype)), _class);
-var OldLevel = (_class3 =
+var OldLevel = (_class3 = (_temp2 =
 /*#__PURE__*/
 function (_Level) {
   _inherits(OldLevel, _Level);
 
   function OldLevel() {
+    var _getPrototypeOf2;
+
+    var _this3;
+
     _classCallCheck(this, OldLevel);
 
-    return _possibleConstructorReturn(this, _getPrototypeOf(OldLevel).apply(this, arguments));
+    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    _this3 = _possibleConstructorReturn(this, (_getPrototypeOf2 = _getPrototypeOf(OldLevel)).call.apply(_getPrototypeOf2, [this].concat(args)));
+    _this3.old = true;
+    return _this3;
   }
 
   _createClass(OldLevel, [{
@@ -459,31 +471,32 @@ function (_Level) {
   }]);
 
   return OldLevel;
-}(Level), (_applyDecoratedDescriptor(_class3.prototype, "sort", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class3.prototype, "sort"), _class3.prototype)), _class3);
-var NewLevel = (_class4 = (_temp2 =
+}(Level), _temp2), (_applyDecoratedDescriptor(_class3.prototype, "sort", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class3.prototype, "sort"), _class3.prototype)), _class3);
+var NewLevel = (_class5 = (_temp3 =
 /*#__PURE__*/
 function (_Level2) {
   _inherits(NewLevel, _Level2);
 
   function NewLevel(levelJSON, program) {
-    var _this3;
+    var _this4;
 
     _classCallCheck(this, NewLevel);
 
-    _this3 = _possibleConstructorReturn(this, _getPrototypeOf(NewLevel).call(this, levelJSON, program));
-    _this3.tierPk = null;
-    _this3.ontology = null;
-    _this3.sortOntology = null;
-    _this3.depth = null;
-    _this3._level2parent = null;
-    _this3._parent = null;
-    _this3.tierPk = parseInt(levelJSON.tierPk);
-    _this3.ontology = levelJSON.ontology;
-    _this3.sortOntology = levelJSON.sort_ontology;
-    _this3.depth = parseInt(levelJSON.depth);
-    _this3._level2parent = parseInt(levelJSON.level2parent);
-    _this3._parent = parseInt(levelJSON.parent);
-    return _this3;
+    _this4 = _possibleConstructorReturn(this, _getPrototypeOf(NewLevel).call(this, levelJSON, program));
+    _this4.old = false;
+    _this4.tierPk = null;
+    _this4.ontology = null;
+    _this4.sortOntology = null;
+    _this4.depth = null;
+    _this4._level2parent = null;
+    _this4._parent = null;
+    _this4.tierPk = parseInt(levelJSON.tierPk);
+    _this4.ontology = levelJSON.ontology;
+    _this4.sortOntology = levelJSON.sort_ontology;
+    _this4.depth = parseInt(levelJSON.depth);
+    _this4._level2parent = parseInt(levelJSON.level2parent);
+    _this4._parent = parseInt(levelJSON.parent);
+    return _this4;
   }
 
   _createClass(NewLevel, [{
@@ -499,10 +512,10 @@ function (_Level2) {
   }, {
     key: "childLevels",
     get: function get() {
-      var _this4 = this;
+      var _this5 = this;
 
       return this.program.levels.filter(function (level) {
-        return level._parent == _this4.pk;
+        return level._parent == _this5.pk;
       });
     }
   }, {
@@ -518,8 +531,8 @@ function (_Level2) {
   }]);
 
   return NewLevel;
-}(Level), _temp2), (_applyDecoratedDescriptor(_class4.prototype, "sort", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class4.prototype, "sort"), _class4.prototype), _applyDecoratedDescriptor(_class4.prototype, "sortDisplay", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class4.prototype, "sortDisplay"), _class4.prototype)), _class4);
-var Tier = (_class6 = (_temp3 =
+}(Level), _temp3), (_applyDecoratedDescriptor(_class5.prototype, "sort", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class5.prototype, "sort"), _class5.prototype), _applyDecoratedDescriptor(_class5.prototype, "sortDisplay", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class5.prototype, "sortDisplay"), _class5.prototype)), _class5);
+var Tier = (_class7 = (_temp4 =
 /*#__PURE__*/
 function () {
   function Tier(levelJSON, program) {
@@ -538,16 +551,16 @@ function () {
   _createClass(Tier, [{
     key: "levels",
     get: function get() {
-      var _this5 = this;
+      var _this6 = this;
 
       return this.program.levels.filter(function (level) {
-        return level.tierPk == _this5.pk;
+        return level.tierPk == _this6.pk;
       });
     }
   }]);
 
   return Tier;
-}(), _temp3), (_applyDecoratedDescriptor(_class6.prototype, "levels", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class6.prototype, "levels"), _class6.prototype)), _class6);
+}(), _temp4), (_applyDecoratedDescriptor(_class7.prototype, "levels", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class7.prototype, "levels"), _class7.prototype)), _class7);
 
 var Period =
 /*#__PURE__*/
@@ -657,7 +670,7 @@ var PeriodRange =
 /*#__PURE__*/
 function () {
   function PeriodRange(frequency, periodsJSON) {
-    var _this6 = this;
+    var _this7 = this;
 
     _classCallCheck(this, PeriodRange);
 
@@ -678,21 +691,21 @@ function () {
           index = _ref$index === void 0 ? null : _ref$index;
 
       if (startAfter !== null) {
-        return _this6.startAfter(startAfter)[0];
+        return _this7.startAfter(startAfter)[0];
       } else if (endBefore !== null) {
-        return _this6.endBefore(endBefore).slice(-1)[0];
+        return _this7.endBefore(endBefore).slice(-1)[0];
       } else if (current !== null) {
-        return _this6.currentPeriods.slice(-1)[0];
+        return _this7.currentPeriods.slice(-1)[0];
       } else if (last !== null) {
-        return _this6.periods.slice(-1)[0];
+        return _this7.periods.slice(-1)[0];
       } else if (index !== null) {
-        return _this6.periods[index];
+        return _this7.periods[index];
       }
     };
 
     this.frequency = parseInt(frequency);
     this.periods = periodsJSON.map(function (periodJSON, index) {
-      return new Period(periodJSON, index, _this6.frequency);
+      return new Period(periodJSON, index, _this7.frequency);
     });
   }
 
@@ -732,11 +745,11 @@ function () {
   return PeriodRange;
 }();
 
-var Program = (_class8 = (_temp4 =
+var Program = (_class9 = (_temp5 =
 /*#__PURE__*/
 function () {
   function Program(JSON) {
-    var _this7 = this;
+    var _this8 = this;
 
     _classCallCheck(this, Program);
 
@@ -775,15 +788,15 @@ function () {
     _initializerDefineProperty(this, "_indicators", _descriptor17, this);
 
     this.getIndicator = function (indicatorPk) {
-      if (_this7._indicators[indicatorPk] && _this7._indicators[indicatorPk] !== undefined) {
-        return _this7._indicators[indicatorPk];
+      if (_this8._indicators[indicatorPk] && _this8._indicators[indicatorPk] !== undefined) {
+        return _this8._indicators[indicatorPk];
       }
 
       return {};
     };
 
     this.updateProgramData = function (reportJSON) {
-      _this7.addLevels(reportJSON.levels);
+      _this8.addLevels(reportJSON.levels);
 
       if (reportJSON.indicators && Array.isArray(reportJSON.indicators)) {
         reportJSON.indicators.forEach(function (indicatorJSON) {
@@ -792,8 +805,8 @@ function () {
           if (indicatorJSON.sector && indicatorJSON.sector.pk) {
             var sectorPk = parseInt(indicatorJSON.sector.pk);
 
-            if (_this7._sectors[sectorPk] === undefined) {
-              _this7._sectors[sectorPk] = {
+            if (_this8._sectors[sectorPk] === undefined) {
+              _this8._sectors[sectorPk] = {
                 pk: sectorPk,
                 name: indicatorJSON.sector.name || ''
               };
@@ -804,8 +817,8 @@ function () {
             indicatorJSON.sites.forEach(function (siteJSON) {
               var sitePk = parseInt(siteJSON.pk);
 
-              if (_this7._sites[sitePk] === undefined) {
-                _this7._sites[sitePk] = {
+              if (_this8._sites[sitePk] === undefined) {
+                _this8._sites[sitePk] = {
                   pk: sitePk,
                   name: siteJSON.name
                 };
@@ -817,8 +830,8 @@ function () {
             indicatorJSON.indicatorTypes.forEach(function (typeJSON) {
               var typePk = parseInt(typeJSON.pk);
 
-              if (_this7._types[typePk] === undefined) {
-                _this7._types[typePk] = {
+              if (_this8._types[typePk] === undefined) {
+                _this8._types[typePk] = {
                   pk: typePk,
                   name: typeJSON.name
                 };
@@ -830,36 +843,36 @@ function () {
     };
 
     this.loadReportData = function (reportJSON) {
-      _this7.updateProgramData(reportJSON);
+      _this8.updateProgramData(reportJSON);
 
       if (reportJSON.indicators && Array.isArray(reportJSON.indicators)) {
         reportJSON.indicators.forEach(function (indicatorJSON) {
           var indicatorPk = parseInt(indicatorJSON.pk);
 
-          if (_this7._indicators[indicatorPk] && _this7._indicators[indicatorPk].pk === indicatorPk) {
-            _this7._indicators[indicatorPk].loadReportData(indicatorJSON.reportData);
+          if (_this8._indicators[indicatorPk] && _this8._indicators[indicatorPk].pk === indicatorPk) {
+            _this8._indicators[indicatorPk].loadReportData(indicatorJSON.reportData);
           } else {
-            _this7._indicators[indicatorPk] = new Indicator(indicatorJSON, _this7);
+            _this8._indicators[indicatorPk] = new Indicator(indicatorJSON, _this8);
           }
         });
       }
 
-      _this7.initialized[parseInt(reportJSON.reportType)].push(parseInt(reportJSON.reportFrequency));
+      _this8.initialized[parseInt(reportJSON.reportType)].push(parseInt(reportJSON.reportFrequency));
 
-      _this7.calls[parseInt(reportJSON.reportType)][parseInt(reportJSON.reportFrequency)] = false;
+      _this8.calls[parseInt(reportJSON.reportType)][parseInt(reportJSON.reportFrequency)] = false;
     };
 
     this.loadIndicatorData = function (reportJSON) {
-      _this7.updateProgramData(reportJSON);
+      _this8.updateProgramData(reportJSON);
 
       if (reportJSON.indicator) {
         var indicatorPk = parseInt(reportJSON.indicator.pk);
 
-        if (_this7._indicators[indicatorPk]) {
-          delete _this7._indicators[indicatorPk];
+        if (_this8._indicators[indicatorPk]) {
+          delete _this8._indicators[indicatorPk];
         }
 
-        _this7._indicators[indicatorPk] = new Indicator(reportJSON.indicator, _this7);
+        _this8._indicators[indicatorPk] = new Indicator(reportJSON.indicator, _this8);
         return Promise.resolve(indicatorPk);
       } else {
         return Promise.reject(_constants__WEBPACK_IMPORTED_MODULE_1__["STATUS_CODES"].NO_INDICATOR_IN_UPDATE);
@@ -867,31 +880,31 @@ function () {
     };
 
     this.validFrequency = function (frequency) {
-      return _this7.frequencies.includes(frequency);
+      return _this8.frequencies.includes(frequency);
     };
 
     this.periodsFor = function (frequency) {
-      return _this7.periods[parseInt(frequency)];
+      return _this8.periods[parseInt(frequency)];
     };
 
     this.currentPeriod = function (frequency) {
-      return _this7.periodsFor(frequency).getPeriod({
+      return _this8.periodsFor(frequency).getPeriod({
         current: true
       });
     };
 
     this.lastPeriod = function (frequency) {
-      return _this7.periodsFor(frequency).getPeriod({
+      return _this8.periodsFor(frequency).getPeriod({
         last: true
       });
     };
 
     this.isLoaded = function (reportType, frequency) {
-      return _this7.initialized[reportType].includes(frequency);
+      return _this8.initialized[reportType].includes(frequency);
     };
 
     this.isLoading = function (reportType, frequency) {
-      var loadingValue = _this7.calls[reportType][frequency];
+      var loadingValue = _this8.calls[reportType][frequency];
 
       if (loadingValue === undefined || loadingValue === false) {
         return false;
@@ -901,21 +914,21 @@ function () {
     };
 
     this.setLoading = function (reportType, frequency, call) {
-      _this7.calls[reportType][frequency] = call;
+      _this8.calls[reportType][frequency] = call;
     };
 
     this.addLevels = function (levelsJSON) {
-      if (!_this7.oldLevels) {
+      if (!_this8.oldLevels) {
         levelsJSON.forEach(function (levelJSON) {
           var levelPk = parseInt(levelJSON.pk);
 
           if (!isNaN(levelPk)) {
-            _this7._levels[levelPk] = new NewLevel(levelJSON, _this7);
+            _this8._levels[levelPk] = new NewLevel(levelJSON, _this8);
             var tierPk = parseInt(levelJSON.tierPk);
 
             if (!isNaN(tierPk)) {
-              if (!_this7._tiers[tierPk]) {
-                _this7._tiers[tierPk] = new Tier(levelJSON, _this7);
+              if (!_this8._tiers[tierPk]) {
+                _this8._tiers[tierPk] = new Tier(levelJSON, _this8);
               }
             }
           }
@@ -925,7 +938,7 @@ function () {
           var levelPk = parseInt(levelJSON.pk);
 
           if (!isNaN(levelPk)) {
-            _this7._levels[levelPk] = new OldLevel(levelJSON, _this7);
+            _this8._levels[levelPk] = new OldLevel(levelJSON, _this8);
           }
         });
       }
@@ -933,36 +946,36 @@ function () {
 
     this.getLevel = function (pk) {
       pk = parseInt(pk);
-      return _this7._levels[pk] !== undefined ? _this7._levels[pk] : null;
+      return _this8._levels[pk] !== undefined ? _this8._levels[pk] : null;
     };
 
     this.getTier = function (pk) {
       pk = parseInt(pk);
-      return _this7._tiers[pk] !== undefined ? _this7._tiers[pk] : null;
+      return _this8._tiers[pk] !== undefined ? _this8._tiers[pk] : null;
     };
 
     this.validLevel = function (level) {
-      return _this7._levels[level] !== undefined;
+      return _this8._levels[level] !== undefined;
     };
 
     this.validTier = function (tier) {
-      return !_this7.oldLevels && _this7._tiers[tier] !== undefined;
+      return !_this8.oldLevels && _this8._tiers[tier] !== undefined;
     };
 
     this.validType = function (type) {
-      return _this7._types[type] !== undefined;
+      return _this8._types[type] !== undefined;
     };
 
     this.validSite = function (site) {
-      return _this7._sites[site] !== undefined;
+      return _this8._sites[site] !== undefined;
     };
 
     this.validSector = function (sector) {
-      return _this7._sectors[sector] !== undefined;
+      return _this8._sectors[sector] !== undefined;
     };
 
     this.validIndicator = function (indicator) {
-      return _this7._indicators[indicator] !== undefined;
+      return _this8._indicators[indicator] !== undefined;
     };
 
     this.pk = parseInt(JSON.id);
@@ -978,7 +991,7 @@ function () {
           frequency = _ref3[0],
           periodsJSON = _ref3[1];
 
-      _this7.periods[parseInt(frequency)] = new PeriodRange(frequency, periodsJSON);
+      _this8.periods[parseInt(frequency)] = new PeriodRange(frequency, periodsJSON);
     });
   }
 
@@ -1034,70 +1047,70 @@ function () {
   }]);
 
   return Program;
-}(), _temp4), (_descriptor = _applyDecoratedDescriptor(_class8.prototype, "pk", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}(), _temp5), (_descriptor = _applyDecoratedDescriptor(_class9.prototype, "pk", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return null;
   }
-}), _descriptor2 = _applyDecoratedDescriptor(_class8.prototype, "name", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor2 = _applyDecoratedDescriptor(_class9.prototype, "name", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return null;
   }
-}), _descriptor3 = _applyDecoratedDescriptor(_class8.prototype, "reportingStart", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor3 = _applyDecoratedDescriptor(_class9.prototype, "reportingStart", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return null;
   }
-}), _descriptor4 = _applyDecoratedDescriptor(_class8.prototype, "reportingEnd", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor4 = _applyDecoratedDescriptor(_class9.prototype, "reportingEnd", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return null;
   }
-}), _descriptor5 = _applyDecoratedDescriptor(_class8.prototype, "frequencies", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor5 = _applyDecoratedDescriptor(_class9.prototype, "frequencies", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return [];
   }
-}), _descriptor6 = _applyDecoratedDescriptor(_class8.prototype, "validTVA", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor6 = _applyDecoratedDescriptor(_class9.prototype, "validTVA", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return false;
   }
-}), _descriptor7 = _applyDecoratedDescriptor(_class8.prototype, "validTIMEPERIODS", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor7 = _applyDecoratedDescriptor(_class9.prototype, "validTIMEPERIODS", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return true;
   }
-}), _descriptor8 = _applyDecoratedDescriptor(_class8.prototype, "periods", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor8 = _applyDecoratedDescriptor(_class9.prototype, "periods", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return {};
   }
-}), _descriptor9 = _applyDecoratedDescriptor(_class8.prototype, "oldLevels", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor9 = _applyDecoratedDescriptor(_class9.prototype, "oldLevels", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return false;
   }
-}), _descriptor10 = _applyDecoratedDescriptor(_class8.prototype, "initialized", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor10 = _applyDecoratedDescriptor(_class9.prototype, "initialized", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
@@ -1106,7 +1119,7 @@ function () {
 
     return _ref4 = {}, _defineProperty(_ref4, _constants__WEBPACK_IMPORTED_MODULE_1__["TVA"], []), _defineProperty(_ref4, _constants__WEBPACK_IMPORTED_MODULE_1__["TIMEPERIODS"], []), _ref4;
   }
-}), _descriptor11 = _applyDecoratedDescriptor(_class8.prototype, "calls", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor11 = _applyDecoratedDescriptor(_class9.prototype, "calls", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
@@ -1115,57 +1128,57 @@ function () {
 
     return _ref5 = {}, _defineProperty(_ref5, _constants__WEBPACK_IMPORTED_MODULE_1__["TVA"], {}), _defineProperty(_ref5, _constants__WEBPACK_IMPORTED_MODULE_1__["TIMEPERIODS"], {}), _ref5;
   }
-}), _descriptor12 = _applyDecoratedDescriptor(_class8.prototype, "_levels", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor12 = _applyDecoratedDescriptor(_class9.prototype, "_levels", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return {};
   }
-}), _descriptor13 = _applyDecoratedDescriptor(_class8.prototype, "_tiers", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor13 = _applyDecoratedDescriptor(_class9.prototype, "_tiers", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return {};
   }
-}), _descriptor14 = _applyDecoratedDescriptor(_class8.prototype, "_sites", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor14 = _applyDecoratedDescriptor(_class9.prototype, "_sites", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return {};
   }
-}), _descriptor15 = _applyDecoratedDescriptor(_class8.prototype, "_sectors", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor15 = _applyDecoratedDescriptor(_class9.prototype, "_sectors", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return {};
   }
-}), _descriptor16 = _applyDecoratedDescriptor(_class8.prototype, "_types", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor16 = _applyDecoratedDescriptor(_class9.prototype, "_types", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return {};
   }
-}), _descriptor17 = _applyDecoratedDescriptor(_class8.prototype, "_indicators", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor17 = _applyDecoratedDescriptor(_class9.prototype, "_indicators", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return {};
   }
-}), _applyDecoratedDescriptor(_class8.prototype, "levels", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class8.prototype, "levels"), _class8.prototype), _applyDecoratedDescriptor(_class8.prototype, "tiers", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class8.prototype, "tiers"), _class8.prototype), _applyDecoratedDescriptor(_class8.prototype, "resultChainFilterLabel", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class8.prototype, "resultChainFilterLabel"), _class8.prototype), _applyDecoratedDescriptor(_class8.prototype, "types", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class8.prototype, "types"), _class8.prototype), _applyDecoratedDescriptor(_class8.prototype, "sectors", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class8.prototype, "sectors"), _class8.prototype), _applyDecoratedDescriptor(_class8.prototype, "sites", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class8.prototype, "sites"), _class8.prototype), _applyDecoratedDescriptor(_class8.prototype, "indicators", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class8.prototype, "indicators"), _class8.prototype), _applyDecoratedDescriptor(_class8.prototype, "unassignedIndicators", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class8.prototype, "unassignedIndicators"), _class8.prototype), _applyDecoratedDescriptor(_class8.prototype, "programPageUrl", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class8.prototype, "programPageUrl"), _class8.prototype)), _class8);
+}), _applyDecoratedDescriptor(_class9.prototype, "levels", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class9.prototype, "levels"), _class9.prototype), _applyDecoratedDescriptor(_class9.prototype, "tiers", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class9.prototype, "tiers"), _class9.prototype), _applyDecoratedDescriptor(_class9.prototype, "resultChainFilterLabel", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class9.prototype, "resultChainFilterLabel"), _class9.prototype), _applyDecoratedDescriptor(_class9.prototype, "types", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class9.prototype, "types"), _class9.prototype), _applyDecoratedDescriptor(_class9.prototype, "sectors", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class9.prototype, "sectors"), _class9.prototype), _applyDecoratedDescriptor(_class9.prototype, "sites", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class9.prototype, "sites"), _class9.prototype), _applyDecoratedDescriptor(_class9.prototype, "indicators", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class9.prototype, "indicators"), _class9.prototype), _applyDecoratedDescriptor(_class9.prototype, "unassignedIndicators", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class9.prototype, "unassignedIndicators"), _class9.prototype), _applyDecoratedDescriptor(_class9.prototype, "programPageUrl", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class9.prototype, "programPageUrl"), _class9.prototype)), _class9);
 /* Export for testing: */
 
 
-var ProgramStore = (_class10 = (_temp5 =
+var ProgramStore = (_class11 = (_temp6 =
 /*#__PURE__*/
 function () {
   function ProgramStore(contextData, api) {
-    var _this8 = this;
+    var _this9 = this;
 
     _classCallCheck(this, ProgramStore);
 
@@ -1175,17 +1188,17 @@ function () {
 
     this.addPrograms = function (programsJSON) {
       programsJSON.forEach(function (programJSON) {
-        _this8.addProgram(programJSON);
+        _this9.addProgram(programJSON);
       });
     };
 
     this.addProgram = function (programJSON) {
-      _this8._programs[programJSON.id] = new Program(programJSON);
+      _this9._programs[programJSON.id] = new Program(programJSON);
     };
 
     this.validProgramId = function (reportType) {
       return function (id) {
-        return _this8.programs.filter(reportType === _constants__WEBPACK_IMPORTED_MODULE_1__["TVA"] ? function (program) {
+        return _this9.programs.filter(reportType === _constants__WEBPACK_IMPORTED_MODULE_1__["TVA"] ? function (program) {
           return program.validTVA;
         } : function (program) {
           return program.validTIMEPERIODS;
@@ -1196,7 +1209,7 @@ function () {
     };
 
     this.getPrograms = function (reportType) {
-      return _this8.programs.filter(reportType === _constants__WEBPACK_IMPORTED_MODULE_1__["TVA"] ? function (program) {
+      return _this9.programs.filter(reportType === _constants__WEBPACK_IMPORTED_MODULE_1__["TVA"] ? function (program) {
         return program.validTVA;
       } : function (program) {
         return program.validTIMEPERIODS;
@@ -1204,28 +1217,28 @@ function () {
     };
 
     this.getProgram = function (id) {
-      return _this8._programs[id];
+      return _this9._programs[id];
     };
 
     this.loadProgram = function (reportType, id, frequency) {
-      if (_this8.getProgram(id).isLoaded(reportType, frequency)) {
-        return Promise.resolve(_this8.getProgram(id));
-      } else if (_this8.getProgram(id).isLoading(reportType, frequency) !== false) {
-        return Promise.resolve(_this8.getProgram(id).isLoading(reportType, frequency));
+      if (_this9.getProgram(id).isLoaded(reportType, frequency)) {
+        return Promise.resolve(_this9.getProgram(id));
+      } else if (_this9.getProgram(id).isLoading(reportType, frequency) !== false) {
+        return Promise.resolve(_this9.getProgram(id).isLoading(reportType, frequency));
       }
 
-      var dataHandler = _this8.getProgram(id).loadReportData;
+      var dataHandler = _this9.getProgram(id).loadReportData;
 
-      var call = _this8.api.callForReportData(reportType, id, frequency).then(dataHandler);
+      var call = _this9.api.callForReportData(reportType, id, frequency).then(dataHandler);
 
-      _this8.getProgram(id).setLoading(reportType, frequency, call);
+      _this9.getProgram(id).setLoading(reportType, frequency, call);
 
       return call;
     };
 
     this.getLoadedProgram = function (reportType, id, frequency) {
-      return _this8.loadProgram(reportType, id, frequency).then(function () {
-        return _this8.getProgram(id);
+      return _this9.loadProgram(reportType, id, frequency).then(function () {
+        return _this9.getProgram(id);
       });
     };
 
@@ -1261,25 +1274,25 @@ function () {
   }]);
 
   return ProgramStore;
-}(), _temp5), (_descriptor18 = _applyDecoratedDescriptor(_class10.prototype, "_programs", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}(), _temp6), (_descriptor18 = _applyDecoratedDescriptor(_class11.prototype, "_programs", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return {};
   }
-}), _applyDecoratedDescriptor(_class10.prototype, "programs", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class10.prototype, "programs"), _class10.prototype), _descriptor19 = _applyDecoratedDescriptor(_class10.prototype, "updateIndicator", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
+}), _applyDecoratedDescriptor(_class11.prototype, "programs", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class11.prototype, "programs"), _class11.prototype), _descriptor19 = _applyDecoratedDescriptor(_class11.prototype, "updateIndicator", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
-    var _this9 = this;
+    var _this10 = this;
 
     return function (reportType, programId, frequencyId, indicatorId) {
-      var program = _this9.getProgram(programId) || null;
+      var program = _this10.getProgram(programId) || null;
 
       if (program) {
-        var call = _this9.api.callForIndicatorData(reportType, programId, frequencyId, indicatorId).then(program.loadIndicatorData).then(function (pk) {//do something with the pk here?  It updated!
+        var call = _this10.api.callForIndicatorData(reportType, programId, frequencyId, indicatorId).then(program.loadIndicatorData).then(function (pk) {//do something with the pk here?  It updated!
         }, function (code) {//do something with the failure here?
         });
 
@@ -1287,15 +1300,15 @@ function () {
       }
     };
   }
-}), _descriptor20 = _applyDecoratedDescriptor(_class10.prototype, "removeIndicator", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
+}), _descriptor20 = _applyDecoratedDescriptor(_class11.prototype, "removeIndicator", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
-    var _this10 = this;
+    var _this11 = this;
 
     return function (programId, indicatorId) {
-      var program = _this10.getProgram(programId) || null;
+      var program = _this11.getProgram(programId) || null;
 
       if (program && program._indicators[indicatorId]) {
         delete program._indicators[indicatorId];
@@ -1305,7 +1318,7 @@ function () {
       return false;
     };
   }
-})), _class10);
+})), _class11);
 
 
 /***/ }),
@@ -5078,4 +5091,4 @@ function () {
 /***/ })
 
 },[["mYfJ","runtime","vendors"]]]);
-//# sourceMappingURL=iptt_report-33b94f8c364ccc210cf5.js.map
+//# sourceMappingURL=iptt_report-a50e577f90820ab2bfce.js.map
