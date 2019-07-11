@@ -85,7 +85,7 @@ class Indicator {
     }
     
     get levelName() {
-        return this.level ? this.level.name : null;
+        return this.level ? (this.level.old ? this.level.displayName : this.level.name) : null;
     }
     
     get cumulative() {
@@ -98,12 +98,14 @@ class Level {
     program = null;
     pk = null;
     name = null;
+    displayName = null;
     _sort = null;
 
     constructor(levelJSON, program) {
         this.program = program;
         this.pk = parseInt(levelJSON.pk);
         this.name = levelJSON.name;
+        this.displayName = levelJSON.display_name;
         this._sort = parseInt(levelJSON.sort);
     }
     
@@ -114,12 +116,14 @@ class Level {
 }
 
 class OldLevel extends Level {
+    old = true;
     @computed get sort() {
         return this._sort;
     }
 }
 
 class NewLevel extends Level {
+    old = false;
     tierPk = null;
     ontology = null;
     sortOntology = null;
