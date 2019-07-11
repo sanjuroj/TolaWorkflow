@@ -2425,7 +2425,19 @@ function (_React$Component) {
         className: "d-flex flex-column w-75 pr-5"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("form", {
         className: "form"
-      }, this.state.autonumber !== null && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", null, gettext("Indicator numbering")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      }, this.state.grouping !== false && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", null, gettext("Indicator grouping")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "form-check mb-3"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+        className: "form-check-input",
+        type: "checkbox",
+        name: "grouping",
+        id: "grouping",
+        checked: this.state.grouping == 2,
+        onChange: this.groupingChange
+      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+        className: "form-check-label",
+        htmlFor: "grouping"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, gettext('Group indicators according to the results framework'), ":"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, "\xA0 ", gettext('After you have set a results framework for this program and assigned indicators to it, ' + 'select this option to retire the original indicator levels and view indicators grouped by ' + 'results framework levels instead.  This setting affects the program page, indicator plan, ' + 'and IPTT reports.'))))), this.state.autonumber !== null && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", null, gettext("Indicator numbering")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-check mb-3"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         className: "form-check-input",
@@ -2454,19 +2466,7 @@ function (_React$Component) {
         htmlFor: "autonumber_off"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, gettext('Manually number indicators'), ":"), "\xA0 ", gettext('If your donor requires a special numbering convention, you can enter a custom number for each indicator.'), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", {
         className: "text-danger"
-      }, "\xA0 ", gettext('Manually entered numbers do not affect the order in which indicators are listed; they are purely for display purposes.'))))), this.state.grouping !== false && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", null, gettext("Indicator grouping")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "form-check mb-3"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
-        className: "form-check-input",
-        type: "checkbox",
-        name: "grouping",
-        id: "grouping",
-        checked: this.state.grouping == 2,
-        onChange: this.groupingChange
-      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
-        className: "form-check-label",
-        htmlFor: "grouping"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, gettext('Group indicators according to the results framework'), ":"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, "\xA0 ", gettext('After you have set a results framework for this program and assigned indicators to it, ' + 'select this option to retire the original indicator levels and view indicators grouped by ' + 'results framework levels instead.  This setting affects the program page, indicator plan, ' + 'and IPTT reports.'))))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      }, "\xA0 ", gettext('Manually entered numbers do not affect the order in which indicators are listed; they are purely for display purposes.'))))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group btn-row"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         disabled: !this.formDirty(),
@@ -3240,4 +3240,4 @@ function () {
 /***/ })
 
 },[["1faY","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_program-ba9cb321ecf2edb8d2c5.js.map
+//# sourceMappingURL=tola_management_program-cb6d6bc0d7a4be37deb8.js.map
