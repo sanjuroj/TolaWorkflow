@@ -732,6 +732,10 @@ class Program(models.Model):
             return self.using_results_framework
         return self._using_results_framework != self.NOT_MIGRATED
 
+    @property
+    def manual_numbering(self):
+        return self.results_framework and not self.auto_number_indicators
+
 
 PROGRAM_ROLE_CHOICES = (
     # Translators: Refers to a user permission role with limited access to view data only

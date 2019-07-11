@@ -30,7 +30,7 @@ class Indicator {
 
     constructor(indicatorJSON, program) {
         this.pk = parseInt(indicatorJSON.pk);
-        this.number = indicatorJSON.number || indicatorJSON.old_number;
+        this.number = indicatorJSON.number;
         this.old_number = indicatorJSON.old_number;
         this.name = indicatorJSON.name;
         this.unitOfMeasure = indicatorJSON.unitOfMeasure;
