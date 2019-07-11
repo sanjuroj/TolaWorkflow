@@ -9816,6 +9816,15 @@ input[type=radio]:disabled {
 .level-button + .level-button {
   margin-left: 7.5px; }
 
+#logframe_link {
+  min-width: 220px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center; }
+
+#logframe_link a {
+  margin-left: 5px; }
+
 .sortable-list-header {
   display: flex;
   justify-content: space-between;
@@ -10646,3 +10655,5 @@ a:hover {
 
 /* Unsorted custom selectors */
 
+
+/*# sourceMappingURL=base-d682e93a0775fdd0b8f6.css.map*/
