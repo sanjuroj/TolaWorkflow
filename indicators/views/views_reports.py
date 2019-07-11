@@ -87,6 +87,7 @@ def get_program_filter_data(request):
                 'frequencies': frequencies,
                 'reporting_period_start': start_formatted,
                 'reporting_period_end': end_formatted,
+                'result_chain_filter_label': program.rf_chain_sort_label,
                 'periodDateRanges': {
                     '1': [[
                         start_formatted,

@@ -146,7 +146,8 @@ class NewLevel extends Level {
     }
     
     get outcomeChainDisplay() {
-        return `${this.tier.name} ${this.sortDisplay} and sub-levels: ${this.name}`;
+        var subLevelText = gettext('and sub-levels:');
+        return `${this.tier.name} ${this.sortDisplay} ${subLevelText}: ${this.name}`;
     }
     
     get childLevels() {
@@ -326,6 +327,7 @@ class Program {
     @observable validTIMEPERIODS = true;
     @observable periods = {};
     @observable oldLevels = false;
+    @observable _resultChainFilterLabel = null;
     @observable initialized = {
         [TVA]: [],
         [TIMEPERIODS]: []
@@ -350,6 +352,7 @@ class Program {
         this.validTVA = this.frequencies.length > 0;
         this.validTIMEPERIODS = true;
         this.oldLevels = JSON.old_style_levels === true || JSON.old_style_levels === "True";
+        this._resultChainFilterLabel = JSON.result_chain_filter_label;
         Object.entries(JSON.periodDateRanges)
             .forEach(([frequency, periodsJSON]) => {
                 this.periods[parseInt(frequency)] = new PeriodRange(frequency, periodsJSON);
@@ -508,7 +511,7 @@ class Program {
     }
     
     @computed get resultChainFilterLabel() {
-        return this.tiers && this.tiers.length > 1 && `by ${this.tiers[1].name} chain`;
+        return this._resultChainFilterLabel || (this.tiers && this.tiers.length > 1 && `by ${this.tiers[1].name} chain`);
     }
     
     @computed get types() {
