@@ -92,6 +92,12 @@ class LevelViewSet (viewsets.ModelViewSet):
     queryset = Level.objects.all()
 
     def update(self, request, pk=None):
+        instance = self.get_object()
+        program = instance.program
+        role = request.user.tola_user.program_role(program.id)
+        if request.user.is_anonymous or role != 'high':
+            return HttpResponseRedirect('/')
+
         # Pull rationale string outside of model serializer, since not part of model
         rationale_str = request.data.get('rationale', '')
         instance = self.get_object()
@@ -164,7 +170,6 @@ class LevelViewSet (viewsets.ModelViewSet):
         return Response(LevelSerializer(all_levels, many=True).data)
 
 
-# TODO: add security
 @api_view(http_method_names=['POST'])
 def insert_new_level(request):
     level_data = copy.copy(request.data)
@@ -210,7 +215,7 @@ def insert_new_level(request):
     all_data = LevelSerializer(Level.objects.filter(program=program), many=True).data
     return Response({'all_data': all_data, 'new_level': LevelSerializer(new_level).data})
 
-# TODO: add security
+
 @api_view(http_method_names=['POST'])
 def save_leveltiers(request):
     program = Program.objects.get(id=request.data['program_id'])
@@ -233,7 +238,7 @@ def save_leveltiers(request):
 
     return Response({"message": "success"})
 
-# TODO: add security
+
 @login_required
 @api_view(http_method_names=['POST'])
 def reorder_indicators(request):
