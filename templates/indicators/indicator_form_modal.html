@@ -126,13 +126,14 @@
                         {% if form.level.field.disabled %}
                             <input type="hidden" name="level" value="{{ form.level.value }}" />
                         {% endif %}
-
-                        <div class="form-group" id="div_id_objectives">
-                            <label for="id_objectives" class="">{{ form.objectives.label }} </label>
-                            {% render_field form.objectives class+="form-control" %}
-                            <small class="form-text text-muted">{{ form.objectives.help_text }}</small>
-                            <span id="validation_id_objectives" class="has-error"></span>
-                        </div>
+                        {% if form.objectives %}
+                            <div class="form-group" id="div_id_objectives">
+                                <label for="id_objectives" class="">{{ form.objectives.label }} </label>
+                                {% render_field form.objectives class+="form-control" %}
+                                <small class="form-text text-muted">{{ form.objectives.help_text }}</small>
+                                <span id="validation_id_objectives" class="has-error"></span>
+                            </div>
+                        {% endif %}
 
                         <div class="form-group" id="div_id_strategic_objectives">
                             <label for="id_strategic_objectives" class="">{{ form.strategic_objectives.label }} </label>
