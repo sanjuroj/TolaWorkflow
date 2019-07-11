@@ -777,9 +777,9 @@ class ResultCreate(ResultFormMixin, CreateView):
         context['indicator'] = self.indicator
         context['custom_disaggregation_labels'] = custom_disaggregation_labels
         context['standard_disaggregation_labels'] = standard_disaggregation_labels
-        context['title_str'] = '{}: {}'.format(
-            self.indicator.form_title_level,
-            self.indicator.name
+        context['title_str'] = u'{}: {}'.format(
+            unicode(self.indicator.form_title_level),
+            unicode(self.indicator.name)
         )
         return context
 
@@ -881,9 +881,9 @@ class ResultUpdate(ResultFormMixin, UpdateView):
         context['custom_disaggregation_values'] = custom_disaggregation_values
         context['standard_disaggregation_labels'] = standard_disaggregation_labels
         context['standard_disaggregation_values'] = standard_disaggregation_values
-        context['title_str'] = '{}: {}'.format(
-            self.indicator.form_title_level,
-            self.indicator.name
+        context['title_str'] = u'{}: {}'.format(
+            unicode(self.indicator.form_title_level),
+            unicode(self.indicator.name)
         )
         return context
 

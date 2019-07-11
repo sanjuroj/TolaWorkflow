@@ -1216,10 +1216,15 @@ class Indicator(SafeDeleteModel):
     @property
     def form_title_level(self):
         if self.results_framework:
-            return '{} {} {}'.format(
-                self.leveltier_name,
-                _('indicator'),
-                self.name
+            return unicode(
+                u'{} {}{}'.format(
+                    unicode(_(self.leveltier_name)),
+                    unicode(_('indicator')),
+                    u'{}{}'.format(
+                        u' ' if self.results_aware_number else '',
+                        self.results_aware_number
+                    )
+                )
             )
         else:
             return '{} {}'.format(
