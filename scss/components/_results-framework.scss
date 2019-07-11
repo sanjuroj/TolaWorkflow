@@ -214,3 +214,13 @@
     }
 }
 
+#logframe_link {
+    min-width: 220px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center
+}
+
+#logframe_link a {
+    margin-left: 5px;
+}
