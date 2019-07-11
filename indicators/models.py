@@ -1246,7 +1246,7 @@ class Indicator(SafeDeleteModel):
     def auto_number_indicators(self):
         if hasattr(self, '_auto_number_indicators'):
             return self._auto_number_indicators
-        return self.program.auto_number_indicators
+        return not self.program.manual_numbering
 
 
 @receiver(signals.pre_save, sender=Indicator)
