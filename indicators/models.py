@@ -776,7 +776,7 @@ class Indicator(SafeDeleteModel):
         blank=True, related_name="strat_indicator", help_text=" "
     )
 
-    name = models.CharField(verbose_name=_("Name"), max_length=255,
+    name = models.CharField(verbose_name=_("Name"), max_length=500,
                             null=False, help_text=" ")
 
     number = models.CharField(
