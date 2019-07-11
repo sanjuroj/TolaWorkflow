@@ -691,7 +691,7 @@ export default class FilterStore {
                         options: this.filterIndicators(level.indicators, 'indicators').map(
                             indicator => ({
                                     value: indicator.pk,
-                                    label: `${indicator.number} ${indicator.name}`
+                                    label: `${indicator.number || ''} ${indicator.name}`
                                 })
                         )
                     })

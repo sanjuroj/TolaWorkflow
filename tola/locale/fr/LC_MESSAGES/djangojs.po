@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-11 15:13-0700\n"
+"POT-Creation-Date: 2019-07-11 16:07-0700\n"
 "PO-Revision-Date: 2019-07-11 15:43-0700\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -513,6 +513,10 @@ msgstr "Fin"
 #: js/pages/iptt_report/components/sidebar/sidebar.js:14
 msgid "Show/Hide Filters"
 msgstr "Afficher/Masquer les filtres"
+
+#: js/pages/iptt_report/models/programStore.js:149
+msgid "and sub-levels:"
+msgstr "et sous-niveau:"
 
 #: js/pages/logframe/components/subtitle.js:14
 msgid "View results framework"
@@ -1314,53 +1318,14 @@ msgid "Fund Code"
 msgstr "Code du fonds"
 
 #: js/pages/tola_management_pages/program/components/program_settings.js:69
-msgid "Indicator numbering"
-msgstr "Numérotation de l’indicateur"
-
-#. Translators: Auto-number meaning the system will do this automatically
-#: js/pages/tola_management_pages/program/components/program_settings.js:83
-msgid "Auto-number indicators (recommended)"
-msgstr "Numérotation automatique des indicateurs (recommandé)"
-
-#: js/pages/tola_management_pages/program/components/program_settings.js:85
-msgid ""
-"Indicator numbers are automatically determined by their results framework "
-"assignments."
-msgstr ""
-"La numérotation d’un indicateur est automatiquement définie par les "
-"affectations de leur cadre de résultats."
-
-#: js/pages/tola_management_pages/program/components/program_settings.js:99
-msgid "Manually number indicators"
-msgstr "Numéroter les indicateurs manuellement"
-
-#: js/pages/tola_management_pages/program/components/program_settings.js:100
-msgid ""
-"If your donor requires a special numbering convention, you can enter a "
-"custom number for each indicator."
-msgstr ""
-"Lorsqu’un donateur souhaite avoir recours à un système de numérotation "
-"particulier, il vous sera possible de saisir la numérotation de votre choix "
-"pour chaque indicateur."
-
-#: js/pages/tola_management_pages/program/components/program_settings.js:101
-msgid ""
-"Manually entered numbers do not affect the order in which indicators are "
-"listed; they are purely for display purposes."
-msgstr ""
-"Une numérotation saisie manuellement n’affecte pas l’ordre dans lequel les "
-"indicateurs sont classés ; elle est uniquement utilisée à des fins "
-"d’affichage."
-
-#: js/pages/tola_management_pages/program/components/program_settings.js:108
 msgid "Indicator grouping"
 msgstr "Regroupement des indicateurs"
 
-#: js/pages/tola_management_pages/program/components/program_settings.js:119
+#: js/pages/tola_management_pages/program/components/program_settings.js:80
 msgid "Group indicators according to the results framework"
 msgstr "Regrouper les indicateurs selon le cadre de résultats"
 
-#: js/pages/tola_management_pages/program/components/program_settings.js:121
+#: js/pages/tola_management_pages/program/components/program_settings.js:82
 msgid ""
 "After you have set a results framework for this program and assigned "
 "indicators to it, select this option to retire the original indicator levels "
@@ -1372,6 +1337,45 @@ msgstr ""
 "niveaux d’indicateur initiaux et d’afficher les indicateurs regroupés par "
 "niveaux de cadre de résultats. Cette configuration affecte la page du "
 "programme, le plan de l’indicateur et les rapports IPTT."
+
+#: js/pages/tola_management_pages/program/components/program_settings.js:92
+msgid "Indicator numbering"
+msgstr "Numérotation de l’indicateur"
+
+#. Translators: Auto-number meaning the system will do this automatically
+#: js/pages/tola_management_pages/program/components/program_settings.js:106
+msgid "Auto-number indicators (recommended)"
+msgstr "Numérotation automatique des indicateurs (recommandé)"
+
+#: js/pages/tola_management_pages/program/components/program_settings.js:108
+msgid ""
+"Indicator numbers are automatically determined by their results framework "
+"assignments."
+msgstr ""
+"La numérotation d’un indicateur est automatiquement définie par les "
+"affectations de leur cadre de résultats."
+
+#: js/pages/tola_management_pages/program/components/program_settings.js:122
+msgid "Manually number indicators"
+msgstr "Numéroter les indicateurs manuellement"
+
+#: js/pages/tola_management_pages/program/components/program_settings.js:123
+msgid ""
+"If your donor requires a special numbering convention, you can enter a "
+"custom number for each indicator."
+msgstr ""
+"Lorsqu’un donateur souhaite avoir recours à un système de numérotation "
+"particulier, il vous sera possible de saisir la numérotation de votre choix "
+"pour chaque indicateur."
+
+#: js/pages/tola_management_pages/program/components/program_settings.js:124
+msgid ""
+"Manually entered numbers do not affect the order in which indicators are "
+"listed; they are purely for display purposes."
+msgstr ""
+"Une numérotation saisie manuellement n’affecte pas l’ordre dans lequel les "
+"indicateurs sont classés ; elle est uniquement utilisée à des fins "
+"d’affichage."
 
 #: js/pages/tola_management_pages/program/models.js:189
 msgid "Successfully saved"
