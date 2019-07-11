@@ -2377,24 +2377,27 @@ function (_React$Component) {
     _this.save = function (e) {
       e.preventDefault();
 
-      var data = _objectSpread({}, _this.props.program_data, {
-        auto_number_indicators: _this.state.autonumber
-      });
+      var data = _objectSpread({}, _this.props.program_data);
 
       if (_this.state.grouping !== false) {
         data._using_results_framework = _this.state.grouping;
+      }
+
+      if (_this.state.autonumber !== null) {
+        data.auto_number_indicators = _this.state.autonumber;
       }
 
       _this.props.onSave(_this.props.program_data.id, data);
     };
 
     var grouping = props.program_data._using_results_framework === undefined ? false : props.program_data._using_results_framework;
+    var autonumber = grouping === 1 ? null : props.program_data.auto_number_indicators;
     _this.state = {
-      autonumber: props.program_data.auto_number_indicators,
+      autonumber: autonumber,
       grouping: grouping
     };
     var originalState = {
-      autonumber: props.program_data.auto_number_indicators,
+      autonumber: autonumber,
       grouping: grouping
     };
 
@@ -2422,7 +2425,7 @@ function (_React$Component) {
         className: "d-flex flex-column w-75 pr-5"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("form", {
         className: "form"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", null, gettext("Indicator numbering")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      }, this.state.autonumber !== null && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", null, gettext("Indicator numbering")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-check mb-3"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         className: "form-check-input",
@@ -2451,7 +2454,7 @@ function (_React$Component) {
         htmlFor: "autonumber_off"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, gettext('Manually number indicators'), ":"), "\xA0 ", gettext('If your donor requires a special numbering convention, you can enter a custom number for each indicator.'), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", {
         className: "text-danger"
-      }, "\xA0 ", gettext('Manually entered numbers do not affect the order in which indicators are listed; they are purely for display purposes.')))), this.state.grouping !== false && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", null, gettext("Indicator grouping")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      }, "\xA0 ", gettext('Manually entered numbers do not affect the order in which indicators are listed; they are purely for display purposes.'))))), this.state.grouping !== false && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", null, gettext("Indicator grouping")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-check mb-3"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         className: "form-check-input",
@@ -3237,4 +3240,4 @@ function () {
 /***/ })
 
 },[["1faY","runtime","vendors"]]]);
-//# sourceMappingURL=tola_management_program-a6891299779459b7efb3.js.map
+//# sourceMappingURL=tola_management_program-ba9cb321ecf2edb8d2c5.js.map

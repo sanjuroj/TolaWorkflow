@@ -101,7 +101,7 @@ class IndicatorForm(forms.ModelForm):
                                            [(l.id, l.display_name) for l in Level.sort_by_ontology(Level.objects.filter(program_id=self.programval))]
 
 
-        if self.programval.auto_number_indicators:
+        if not self.programval.manual_numbering:
             # in this (the default) case, the number field is removed (values not updated):
             self.fields.pop('number')
         else:
