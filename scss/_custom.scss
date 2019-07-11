@@ -311,6 +311,10 @@ a:hover {
     text-indent: -22.5px;
 }
 
+.indicator_name {
+    word-break: break-word;
+}
+
 // conditional styling to hide modal titles in nonmodal contexts.
 // used on results table in IPTT
 .is-shown-in-modals {

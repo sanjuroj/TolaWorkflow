@@ -15,9 +15,23 @@
 {% endblock %}
 
 {% block header_extras %}
-{# Translators: "Logframe" is the Mercy Corps term for a "Logical Framework," a hierarchical system that makes explicit the results framework and ties it to indicators and results #}
+
 <div id="logframe_link" style="{% if program.levels.count == 0 %}display:none;{% endif %}">
-    <a href="{% url 'logframe' program=program.pk %}" class="btn btn-link text-nowrap"><i class="fas fa-table"></i>{% trans "View logframe" %}</a>
+    <a href="{% url 'logframe' program=program.pk %}" class="btn btn-link text-nowrap{% if not program.results_framework %} disabled{% endif %}">
+        {# Translators: "Logframe" is the Mercy Corps term for a "Logical Framework," a hierarchical system that makes explicit the results framework and ties it to indicators and results #}
+        <i class="fas fa-table"></i>{% trans "View logframe" %}
+    </a>
+    {% if not program.results_framework %}
+        <a
+            tabIndex="0"
+            data-toggle="popover"
+            data-trigger="focus"
+            data-html="true"
+            data-placement="bottom"
+            {# Translators: This is help text to explain why a link to the Logframe page is disabled. #}
+            data-content="{% trans "Indicators are currently grouped by an older version of indicator levels. To group indicators according to the results framework and view the Logframe, an admin will need to adjust program settings." %}">
+            <i class="far fa-question-circle"></i></a>
+    {% endif %}
 </div>
 {% endblock %}
 
