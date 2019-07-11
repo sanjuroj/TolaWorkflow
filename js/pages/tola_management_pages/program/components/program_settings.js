@@ -7,12 +7,13 @@ export default class ProgramSettings extends React.Component {
         super(props);
         let grouping = props.program_data._using_results_framework === undefined ?
                 false : props.program_data._using_results_framework;
+        let autonumber = grouping === 1 ? null : props.program_data.auto_number_indicators;
         this.state = {
-            autonumber: props.program_data.auto_number_indicators,
+            autonumber: autonumber,
             grouping: grouping
         };
         const originalState = {
-            autonumber: props.program_data.auto_number_indicators,
+            autonumber: autonumber,
             grouping: grouping
         };
         this.resetForm = () => {
@@ -46,10 +47,12 @@ export default class ProgramSettings extends React.Component {
     save = (e) => {
         e.preventDefault();
         let data = { ...this.props.program_data,
-                     auto_number_indicators: this.state.autonumber
                      };
         if (this.state.grouping !== false) {
             data._using_results_framework = this.state.grouping;
+        }
+        if (this.state.autonumber !== null) {
+            data.auto_number_indicators = this.state.autonumber;
         }
         this.props.onSave(this.props.program_data.id, data);
     }
@@ -61,6 +64,8 @@ export default class ProgramSettings extends React.Component {
                 <h2 className="no-bold">{this.props.program_data.name ? this.props.program_data.name+': ' : ''}{gettext("Settings")}</h2>
                 <div className="d-flex flex-column w-75 pr-5">
                     <form className="form">
+                        { this.state.autonumber !== null &&
+                        <React.Fragment>
                         <h4>{ gettext("Indicator numbering") }</h4>
                         <div className="form-check mb-3">
                             <input
@@ -96,6 +101,8 @@ export default class ProgramSettings extends React.Component {
                             <strong className="text-danger">&nbsp; {gettext('Manually entered numbers do not affect the order in which indicators are listed; they are purely for display purposes.')}</strong>
                             </label>        
                         </div>
+                        </React.Fragment>
+                        }
                         { this.state.grouping !== false &&
                         <React.Fragment>
                         <h4>{ gettext("Indicator grouping") }</h4>
