@@ -278,11 +278,15 @@ class ProgramAdminSerializer(ModelSerializer):
     @transaction.atomic
     def update(self, instance, validated_data):
         previous_state = instance.admin_logged_fields
-        
-        if '_using_results_framework' in validated_data and \
-                validated_data['_using_results_framework'] is None:
+
+        if '_using_results_framework' in validated_data and validated_data['_using_results_framework'] is None:
             validated_data['_using_results_framework'] = instance._using_results_framework
-        
+
+        # default for any unmigrated program is "auto" - so if someone sets their program to "not grouping" - reset it
+        # to default ("auto")
+        if validated_data['_using_results_framework'] == instance.NOT_MIGRATED:
+            validated_data['auto_number_indicators'] = True
+
         original_countries = instance.country.all()
         incoming_countries = validated_data.pop('country')
         added_countries = [x for x in incoming_countries if x not in original_countries]
