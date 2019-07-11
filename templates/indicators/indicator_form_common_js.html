@@ -1026,10 +1026,8 @@
         var validationsTargetTab = true;
         var validationsSummaryTab = true;
         var validationsPerformanceTab = true;
+        var noMessageValidations = true;
         
-        if (validateName() === false) {
-            validationsSummaryTab = false;
-        }
         if  (validate_baseline() === false ) {
             validationsTargetTab = false
         }
@@ -1067,8 +1065,9 @@
             validationsSummaryTab = false;
             $("#div_id_name").addClass("marginbottom-225");
             $("#div_id_name").removeClass("mb-3");
-        }
-        else {
+        } else if (validateName() === false) {
+            noMessageValidations = false;
+        } else {
           $("#div_id_name").addClass("mb-3");
           $("#div_id_name").removeClass("marginbottom-225");
         }
@@ -1093,7 +1092,7 @@
         }
 
         // return all tab validations
-        return validationsTargetTab && validationsSummaryTab && validationsPerformanceTab;
+        return validationsTargetTab && validationsSummaryTab && validationsPerformanceTab && noMessageValidations;
     }
 
     $("#indicator_modal_content").on("keypress", "input[type=number]", function(e){

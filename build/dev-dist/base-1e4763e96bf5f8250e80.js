@@ -327,7 +327,11 @@ function notifyError(title, msg) {
 window.notifyError = notifyError;
 $(document).ready(function () {
   $(document).on('hidden.bs.modal', '.modal', function () {
-    $('.modal:visible').length && $(document.body).addClass('modal-open');
+    if ($('.modal:visible').length) {
+      $(document.body).addClass('modal-open');
+    } else {
+      $(document.body).removeClass('modal-open');
+    }
   });
 });
 /*
@@ -626,4 +630,4 @@ window.scrollToBottom = scrollToBottom;
 /***/ })
 
 },[["YqHn","runtime","vendors"]]]);
-//# sourceMappingURL=base-5cc4adf5372dcfeea9f6.js.map
+//# sourceMappingURL=base-1e4763e96bf5f8250e80.js.map
