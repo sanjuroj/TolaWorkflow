@@ -818,6 +818,27 @@
         validation_msgs['lop_target_not_matching'] = msg;
         showValidations('#modalmessages');
     }
+    
+    function validateName() {
+        const $nameField = $('#id_name');
+        const $nameValidation = $('#validation_id_name');
+        let errMsg = null;
+        if (!$nameField.val() || $nameField.val().length == 0) {
+            errMsg = "{% trans 'Please complete this field.'|escapejs %}";
+        } else if ($nameField.val().length > 500) {
+            errMsg = "{% trans 'Please enter an indicator with fewer than 500 characters.'|escapejs %}";
+        }
+        if (errMsg) {
+            $nameField.addClass('is-invalid');
+            $nameValidation.html(errMsg);
+            return false;
+        } else {
+            $nameField.removeClass('is-invalid');
+            $nameValidation.html("");
+            return true;
+        }
+    }
+    
 
     function reset_baseline_errors(){
         $("#id_baseline").removeClass('is-invalid');
@@ -1005,7 +1026,10 @@
         var validationsTargetTab = true;
         var validationsSummaryTab = true;
         var validationsPerformanceTab = true;
-
+        
+        if (validateName() === false) {
+            validationsSummaryTab = false;
+        }
         if  (validate_baseline() === false ) {
             validationsTargetTab = false
         }
@@ -1130,6 +1154,10 @@
     $("#indicator_modal_content").on("blur", "#id_baseline", function(e){
         $("#id_baseline_na").prop('checked', false);
         validate_baseline();
+    });
+    
+    $("#indicator_modal_content").on("keyup", "#id_name", function(e){
+        validateName();
     });
 
     $("#indicator_modal_content").on("input", "#id_baseline", function(e){
