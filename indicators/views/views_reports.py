@@ -177,7 +177,7 @@ def process_iptt_data(program_data, frequency, indicator_qs, tva):
             level_item = {
                 'pk': level.pk,
                 'name': level.name,
-                'tier': level.leveltier.name if level.leveltier else None,
+                'tier': ugettext(level.leveltier.name) if level.leveltier else None,
                 'tierPk': level.leveltier.pk if level.leveltier else None,
                 'ontology': level.display_ontology,
                 'sort_ontology': level.ontology,
@@ -208,6 +208,7 @@ def process_iptt_data(program_data, frequency, indicator_qs, tva):
             level_data.append({
                 'pk': pk,
                 'name': level['old_level'],
+                'display_name': ugettext(level['old_level']) if level['old_level'] else '',
                 'sort': pk
             })
     return indicator_qs, level_data, results_framework
@@ -240,7 +241,7 @@ def indicators_to_iptt(indicator_qs, frequency, tva, results_framework, program_
             'reportData': {}
         }
         if results_framework:
-            indicator_data['level'] = indicator.leveltier_name
+            indicator_data['level'] = ugettext(indicator.leveltier_name) if indicator.leveltier_name else None
             indicator_data['tierDepth'] = indicator.leveltier_depth
             indicator_data['levelpk'] = indicator.level.pk if indicator.level else None
             indicator_data['levelOrder'] = indicator.level_order_display

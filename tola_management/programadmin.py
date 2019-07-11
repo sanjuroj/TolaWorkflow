@@ -77,12 +77,12 @@ def get_audit_log_workbook(ws, program):
     # helper for result level column
     def _result_level(indicator):
         if indicator.leveltier_name and indicator.level_display_ontology:
-            return '{} {}'.format(
-                indicator.leveltier_name,
-                indicator.level_display_ontology,
+            return u'{} {}'.format(
+                unicode(indicator.leveltier_name),
+                unicode(indicator.level_display_ontology),
             )
         elif indicator.leveltier_name:
-            return indicator.leveltier_name
+            return unicode(indicator.leveltier_name)
         else:
             return ''
 
