@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-08 16:00-0700\n"
-"PO-Revision-Date: 2019-07-08 16:06-0700\n"
+"POT-Creation-Date: 2019-07-11 15:13-0700\n"
+"PO-Revision-Date: 2019-07-11 15:43-0700\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -13,7 +13,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 2.2.3\n"
 
-#: js/base.js:327 js/base.js:328
+#: js/base.js:331 js/base.js:332
 msgid ""
 "Your changes will be recorded in a change log. For future reference, please "
 "share your reason for these changes."
@@ -22,11 +22,11 @@ msgstr ""
 "titre de référence, veuillez partager votre justification pour ces "
 "modifications."
 
-#: js/base.js:329
+#: js/base.js:333
 msgid "This action cannot be undone"
 msgstr "Cette action est irréversible"
 
-#: js/base.js:335
+#: js/base.js:339
 #, python-format
 msgid ""
 "Removing this target means that %s result will no longer have targets "
@@ -42,33 +42,33 @@ msgstr[1] ""
 "associés à des cibles."
 
 #. Translators: Button to approve a form
-#: js/base.js:347 js/base.js:445 js/base.js:493 js/base.js:535
+#: js/base.js:351 js/base.js:449 js/base.js:497 js/base.js:539
 msgid "Ok"
 msgstr "Confirmer"
 
 #. Translators: Button to cancel a form submission
-#: js/base.js:349 js/base.js:447 js/base.js:495 js/base.js:537
+#: js/base.js:353 js/base.js:451 js/base.js:499 js/base.js:541
 #: js/pages/results_framework/components/level_cards.js:548
 msgid "Cancel"
 msgstr "Annuler"
 
-#: js/base.js:394
+#: js/base.js:398
 msgid "A reason is required."
 msgstr "Une justification est nécessaire."
 
-#: js/base.js:454 js/base.js:543
+#: js/base.js:458 js/base.js:547
 msgid "This action cannot be undone."
 msgstr "Cette action est irréversible."
 
-#: js/base.js:458 js/base.js:547
+#: js/base.js:462 js/base.js:551
 msgid "Warning"
 msgstr "Attention"
 
-#: js/base.js:502 js/pages/tola_management_pages/audit_log/views.js:173
+#: js/base.js:506 js/pages/tola_management_pages/audit_log/views.js:173
 msgid "Reason for change"
 msgstr "Justification de la modification"
 
-#: js/base.js:599
+#: js/base.js:603
 msgid "Success!"
 msgstr "Succès !"
 
@@ -141,18 +141,16 @@ msgid "Output"
 msgstr "Rendement"
 
 #: js/level_utils.js:22 js/level_utils.js:37
-#, fuzzy
-#| msgid "Active"
 msgid "Activity"
-msgstr "Actif"
+msgstr "Activité"
 
 #: js/level_utils.js:24
 msgid "Department for International Development (DFID)"
-msgstr ""
+msgstr "Département du Développement International (DFID)"
 
 #: js/level_utils.js:26
 msgid "Impact"
-msgstr ""
+msgstr "Impact"
 
 #: js/level_utils.js:29 js/level_utils.js:45 js/level_utils.js:53
 msgid "Input"
@@ -388,7 +386,7 @@ msgstr "Nº"
 
 #. Translators: Column header for indicator Name column */
 #: js/pages/iptt_report/components/report/tableHeader.js:51
-#: js/pages/logframe/components/table.js:16
+#: js/pages/logframe/components/table.js:22
 #: js/pages/program_page/components/indicator_list.js:198
 #: js/pages/tola_management_pages/audit_log/views.js:113
 #: js/pages/tola_management_pages/audit_log/views.js:117
@@ -520,7 +518,7 @@ msgstr "Afficher/Masquer les filtres"
 msgid "View results framework"
 msgstr "Afficher le cadre de résultats"
 
-#: js/pages/logframe/components/table.js:94
+#: js/pages/logframe/components/table.js:103
 msgid "Indicators unassigned to  a results framework level"
 msgstr "Indicateurs non affectés à un niveau de cadre de résultats"
 
@@ -811,7 +809,7 @@ msgstr "Enregistrer et fermer"
 #: js/pages/results_framework/components/level_cards.js:618
 #: js/pages/results_framework/components/level_cards.js:660
 #: js/pages/tola_management_pages/program/components/program_editor.js:33
-#: js/pages/tola_management_pages/program/components/program_settings.js:61
+#: js/pages/tola_management_pages/program/components/program_settings.js:64
 msgid "Settings"
 msgstr "Paramètres"
 
@@ -1025,7 +1023,7 @@ msgstr "Code pays"
 #: js/pages/tola_management_pages/program/components/edit_program_profile.js:141
 #: js/pages/tola_management_pages/program/components/edit_program_profile.js:148
 #: js/pages/tola_management_pages/program/components/program_history.js:64
-#: js/pages/tola_management_pages/program/components/program_settings.js:123
+#: js/pages/tola_management_pages/program/components/program_settings.js:130
 #: js/pages/tola_management_pages/user/components/edit_user_history.js:74
 msgid "Save Changes"
 msgstr "Enregistrer les modifications"
@@ -1042,7 +1040,7 @@ msgstr "Enregistrer les modifications"
 #: js/pages/tola_management_pages/program/components/edit_program_profile.js:143
 #: js/pages/tola_management_pages/program/components/edit_program_profile.js:149
 #: js/pages/tola_management_pages/program/components/program_history.js:65
-#: js/pages/tola_management_pages/program/components/program_settings.js:124
+#: js/pages/tola_management_pages/program/components/program_settings.js:131
 #: js/pages/tola_management_pages/program/views.js:201
 #: js/pages/tola_management_pages/user/components/edit_user_history.js:75
 #: js/pages/tola_management_pages/user/components/edit_user_profile.js:248
@@ -1315,16 +1313,16 @@ msgstr "ID GAIT"
 msgid "Fund Code"
 msgstr "Code du fonds"
 
-#: js/pages/tola_management_pages/program/components/program_settings.js:64
+#: js/pages/tola_management_pages/program/components/program_settings.js:69
 msgid "Indicator numbering"
 msgstr "Numérotation de l’indicateur"
 
 #. Translators: Auto-number meaning the system will do this automatically
-#: js/pages/tola_management_pages/program/components/program_settings.js:78
+#: js/pages/tola_management_pages/program/components/program_settings.js:83
 msgid "Auto-number indicators (recommended)"
 msgstr "Numérotation automatique des indicateurs (recommandé)"
 
-#: js/pages/tola_management_pages/program/components/program_settings.js:80
+#: js/pages/tola_management_pages/program/components/program_settings.js:85
 msgid ""
 "Indicator numbers are automatically determined by their results framework "
 "assignments."
@@ -1332,11 +1330,11 @@ msgstr ""
 "La numérotation d’un indicateur est automatiquement définie par les "
 "affectations de leur cadre de résultats."
 
-#: js/pages/tola_management_pages/program/components/program_settings.js:94
+#: js/pages/tola_management_pages/program/components/program_settings.js:99
 msgid "Manually number indicators"
 msgstr "Numéroter les indicateurs manuellement"
 
-#: js/pages/tola_management_pages/program/components/program_settings.js:95
+#: js/pages/tola_management_pages/program/components/program_settings.js:100
 msgid ""
 "If your donor requires a special numbering convention, you can enter a "
 "custom number for each indicator."
@@ -1345,7 +1343,7 @@ msgstr ""
 "particulier, il vous sera possible de saisir la numérotation de votre choix "
 "pour chaque indicateur."
 
-#: js/pages/tola_management_pages/program/components/program_settings.js:96
+#: js/pages/tola_management_pages/program/components/program_settings.js:101
 msgid ""
 "Manually entered numbers do not affect the order in which indicators are "
 "listed; they are purely for display purposes."
@@ -1354,15 +1352,15 @@ msgstr ""
 "indicateurs sont classés ; elle est uniquement utilisée à des fins "
 "d’affichage."
 
-#: js/pages/tola_management_pages/program/components/program_settings.js:101
+#: js/pages/tola_management_pages/program/components/program_settings.js:108
 msgid "Indicator grouping"
 msgstr "Regroupement des indicateurs"
 
-#: js/pages/tola_management_pages/program/components/program_settings.js:112
+#: js/pages/tola_management_pages/program/components/program_settings.js:119
 msgid "Group indicators according to the results framework"
 msgstr "Regrouper les indicateurs selon le cadre de résultats"
 
-#: js/pages/tola_management_pages/program/components/program_settings.js:114
+#: js/pages/tola_management_pages/program/components/program_settings.js:121
 msgid ""
 "After you have set a results framework for this program and assigned "
 "indicators to it, select this option to retire the original indicator levels "
