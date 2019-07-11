@@ -10611,6 +10611,9 @@ a:hover {
   padding: 0 !important;
   text-indent: -22.5px; }
 
+.indicator_name {
+  word-break: break-word; }
+
 .is-shown-in-modals {
   display: none; }
   .modal-dialog .is-shown-in-modals {
