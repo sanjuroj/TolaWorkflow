@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-08 16:00-0700\n"
-"PO-Revision-Date: 2019-06-30 17:22-0300\n"
+"POT-Creation-Date: 2019-07-02 16:56-0700\n"
+"PO-Revision-Date: 2019-07-11 12:56-0700\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: es\n"
@@ -125,91 +125,6 @@ msgstr "por Nivel"
 #: js/components/selectWidgets.js:200
 msgid "Group indicators"
 msgstr "Agrupar indicadores"
-
-#: js/level_utils.js:17
-msgid "Mercy Corps"
-msgstr ""
-
-#: js/level_utils.js:19 js/level_utils.js:41 js/level_utils.js:57
-msgid "Goal"
-msgstr "Objetivo"
-
-#: js/level_utils.js:20 js/level_utils.js:27
-msgid "Outcome"
-msgstr "Resultado"
-
-#: js/level_utils.js:21 js/level_utils.js:28 js/level_utils.js:44
-#: js/level_utils.js:52 js/level_utils.js:61
-msgid "Output"
-msgstr "Salida"
-
-#: js/level_utils.js:22 js/level_utils.js:37
-msgid "Activity"
-msgstr "Actividad"
-
-#: js/level_utils.js:24
-msgid "Department for International Development (DFID)"
-msgstr ""
-
-#: js/level_utils.js:26
-msgid "Impact"
-msgstr ""
-
-#: js/level_utils.js:29 js/level_utils.js:45 js/level_utils.js:53
-msgid "Input"
-msgstr "Entrada"
-
-#: js/level_utils.js:31
-msgid "European Commission (EC)"
-msgstr "Comisión Europea (CE)"
-
-#: js/level_utils.js:33
-msgid "Overall Objective"
-msgstr "Objetivo General"
-
-#: js/level_utils.js:34
-msgid "Specific Objective"
-msgstr "Objetivo Específico"
-
-#: js/level_utils.js:35 js/level_utils.js:42 js/level_utils.js:58
-msgid "Purpose"
-msgstr "Finalidad"
-
-#: js/level_utils.js:36
-msgid "Result"
-msgstr "Resultado"
-
-#: js/level_utils.js:39
-msgid "USAID 1"
-msgstr "USAID 1"
-
-#: js/level_utils.js:43 js/level_utils.js:59
-msgid "Sub-Purpose"
-msgstr "Subpropósito"
-
-#: js/level_utils.js:47
-msgid "USAID 2"
-msgstr "USAID 2"
-
-#: js/level_utils.js:49
-msgid "Strategic Objective"
-msgstr "Objetivo Estratégico"
-
-#: js/level_utils.js:50
-msgid "Intermediate Result"
-msgstr "Resultado Intermedio"
-
-#: js/level_utils.js:51
-msgid "Sub-Intermediate Result"
-msgstr "Resultado Sub-Intermedio"
-
-#: js/level_utils.js:55
-msgid "USAID FFP"
-msgstr "USAID FFP"
-
-#: js/level_utils.js:60
-msgid "Intermediate Outcome"
-msgstr "Resultado Intermedio"
 
 #: js/pages/document_list/components/document_list.js:59
 msgid "Filter by program"
@@ -388,7 +303,7 @@ msgstr "No."
 
 #. Translators: Column header for indicator Name column */
 #: js/pages/iptt_report/components/report/tableHeader.js:51
-#: js/pages/logframe/components/table.js:16
+#: js/pages/logframe/components/table.js:15
 #: js/pages/program_page/components/indicator_list.js:198
 #: js/pages/tola_management_pages/audit_log/views.js:113
 #: js/pages/tola_management_pages/audit_log/views.js:117
@@ -520,7 +435,7 @@ msgstr "Mostrar/Ocultar filtros"
 msgid "View results framework"
 msgstr "Ver sistema de resultados"
 
-#: js/pages/logframe/components/table.js:94
+#: js/pages/logframe/components/table.js:93
 msgid "Indicators unassigned to  a results framework level"
 msgstr "Indicadores sin asignar a un nivel del sistema de resultados"
 
@@ -766,10 +681,8 @@ msgstr ""
 
 #. Translators: Take the text of a program objective and import it for editing
 #: js/pages/results_framework/components/level_cards.js:50
-#, fuzzy
-#| msgid "Program Objective"
 msgid "Import Program Objective"
-msgstr "Objetivo del programa"
+msgstr "Importar Objetivo del Programa"
 
 #. Translators: instructions to users containing some HTML */
 #: js/pages/results_framework/components/level_cards.js:67
@@ -778,6 +691,9 @@ msgid ""
 "import__popover-strong-text'>Make sure to remove levels and numbers from "
 "your text, because they are automatically displayed.</strong>"
 msgstr ""
+"Importar texto desde un Objetivo de Programa. <strong class='program-"
+"objective-import__popover-strong-text'>Asegúrese de eliminar niveles y "
+"números de su texto ya que los mismos se muestran automáticamente.</strong>"
 
 #. Translators: This is a validation message given to the user when the user-editable name field has been deleted or omitted. */
 #: js/pages/results_framework/components/level_cards.js:411
@@ -786,10 +702,9 @@ msgstr "Por favor complete este campo."
 
 #. Translators: This is button text that allows users to save their work and unlock the ability to add indicators */ }
 #: js/pages/results_framework/components/level_cards.js:447
-#, fuzzy, python-format
-#| msgid "Save and add another %s"
+#, python-format
 msgid "Save %s and add indicators"
-msgstr "Guardar y agregar otro %s"
+msgstr "Guardar %s y agregar indicadores"
 
 #. Translators: On a button, with a tiered set of objects, save current object and add another one in the same tier, e.g. "Save and add another Outcome" when the user is editing an Outcome */}
 #: js/pages/results_framework/components/level_cards.js:531
@@ -821,6 +736,9 @@ msgid ""
 "indicator from the program page and use the “Result level” menu on the "
 "Summary tab."
 msgstr ""
+"Para vincular un indicador ya guardado a su sistema de resultados: Abra el "
+"indicador desde la página del programa y utilice el menú \"Nivel de resultado"
+"\" en la pestaña Resumen."
 
 #. Translators: Popover for help link, tell user how to disassociate an Indicator from the Level they are currently editing. */
 #: js/pages/results_framework/components/level_cards.js:632
@@ -833,10 +751,9 @@ msgstr ""
 
 #. Translators: Title for a section that lists the Indicators associated with whatever this.props.tiername is. */}
 #: js/pages/results_framework/components/level_cards.js:648
-#, fuzzy, python-format
-#| msgid "Indicators missing targets"
+#, python-format
 msgid "Indicators linked to this %s"
-msgstr "Indicadores sin objetivos"
+msgstr "Indicadores vinculados a este %s"
 
 #: js/pages/results_framework/components/leveltier_picker.js:30
 msgid ""
@@ -879,30 +796,26 @@ msgstr "Aplicar"
 
 #. Translators: This signifies that the user has build their own level hierarchy instead of using one of the pre-defined ones */}
 #: js/pages/results_framework/models.js:88
-#, fuzzy
-#| msgid "Customsort"
 msgid "Custom"
-msgstr "Customsort"
+msgstr "Personalizado"
 
 #. Translators: Notification to user that the deletion command that they issued was successful */
 #: js/pages/results_framework/models.js:229
 #, python-format
 msgid "%s was deleted."
-msgstr ""
+msgstr "%s fue eliminado."
 
 #. Translators: This is a confirmation message that confirms that change has been successfully saved to the DB.
 #: js/pages/results_framework/models.js:276
-#, fuzzy, python-format
-#| msgid "save"
+#, python-format
 msgid "%s saved."
-msgstr "guardar"
+msgstr "%s guardado."
 
 #. Translators:  Confirmation message that user-supplied updates were successfully applied.
 #: js/pages/results_framework/models.js:310
-#, fuzzy, python-format
-#| msgid "Updated"
+#, python-format
 msgid "%s updated."
-msgstr "Actualizado"
+msgstr "%s actualizado."
 
 #. Translators:  This is a confirmation prompt that is triggered by clicking on a cancel button.  */
 #: js/pages/results_framework/models.js:478
@@ -914,7 +827,7 @@ msgstr "¿Está seguro que quiere continuar?"
 #: js/pages/results_framework/models.js:480
 #, python-format
 msgid "Changes to this %s will not be saved"
-msgstr ""
+msgstr "Los cambios a este/a %s no serán guardados"
 
 #: js/pages/tola_management_pages/audit_log/views.js:14
 msgid "Disaggregated values changed"
@@ -947,8 +860,6 @@ msgid "Date and time"
 msgstr "Fecha y hora"
 
 #: js/pages/tola_management_pages/audit_log/views.js:166
-#, fuzzy
-#| msgid "Result level"
 msgid "Result Level"
 msgstr "Nivel del resultado"
 
