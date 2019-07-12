@@ -384,17 +384,22 @@ class IndicatorUpdate(IndicatorFormMixin, UpdateView):
         such that it can also be used via AJAX
         """
         if self.object.results_framework:
-            return '{} {} {}{}'.format(
-                self.object.leveltier_name,
-                _('indicator'),
-                self.object.level_display_ontology,
-                self.object.level_order_display,
-            )
-        else:
-            return '{} {}:'.format(
+            if self.object.level_display_ontology:
+                return '{} {} {}{}'.format(
+                    self.object.leveltier_name,
+                    _('indicator'),
+                    self.object.level_display_ontology,
+                    self.object.level_order_display,
+                )
+            else:
+                return _('Indicator setup')
+        elif self.object.old_level:
+            return '{} {}'.format(
                 self.object.old_level,
                 _('indicator'),
             )
+        else:
+            return _('Indicator setup')
 
     @property
     def _form_subtitle_display_str(self):

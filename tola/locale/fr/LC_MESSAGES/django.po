@@ -5078,8 +5078,8 @@ msgstr "Ville, Pays :"
 #~ msgid "Form Help/Guidance"
 #~ msgstr "Formulaire d’assistance/aide"
 
-#~ msgid "Indicator setup"
-#~ msgstr "Configuration de l’indicateur"
+msgid "Indicator setup"
+msgstr "Configuration de l’indicateur"
 
 #~ msgid "View your indicator on the program page."
 #~ msgstr "Visualisez vos indicateurs sur la page du programme."

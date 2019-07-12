@@ -1011,7 +1011,7 @@
 
 
     function showValidations(messagesDiv) {
-        if (!validation_msgs || Object.items(validation_msgs).length ==  0) {
+        if (!validation_msgs || Object.entries(validation_msgs).length ==  0) {
             return;
         }
         var msg = '';
@@ -1144,6 +1144,10 @@
 
     $("#indicator_modal_content").on("blur", "#id_target_frequency", function(e){
         validateForEmptyField("id_target_frequency");
+    });
+
+    $("#indicator_modal_content").on("blur", "#id_old_level", function(e){
+        validateForEmptyField("id_old_level");
     });
 
     $("#indicator_modal_content").on("blur", "#id_lop_target", function(e){
