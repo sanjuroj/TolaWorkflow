@@ -548,7 +548,7 @@ window.create_no_rationale_changeset_notice = ({
     const inner = `
         <div class="row">
             <div class="col">
-                <h2><i class="fas fa-exclamation-triangle"></i>${gettext("Warning")}</h2>
+                <h2 class="pnotify--header"><i class="fas fa-exclamation-triangle"></i>${gettext("Warning")}</h2>
             </div>
         </div>
         <div class="row">
@@ -600,7 +600,7 @@ const createPnotifyAlert = (passedInConfig) => {
     const inner = `
         <div class="row">
             <div class="col">
-                <h2><i class="fas ${faClass}"></i> ${gettext("Success!")}</h2>
+                <h2 class="pnotify--header"><i class="fas ${faClass}"></i>${gettext("Success!")}</h2>
             </div>
         </div>
         <div class="row">

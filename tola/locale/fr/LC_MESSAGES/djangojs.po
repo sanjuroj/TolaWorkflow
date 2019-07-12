@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-12 09:21-0700\n"
-"PO-Revision-Date: 2019-07-11 15:43-0700\n"
+"POT-Creation-Date: 2019-07-12 15:42-0700\n"
+"PO-Revision-Date: 2019-07-12 15:42-0700\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 2.2.3\n"
+"X-Generator: Poedit 2.2\n"
 
 #: js/base.js:331 js/base.js:332
 msgid ""
@@ -782,6 +782,12 @@ msgstr ""
 "class=‘program-objective-import__popover-strong-text’>Les niveaux et les "
 "nombres s’affichent automatiquement, n’oubliez donc pas de les supprimer.</"
 "strong>"
+
+#. Translators:  This is a confirmation prompt that is triggered by clicking on a delete button. The code is a reference to the name of the specific item being deleted.  Only one item can be deleted at a time. */
+#: js/pages/results_framework/components/level_cards.js:86
+#, python-format
+msgid "Are you sure you want to delete %s?"
+msgstr "Êtes-vous sûr de vouloir supprimer %s ?"
 
 #. Translators: This is a validation message given to the user when the user-editable name field has been deleted or omitted. */
 #: js/pages/results_framework/components/level_cards.js:411
