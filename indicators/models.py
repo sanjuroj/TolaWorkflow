@@ -1169,8 +1169,8 @@ class Indicator(SafeDeleteModel):
     def leveltier_name(self):
         if self.level and self.level.leveltier:
             return _(self.level.leveltier.name)
-        elif self.level is None and self.old_level:
-            return self.old_level
+        elif self.old_level and not self.results_framework:
+            return _(self.old_level)
         return None
 
     @property
@@ -1216,15 +1216,17 @@ class Indicator(SafeDeleteModel):
     @property
     def form_title_level(self):
         if self.results_framework:
-            return '{} {} {}'.format(
-                self.leveltier_name,
-                _('indicator'),
-                self.name
+            return unicode(
+                u'{} {}{}'.format(
+                    unicode(self.leveltier_name) if self.leveltier_name else u'',
+                    unicode(_('indicator')),
+                    (u' {}'.format(self.results_aware_number) if self.results_aware_number else u'')
+                )
             )
         else:
-            return '{} {}'.format(
-                self.old_level,
-                _('indicator')
+            return u'{} {}'.format(
+                (unicode(_(self.old_level)) if self.old_level else u''),
+                unicode(_('indicator'))
             )
 
     @property

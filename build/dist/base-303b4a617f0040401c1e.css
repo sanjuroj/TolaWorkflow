@@ -9790,7 +9790,7 @@ input[type=radio]:disabled {
   font-weight: normal; }
 
 .program-objective-import {
-  width: 300px;
+  width: 55%;
   display: flex;
   justify-content: space-between;
   align-items: center; }
@@ -10625,6 +10625,8 @@ a:hover {
 
 .indicator_name {
   word-break: break-word; }
+  .indicator_name:first-letter {
+    text-transform: uppercase; }
 
 .is-shown-in-modals {
   display: none; }

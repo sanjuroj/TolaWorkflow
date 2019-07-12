@@ -506,7 +506,7 @@ export default class FilterStore {
             let periods = this.periods.filter(periodFilter);
             // all non-annual time-aware frequencies are opt-grouped by year:
             let years = Array.from(new Set(this.periods.filter(periodFilter)
-                                            .map(period => period.year))).sort();
+                                            .map(period => period.year))).filter(year => !isNaN(year)).sort();
             return years.map(
                 year => {
                     let options = periods.filter(period => period.year === year)
@@ -589,7 +589,7 @@ export default class FilterStore {
             }
             if (levels && levels.length > 0) {
                 options.push({
-                    label: _gettext('Outcome Chains'),
+                    label: this.program.shortResultChainLabel,
                     options: levels.filter(
                         level => level.tier.depth == 2
                     ).map(

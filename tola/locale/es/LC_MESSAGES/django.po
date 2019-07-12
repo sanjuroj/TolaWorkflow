@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-11 15:47-0700\n"
+"POT-Creation-Date: 2019-07-12 13:20-0700\n"
 "PO-Revision-Date: 2019-07-11 15:55-0700\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -127,8 +127,8 @@ msgstr "Indicadores sin asignar a un nivel del sistema de resultados"
 #: indicators/models.py:926 indicators/models.py:1597
 #: templates/workflow/documentation_popup_list.html:47
 #: templates/workflow/projectdashboard_list.html:31 workflow/forms.py:1319
-#: workflow/models.py:561 workflow/models.py:1328 workflow/models.py:1535
-#: workflow/models.py:1681
+#: workflow/models.py:561 workflow/models.py:1339 workflow/models.py:1546
+#: workflow/models.py:1692
 msgid "Program"
 msgstr "Programa"
 
@@ -187,7 +187,7 @@ msgstr ""
 #: templates/workflow/siteprofile_form.html:3
 #: templates/workflow/siteprofile_form.html:4
 #: templates/workflow/siteprofile_form.html:14 workflow/models.py:42
-#: workflow/models.py:1616
+#: workflow/models.py:1627
 msgid "Site"
 msgstr "Sitio"
 
@@ -202,7 +202,7 @@ msgid "Measure against target"
 msgstr "Medida contra objetivo"
 
 #: indicators/forms.py:194 templates/workflow/projectdashboard_list.html:12
-#: templates/workflow/projectdashboard_list.html:17 workflow/models.py:1680
+#: templates/workflow/projectdashboard_list.html:17 workflow/models.py:1691
 msgid "Project"
 msgstr "Proyecto"
 
@@ -290,7 +290,7 @@ msgid "Types"
 msgstr "Tipos"
 
 #: indicators/forms.py:375 tola_management/models.py:491
-#: tola_management/models.py:549 workflow/models.py:1247
+#: tola_management/models.py:549 workflow/models.py:1258
 msgid "Sectors"
 msgstr "Sectores"
 
@@ -443,7 +443,7 @@ msgstr "Plan de indicadores"
 #: indicators/models.py:779 tola_management/models.py:80
 #: tola_management/models.py:208 tola_management/models.py:487
 #: tola_management/models.py:542 workflow/models.py:35 workflow/models.py:452
-#: workflow/models.py:1815
+#: workflow/models.py:1826
 msgid "Name"
 msgstr "Nombre"
 
@@ -451,7 +451,7 @@ msgstr "Nombre"
 msgid "Table id"
 msgstr "Identificador de la tabla"
 
-#: indicators/models.py:39 workflow/models.py:1847
+#: indicators/models.py:39 workflow/models.py:1858
 msgid "Owner"
 msgstr "Propietario"
 
@@ -460,9 +460,9 @@ msgid "Remote owner"
 msgstr "Propietario remoto"
 
 #: indicators/models.py:41 indicators/models.py:88 workflow/models.py:181
-#: workflow/models.py:458 workflow/models.py:534 workflow/models.py:771
-#: workflow/models.py:793 workflow/models.py:1046 workflow/models.py:1246
-#: workflow/models.py:1817 workflow/models.py:1881
+#: workflow/models.py:458 workflow/models.py:534 workflow/models.py:782
+#: workflow/models.py:804 workflow/models.py:1057 workflow/models.py:1257
+#: workflow/models.py:1828 workflow/models.py:1892
 msgid "Country"
 msgstr "País"
 
@@ -500,8 +500,8 @@ msgstr "Tipo de indicador"
 
 #: indicators/models.py:69 indicators/models.py:89 indicators/models.py:110
 #: indicators/models.py:401 indicators/models.py:451 indicators/models.py:466
-#: tola_management/models.py:490 workflow/forms.py:1353 workflow/models.py:1185
-#: workflow/models.py:1212 workflow/models.py:1676 workflow/models.py:1728
+#: tola_management/models.py:490 workflow/forms.py:1353 workflow/models.py:1196
+#: workflow/models.py:1223 workflow/models.py:1687 workflow/models.py:1739
 msgid "Description"
 msgstr "Descripción"
 
@@ -542,8 +542,8 @@ msgstr "Objetivo"
 
 #. Translators: Below Goals, the 2nd highest organizing level to attach KPIs to.
 #: indicators/models.py:301 indicators/models.py:313
-#: indicators/views/views_indicators.py:1148
-#: indicators/views/views_reports.py:280
+#: indicators/views/views_indicators.py:1153
+#: indicators/views/views_reports.py:282
 msgid "Outcome"
 msgstr "Resultado"
 
@@ -677,12 +677,12 @@ msgstr "Etiqueta de desagregación"
 
 #: indicators/models.py:429 templates/indicators/disaggregation_print.html:60
 #: templates/indicators/disaggregation_report.html:92
-#: tola_management/models.py:221 workflow/models.py:1789
+#: tola_management/models.py:221 workflow/models.py:1800
 msgid "Value"
 msgstr "Valor"
 
 #: indicators/models.py:449 indicators/models.py:464 indicators/models.py:490
-#: workflow/models.py:1758
+#: workflow/models.py:1769
 msgid "Frequency"
 msgstr "Frecuencia"
 
@@ -841,7 +841,7 @@ msgid "Changes to Indicator"
 msgstr "Cambios en el indicador"
 
 #: indicators/models.py:931 workflow/models.py:75 workflow/models.py:530
-#: workflow/models.py:1348 workflow/models.py:1544
+#: workflow/models.py:1359 workflow/models.py:1555
 msgid "Sector"
 msgstr "Sector"
 
@@ -849,12 +849,12 @@ msgstr "Sector"
 msgid "Key Performance Indicator for this program?"
 msgstr "¿Indicador clave de rendimiento para este programa?"
 
-#: indicators/models.py:941 workflow/models.py:1063 workflow/models.py:1258
-#: workflow/models.py:1629
+#: indicators/models.py:941 workflow/models.py:1074 workflow/models.py:1269
+#: workflow/models.py:1640
 msgid "Approved by"
 msgstr "Aprobado por"
 
-#: indicators/models.py:946 workflow/models.py:1448 workflow/models.py:1632
+#: indicators/models.py:946 workflow/models.py:1459 workflow/models.py:1643
 msgid "Approval submitted by"
 msgstr "Aprobación presentada por"
 
@@ -867,7 +867,7 @@ msgstr "Identificación de servicio externo"
 msgid "Old Level"
 msgstr "Nivel Anterior"
 
-#: indicators/models.py:968 workflow/models.py:1262
+#: indicators/models.py:968 workflow/models.py:1273
 msgid "Notes"
 msgstr "Notas"
 
@@ -908,16 +908,16 @@ msgid "+"
 msgstr "+"
 
 #: indicators/models.py:1221 indicators/models.py:1227
-#: indicators/views/views_indicators.py:389
-#: indicators/views/views_indicators.py:396
+#: indicators/views/views_indicators.py:390
+#: indicators/views/views_indicators.py:399
 msgid "indicator"
 msgstr "indicador"
 
-#: indicators/models.py:1290 indicators/views/views_reports.py:98
+#: indicators/models.py:1290 indicators/views/views_reports.py:100
 msgid "Midline"
 msgstr "Línea media"
 
-#: indicators/models.py:1291 indicators/views/views_reports.py:102
+#: indicators/models.py:1291 indicators/views/views_reports.py:104
 msgid "Endline"
 msgstr "Línea final"
 
@@ -970,9 +970,9 @@ msgstr "Objetivo periódico"
 msgid "Disaggregation Value"
 msgstr "Valor de desagregación"
 
-#: indicators/models.py:1587 workflow/models.py:1471 workflow/models.py:1536
-#: workflow/models.py:1729 workflow/models.py:1760 workflow/models.py:1790
-#: workflow/models.py:1816
+#: indicators/models.py:1587 workflow/models.py:1482 workflow/models.py:1547
+#: workflow/models.py:1740 workflow/models.py:1771 workflow/models.py:1801
+#: workflow/models.py:1827
 msgid "Project Initiation"
 msgstr "Iniciación de proyecto"
 
@@ -1067,8 +1067,8 @@ msgid "or"
 msgstr "o"
 
 #: indicators/templatetags/mytags.py:89 tola_management/models.py:250
-#: tola_management/programadmin.py:143 tola_management/programadmin.py:152
-#: tola_management/programadmin.py:156 tola_management/programadmin.py:157
+#: tola_management/programadmin.py:142 tola_management/programadmin.py:151
+#: tola_management/programadmin.py:155 tola_management/programadmin.py:156
 msgid "N/A"
 msgstr "N/A"
 
@@ -1220,15 +1220,20 @@ msgstr ""
 msgid "Indicator {indicator_number} updated."
 msgstr "El indicador {indicator_number} se ha actualizado."
 
-#: indicators/views/views_indicators.py:602
+#: indicators/views/views_indicators.py:395
+#: indicators/views/views_indicators.py:402
+msgid "Indicator setup"
+msgstr "Configuración del indicador"
+
+#: indicators/views/views_indicators.py:607
 msgid "Success, Indicator Deleted!"
 msgstr "¡Éxito, indicador eliminado!"
 
-#: indicators/views/views_indicators.py:612
+#: indicators/views/views_indicators.py:617
 msgid "Reason for change is required."
 msgstr "Se requiere justificación para el cambio."
 
-#: indicators/views/views_indicators.py:617
+#: indicators/views/views_indicators.py:622
 msgid ""
 "Reason for change is not required when deleting an indicator with no linked "
 "results."
@@ -1236,35 +1241,35 @@ msgstr ""
 "No se requiere justificación del cambio al eliminar un indicador sin "
 "resultados vinculados."
 
-#: indicators/views/views_indicators.py:624
+#: indicators/views/views_indicators.py:629
 msgid "The indicator was successfully deleted."
 msgstr "El indicador se ha eliminado satisfactoriamente."
 
 #. Translators: Text of an error message that appears when a user hasn't provided a justification for the change they are making to some data
-#: indicators/views/views_indicators.py:658
-#: indicators/views/views_indicators.py:717
-#: indicators/views/views_indicators.py:972 workflow/views.py:2418
+#: indicators/views/views_indicators.py:663
+#: indicators/views/views_indicators.py:722
+#: indicators/views/views_indicators.py:977 workflow/views.py:2418
 msgid "Reason for change is required"
 msgstr "Se requiere justificación para el cambio"
 
-#: indicators/views/views_indicators.py:662
-#: indicators/views/views_indicators.py:724 tola_management/models.py:378
+#: indicators/views/views_indicators.py:667
+#: indicators/views/views_indicators.py:729 tola_management/models.py:378
 #: tola_management/models.py:460
 msgid "No reason for change required."
 msgstr "No se requiere justificación para el cambio."
 
-#: indicators/views/views_indicators.py:847
+#: indicators/views/views_indicators.py:852
 msgid "Success, Data Created!"
 msgstr "¡Éxito, datos creados!"
 
-#: indicators/views/views_indicators.py:951
+#: indicators/views/views_indicators.py:956
 msgid "Success, Data Updated!"
 msgstr "¡Éxito, datos actualizados!"
 
 #. Translators: This is a filtering option that allows users to select which Level Tier (hierarchy of levels) they want to look at
 #. Translators: This is a filtering option that allows users to select which Level Tier (hierarchy of levels) they want to look at.
-#: indicators/views/views_indicators.py:1170
-#: indicators/views/views_reports.py:282
+#: indicators/views/views_indicators.py:1175
+#: indicators/views/views_reports.py:284
 #, python-format
 msgid "by %(tier)s chain"
 msgstr "por cadena de %(tier)s"
@@ -1278,7 +1283,7 @@ msgid "Logframe"
 msgstr "Marco Lógico"
 
 #. Translators: This is a filtering option that allows users to select which Level Tier (hierarchy of levels) they want to look at.
-#: indicators/views/views_reports.py:284
+#: indicators/views/views_reports.py:286
 #, python-format
 msgid "%(tier)s chains"
 msgstr "Cadenas de %(tier)s"
@@ -1424,8 +1429,8 @@ msgid "Projects"
 msgstr "Proyectos"
 
 #: templates/base.html:90 templates/workflow/stakeholder_list.html:3
-#: templates/workflow/stakeholder_list.html:4 workflow/models.py:1269
-#: workflow/models.py:1355
+#: templates/workflow/stakeholder_list.html:4 workflow/models.py:1280
+#: workflow/models.py:1366
 msgid "Stakeholders"
 msgstr "Partes interesadas"
 
@@ -1489,7 +1494,7 @@ msgstr "Ajustes"
 msgid "Log out"
 msgstr "Cerrar sesión"
 
-#: templates/base.html:239 workflow/models.py:1701
+#: templates/base.html:239 workflow/models.py:1712
 msgid "Documentation"
 msgstr "Documentación"
 
@@ -1733,8 +1738,8 @@ msgstr "En general"
 
 #: templates/indicators/disaggregation_print.html:58
 #: templates/indicators/disaggregation_report.html:90
-#: templates/indicators/disaggregation_report.html:138 workflow/models.py:997
-#: workflow/models.py:1244 workflow/models.py:1759
+#: templates/indicators/disaggregation_report.html:138 workflow/models.py:1008
+#: workflow/models.py:1255 workflow/models.py:1770
 msgid "Type"
 msgstr "Tipo"
 
@@ -1966,8 +1971,8 @@ msgstr "Rendimiento"
 msgid "Analysis and Reporting"
 msgstr "Análisis e informes"
 
-#: templates/indicators/indicator_form_modal.html:86 workflow/models.py:1060
-#: workflow/models.py:1255
+#: templates/indicators/indicator_form_modal.html:86 workflow/models.py:1071
+#: workflow/models.py:1266
 msgid "Approval"
 msgstr "Aprobación"
 
@@ -2256,7 +2261,7 @@ msgstr "Aplicar"
 
 #: templates/indicators/iptt_filter_form.html:141
 #: templates/indicators/program_page.html:36
-#: tola_management/programadmin.py:106 tola_management/programadmin.py:487
+#: tola_management/programadmin.py:106 tola_management/programadmin.py:490
 msgid "Change log"
 msgstr "Registro de Cambios"
 
@@ -3259,25 +3264,25 @@ msgid "Program Dashboard"
 msgstr "Tablero del programa"
 
 #: templates/workflow/programdashboard_list.html:43
-#: templates/workflow/site_projectcomplete.html:25 workflow/models.py:1463
-#: workflow/models.py:1634
+#: templates/workflow/site_projectcomplete.html:25 workflow/models.py:1474
+#: workflow/models.py:1645
 msgid "Date Created"
 msgstr "Fecha de creacion"
 
 #: templates/workflow/programdashboard_list.html:44
 #: templates/workflow/site_projectcomplete.html:26 workflow/forms.py:1318
-#: workflow/models.py:1332 workflow/models.py:1539
+#: workflow/models.py:1343 workflow/models.py:1550
 msgid "Project Name"
 msgstr "Nombre del proyecto"
 
 #: templates/workflow/programdashboard_list.html:45
-#: templates/workflow/site_projectcomplete.html:27 workflow/models.py:1345
-#: workflow/models.py:1538
+#: templates/workflow/site_projectcomplete.html:27 workflow/models.py:1356
+#: workflow/models.py:1549
 msgid "Project Code"
 msgstr "Código de proyecto"
 
 #: templates/workflow/programdashboard_list.html:46
-#: templates/workflow/site_projectcomplete.html:28 workflow/models.py:914
+#: templates/workflow/site_projectcomplete.html:28 workflow/models.py:925
 msgid "Office Code"
 msgstr "Código de oficina"
 
@@ -3287,8 +3292,8 @@ msgid "Form Version"
 msgstr "Versión del formulario"
 
 #: templates/workflow/programdashboard_list.html:48
-#: templates/workflow/site_projectcomplete.html:30 workflow/models.py:1441
-#: workflow/models.py:1626
+#: templates/workflow/site_projectcomplete.html:30 workflow/models.py:1452
+#: workflow/models.py:1637
 msgid "Approval Status"
 msgstr "Estado de aprobación"
 
@@ -3395,7 +3400,7 @@ msgstr "Provincia"
 
 #: templates/workflow/site_profile_list.html:78
 #: templates/workflow/site_profile_map.html:189
-#: templates/workflow/site_profile_map.html:196 workflow/models.py:883
+#: templates/workflow/site_profile_map.html:196 workflow/models.py:894
 msgid "District"
 msgstr "Distrito"
 
@@ -3459,7 +3464,7 @@ msgid "Confirm Delete"
 msgstr "Confirmar eliminación"
 
 #: templates/workflow/stakeholder_form.html:3
-#: templates/workflow/stakeholder_form.html:4 workflow/models.py:1556
+#: templates/workflow/stakeholder_form.html:4 workflow/models.py:1567
 msgid "Stakeholder"
 msgstr "Parte interesada"
 
@@ -3544,7 +3549,7 @@ msgstr "Nombre"
 msgid "Last Name"
 msgstr "Apellido"
 
-#: tola_management/models.py:83 workflow/models.py:1880
+#: tola_management/models.py:83 workflow/models.py:1891
 msgid "Username"
 msgstr "Nombre de usuario"
 
@@ -3560,7 +3565,7 @@ msgstr "Forma de Contacto Preferida"
 msgid "Phone Number"
 msgstr "Número Telefónico"
 
-#: tola_management/models.py:87 workflow/models.py:456 workflow/models.py:1882
+#: tola_management/models.py:87 workflow/models.py:456 workflow/models.py:1893
 msgid "Email"
 msgstr "Correo electrónico"
 
@@ -3585,7 +3590,7 @@ msgstr "Actualización de los Programas del Usuario"
 msgid "User Profile Updated"
 msgstr "Actualización de Perfil"
 
-#: tola_management/models.py:209 workflow/models.py:1406
+#: tola_management/models.py:209 workflow/models.py:1417
 msgid "Unit of Measure"
 msgstr "Unidad de medida"
 
@@ -3813,7 +3818,7 @@ msgstr "Alfabetización"
 msgid "Demographic Info Data Source"
 msgstr "Origen de los Datos de Información Demográfica"
 
-#: workflow/forms.py:1429 workflow/models.py:1000
+#: workflow/forms.py:1429 workflow/models.py:1011
 msgid "Date of First Contact"
 msgstr "Fecha del primer contacto"
 
@@ -3921,7 +3926,7 @@ msgstr "País activo"
 msgid "Accessible Countries"
 msgstr "Países accesibles"
 
-#: workflow/models.py:201 workflow/models.py:768
+#: workflow/models.py:201 workflow/models.py:779
 msgid "Tola User"
 msgstr "Usuario de Tola"
 
@@ -3965,12 +3970,12 @@ msgstr "Dirección"
 msgid "Phone"
 msgstr "Teléfono"
 
-#: workflow/models.py:464 workflow/models.py:1245
+#: workflow/models.py:464 workflow/models.py:1256
 msgid "Contact"
 msgstr "Contacto"
 
 #: workflow/models.py:487 workflow/models.py:492 workflow/models.py:527
-#: workflow/models.py:1350 workflow/models.py:1558
+#: workflow/models.py:1361 workflow/models.py:1569
 msgid "Fund Code"
 msgstr "Código del fondo"
 
@@ -4029,360 +4034,365 @@ msgstr "Agrupar indicadores de acuerdo con el sistema de resultados"
 msgid "by %(level_name)s chain"
 msgstr "por cadena de %(level_name)s"
 
+#: workflow/models.py:737
+#, python-format
+msgid "%(level_name)s chains"
+msgstr "cadenas de %(level_name)s"
+
 #. Translators: Refers to a user permission role with limited access to view data only
-#: workflow/models.py:742
+#: workflow/models.py:753
 msgid "Low (view only)"
 msgstr "Bajo (solo ver)"
 
 #. Translators: Refers to a user permission role with limited access to add or edit result data
-#: workflow/models.py:744
+#: workflow/models.py:755
 msgid "Medium (add and edit results)"
 msgstr "Medio (agregar y editar resultados)"
 
 #. Translators: Refers to a user permission role with access to edit any data
-#: workflow/models.py:746
+#: workflow/models.py:757
 msgid "High (edit anything)"
 msgstr "Alto (editar todo)"
 
-#: workflow/models.py:768
+#: workflow/models.py:779
 msgid "User with Approval Authority"
 msgstr "Usuario con autoridad de aprobación"
 
-#: workflow/models.py:770
+#: workflow/models.py:781
 msgid "Fund"
 msgstr "Fondo"
 
-#: workflow/models.py:777
+#: workflow/models.py:788
 msgid "Tola Approval Authority"
 msgstr "Autoridad de aprobación de Tola"
 
-#: workflow/models.py:792 workflow/models.py:799 workflow/models.py:800
-#: workflow/models.py:823 workflow/models.py:915
+#: workflow/models.py:803 workflow/models.py:810 workflow/models.py:811
+#: workflow/models.py:834 workflow/models.py:926
 msgid "Admin Level 1"
 msgstr "Nivel de administración 1"
 
-#: workflow/models.py:822 workflow/models.py:829 workflow/models.py:830
-#: workflow/models.py:853
+#: workflow/models.py:833 workflow/models.py:840 workflow/models.py:841
+#: workflow/models.py:864
 msgid "Admin Level 2"
 msgstr "Nivel de administración 2"
 
-#: workflow/models.py:852 workflow/models.py:859 workflow/models.py:860
-#: workflow/models.py:884
+#: workflow/models.py:863 workflow/models.py:870 workflow/models.py:871
+#: workflow/models.py:895
 msgid "Admin Level 3"
 msgstr "Nivel de administración 3"
 
-#: workflow/models.py:882 workflow/models.py:890 workflow/models.py:891
+#: workflow/models.py:893 workflow/models.py:901 workflow/models.py:902
 msgid "Admin Level 4"
 msgstr "Nivel de administración 4"
 
-#: workflow/models.py:913
+#: workflow/models.py:924
 msgid "Office Name"
 msgstr "Nombre de la oficina"
 
-#: workflow/models.py:920 workflow/models.py:998 workflow/models.py:1346
-#: workflow/models.py:1543
+#: workflow/models.py:931 workflow/models.py:1009 workflow/models.py:1357
+#: workflow/models.py:1554
 msgid "Office"
 msgstr "Oficina"
 
-#: workflow/models.py:937 workflow/models.py:942
+#: workflow/models.py:948 workflow/models.py:953
 msgid "Profile Type"
 msgstr "Tipo de perfil"
 
-#: workflow/models.py:964
+#: workflow/models.py:975
 msgid "Land Classification"
 msgstr "Clasificación de tierras"
 
-#: workflow/models.py:964
+#: workflow/models.py:975
 msgid "Rural, Urban, Peri-Urban"
 msgstr "Rural, urbano, periurbano"
 
-#: workflow/models.py:969
+#: workflow/models.py:980
 msgid "Land Type"
 msgstr "Tipo de tierra"
 
-#: workflow/models.py:996
+#: workflow/models.py:1007
 msgid "Site Name"
 msgstr "Nombre del sitio"
 
-#: workflow/models.py:999
+#: workflow/models.py:1010
 msgid "Contact Name"
 msgstr "Nombre de contacto"
 
-#: workflow/models.py:1001
+#: workflow/models.py:1012
 msgid "Contact Number"
 msgstr "Número de contacto"
 
-#: workflow/models.py:1002
+#: workflow/models.py:1013
 msgid "Number of Members"
 msgstr "Número de miembros"
 
-#: workflow/models.py:1003
+#: workflow/models.py:1014
 msgid "Data Source"
 msgstr "Fuente de datos"
 
-#: workflow/models.py:1004
+#: workflow/models.py:1015
 msgid "Total # Households"
 msgstr "Número total de hogares"
 
-#: workflow/models.py:1005 workflow/models.py:1369 workflow/models.py:1590
+#: workflow/models.py:1016 workflow/models.py:1380 workflow/models.py:1601
 msgid "Average Household Size"
 msgstr "Tamaño promedio del hogar"
 
-#: workflow/models.py:1006
+#: workflow/models.py:1017
 msgid "Male age 0-5"
 msgstr "Hombre de 0-5 años"
 
-#: workflow/models.py:1007
+#: workflow/models.py:1018
 msgid "Female age 0-5"
 msgstr "Mujer de 0-5 años"
 
-#: workflow/models.py:1008
+#: workflow/models.py:1019
 msgid "Male age 6-9"
 msgstr "Hombre de 6-9 años"
 
-#: workflow/models.py:1009
+#: workflow/models.py:1020
 msgid "Female age 6-9"
 msgstr "Mujer de 6-9 años"
 
-#: workflow/models.py:1010
+#: workflow/models.py:1021
 msgid "Male age 10-14"
 msgstr "Hombre de 10-14 años"
 
-#: workflow/models.py:1011
+#: workflow/models.py:1022
 msgid "Female age 10-14"
 msgstr "Mujer de 10-14 años"
 
-#: workflow/models.py:1012
+#: workflow/models.py:1023
 msgid "Male age 15-19"
 msgstr "Hombre de 15-19 años"
 
-#: workflow/models.py:1013
+#: workflow/models.py:1024
 msgid "Female age 15-19"
 msgstr "Mujer de 15-19 años"
 
-#: workflow/models.py:1014
+#: workflow/models.py:1025
 msgid "Male age 20-24"
 msgstr "Hombre de 20-24 años"
 
-#: workflow/models.py:1015
+#: workflow/models.py:1026
 msgid "Female age 20-24"
 msgstr "Mujer de 20-24 años"
 
-#: workflow/models.py:1016
+#: workflow/models.py:1027
 msgid "Male age 25-34"
 msgstr "Hombre de 25-34 años"
 
-#: workflow/models.py:1017
+#: workflow/models.py:1028
 msgid "Female age 25-34"
 msgstr "Mujer de 25-34 años"
 
-#: workflow/models.py:1018
+#: workflow/models.py:1029
 msgid "Male age 35-49"
 msgstr "Hombre de 35-49 años"
 
-#: workflow/models.py:1019
+#: workflow/models.py:1030
 msgid "Female age 35-49"
 msgstr "Mujere de 35-49 años"
 
-#: workflow/models.py:1020
+#: workflow/models.py:1031
 msgid "Male Over 50"
 msgstr "Hombre mayor de 50 años"
 
-#: workflow/models.py:1021
+#: workflow/models.py:1032
 msgid "Female Over 50"
 msgstr "Mujer mayor de 50 años"
 
-#: workflow/models.py:1022
+#: workflow/models.py:1033
 msgid "Total population"
 msgstr "Población total"
 
-#: workflow/models.py:1023
+#: workflow/models.py:1034
 msgid "Total male"
 msgstr "Total masculino"
 
-#: workflow/models.py:1024
+#: workflow/models.py:1035
 msgid "Total female"
 msgstr "Total femenino"
 
-#: workflow/models.py:1026
+#: workflow/models.py:1037
 msgid "Classify land"
 msgstr "Clasificar la tierra"
 
-#: workflow/models.py:1027
+#: workflow/models.py:1038
 msgid "Total Land"
 msgstr "Tierra total"
 
-#: workflow/models.py:1029
+#: workflow/models.py:1040
 msgid "Total Agricultural Land"
 msgstr "Tierra agrícola total"
 
-#: workflow/models.py:1031
+#: workflow/models.py:1042
 msgid "Total Rain-fed Land"
 msgstr "Tierra total alimentada por la lluvia"
 
-#: workflow/models.py:1033
+#: workflow/models.py:1044
 msgid "Total Horticultural Land"
 msgstr "Tierra hortícola total"
 
-#: workflow/models.py:1034
+#: workflow/models.py:1045
 msgid "Total Literate People"
 msgstr "Total de personas alfabetizadas"
 
-#: workflow/models.py:1035
+#: workflow/models.py:1046
 #, python-format
 msgid "% of Literate Males"
 msgstr "% de hombres alfabetizados"
 
-#: workflow/models.py:1036
+#: workflow/models.py:1047
 #, python-format
 msgid "% of Literate Females"
 msgstr "% de mujeres alfabetizadas"
 
-#: workflow/models.py:1037
+#: workflow/models.py:1048
 msgid "Literacy Rate (%)"
 msgstr "Tasa de alfabetización (%)"
 
-#: workflow/models.py:1038
+#: workflow/models.py:1049
 msgid "Households Owning Land"
 msgstr "Hogares que poseen tierras"
 
-#: workflow/models.py:1040
+#: workflow/models.py:1051
 msgid "Average Landholding Size"
 msgstr "Tamaño promedio de propiedad"
 
-#: workflow/models.py:1041
+#: workflow/models.py:1052
 msgid "In hectares/jeribs"
 msgstr "En hectáreas/jeribs"
 
-#: workflow/models.py:1043
+#: workflow/models.py:1054
 msgid "Households Owning Livestock"
 msgstr "Hogares que son propietarios de ganado"
 
-#: workflow/models.py:1045
+#: workflow/models.py:1056
 msgid "Animal Types"
 msgstr "Tipos de animales"
 
-#: workflow/models.py:1045
+#: workflow/models.py:1056
 msgid "List Animal Types"
 msgstr "Lista de tipos de animales"
 
-#: workflow/models.py:1048
+#: workflow/models.py:1059
 msgid "Administrative Level 1"
 msgstr "Nivel administrativo 1"
 
-#: workflow/models.py:1050
+#: workflow/models.py:1061
 msgid "Administrative Level 2"
 msgstr "Nivel administrativo 2"
 
-#: workflow/models.py:1052
+#: workflow/models.py:1063
 msgid "Administrative Level 3"
 msgstr "Nivel administrativo 3"
 
-#: workflow/models.py:1054
+#: workflow/models.py:1065
 msgid "Administrative Level 4"
 msgstr "Nivel administrativo 4"
 
-#: workflow/models.py:1056
+#: workflow/models.py:1067
 msgid "Latitude (Decimal Coordinates)"
 msgstr "Latitud (coordenadas decimales)"
 
-#: workflow/models.py:1058
+#: workflow/models.py:1069
 msgid "Longitude (Decimal Coordinates)"
 msgstr "Longitud (coordenadas decimales)"
 
-#: workflow/models.py:1059
+#: workflow/models.py:1070
 msgid "Site Active"
 msgstr "Sitio activo"
 
-#: workflow/models.py:1060
+#: workflow/models.py:1071
 msgid "in progress"
 msgstr "en progreso"
 
-#: workflow/models.py:1062
+#: workflow/models.py:1073
 msgid "This is the Provincial Line Manager"
 msgstr "Este es el gerente de línea provincial"
 
-#: workflow/models.py:1065
+#: workflow/models.py:1076
 msgid "This is the originator"
 msgstr "Este es el creador"
 
-#: workflow/models.py:1066 workflow/models.py:1261
+#: workflow/models.py:1077 workflow/models.py:1272
 msgid "Filled by"
 msgstr "Llenado por"
 
-#: workflow/models.py:1068
+#: workflow/models.py:1079
 msgid "This should be GIS Manager"
 msgstr "Esto debería ser gerente de SIG"
 
-#: workflow/models.py:1069
+#: workflow/models.py:1080
 msgid "Location verified by"
 msgstr "Ubicación verificada por"
 
-#: workflow/models.py:1104 workflow/models.py:1110
+#: workflow/models.py:1115 workflow/models.py:1121
 msgid "Capacity"
 msgstr "Capacidad"
 
-#: workflow/models.py:1130
+#: workflow/models.py:1141
 msgid "Stakeholder Type"
 msgstr "Tipo de partes interesadas"
 
-#: workflow/models.py:1136
+#: workflow/models.py:1147
 msgid "Stakeholder Types"
 msgstr "Tipos de partes interesadas"
 
-#: workflow/models.py:1158
+#: workflow/models.py:1169
 msgid "How will you evaluate the outcome or impact of the project?"
 msgstr "¿Cómo evaluará el resultado o el impacto del proyecto?"
 
-#: workflow/models.py:1164 workflow/models.py:1440
+#: workflow/models.py:1175 workflow/models.py:1451
 msgid "Evaluate"
 msgstr "Evaluar"
 
-#: workflow/models.py:1184
+#: workflow/models.py:1195
 msgid "Type of Activity"
 msgstr "Tipo de actividad"
 
-#: workflow/models.py:1200 workflow/models.py:1336 workflow/models.py:1542
+#: workflow/models.py:1211 workflow/models.py:1347 workflow/models.py:1553
 msgid "Project Type"
 msgstr "Tipo de proyecto"
 
-#: workflow/models.py:1210 workflow/models.py:1674
+#: workflow/models.py:1221 workflow/models.py:1685
 msgid "Name of Document"
 msgstr "Nombre del documento"
 
-#: workflow/models.py:1211
+#: workflow/models.py:1222
 msgid "Type (File or URL)"
 msgstr "Tipo (archivo o URL)"
 
-#: workflow/models.py:1228 workflow/models.py:1678
+#: workflow/models.py:1239 workflow/models.py:1689
 msgid "Template"
 msgstr "Modelo"
 
-#: workflow/models.py:1243
+#: workflow/models.py:1254
 msgid "Stakeholder/Organization Name"
 msgstr "Nombre de parte interesada/organización"
 
-#: workflow/models.py:1248
+#: workflow/models.py:1259
 msgid "Has this partner been added to stakeholder register?"
 msgstr "¿Este socio se ha agregado al registro de partes interesadas?"
 
-#: workflow/models.py:1250
+#: workflow/models.py:1261
 msgid "Formal Written Description of Relationship"
 msgstr "Descripción escrita formal de la relación"
 
-#: workflow/models.py:1253
+#: workflow/models.py:1264
 msgid "Vetting/ due diligence statement"
 msgstr "Declaración de escrutinio/diligencia debida"
 
-#: workflow/models.py:1327
+#: workflow/models.py:1338
 msgid "Short Form (recommended)"
 msgstr "Formulario corto (recomendado)"
 
-#: workflow/models.py:1329
+#: workflow/models.py:1340
 msgid "Date of Request"
 msgstr "Fecha de solicitud"
 
-#: workflow/models.py:1333
+#: workflow/models.py:1344
 msgid ""
 "Please be specific in your name.  Consider that your Project Name includes "
 "WHO, WHAT, WHERE, HOW"
@@ -4390,99 +4400,99 @@ msgstr ""
 "Por favor elija un nombre específico. Considere que su nombre de proyecto "
 "debe incluir QUIÉN, QUÉ, DÓNDE, CÓMO"
 
-#: workflow/models.py:1339 workflow/models.py:1540
+#: workflow/models.py:1350 workflow/models.py:1551
 msgid "Project Activity"
 msgstr "Actividad del proyecto"
 
-#: workflow/models.py:1339
+#: workflow/models.py:1350
 msgid "This should come directly from the activities listed in the Logframe"
 msgstr ""
 "Esto debe provenir directamente de las actividades enumeradas en el Logframe"
 
-#: workflow/models.py:1341
+#: workflow/models.py:1352
 msgid "Project Description"
 msgstr "Descripción del proyecto"
 
-#: workflow/models.py:1344
+#: workflow/models.py:1355
 msgid "If Rejected: Rejection Letter Sent?"
 msgstr "Si se rechaza: ¿Carta de rechazo enviada?"
 
-#: workflow/models.py:1344
+#: workflow/models.py:1355
 msgid "If yes attach copy"
 msgstr "Si es así, adjuntar copia"
 
-#: workflow/models.py:1347
+#: workflow/models.py:1358
 msgid "Project COD #"
 msgstr "Número COD de proyecto"
 
-#: workflow/models.py:1349
+#: workflow/models.py:1360
 msgid "Activity design for"
 msgstr "Diseño de actividad para"
 
-#: workflow/models.py:1351 workflow/models.py:1559
+#: workflow/models.py:1362 workflow/models.py:1570
 msgid "LIN Code"
 msgstr "Código LIN"
 
-#: workflow/models.py:1352
+#: workflow/models.py:1363
 msgid "Staff Responsible"
 msgstr "Personal responsable"
 
-#: workflow/models.py:1353
+#: workflow/models.py:1364
 msgid "Are there partners involved?"
 msgstr "¿Hay socios involucrados?"
 
-#: workflow/models.py:1354
+#: workflow/models.py:1365
 msgid "Name of Partners"
 msgstr "Nombre de los socios"
 
-#: workflow/models.py:1356
+#: workflow/models.py:1367
 msgid "What is the anticipated Outcome or Goal?"
 msgstr "¿Cuál es el resultado u objetivo previsto?"
 
-#: workflow/models.py:1357
+#: workflow/models.py:1368
 msgid "Expected starting date"
 msgstr "Fecha de inicio prevista"
 
-#: workflow/models.py:1358
+#: workflow/models.py:1369
 msgid "Expected ending date"
 msgstr "Fecha de finalización esperada"
 
-#: workflow/models.py:1360
+#: workflow/models.py:1371
 msgid "Expected duration"
 msgstr "Duración esperada"
 
-#: workflow/models.py:1360
+#: workflow/models.py:1371
 msgid "[MONTHS]/[DAYS]"
 msgstr "[MESES]/[DÍAS]"
 
-#: workflow/models.py:1362 workflow/models.py:1587
+#: workflow/models.py:1373 workflow/models.py:1598
 msgid "Type of direct beneficiaries"
 msgstr "Tipo de beneficiarios directos"
 
-#: workflow/models.py:1362 workflow/models.py:1587
+#: workflow/models.py:1373 workflow/models.py:1598
 msgid "i.e. Farmer, Association, Student, Govt, etc."
 msgstr "es decir, granjero, asociación, estudiante, gobierno, etc."
 
-#: workflow/models.py:1365
+#: workflow/models.py:1376
 msgid "Estimated number of direct beneficiaries"
 msgstr "Número estimado de beneficiarios directos"
 
-#: workflow/models.py:1366
+#: workflow/models.py:1377
 msgid ""
 "Please provide achievable estimates as we will use these as our 'Targets'"
 msgstr ""
 "Proporcione estimaciones alcanzables ya que las usaremos como nuestros "
 "'Objetivos'"
 
-#: workflow/models.py:1369 workflow/models.py:1590
+#: workflow/models.py:1380 workflow/models.py:1601
 msgid "Refer to Form 01 - Community Profile"
 msgstr "Consulte el formulario 01 - Perfil de la comunidad"
 
-#: workflow/models.py:1372 workflow/models.py:1593
+#: workflow/models.py:1383 workflow/models.py:1604
 msgid "Estimated Number of indirect beneficiaries"
 msgstr "Número estimado de beneficiarios indirectos"
 
-#: workflow/models.py:1373 workflow/models.py:1594
+#: workflow/models.py:1384 workflow/models.py:1605
 msgid ""
 "This is a calculation - multiply direct beneficiaries by average household "
 "size"
@@ -4490,369 +4500,369 @@ msgstr ""
 "Este es un cálculo: multiplique los beneficiarios directos por el tamaño "
 "promedio del hogar"
 
-#: workflow/models.py:1376
+#: workflow/models.py:1387
 msgid "Total Project Budget"
 msgstr "Presupuesto total del proyecto"
 
-#: workflow/models.py:1377 workflow/models.py:1380
+#: workflow/models.py:1388 workflow/models.py:1391
 msgid "In USD"
 msgstr "En USD"
 
-#: workflow/models.py:1379
+#: workflow/models.py:1390
 msgid "Organizations portion of Project Budget"
 msgstr "Porción de las organizaciones del presupuesto del proyecto"
 
-#: workflow/models.py:1382
+#: workflow/models.py:1393
 msgid "Estimated Total in Local Currency"
 msgstr "Total estimado en moneda local"
 
-#: workflow/models.py:1383
+#: workflow/models.py:1394
 msgid "In Local Currency"
 msgstr "En moneda local"
 
-#: workflow/models.py:1385
+#: workflow/models.py:1396
 msgid "Estimated Organization Total in Local Currency"
 msgstr "Total estimado de la organización en moneda local"
 
-#: workflow/models.py:1386
+#: workflow/models.py:1397
 msgid "Total portion of estimate for your agency"
 msgstr "Porción total de la estimación para su agencia"
 
-#: workflow/models.py:1388 workflow/models.py:1581
+#: workflow/models.py:1399 workflow/models.py:1592
 msgid "Local Currency exchange rate to USD"
 msgstr "Tasa de cambio de moneda local a USD"
 
-#: workflow/models.py:1389 workflow/models.py:1582
+#: workflow/models.py:1400 workflow/models.py:1593
 msgid "Date of exchange rate"
 msgstr "Fecha de tasa de cambio"
 
-#: workflow/models.py:1393
+#: workflow/models.py:1404
 msgid "Community Representative"
 msgstr "Representante de la comunidad"
 
-#: workflow/models.py:1395
+#: workflow/models.py:1406
 msgid "Community Representative Contact"
 msgstr "Contacto del representante de la comunidad"
 
-#: workflow/models.py:1397
+#: workflow/models.py:1408
 msgid "Community Mobilizer"
 msgstr "Movilizador comunitario"
 
-#: workflow/models.py:1399
+#: workflow/models.py:1410
 msgid "Community Mobilizer Contact Number"
 msgstr "Número de contacto del movilizador comunitario"
 
-#: workflow/models.py:1400
+#: workflow/models.py:1411
 msgid "Community Proposal"
 msgstr "Propuesta comunitaria"
 
-#: workflow/models.py:1401
+#: workflow/models.py:1412
 msgid "Estimated # of Male Trained"
 msgstr "Número estimado de hombres entrenados"
 
-#: workflow/models.py:1402
+#: workflow/models.py:1413
 msgid "Estimated # of Female Trained"
 msgstr "Número estimado de mujeres entrenadas"
 
-#: workflow/models.py:1403
+#: workflow/models.py:1414
 msgid "Estimated Total # Trained"
 msgstr "Número total estimado de personas entrenadas"
 
-#: workflow/models.py:1404
+#: workflow/models.py:1415
 msgid "Estimated # of Trainings Conducted"
 msgstr "Número estimado de capacitaciones realizadas"
 
-#: workflow/models.py:1405
+#: workflow/models.py:1416
 msgid "Type of Items Distributed"
 msgstr "Tipo de elementos distribuidos"
 
-#: workflow/models.py:1407
+#: workflow/models.py:1418
 msgid "Estimated # of Items Distributed"
 msgstr "Cantidad estimada de elementos distribuidos"
 
-#: workflow/models.py:1408
+#: workflow/models.py:1419
 msgid "Estimated # of Male Laborers"
 msgstr "Número estimado de hombres trabajadores"
 
-#: workflow/models.py:1409
+#: workflow/models.py:1420
 msgid "Estimated # of Female Laborers"
 msgstr "Número estimado de mujeres trabajadoras"
 
-#: workflow/models.py:1410
+#: workflow/models.py:1421
 msgid "Estimated Total # of Laborers"
 msgstr "Cantidad total estimada de trabajadores"
 
-#: workflow/models.py:1411
+#: workflow/models.py:1422
 msgid "Estimated # of Project Days"
 msgstr "Número estimado de días del proyecto"
 
-#: workflow/models.py:1412
+#: workflow/models.py:1423
 msgid "Estimated # of Person Days"
 msgstr "Número estimado de días de personas"
 
-#: workflow/models.py:1413
+#: workflow/models.py:1424
 msgid "Estimated Total Cost of Materials"
 msgstr "Costo total estimado de los materiales"
 
-#: workflow/models.py:1414
+#: workflow/models.py:1425
 msgid "Estimated Wages Budgeted"
 msgstr "Salarios estimados presupuestados"
 
-#: workflow/models.py:1418
+#: workflow/models.py:1429
 msgid "Estimation date"
 msgstr "Fecha de estimación"
 
-#: workflow/models.py:1425 workflow/models.py:1622
+#: workflow/models.py:1436 workflow/models.py:1633
 msgid "Checked by"
 msgstr "Revisado por"
 
-#: workflow/models.py:1433
+#: workflow/models.py:1444
 msgid "Finance reviewed by"
 msgstr "Finanzas revisadas por"
 
-#: workflow/models.py:1434
+#: workflow/models.py:1445
 msgid "Date Reviewed by Finance"
 msgstr "Fecha revisada por Finanzas"
 
-#: workflow/models.py:1437
+#: workflow/models.py:1448
 msgid "M&E Reviewed by"
 msgstr "M & E revisado por"
 
-#: workflow/models.py:1438
+#: workflow/models.py:1449
 msgid "Date Reviewed by M&E"
 msgstr "Fecha revisada por M & E"
 
-#: workflow/models.py:1439
+#: workflow/models.py:1450
 msgid "Sustainability Plan"
 msgstr "Plan de sostenibilidad"
 
-#: workflow/models.py:1445
+#: workflow/models.py:1456
 msgid "Date Approved"
 msgstr "Fecha aprobada"
 
-#: workflow/models.py:1449 workflow/models.py:1633
+#: workflow/models.py:1460 workflow/models.py:1644
 msgid "Approval Remarks"
 msgstr "Observaciones de aprobación"
 
-#: workflow/models.py:1450
+#: workflow/models.py:1461
 msgid "General Background and Problem Statement"
 msgstr "Antecedentes generales y declaración del problema"
 
-#: workflow/models.py:1451
+#: workflow/models.py:1462
 msgid "Risks and Assumptions"
 msgstr "Riesgos y suposiciones"
 
-#: workflow/models.py:1453
+#: workflow/models.py:1464
 msgid "Description of Stakeholder Selection Criteria"
 msgstr "Descripción de los criterios de selección de las partes interesadas"
 
-#: workflow/models.py:1454
+#: workflow/models.py:1465
 msgid "Description of project activities"
 msgstr "Descripción de las actividades del proyecto"
 
-#: workflow/models.py:1456
+#: workflow/models.py:1467
 msgid "Description of government involvement"
 msgstr "Descripción de la participación del gobierno"
 
-#: workflow/models.py:1458
+#: workflow/models.py:1469
 msgid "Description of community involvement"
 msgstr "Descripción de la participación de la comunidad"
 
-#: workflow/models.py:1460
+#: workflow/models.py:1471
 msgid "Describe the project you would like the program to consider"
 msgstr "Describa el proyecto que desea que el programa considere"
 
-#: workflow/models.py:1464 workflow/models.py:1635
+#: workflow/models.py:1475 workflow/models.py:1646
 msgid "Last Edit Date"
 msgstr "Última fecha de edición"
 
-#: workflow/models.py:1546
+#: workflow/models.py:1557
 msgid "Expected start date"
 msgstr "Fecha de inicio esperada"
 
-#: workflow/models.py:1546 workflow/models.py:1550 workflow/models.py:1552
+#: workflow/models.py:1557 workflow/models.py:1561 workflow/models.py:1563
 msgid "Imported from Project Initiation"
 msgstr "Importado desde el inicio del proyecto"
 
-#: workflow/models.py:1548
+#: workflow/models.py:1559
 msgid "Expected end date"
 msgstr "Fecha de finalización esperada"
 
-#: workflow/models.py:1548
+#: workflow/models.py:1559
 msgid "Imported Project Initiation"
 msgstr "Iniciación de proyectos importados"
 
-#: workflow/models.py:1550
+#: workflow/models.py:1561
 msgid "Expected Duration"
 msgstr "Duración esperada"
 
-#: workflow/models.py:1552 workflow/models.py:1723
+#: workflow/models.py:1563 workflow/models.py:1734
 msgid "Actual start date"
 msgstr "Fecha de inicio real"
 
-#: workflow/models.py:1553 workflow/models.py:1724
+#: workflow/models.py:1564 workflow/models.py:1735
 msgid "Actual end date"
 msgstr "Fecha de finalización real"
 
-#: workflow/models.py:1554
+#: workflow/models.py:1565
 msgid "Actual duaration"
 msgstr "Duración real"
 
-#: workflow/models.py:1557
+#: workflow/models.py:1568
 msgid "If not on time explain delay"
 msgstr "Si no está a tiempo, explique la demora"
 
-#: workflow/models.py:1561 workflow/models.py:1726
+#: workflow/models.py:1572 workflow/models.py:1737
 msgid "Estimated Budget"
 msgstr "Presupuesto estimado"
 
-#: workflow/models.py:1563 workflow/models.py:1575 workflow/models.py:1727
+#: workflow/models.py:1574 workflow/models.py:1586 workflow/models.py:1738
 msgid "Actual Cost"
 msgstr "Costo real"
 
-#: workflow/models.py:1565
+#: workflow/models.py:1576
 msgid "Actual cost date"
 msgstr "Fecha de costo real"
 
-#: workflow/models.py:1566
+#: workflow/models.py:1577
 msgid "Budget versus Actual variance"
 msgstr "Presupuesto frente a la varianza real"
 
-#: workflow/models.py:1567
+#: workflow/models.py:1578
 msgid "Explanation of variance"
 msgstr "Explicación de la varianza"
 
-#: workflow/models.py:1569
+#: workflow/models.py:1580
 msgid "Estimated Budget for Organization"
 msgstr "Presupuesto estimado para la organización"
 
-#: workflow/models.py:1572 workflow/models.py:1578
+#: workflow/models.py:1583 workflow/models.py:1589
 msgid "Actual Cost for Organization"
 msgstr "Costo real de la organización"
 
-#: workflow/models.py:1596
+#: workflow/models.py:1607
 msgid "Actual Direct Beneficiaries"
 msgstr "Beneficiarios directos reales"
 
-#: workflow/models.py:1597
+#: workflow/models.py:1608
 msgid "Number of Jobs Created"
 msgstr "Número de empleos creados"
 
-#: workflow/models.py:1598
+#: workflow/models.py:1609
 msgid "Part Time Jobs"
 msgstr "Trabajos de medio tiempo"
 
-#: workflow/models.py:1599
+#: workflow/models.py:1610
 msgid "Full Time Jobs"
 msgstr "Trabajos a tiempo completo"
 
-#: workflow/models.py:1600
+#: workflow/models.py:1611
 msgid "Progress against Targets (%)"
 msgstr "Progreso contra objetivos (%)"
 
-#: workflow/models.py:1601
+#: workflow/models.py:1612
 msgid "Government Involvement"
 msgstr "Participación del gobierno"
 
-#: workflow/models.py:1602
+#: workflow/models.py:1613
 msgid "Community Involvement"
 msgstr "Participación de la comunidad"
 
-#: workflow/models.py:1607
+#: workflow/models.py:1618
 msgid "CommunityHandover/Sustainability Maintenance Plan"
 msgstr "Plan de CommunityHandover/mantenimiento de la sostenibilidad"
 
-#: workflow/models.py:1608
+#: workflow/models.py:1619
 msgid "Check box if it was completed"
 msgstr "Marque la casilla si se completó"
 
-#: workflow/models.py:1610
+#: workflow/models.py:1621
 msgid "Describe how sustainability was ensured for this project"
 msgstr "Describa cómo se aseguró la sostenibilidad para este proyecto"
 
-#: workflow/models.py:1612
+#: workflow/models.py:1623
 msgid "How was quality assured for this project"
 msgstr "Cómo se aseguró la calidad de este proyecto"
 
-#: workflow/models.py:1615
+#: workflow/models.py:1626
 msgid "Lessons learned"
 msgstr "Lecciones aprendidas"
 
-#: workflow/models.py:1619
+#: workflow/models.py:1630
 msgid "Estimated by"
 msgstr "Estimado por"
 
-#: workflow/models.py:1625
+#: workflow/models.py:1636
 msgid "Reviewed by"
 msgstr "Revisado por"
 
-#: workflow/models.py:1640
+#: workflow/models.py:1651
 msgid "Project Tracking"
 msgstr "Seguimiento de proyecto"
 
-#: workflow/models.py:1675
+#: workflow/models.py:1686
 msgid "Link to document, document repository, or document URL"
 msgstr "Enlace al documento, repositorio de documentos o URL del documento"
 
-#: workflow/models.py:1719
+#: workflow/models.py:1730
 #, python-format
 msgid "%% complete"
 msgstr "%% completado"
 
-#: workflow/models.py:1720
+#: workflow/models.py:1731
 #, python-format
 msgid "%% cumulative completion"
 msgstr "%% de finalización acumulativa"
 
-#: workflow/models.py:1721
+#: workflow/models.py:1732
 msgid "Est start date"
 msgstr "Fecha estimada de inicio"
 
-#: workflow/models.py:1722
+#: workflow/models.py:1733
 msgid "Est end date"
 msgstr "Fecha estimada de finalización"
 
-#: workflow/models.py:1725
+#: workflow/models.py:1736
 msgid "site"
 msgstr "sitio"
 
-#: workflow/models.py:1730 workflow/models.py:1791
+#: workflow/models.py:1741 workflow/models.py:1802
 msgid "Complete"
 msgstr "Completar"
 
-#: workflow/models.py:1736
+#: workflow/models.py:1747
 msgid "Project Components"
 msgstr "Componentes del proyecto"
 
-#: workflow/models.py:1757
+#: workflow/models.py:1768
 msgid "Person Responsible"
 msgstr "Persona responsable"
 
-#: workflow/models.py:1761
+#: workflow/models.py:1772
 msgid "complete"
 msgstr "completar"
 
-#: workflow/models.py:1767
+#: workflow/models.py:1778
 msgid "Monitors"
 msgstr "Monitores"
 
-#: workflow/models.py:1787
+#: workflow/models.py:1798
 msgid "Contributor"
 msgstr "Contribuyente"
 
-#: workflow/models.py:1788
+#: workflow/models.py:1799
 msgid "Description of contribution"
 msgstr "Descripción de la contribución"
 
-#: workflow/models.py:1842
+#: workflow/models.py:1853
 msgid "Item"
 msgstr "Elemento"
 
-#: workflow/models.py:1843
+#: workflow/models.py:1854
 msgid "Checklist"
 msgstr "Lista de verificación"
 
-#: workflow/models.py:1852
+#: workflow/models.py:1863
 msgid "Checklist Item"
 msgstr "Elemento de la lista de verificación"
 
@@ -5052,9 +5062,6 @@ msgstr "Ciudad, País:"
 
 #~ msgid "Form Help/Guidance"
 #~ msgstr "Ayuda del formulario / Guía"
-
-msgid "Indicator setup"
-msgstr "Configuración del indicador"
 
 #~ msgid "View your indicator on the program page."
 #~ msgstr "Vea su indicador en la página del programa."

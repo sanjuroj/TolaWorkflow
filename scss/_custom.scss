@@ -313,6 +313,9 @@ a:hover {
 
 .indicator_name {
     word-break: break-word;
+    &:first-letter {
+        text-transform: uppercase;
+    }
 }
 
 // conditional styling to hide modal titles in nonmodal contexts.

@@ -328,6 +328,7 @@ class Program {
     @observable periods = {};
     @observable oldLevels = false;
     @observable _resultChainFilterLabel = null;
+    @observable _shortResultChainLabel = null;
     @observable initialized = {
         [TVA]: [],
         [TIMEPERIODS]: []
@@ -353,6 +354,7 @@ class Program {
         this.validTIMEPERIODS = true;
         this.oldLevels = JSON.old_style_levels === true || JSON.old_style_levels === "True";
         this._resultChainFilterLabel = JSON.result_chain_filter_label;
+        this._shortResultChainLabel = JSON.short_result_chain_label;
         Object.entries(JSON.periodDateRanges)
             .forEach(([frequency, periodsJSON]) => {
                 this.periods[parseInt(frequency)] = new PeriodRange(frequency, periodsJSON);
@@ -512,6 +514,10 @@ class Program {
     
     @computed get resultChainFilterLabel() {
         return this._resultChainFilterLabel || (this.tiers && this.tiers.length > 1 && `by ${this.tiers[1].name} chain`);
+    }
+    
+    @computed get shortResultChainLabel() {
+        return this._shortResultChainLabel || (this.tiers && this.tiers.length > 1 && `${this.tiers[1].name} chains`);
     }
     
     @computed get types() {
