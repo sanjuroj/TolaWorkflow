@@ -268,7 +268,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return ProgramStore; });
 /* harmony import */ var mobx__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! mobx */ "2vnA");
 /* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../constants */ "v38i");
-var _class, _temp, _class3, _temp2, _class5, _temp3, _class7, _temp4, _class9, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _descriptor16, _descriptor17, _descriptor18, _temp5, _class11, _descriptor19, _descriptor20, _descriptor21, _temp6;
+var _class, _temp, _class3, _temp2, _class5, _temp3, _class7, _temp4, _class9, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _descriptor16, _descriptor17, _descriptor18, _descriptor19, _temp5, _class11, _descriptor20, _descriptor21, _descriptor22, _temp6;
 
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
 
@@ -774,21 +774,23 @@ function () {
 
     _initializerDefineProperty(this, "_resultChainFilterLabel", _descriptor10, this);
 
-    _initializerDefineProperty(this, "initialized", _descriptor11, this);
+    _initializerDefineProperty(this, "_shortResultChainLabel", _descriptor11, this);
 
-    _initializerDefineProperty(this, "calls", _descriptor12, this);
+    _initializerDefineProperty(this, "initialized", _descriptor12, this);
 
-    _initializerDefineProperty(this, "_levels", _descriptor13, this);
+    _initializerDefineProperty(this, "calls", _descriptor13, this);
 
-    _initializerDefineProperty(this, "_tiers", _descriptor14, this);
+    _initializerDefineProperty(this, "_levels", _descriptor14, this);
 
-    _initializerDefineProperty(this, "_sites", _descriptor15, this);
+    _initializerDefineProperty(this, "_tiers", _descriptor15, this);
 
-    _initializerDefineProperty(this, "_sectors", _descriptor16, this);
+    _initializerDefineProperty(this, "_sites", _descriptor16, this);
 
-    _initializerDefineProperty(this, "_types", _descriptor17, this);
+    _initializerDefineProperty(this, "_sectors", _descriptor17, this);
 
-    _initializerDefineProperty(this, "_indicators", _descriptor18, this);
+    _initializerDefineProperty(this, "_types", _descriptor18, this);
+
+    _initializerDefineProperty(this, "_indicators", _descriptor19, this);
 
     this.getIndicator = function (indicatorPk) {
       if (_this8._indicators[indicatorPk] && _this8._indicators[indicatorPk] !== undefined) {
@@ -990,6 +992,7 @@ function () {
     this.validTIMEPERIODS = true;
     this.oldLevels = JSON.old_style_levels === true || JSON.old_style_levels === "True";
     this._resultChainFilterLabel = JSON.result_chain_filter_label;
+    this._shortReulstChainLabel = JSON.short_result_chain_label;
     Object.entries(JSON.periodDateRanges).forEach(function (_ref2) {
       var _ref3 = _slicedToArray(_ref2, 2),
           frequency = _ref3[0],
@@ -1015,6 +1018,11 @@ function () {
     key: "resultChainFilterLabel",
     get: function get() {
       return this._resultChainFilterLabel || this.tiers && this.tiers.length > 1 && "by ".concat(this.tiers[1].name, " chain");
+    }
+  }, {
+    key: "shortResultChainLabel",
+    get: function get() {
+      return this._shortResultChainLabel || this.tiers && this.tiers.length > 1 && "".concat(this.tiers[1].name, " chains");
     }
   }, {
     key: "types",
@@ -1121,7 +1129,14 @@ function () {
   initializer: function initializer() {
     return null;
   }
-}), _descriptor11 = _applyDecoratedDescriptor(_class9.prototype, "initialized", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor11 = _applyDecoratedDescriptor(_class9.prototype, "_shortResultChainLabel", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function initializer() {
+    return null;
+  }
+}), _descriptor12 = _applyDecoratedDescriptor(_class9.prototype, "initialized", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
@@ -1130,7 +1145,7 @@ function () {
 
     return _ref4 = {}, _defineProperty(_ref4, _constants__WEBPACK_IMPORTED_MODULE_1__["TVA"], []), _defineProperty(_ref4, _constants__WEBPACK_IMPORTED_MODULE_1__["TIMEPERIODS"], []), _ref4;
   }
-}), _descriptor12 = _applyDecoratedDescriptor(_class9.prototype, "calls", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor13 = _applyDecoratedDescriptor(_class9.prototype, "calls", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
@@ -1139,49 +1154,49 @@ function () {
 
     return _ref5 = {}, _defineProperty(_ref5, _constants__WEBPACK_IMPORTED_MODULE_1__["TVA"], {}), _defineProperty(_ref5, _constants__WEBPACK_IMPORTED_MODULE_1__["TIMEPERIODS"], {}), _ref5;
   }
-}), _descriptor13 = _applyDecoratedDescriptor(_class9.prototype, "_levels", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor14 = _applyDecoratedDescriptor(_class9.prototype, "_levels", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return {};
   }
-}), _descriptor14 = _applyDecoratedDescriptor(_class9.prototype, "_tiers", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor15 = _applyDecoratedDescriptor(_class9.prototype, "_tiers", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return {};
   }
-}), _descriptor15 = _applyDecoratedDescriptor(_class9.prototype, "_sites", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor16 = _applyDecoratedDescriptor(_class9.prototype, "_sites", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return {};
   }
-}), _descriptor16 = _applyDecoratedDescriptor(_class9.prototype, "_sectors", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor17 = _applyDecoratedDescriptor(_class9.prototype, "_sectors", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return {};
   }
-}), _descriptor17 = _applyDecoratedDescriptor(_class9.prototype, "_types", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor18 = _applyDecoratedDescriptor(_class9.prototype, "_types", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return {};
   }
-}), _descriptor18 = _applyDecoratedDescriptor(_class9.prototype, "_indicators", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}), _descriptor19 = _applyDecoratedDescriptor(_class9.prototype, "_indicators", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return {};
   }
-}), _applyDecoratedDescriptor(_class9.prototype, "levels", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class9.prototype, "levels"), _class9.prototype), _applyDecoratedDescriptor(_class9.prototype, "tiers", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class9.prototype, "tiers"), _class9.prototype), _applyDecoratedDescriptor(_class9.prototype, "resultChainFilterLabel", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class9.prototype, "resultChainFilterLabel"), _class9.prototype), _applyDecoratedDescriptor(_class9.prototype, "types", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class9.prototype, "types"), _class9.prototype), _applyDecoratedDescriptor(_class9.prototype, "sectors", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class9.prototype, "sectors"), _class9.prototype), _applyDecoratedDescriptor(_class9.prototype, "sites", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class9.prototype, "sites"), _class9.prototype), _applyDecoratedDescriptor(_class9.prototype, "indicators", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class9.prototype, "indicators"), _class9.prototype), _applyDecoratedDescriptor(_class9.prototype, "unassignedIndicators", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class9.prototype, "unassignedIndicators"), _class9.prototype), _applyDecoratedDescriptor(_class9.prototype, "programPageUrl", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class9.prototype, "programPageUrl"), _class9.prototype)), _class9);
+}), _applyDecoratedDescriptor(_class9.prototype, "levels", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class9.prototype, "levels"), _class9.prototype), _applyDecoratedDescriptor(_class9.prototype, "tiers", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class9.prototype, "tiers"), _class9.prototype), _applyDecoratedDescriptor(_class9.prototype, "resultChainFilterLabel", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class9.prototype, "resultChainFilterLabel"), _class9.prototype), _applyDecoratedDescriptor(_class9.prototype, "shortResultChainLabel", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class9.prototype, "shortResultChainLabel"), _class9.prototype), _applyDecoratedDescriptor(_class9.prototype, "types", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class9.prototype, "types"), _class9.prototype), _applyDecoratedDescriptor(_class9.prototype, "sectors", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class9.prototype, "sectors"), _class9.prototype), _applyDecoratedDescriptor(_class9.prototype, "sites", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class9.prototype, "sites"), _class9.prototype), _applyDecoratedDescriptor(_class9.prototype, "indicators", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class9.prototype, "indicators"), _class9.prototype), _applyDecoratedDescriptor(_class9.prototype, "unassignedIndicators", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class9.prototype, "unassignedIndicators"), _class9.prototype), _applyDecoratedDescriptor(_class9.prototype, "programPageUrl", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class9.prototype, "programPageUrl"), _class9.prototype)), _class9);
 /* Export for testing: */
 
 
@@ -1193,7 +1208,7 @@ function () {
 
     _classCallCheck(this, ProgramStore);
 
-    _initializerDefineProperty(this, "_programs", _descriptor19, this);
+    _initializerDefineProperty(this, "_programs", _descriptor20, this);
 
     this.api = null;
 
@@ -1257,9 +1272,9 @@ function () {
       return programA.name > programB.name ? 1 : programB.name < programA.name ? -1 : 0;
     };
 
-    _initializerDefineProperty(this, "updateIndicator", _descriptor20, this);
+    _initializerDefineProperty(this, "updateIndicator", _descriptor21, this);
 
-    _initializerDefineProperty(this, "removeIndicator", _descriptor21, this);
+    _initializerDefineProperty(this, "removeIndicator", _descriptor22, this);
 
     this.api = api;
     this.addPrograms(contextData.programs);
@@ -1285,14 +1300,14 @@ function () {
   }]);
 
   return ProgramStore;
-}(), _temp6), (_descriptor19 = _applyDecoratedDescriptor(_class11.prototype, "_programs", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
+}(), _temp6), (_descriptor20 = _applyDecoratedDescriptor(_class11.prototype, "_programs", [mobx__WEBPACK_IMPORTED_MODULE_0__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
   initializer: function initializer() {
     return {};
   }
-}), _applyDecoratedDescriptor(_class11.prototype, "programs", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class11.prototype, "programs"), _class11.prototype), _descriptor20 = _applyDecoratedDescriptor(_class11.prototype, "updateIndicator", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
+}), _applyDecoratedDescriptor(_class11.prototype, "programs", [mobx__WEBPACK_IMPORTED_MODULE_0__["computed"]], Object.getOwnPropertyDescriptor(_class11.prototype, "programs"), _class11.prototype), _descriptor21 = _applyDecoratedDescriptor(_class11.prototype, "updateIndicator", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
   configurable: true,
   enumerable: true,
   writable: true,
@@ -1311,7 +1326,7 @@ function () {
       }
     };
   }
-}), _descriptor21 = _applyDecoratedDescriptor(_class11.prototype, "removeIndicator", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
+}), _descriptor22 = _applyDecoratedDescriptor(_class11.prototype, "removeIndicator", [mobx__WEBPACK_IMPORTED_MODULE_0__["action"]], {
   configurable: true,
   enumerable: true,
   writable: true,
@@ -2599,7 +2614,9 @@ function () {
 
         var years = Array.from(new Set(this.periods.filter(periodFilter).map(function (period) {
           return period.year;
-        }))).sort();
+        }))).filter(function (year) {
+          return !isNaN(year);
+        }).sort();
         return years.map(function (year) {
           var options = periods.filter(function (period) {
             return period.year === year;
@@ -3302,7 +3319,7 @@ function () {
 
         if (levels && levels.length > 0) {
           options.push({
-            label: _gettext('Outcome Chains'),
+            label: this.program.shortResultChainLabel,
             options: levels.filter(function (level) {
               return level.tier.depth == 2;
             }).map(function (level) {
@@ -5102,4 +5119,4 @@ function () {
 /***/ })
 
 },[["mYfJ","runtime","vendors"]]]);
-//# sourceMappingURL=iptt_report-01a75cb4bd1e58cf38ed.js.map
+//# sourceMappingURL=iptt_report-d76de6a2fa8b577b9da6.js.map

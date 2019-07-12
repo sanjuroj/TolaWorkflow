@@ -727,6 +727,17 @@ class Program(models.Model):
         return None
 
     @property
+    def rf_chain_group_label(self):
+        """IPTT labels filter options as "<second tier name> chains"
+        """
+        tier = self.level_tiers.filter(tier_depth=2).first() if self.results_framework else None
+        if tier:
+            # Translators: this labels a filter to sort indicators, for example, "by Outcome chain":
+            tier_name = _(tier.name)
+            return _('%(level_name)s chains') % {'level_name': tier_name}
+        return None
+
+    @property
     def results_framework(self):
         if hasattr(self, 'using_results_framework'):
             return self.using_results_framework
