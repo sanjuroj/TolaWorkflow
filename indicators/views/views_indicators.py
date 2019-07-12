@@ -383,9 +383,9 @@ class IndicatorUpdate(IndicatorFormMixin, UpdateView):
         The header of the form when updating - composed here instead of in the template
         such that it can also be used via AJAX
         """
-        if self.object.results_framework:
+        if self.object.results_framework and self.object.auto_number_indicators:
             if self.object.level_display_ontology:
-                return '{} {} {}{}'.format(
+                return u'{} {} {}{}'.format(
                     self.object.leveltier_name,
                     _('indicator'),
                     self.object.level_display_ontology,
@@ -393,6 +393,10 @@ class IndicatorUpdate(IndicatorFormMixin, UpdateView):
                 )
             else:
                 return _('Indicator setup')
+        elif self.object.results_framework and self.object.number:
+            return u'{} {}'.format(_('indicator'), self.object.number)
+        elif self.object.results_framework:
+            return _('Indicator setup')
         elif self.object.old_level:
             return u'{} {}'.format(
                 unicode(ugettext(self.object.old_level)),
