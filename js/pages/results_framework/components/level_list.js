@@ -59,6 +59,10 @@ class LevelList extends React.Component {
 @observer
 export class LevelListPanel  extends React.Component {
 
+    getWarningText = () => {
+        return {__html: gettext('<strong class="text-danger">Choose your results framework template carefully!</strong> Once you begin building your framework, it will not be possible to change templates without first deleting all saved levels.') }
+    };
+
     render() {
         if (this.props.rootStore.levelStore.levels.length == 0) {
             return (
@@ -66,9 +70,9 @@ export class LevelListPanel  extends React.Component {
                     <div className="level-list-panel__dingbat">
                         <i className="fas fa-sitemap"></i>
                     </div>
-                    <div className="level-list-panel__text text-large">
-                        <strong className="text-danger">Choose your results framework template carefully!</strong> Once you begin building your framework, it will not be possible to change templates without first deleting all saved levels.
-                    </div>
+                    <div className="level-list-panel__text text-large"
+                        dangerouslySetInnerHTML={this.getWarningText()}/>
+
                 </div>
             )
         }
