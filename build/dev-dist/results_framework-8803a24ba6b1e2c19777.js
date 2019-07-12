@@ -2634,7 +2634,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @fortawesome/react-fontawesome */ "IP2g");
 /* harmony import */ var _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @fortawesome/free-solid-svg-icons */ "wHSu");
 /* harmony import */ var _level_cards__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./level_cards */ "5Za8");
-var _dec, _class, _dec2, _class2;
+var _dec, _class, _dec2, _class2, _temp;
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
@@ -2728,15 +2728,31 @@ function (_React$Component) {
 
   return LevelList;
 }(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component)) || _class) || _class);
-var LevelListPanel = (_dec2 = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inject"])('rootStore'), _dec2(_class2 = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(_class2 =
+var LevelListPanel = (_dec2 = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inject"])('rootStore'), _dec2(_class2 = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(_class2 = (_temp =
 /*#__PURE__*/
 function (_React$Component2) {
   _inherits(LevelListPanel, _React$Component2);
 
   function LevelListPanel() {
+    var _getPrototypeOf2;
+
+    var _this2;
+
     _classCallCheck(this, LevelListPanel);
 
-    return _possibleConstructorReturn(this, _getPrototypeOf(LevelListPanel).apply(this, arguments));
+    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    _this2 = _possibleConstructorReturn(this, (_getPrototypeOf2 = _getPrototypeOf(LevelListPanel)).call.apply(_getPrototypeOf2, [this].concat(args)));
+
+    _this2.getWarningText = function () {
+      return {
+        __html: gettext('<strong class="text-danger">Choose your results framework template carefully!</strong> Once you begin building your framework, it will not be possible to change templates without first deleting all saved levels.')
+      };
+    };
+
+    return _this2;
   }
 
   _createClass(LevelListPanel, [{
@@ -2750,10 +2766,9 @@ function (_React$Component2) {
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
           className: "fas fa-sitemap"
         })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-          className: "level-list-panel__text text-large"
-        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", {
-          className: "text-danger"
-        }, "Choose your results framework template carefully!"), " Once you begin building your framework, it will not be possible to change templates without first deleting all saved levels."));
+          className: "level-list-panel__text text-large",
+          dangerouslySetInnerHTML: this.getWarningText()
+        }));
       } else {
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
           id: "level-list",
@@ -2768,7 +2783,7 @@ function (_React$Component2) {
   }]);
 
   return LevelListPanel;
-}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component)) || _class2) || _class2);
+}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component), _temp)) || _class2) || _class2);
 
 /***/ }),
 
@@ -2841,4 +2856,4 @@ var STATUS_CODES = {
 /***/ })
 
 },[["QTZG","runtime","vendors"]]]);
-//# sourceMappingURL=results_framework-5c90448f014ec9344263.js.map
+//# sourceMappingURL=results_framework-8803a24ba6b1e2c19777.js.map
