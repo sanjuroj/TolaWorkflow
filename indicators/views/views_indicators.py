@@ -394,8 +394,8 @@ class IndicatorUpdate(IndicatorFormMixin, UpdateView):
             else:
                 return _('Indicator setup')
         elif self.object.old_level:
-            return '{} {}'.format(
-                self.object.old_level,
+            return u'{} {}'.format(
+                _(self.object.old_level),
                 _('indicator'),
             )
         else:
