@@ -108,7 +108,9 @@ def logframe_excel_view(request, program):
         for indicator in sorted(level['indicators'], key=itemgetter('level_order')):
             cell = ws.cell(row=row, column=2)
             value = ugettext('Indicator')
-            if indicator['level_order_display'] or level['display_ontology']:
+            if program['manual_numbering']:
+                value += u' {}'.format(indicator['number']) if indicator['number'] else u''
+            elif indicator['level_order_display'] or level['display_ontology']:
                 value += u' {}{}'.format(level['display_ontology'], indicator['level_order_display'])
             value += u': {}'.format(clean_unicode(indicator['name']))
             cell.value = value
@@ -144,7 +146,10 @@ def logframe_excel_view(request, program):
         cell.fill = LEVEL_ROW_FILL
         for indicator in program['unassigned_indicators']:
             cell = ws.cell(row=row, column=2)
-            cell.value = u'{}: {}'.format(ugettext('Indicator'), clean_unicode(indicator['name']))
+            value = ugettext('Indicator')
+            if program['manual_numbering']:
+                value += u' {}'.format(indicator['number']) if indicator['number'] else u''
+            cell.value = u'{}: {}'.format(value, clean_unicode(indicator['name']))
             cell.alignment = TOP_LEFT_ALIGN_WRAP
             cell = ws.cell(row=row, column=3)
             cell.value = clean_unicode(indicator['means_of_verification'])

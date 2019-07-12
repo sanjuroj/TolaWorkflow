@@ -11,6 +11,8 @@ class Indicator {
         this.name = indicatorData.name;
         this.level_order_display = indicatorData.level_order_display;
         this.means_of_verification = indicatorData.means_of_verification;
+        this.manualNumbering = !indicatorData.auto_number_indicators;
+        this.number = indicatorData.number || false;
     }
 }
 

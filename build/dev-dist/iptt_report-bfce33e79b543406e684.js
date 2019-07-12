@@ -1880,8 +1880,14 @@ var IndicatorRow = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["inject"])('re
   }
 
   var cumulative = indicator.cumulative === null ? null : indicator.cumulative ? gettext('Cumulative') : gettext('Non-cumulative');
+  var displayNumber = indicator.number;
+
+  if (displayNumber && displayNumber.length > 0 && displayNumber.slice(-1) == ":") {
+    displayNumber = displayNumber.slice(0, -1);
+  }
+
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(IndicatorCell, {
-    value: indicator.number
+    value: displayNumber
   }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(IndicatorResultModalCell, {
     indicator: indicator
   }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(IndicatorEditModalCell, {
@@ -5119,4 +5125,4 @@ function () {
 /***/ })
 
 },[["mYfJ","runtime","vendors"]]]);
-//# sourceMappingURL=iptt_report-aa8bbdb3f9912682ddce.js.map
+//# sourceMappingURL=iptt_report-bfce33e79b543406e684.js.map
