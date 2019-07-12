@@ -9790,7 +9790,7 @@ input[type=radio]:disabled {
   font-weight: normal; }
 
 .program-objective-import {
-  width: 300px;
+  width: 55%;
   display: flex;
   justify-content: space-between;
   align-items: center; }
@@ -10659,4 +10659,4 @@ a:hover {
 /* Unsorted custom selectors */
 
 
-/*# sourceMappingURL=base-8c892e78044c7bc44088.css.map*/
+/*# sourceMappingURL=base-12c9e98d60d73cdda6a7.css.map*/
