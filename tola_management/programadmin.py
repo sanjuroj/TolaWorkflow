@@ -63,15 +63,15 @@ def get_audit_log_workbook(ws, program):
     # helper for indicator name column
     def _indicator_name(indicator):
         if indicator.results_aware_number:
-            return '{} {}: {}'.format(
+            return u'{} {}: {}'.format(
                 _('Indicator'),
-                indicator.results_aware_number,
-                indicator.name,
+                unicode(indicator.results_aware_number),
+                unicode(indicator.name),
             )
         else:
-            return '{}: {}'.format(
+            return u'{}: {}'.format(
                 _('Indicator'),
-                indicator.name,
+                unicode(indicator.name),
             )
 
     # helper for result level column
@@ -111,7 +111,7 @@ def get_audit_log_workbook(ws, program):
     subtitle.font = Font(size=18)
     ws.append([subtitle,])
     ws.merge_cells(start_row=2, end_row=2, start_column=1, end_column=len(header))
-    
+
 
     header_font = Font(bold=True)
     header_fill = PatternFill('solid', 'EEEEEE')
@@ -119,8 +119,7 @@ def get_audit_log_workbook(ws, program):
     for h in header:
         h.font = header_font
         h.fill = header_fill
-    
-    
+
     ws.append(header)
 
     alignment = Alignment(
@@ -153,14 +152,14 @@ def get_audit_log_workbook(ws, program):
 
         xl_row = [
             Cell(ws, value=row.date),
-            Cell(ws, value=_result_level(row.indicator) if row.indicator else _('N/A')),
-            Cell(ws, value=_indicator_name(row.indicator) if row.indicator else _('N/A')),
-            Cell(ws, value=row.user.name),
-            Cell(ws, value=row.organization.name),
-            Cell(ws, value=row.pretty_change_type),
-            Cell(ws, value=prev_string),
-            Cell(ws, value=new_string),
-            Cell(ws, value=row.rationale)
+            Cell(ws, value=unicode(_result_level(row.indicator)) if row.indicator else _('N/A')),
+            Cell(ws, value=unicode(_indicator_name(row.indicator)) if row.indicator else _('N/A')),
+            Cell(ws, value=unicode(row.user.name)),
+            Cell(ws, value=unicode(row.organization.name)),
+            Cell(ws, value=unicode(row.pretty_change_type)),
+            Cell(ws, value=unicode(prev_string)),
+            Cell(ws, value=unicode(new_string)),
+            Cell(ws, value=unicode(row.rationale))
         ]
         for cell in xl_row:
             cell.alignment = alignment

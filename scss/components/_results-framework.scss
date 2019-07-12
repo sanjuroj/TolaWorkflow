@@ -176,7 +176,7 @@
 
 // component ProgramObjectiveImport
 .program-objective-import {
-    width: 300px;
+    width: 55%;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -214,3 +214,13 @@
     }
 }
 
+#logframe_link {
+    min-width: 220px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center
+}
+
+#logframe_link a {
+    margin-left: 5px;
+}

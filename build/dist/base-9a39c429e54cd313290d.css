@@ -8090,6 +8090,8 @@ span.multiselect-native-select select {
 
 .multiselect.btn {
   align-items: center;
+  background: #fff;
+  border: 1px solid #b8babd;
   color: #54585a;
   display: flex;
   font-weight: 400;
@@ -8109,6 +8111,7 @@ span.multiselect-native-select select {
   padding-right: 0.75rem; }
 
 .multiselect-selected-text {
+  height: 1.5rem;
   overflow: hidden;
   white-space: normal; }
 
@@ -9787,7 +9790,7 @@ input[type=radio]:disabled {
   font-weight: normal; }
 
 .program-objective-import {
-  width: 300px;
+  width: 55%;
   display: flex;
   justify-content: space-between;
   align-items: center; }
@@ -9815,6 +9818,15 @@ input[type=radio]:disabled {
 
 .level-button + .level-button {
   margin-left: 7.5px; }
+
+#logframe_link {
+  min-width: 220px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center; }
+
+#logframe_link a {
+  margin-left: 5px; }
 
 .sortable-list-header {
   display: flex;
