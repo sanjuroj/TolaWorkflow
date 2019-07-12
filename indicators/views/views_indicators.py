@@ -21,7 +21,7 @@ from django.shortcuts import render, render_to_response, get_object_or_404, redi
 from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.decorators import method_decorator
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext as _, ugettext
 from django.views.generic import TemplateView
 from django.views.generic.detail import View
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
@@ -395,8 +395,8 @@ class IndicatorUpdate(IndicatorFormMixin, UpdateView):
                 return _('Indicator setup')
         elif self.object.old_level:
             return u'{} {}'.format(
-                _(self.object.old_level),
-                _('indicator'),
+                unicode(ugettext(self.object.old_level)),
+                unicode(_('indicator')),
             )
         else:
             return _('Indicator setup')
