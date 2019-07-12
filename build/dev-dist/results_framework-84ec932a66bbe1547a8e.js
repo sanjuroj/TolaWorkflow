@@ -533,8 +533,8 @@ function (_React$Component3) {
 
       var levelTitle = _this2.props.levelProps.tierName + " " + _this2.props.levelProps.ontologyLabel;
       create_no_rationale_changeset_notice({
-        /* # Translators:  This is a confirmation prompt that is triggered by clicking on a delete button. The code is a reference to the specific item being deleted.  Only one item can be deleted at a time. */
-        message_text: "Are you sure you want to delete ".concat(levelTitle, "?"),
+        /* # Translators:  This is a confirmation prompt that is triggered by clicking on a delete button. The code is a reference to the name of the specific item being deleted.  Only one item can be deleted at a time. */
+        message_text: interpolate(gettext("Are you sure you want to delete %s?"), [levelTitle]),
         on_submit: function on_submit() {
           return _this2.props.rootStore.levelStore.deleteLevelFromDB(_this2.props.level.id);
         },
@@ -2856,4 +2856,4 @@ var STATUS_CODES = {
 /***/ })
 
 },[["QTZG","runtime","vendors"]]]);
-//# sourceMappingURL=results_framework-8803a24ba6b1e2c19777.js.map
+//# sourceMappingURL=results_framework-84ec932a66bbe1547a8e.js.map

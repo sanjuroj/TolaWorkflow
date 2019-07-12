@@ -564,7 +564,7 @@ window.create_no_rationale_changeset_notice = function () {
   }
 
   ;
-  var inner = "\n        <div class=\"row\">\n            <div class=\"col\">\n                <h2><i class=\"fas fa-exclamation-triangle\"></i>".concat(gettext("Warning"), "</h2>\n            </div>\n        </div>\n        <div class=\"row\">\n            <div class=\"col\">\n                <span class='text-danger'>\n                    ").concat(preamble, "\n                </span>\n            </div>\n        </div>\n        <div class=\"row\">\n            <div class=\"col\">\n                <span>\n                    ").concat(message_text, "\n                </span>\n            </div>\n        </div>\n    ");
+  var inner = "\n        <div class=\"row\">\n            <div class=\"col\">\n                <h2 class=\"pnotify--header\"><i class=\"fas fa-exclamation-triangle\"></i>".concat(gettext("Warning"), "</h2>\n            </div>\n        </div>\n        <div class=\"row\">\n            <div class=\"col\">\n                <span class='text-danger'>\n                    ").concat(preamble, "\n                </span>\n            </div>\n        </div>\n        <div class=\"row\">\n            <div class=\"col\">\n                <span>\n                    ").concat(message_text, "\n                </span>\n            </div>\n        </div>\n    ");
   return create_changeset_notice({
     message_text: message_text,
     on_submit: on_submit,
@@ -595,7 +595,7 @@ var createPnotifyAlert = function createPnotifyAlert(passedInConfig) {
     faClass = "fa-check-circle";
   }
 
-  var inner = "\n        <div class=\"row\">\n            <div class=\"col\">\n                <h2><i class=\"fas ".concat(faClass, "\"></i> ").concat(gettext("Success!"), "</h2>\n            </div>\n        </div>\n        <div class=\"row\">\n            <div class=\"col\">\n                <span class='text-success'>\n                    ").concat(config.preamble, "\n                </span>\n            </div>\n        </div>\n        <div class=\"row\">\n            <div class=\"col\">\n                <span>\n                    ").concat(config.message_text, "\n                </span>\n            </div>\n        </div>\n    ");
+  var inner = "\n        <div class=\"row\">\n            <div class=\"col\">\n                <h2 class=\"pnotify--header\"><i class=\"fas ".concat(faClass, "\"></i>").concat(gettext("Success!"), "</h2>\n            </div>\n        </div>\n        <div class=\"row\">\n            <div class=\"col\">\n                <span class='text-success'>\n                    ").concat(config.preamble, "\n                </span>\n            </div>\n        </div>\n        <div class=\"row\">\n            <div class=\"col\">\n                <span>\n                    ").concat(config.message_text, "\n                </span>\n            </div>\n        </div>\n    ");
   config.text = $("<div><form action=\"\" method=\"post\" class=\"form container\">".concat(inner, "</form></div>")).html();
   PNotify.alert(config);
 };
@@ -630,4 +630,4 @@ window.scrollToBottom = scrollToBottom;
 /***/ })
 
 },[["YqHn","runtime","vendors"]]]);
-//# sourceMappingURL=base-c253e868abe0f77f54ff.js.map
+//# sourceMappingURL=base-c3bb3b7406c72bf2e850.js.map
