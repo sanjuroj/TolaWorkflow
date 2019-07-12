@@ -8090,6 +8090,8 @@ span.multiselect-native-select select {
 
 .multiselect.btn {
   align-items: center;
+  background: #fff;
+  border: 1px solid #b8babd;
   color: #54585a;
   display: flex;
   font-weight: 400;
@@ -8109,6 +8111,7 @@ span.multiselect-native-select select {
   padding-right: 0.75rem; }
 
 .multiselect-selected-text {
+  height: 1.5rem;
   overflow: hidden;
   white-space: normal; }
 
@@ -10655,3 +10658,5 @@ a:hover {
 
 /* Unsorted custom selectors */
 
+
+/*# sourceMappingURL=base-8c892e78044c7bc44088.css.map*/
