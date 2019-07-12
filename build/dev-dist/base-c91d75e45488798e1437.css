@@ -10658,7 +10658,10 @@ a:hover {
 .picker-dialog {
   z-index: 20001 !important; }
 
+.pnotify--header svg {
+  margin-right: 5px; }
+
 /* Unsorted custom selectors */
 
 
-/*# sourceMappingURL=base-507547c1ea996a6ffe2c.css.map*/
+/*# sourceMappingURL=base-c91d75e45488798e1437.css.map*/

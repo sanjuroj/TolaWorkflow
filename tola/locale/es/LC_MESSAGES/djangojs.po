@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-12 09:21-0700\n"
-"PO-Revision-Date: 2019-07-11 15:55-0700\n"
+"POT-Creation-Date: 2019-07-12 15:42-0700\n"
+"PO-Revision-Date: 2019-07-12 15:38-0700\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: es\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.2.3\n"
+"X-Generator: Poedit 2.2\n"
 
 #: js/base.js:331 js/base.js:332
 msgid ""
@@ -783,6 +783,12 @@ msgstr ""
 "Importar texto desde un Objetivo de Programa. <strong class='program-"
 "objective-import__popover-strong-text'>Asegúrese de eliminar niveles y "
 "números de su texto ya que los mismos se muestran automáticamente.</strong>"
+
+#. Translators:  This is a confirmation prompt that is triggered by clicking on a delete button. The code is a reference to the name of the specific item being deleted.  Only one item can be deleted at a time. */
+#: js/pages/results_framework/components/level_cards.js:86
+#, python-format
+msgid "Are you sure you want to delete %s?"
+msgstr "¿Está seguro que quiere eliminarlo %s?"
 
 #. Translators: This is a validation message given to the user when the user-editable name field has been deleted or omitted. */
 #: js/pages/results_framework/components/level_cards.js:411
@@ -3050,9 +3056,6 @@ msgstr "Super Administrador"
 
 #~ msgid "Bookmark Confirm Delete"
 #~ msgstr "Confirmación de borrado de marcador"
-
-#~ msgid "Are you sure you want to delete"
-#~ msgstr "¿Está seguro que quiere eliminarlo?"
 
 #~ msgid "Your Bookmarks List"
 #~ msgstr "Su lista de marcadores"
