@@ -2259,7 +2259,7 @@ msgid ""
 "            "
 msgstr ""
 "\n"
-"            cible %(get_target_frequency_label)s\n"
+"            cible de %(get_target_frequency_label)s\n"
 "            "
 
 #: templates/indicators/indicatortargets.html:223
