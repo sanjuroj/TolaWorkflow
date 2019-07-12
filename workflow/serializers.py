@@ -45,6 +45,8 @@ class DocumentListDocumentSerializer(serializers.ModelSerializer):
 class LogframeIndicatorSerializer(serializers.ModelSerializer):
     level = serializers.PrimaryKeyRelatedField(read_only=True)
     level_order_display = serializers.CharField(read_only=True)
+    auto_number_indicators = serializers.BooleanField(read_only=True)
+
     class Meta:
         model = Indicator
         fields = [
@@ -54,6 +56,8 @@ class LogframeIndicatorSerializer(serializers.ModelSerializer):
             'level',
             'level_order_display',
             'level_order',
+            'number',
+            'auto_number_indicators'
         ]
 
 class LogframeUnassignedIndicatorSerializer(serializers.ModelSerializer):
