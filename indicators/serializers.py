@@ -79,6 +79,7 @@ class IndicatorSerializer(serializers.ModelSerializer):
     target_period_last_end_date = serializers.DateField()
     level = LevelSerializer(read_only=True)
     lop_target_active = serializers.FloatField()
+    old_level = serializers.SerializerMethodField()
     old_level_pk = serializers.IntegerField(read_only=True)
 
     class Meta:
@@ -116,6 +117,9 @@ class IndicatorSerializer(serializers.ModelSerializer):
         if obj.results_framework and obj.program.auto_number_indicators:
             return None
         return obj.number
+
+    def get_old_level(self, obj):
+        return ugettext(obj.old_level) if obj.old_level else None
 
 
 

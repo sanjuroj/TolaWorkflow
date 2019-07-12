@@ -10625,6 +10625,8 @@ a:hover {
 
 .indicator_name {
   word-break: break-word; }
+  .indicator_name:first-letter {
+    text-transform: uppercase; }
 
 .is-shown-in-modals {
   display: none; }
@@ -10659,4 +10661,4 @@ a:hover {
 /* Unsorted custom selectors */
 
 
-/*# sourceMappingURL=base-16adc220b55eb2483a37.css.map*/
+/*# sourceMappingURL=base-507547c1ea996a6ffe2c.css.map*/

@@ -4035,10 +4035,9 @@ msgid "by %(level_name)s chain"
 msgstr "por cadena de %(level_name)s"
 
 #: workflow/models.py:737
-#, fuzzy, python-format
-#| msgid "by %(level_name)s chain"
+#, python-format
 msgid "%(level_name)s chains"
-msgstr "por cadena de %(level_name)s"
+msgstr "cadenas de %(level_name)s"
 
 #. Translators: Refers to a user permission role with limited access to view data only
 #: workflow/models.py:753

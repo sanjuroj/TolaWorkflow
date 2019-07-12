@@ -354,7 +354,7 @@ class Program {
         this.validTIMEPERIODS = true;
         this.oldLevels = JSON.old_style_levels === true || JSON.old_style_levels === "True";
         this._resultChainFilterLabel = JSON.result_chain_filter_label;
-        this._shortReulstChainLabel = JSON.short_result_chain_label;
+        this._shortResultChainLabel = JSON.short_result_chain_label;
         Object.entries(JSON.periodDateRanges)
             .forEach(([frequency, periodsJSON]) => {
                 this.periods[parseInt(frequency)] = new PeriodRange(frequency, periodsJSON);

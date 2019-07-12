@@ -10625,6 +10625,8 @@ a:hover {
 
 .indicator_name {
   word-break: break-word; }
+  .indicator_name:first-letter {
+    text-transform: uppercase; }
 
 .is-shown-in-modals {
   display: none; }

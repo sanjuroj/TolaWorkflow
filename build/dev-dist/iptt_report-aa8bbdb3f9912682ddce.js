@@ -992,7 +992,7 @@ function () {
     this.validTIMEPERIODS = true;
     this.oldLevels = JSON.old_style_levels === true || JSON.old_style_levels === "True";
     this._resultChainFilterLabel = JSON.result_chain_filter_label;
-    this._shortReulstChainLabel = JSON.short_result_chain_label;
+    this._shortResultChainLabel = JSON.short_result_chain_label;
     Object.entries(JSON.periodDateRanges).forEach(function (_ref2) {
       var _ref3 = _slicedToArray(_ref2, 2),
           frequency = _ref3[0],
@@ -5119,4 +5119,4 @@ function () {
 /***/ })
 
 },[["mYfJ","runtime","vendors"]]]);
-//# sourceMappingURL=iptt_report-d76de6a2fa8b577b9da6.js.map
+//# sourceMappingURL=iptt_report-aa8bbdb3f9912682ddce.js.map
