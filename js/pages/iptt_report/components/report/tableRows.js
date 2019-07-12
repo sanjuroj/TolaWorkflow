@@ -119,9 +119,13 @@ const IndicatorRow = inject('reportStore')(
         let cumulative = indicator.cumulative === null ? null
                 : indicator.cumulative ? gettext('Cumulative')
                             : gettext('Non-cumulative');
+        let displayNumber = indicator.number;
+        if (displayNumber && displayNumber.length > 0 && displayNumber.slice(-1) == ":") {
+            displayNumber = displayNumber.slice(0, -1);
+        }
         return (
             <tr>
-                <IndicatorCell value={ indicator.number } />
+                <IndicatorCell value={ displayNumber } />
                 <IndicatorResultModalCell indicator={ indicator } />
                 <IndicatorEditModalCell indicator={ indicator } />
                 { levelCol && <IndicatorCell value={ indicator.levelName } /> }

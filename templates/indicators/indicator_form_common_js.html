@@ -864,12 +864,12 @@
             errMsg = "{% trans 'Please complete this field. Your baseline can be zero.'|escapejs %}";
         } else if (!$.isNumeric(baseline.val()) || baseline.val() < 0 ) {
             errMsg = "{% trans 'Please complete this field. Your baseline can be zero.'|escapejs %}";
-            return false;
         }
         if (errMsg){
             baseline.addClass('is-invalid');
             // baseline_na.addClass('is-invalid');
             $("#validation_id_baseline").html(errMsg);
+            return false;
         } else {
             reset_baseline_errors();
             errMsg = undefined;
@@ -1150,7 +1150,7 @@
         validateForEmptyField("id_old_level");
     });
 
-    $("#indicator_modal_content").on("blur", "#id_lop_target", function(e){
+    $("#indicator_modal_content").on("keyup", "#id_lop_target", function(e){
         validate_loptarget();
     });
 

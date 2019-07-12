@@ -45,6 +45,8 @@ class DocumentListDocumentSerializer(serializers.ModelSerializer):
 class LogframeIndicatorSerializer(serializers.ModelSerializer):
     level = serializers.PrimaryKeyRelatedField(read_only=True)
     level_order_display = serializers.CharField(read_only=True)
+    auto_number_indicators = serializers.BooleanField(read_only=True)
+
     class Meta:
         model = Indicator
         fields = [
@@ -54,6 +56,8 @@ class LogframeIndicatorSerializer(serializers.ModelSerializer):
             'level',
             'level_order_display',
             'level_order',
+            'number',
+            'auto_number_indicators'
         ]
 
 class LogframeUnassignedIndicatorSerializer(serializers.ModelSerializer):
@@ -63,6 +67,7 @@ class LogframeUnassignedIndicatorSerializer(serializers.ModelSerializer):
             'pk',
             'name',
             'means_of_verification',
+            'number',
         ]
 
 
@@ -146,6 +151,7 @@ class LogframeProgramSerializer(serializers.ModelSerializer):
     results_framework_url = serializers.SerializerMethodField()
     program_page_url = serializers.CharField()
     results_framework = serializers.BooleanField()
+    manual_numbering = serializers.BooleanField(read_only=True)
     rf_chain_sort_label = serializers.SerializerMethodField()
     levels = LogframeLevelSerializer(many=True, read_only=True)
     unassigned_indicators = LogframeUnassignedIndicatorSerializer(many=True, read_only=True)
@@ -159,6 +165,7 @@ class LogframeProgramSerializer(serializers.ModelSerializer):
             'results_framework_url',
             'program_page_url',
             'results_framework',
+            'manual_numbering',
             'rf_chain_sort_label',
             'levels',
             'unassigned_indicators'
@@ -169,7 +176,7 @@ class LogframeProgramSerializer(serializers.ModelSerializer):
         indicator_prefetch = models.Prefetch(
             'indicator_set',
             queryset=Indicator.objects.filter(level__isnull=True).only(
-                'pk', 'name', 'means_of_verification', 'program', 'sector'
+                'pk', 'name', 'means_of_verification', 'program', 'sector', 'number'
             ),
             to_attr='unassigned_indicators'
         )

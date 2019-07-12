@@ -20,7 +20,9 @@ const IndicatorCell = ({ indicator, ontology }) => {
     );
     }
     let name = gettext('Indicator');
-    if (ontology || indicator.level_order_display) {
+    if (indicator.manualNumbering) {
+        name += (indicator.number ? ` ${indicator.number}` : '');
+    } else if (ontology || indicator.level_order_display) {
         name += ` ${trimOntology(ontology)}${indicator.level_order_display}`;
     }
     name += `: ${indicator.name}`;
