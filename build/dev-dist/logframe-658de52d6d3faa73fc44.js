@@ -195,6 +195,8 @@ var Indicator = function Indicator(indicatorData) {
   this.name = indicatorData.name;
   this.level_order_display = indicatorData.level_order_display;
   this.means_of_verification = indicatorData.means_of_verification;
+  this.manualNumbering = !indicatorData.auto_number_indicators;
+  this.number = indicatorData.number || false;
 };
 
 var Level = function Level(levelData) {
@@ -905,7 +907,9 @@ var IndicatorCell = function IndicatorCell(_ref2) {
 
   var name = gettext('Indicator');
 
-  if (ontology || indicator.level_order_display) {
+  if (indicator.manualNumbering) {
+    name += indicator.number ? " ".concat(indicator.number) : '';
+  } else if (ontology || indicator.level_order_display) {
     name += " ".concat(Object(_level_utils__WEBPACK_IMPORTED_MODULE_4__["trimOntology"])(ontology)).concat(indicator.level_order_display);
   }
 
@@ -1027,4 +1031,4 @@ function (_React$Component) {
 /***/ })
 
 },[["+uhY","runtime","vendors"]]]);
-//# sourceMappingURL=logframe-ee3e1bff914e8d4fd080.js.map
+//# sourceMappingURL=logframe-658de52d6d3faa73fc44.js.map
