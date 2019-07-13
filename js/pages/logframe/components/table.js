@@ -19,13 +19,18 @@ const IndicatorCell = ({ indicator, ontology }) => {
         </td>
     );
     }
-    let name = gettext('Indicator');
+    var name;
+    var number = false;
     if (indicator.manualNumbering) {
-        name += (indicator.number ? ` ${indicator.number}` : '');
+        number = (indicator.number ? `${indicator.number}` : false);
     } else if (ontology || indicator.level_order_display) {
-        name += ` ${trimOntology(ontology)}${indicator.level_order_display}`;
+        number = `${trimOntology(ontology)}${indicator.level_order_display}`;
     }
-    name += `: ${indicator.name}`;
+    if (number) {
+        name = `${gettext('Indicator')} ${number}: ${indicator.name}`;
+    } else {
+        name = indicator.name;
+    }
     return (
         <td className="logframe__cell--indicator">
             { name }
