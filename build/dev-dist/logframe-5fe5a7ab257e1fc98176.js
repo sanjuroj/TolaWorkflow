@@ -905,15 +905,21 @@ var IndicatorCell = function IndicatorCell(_ref2) {
     });
   }
 
-  var name = gettext('Indicator');
+  var name;
+  var number = false;
 
   if (indicator.manualNumbering) {
-    name += indicator.number ? " ".concat(indicator.number) : '';
+    number = indicator.number ? "".concat(indicator.number) : false;
   } else if (ontology || indicator.level_order_display) {
-    name += " ".concat(Object(_level_utils__WEBPACK_IMPORTED_MODULE_4__["trimOntology"])(ontology)).concat(indicator.level_order_display);
+    number = "".concat(Object(_level_utils__WEBPACK_IMPORTED_MODULE_4__["trimOntology"])(ontology)).concat(indicator.level_order_display);
   }
 
-  name += ": ".concat(indicator.name);
+  if (number) {
+    name = "".concat(gettext('Indicator'), " ").concat(number, ": ").concat(indicator.name);
+  } else {
+    name = indicator.name;
+  }
+
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
     className: "logframe__cell--indicator"
   }, name);
@@ -1031,4 +1037,4 @@ function (_React$Component) {
 /***/ })
 
 },[["+uhY","runtime","vendors"]]]);
-//# sourceMappingURL=logframe-658de52d6d3faa73fc44.js.map
+//# sourceMappingURL=logframe-5fe5a7ab257e1fc98176.js.map
