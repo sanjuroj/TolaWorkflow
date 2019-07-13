@@ -179,6 +179,7 @@ class IndicatorPlanIndicatorSerializerBase(serializers.ModelSerializer):
             'id',
             'tier_name_only',
             'results_aware_number',
+            'level_order',
             'name',
             'source',
             'definition',

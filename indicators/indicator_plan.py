@@ -2,6 +2,7 @@
 Data definitions and code related to Indicator Plan table view and XLS export
 """
 from itertools import groupby
+from operator import itemgetter
 
 from django.db.models import functions, IntegerField
 from django.utils.translation import (
@@ -274,7 +275,7 @@ def chain_sorted_indicator_queryset(program_id):
 def get_rf_rows(level_qs, program_id):
     rows = []
     for level in [IndicatorPlanLevelWebSerializer(level_obj).data for level_obj in level_qs]:
-        indicators = level.get('indicator_set')
+        indicators = sorted(level.get('indicator_set'), key=itemgetter('level_order'))
         # this check is being bypassed because we are testing the IP with all rows shown
         #  - if it turns out we only want levels shown that HAVE indicators, remove the 'or true'
         #serialized = IndicatorPlanLevelWebSerializer(level)
