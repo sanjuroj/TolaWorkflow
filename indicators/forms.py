@@ -101,12 +101,11 @@ class IndicatorForm(forms.ModelForm):
                                            [(l.id, l.display_name) for l in Level.sort_by_ontology(Level.objects.filter(program_id=self.programval))]
 
 
-        if not self.programval.manual_numbering:
+        if self.programval.results_framework and not self.programval.manual_numbering:
             # in this (the default) case, the number field is removed (values not updated):
             self.fields.pop('number')
-        else:
+        elif self.programval.results_framework:
             # in this case the number field gets this special help text (added as a popover):
-            # 
             self.fields['number'].label = _('Display number')
             # Translators: a "number" in this context is a kind of label.  This is help text to explain why a user is seeing customized numbers instead of auto-generated ones that can derived from the indicator's place in the hierarchy
             self.fields['number'].help_text = _("This number is displayed in place of the indicator number automatically generated through the results framework.  An admin can turn on auto-numbering in program settings")
