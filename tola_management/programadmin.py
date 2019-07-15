@@ -283,7 +283,7 @@ class ProgramAdminSerializer(ModelSerializer):
 
         # default for any unmigrated program is "auto" - so if someone sets their program to "not grouping" - reset it
         # to default ("auto")
-        if validated_data['_using_results_framework'] == instance.NOT_MIGRATED:
+        if '_using_results_framework' in validated_data and validated_data['_using_results_framework'] == instance.NOT_MIGRATED:
             validated_data['auto_number_indicators'] = True
 
         original_countries = instance.country.all()
