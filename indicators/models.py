@@ -569,8 +569,8 @@ class IndicatorSortingQSMixin(object):
     replaced with log frame sorting on release of Satsuma"""
     def with_logframe_sorting(self):
         numeric_re = r'^[[:space:]]*[0-9]+[[:space:]]*$'
-        logframe_re = r'^[[:space:]]*[0-9]+[[.period.]]([0-9]+)?'\
-                      '([[.period.]][0-9]+)?([[.period.]][0-9]+)?([[.period.]])?([a-z]+)?[[:space:]]*$'
+        logframe_re = r'^[[:space:]]*[0-9]+([[.period.]][0-9]+)?'\
+                      '([[.period.]][0-9]+)?([[.period.]][0-9]+)?([[.period.]])?[[:space:]]*$'
         logframe_re2 = r'^[[:space:]]*[0-9]+[[.period.]][0-9]+([[.period.]][0-9]+)?([[.period.]][0-9]+)?[[:space:]]*$'
         logframe_re3 = r'^[[:space:]]*[0-9]+[[.period.]][0-9]+[[.period.]][0-9]+([[.period.]][0-9]+)?[[:space:]]*$'
         logframe_re4 = r'^[[:space:]]*[0-9]+[[.period.]][0-9]+[[.period.]][0-9]+[[.period.]][0-9]+[[:space:]]*$'
