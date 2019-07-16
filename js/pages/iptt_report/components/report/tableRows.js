@@ -48,6 +48,7 @@ const IndicatorResultModalCell = ({ indicator }) => {
     const loadModal = (e) => {
         e.preventDefault();
         let url = `/indicators/result_table/${indicator.pk}/0/?edit=false`;
+        allowModalToClose = true;
         $("#indicator_modal_content").empty();
         $("#modalmessages").empty();
         $("#indicator_modal_content").load(url);
