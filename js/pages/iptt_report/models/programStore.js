@@ -192,8 +192,8 @@ class Period {
     range = null;
     constructor(periodJSON, index, frequency) {
         this.index = index;
-        this.start = new Date(periodJSON[0]);
-        this.end = new Date(periodJSON[1]);
+        this.start = new Date(periodJSON[5]);
+        this.end = new Date(periodJSON[6]);
         this.startDisplay = periodJSON[0];
         this.endDisplay = periodJSON[1];
         if (TIME_AWARE_FREQUENCIES.includes(frequency)) {
