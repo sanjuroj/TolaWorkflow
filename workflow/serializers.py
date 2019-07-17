@@ -68,6 +68,7 @@ class LogframeUnassignedIndicatorSerializer(serializers.ModelSerializer):
             'name',
             'means_of_verification',
             'number',
+            'auto_number_indicators',
         ]
 
 
