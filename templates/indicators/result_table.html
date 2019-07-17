@@ -266,7 +266,7 @@
             <span id="id_span_date_collected_error_msg" class="text-danger">
                 <small>
                     {% ifequal err 'Error_1' %}
-                        {% trans "Targets are not set up for this indicator." %} <strong><a href="{% url 'indicator_update' indicator.id %}" data-tab="#targets" class="indicator-link"> {% trans "Start by selecting a target frequency." %}</a></strong>
+                        {% trans "Targets are not set up for this indicator." %} <strong>
                     {% endifequal %}
 
                     {% ifequal err 'Error_2' %}

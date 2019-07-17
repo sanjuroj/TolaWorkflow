@@ -149,8 +149,6 @@ class TestResultUnassignedUITargetsNotSetup(test.TestCase):
 
     1. The result is displayed in the table.
     2. Under the table, we display error message: Targets are not set up for this indicator.
-        Start by selecting a target frequency.
-    3. The string "Start by selecting a target frequency" links to the Targets tab of the indicator setup form.
     """
 
     def setUp(self):
@@ -194,8 +192,4 @@ class TestResultUnassignedUITargetsNotSetup(test.TestCase):
         self.assertContains(
             response,
             'Targets are not set up for this indicator.'
-        )
-        self.assertContains(
-            response,
-            'Start by selecting a target frequency.'
         )
