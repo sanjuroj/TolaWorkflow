@@ -222,7 +222,7 @@ def indicators_to_iptt(indicator_qs, frequency, tva, results_framework, program_
             'pk': indicator.pk,
             'sortIndex': sort_index,
             'number': (
-                ('{}:'.format(indicator.number_display) if indicator.number_display else None)
+                (u'{}:'.format(indicator.number_display) if indicator.number_display else None)
                 if results_framework else indicator.number
             ),
             'old_number': indicator.number,
