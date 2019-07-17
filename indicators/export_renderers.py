@@ -54,6 +54,8 @@ class ExcelRendererBase(object):
         self.wb.remove(self.wb.active)
 
     def add_sheet(self, name):
+        if name and len(name) > 30:
+            name = name[:26] + u'...'
         sheet = self.wb.create_sheet(name)
         return sheet
 
