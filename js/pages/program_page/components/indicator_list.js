@@ -2,6 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 import { observer } from "mobx-react"
 import eventBus from '../../../eventbus';
+import { AddIndicatorButton } from '../../../components/indicatorModalComponents';
 
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -80,11 +81,9 @@ class StatusHeader extends React.Component {
                 }
             </h3>
             <div>
-            {!readonly &&
-            <a href={`/indicators/indicator_create/${programId}`} role="button" className="btn-link btn-add">
-                <i className="fas fa-plus-circle"/> {gettext("Add indicator")}
-            </a>
-            }
+                {!readonly &&
+                <AddIndicatorButton readonly={readonly} programId={programId}/>
+                }
             </div>
         </div>
     }
@@ -100,6 +99,10 @@ class IndicatorFilter extends React.Component{
             eventBus.emit('nav-select-indicator-to-filter', selectedIndicatorId);
         }
     };
+
+    onGroupingSelection = (selected) => {
+        this.props.uiStore.setGroupBy(selected.value);
+    }
 
     render() {
         const indicators = this.props.rootStore.indicatorStore.indicators;
@@ -117,19 +120,40 @@ class IndicatorFilter extends React.Component{
             selectedValue = indicatorSelectOptions.find(i => i.value === selectedIndicatorId);
         }
 
-        return <nav className="list__filters list__filters--inline-label" id="id_div_indicators">
-            <label className="filters__label">
-                {gettext("Find an indicator:")}
-            </label>
-            <div className="filters__control">
-                <Select
-                    options={indicatorSelectOptions}
-                    value={selectedValue}
-                    isClearable={false}
-                    placeholder={gettext('None')}
-                    onChange={this.onSelection}
-                />
+        const indicatorGroupingOptions = this.props.uiStore.groupByOptions;
+        const groupingValue = this.props.uiStore.selectedGroupByOption;
+        return <nav className="list__filters list__filters--block-label" id="id_div_indicators">
+            <div className="form-group">
+                <label className="">
+                    {gettext("Find an indicator:")}
+                </label>
+                <div className="">
+                    <Select
+                        options={indicatorSelectOptions}
+                        value={selectedValue}
+                        isClearable={false}
+                        placeholder={gettext('None')}
+                        onChange={this.onSelection}
+                    />
+                </div>
             </div>
+            {// show Group By only if program is on results framework AND has two levels (filter label is not false)
+                (!this.props.rootStore.oldStyleLevels && this.props.uiStore.resultChainFilterLabel) &&
+            <React.Fragment>
+                <div className="form-group">
+                    <label className="">
+                        {gettext("Group indicators:")}
+                    </label>
+                    <div className="">
+                        <Select
+                               options={indicatorGroupingOptions}
+                               value={groupingValue}
+                               isClearable={false}
+                               onChange={this.onGroupingSelection}
+                        />
+                    </div>
+                </div>
+            </React.Fragment>}
         </nav>;
     }
 }
@@ -173,7 +197,7 @@ class IndicatorListTable extends React.Component {
             <tr className="table-header">
                 <th className="" id="id_indicator_name_col_header">{gettext("Indicator")}</th>
                 <th className="" id="id_indicator_buttons_col_header">&nbsp;</th>
-                <th className="" id="id_indicator_level_col_header">{gettext("Level")}</th>
+                {this.props.oldStyleLevels && <th className="" id="id_indicator_level_col_header">{gettext("Level")}</th>}
                 <th className="" id="id_indicator_unit_col_header">{gettext("Unit of measure")}</th>
                 <th className="text-right" id="id_indicator_baseline_col_header">{gettext("Baseline")}</th>
                 <th className="text-right" id="id_indicator_target_col_header">{gettext("Target")}</th>
@@ -186,7 +210,21 @@ class IndicatorListTable extends React.Component {
                 const resultsStr = resultsMap.get(indicator.id);
                 const targetPeriodLastEndDate = indicator.target_period_last_end_date ? new Date(indicator.target_period_last_end_date) : null;
                 // ^^^ Because calling Date() on null returns the current date, and we actually need null!
-
+                const displayFunc = (parseInt(indicator.unit_of_measure_type) == 2) ?
+                        (val) => val ? `${val}%` : '' :
+                        (val) => val ? `${val}` : '';
+                const numberCellFunc = (val) => {
+                    if (val == '' || isNaN(parseFloat(val))) {
+                        return '';
+                    }
+                    val = parseFloat(val).toFixed(2);
+                    if (val.slice(-2) == "00") {
+                        return displayFunc(val.slice(0, -3));
+                    } else if (val.slice(-1) == "0") {
+                        return displayFunc(val.slice(0, -1));
+                    }
+                    return displayFunc(val);
+                }
                 return <React.Fragment key={indicator.id}>
                     <tr className={classNames("indicators-list__row", "indicators-list__indicator-header", {
                         "is-highlighted": indicator.just_created,
@@ -194,12 +232,15 @@ class IndicatorListTable extends React.Component {
                     })}>
                         <td>
                             <a href="#"
-                               className="indicator_results_toggle"
+                               className="indicator_results_toggle btn btn-link text-left"
                                onClick={(e) => this.onIndicatorResultsToggleClick(e, indicator.id)}
                             >
                                 <FontAwesomeIcon icon={resultsExist ? 'caret-down' : 'caret-right'} />
-                                <strong>{indicator.number}</strong>&nbsp;
-                                <span className="indicator_name">{indicator.name}</span>
+                                <strong>
+                                    { indicator.number_if_numbering || indicator.number_display ?
+                                            indicator.number_display + ':' : ''  }
+                                </strong>&nbsp;
+                                <span className="indicator_name">{ indicator.name }</span>
                             </a>
 
                             {indicator.key_performance_indicator &&
@@ -220,10 +261,10 @@ class IndicatorListTable extends React.Component {
                                onClick={(e) => this.onIndicatorUpdateClick(e, indicator.id)}><i
                                 className="fas fa-cog"/></a>
                         </td>
-                        <td>{indicator.level ? indicator.level.name : ''}</td>
+                        { this.props.oldStyleLevels && <td>{ indicator.old_level }</td> }
                         <td>{indicator.unit_of_measure}</td>
-                        <td className="text-right">{indicator.baseline_display}</td>
-                        <td className="text-right">{indicator.lop_target_display}</td>
+                        <td className="text-right">{ indicator.baseline_na ? gettext('N/A') : numberCellFunc(indicator.baseline) }</td>
+                        <td className="text-right">{ numberCellFunc(indicator.lop_target_active) }</td>
                     </tr>
 
                     {resultsExist &&
@@ -250,10 +291,14 @@ export const IndicatorList = observer(function (props) {
     const resultsMap = props.rootStore.resultsMap;
     const currentIndicatorFilter = props.uiStore.currentIndicatorFilter;
     const selectedIndicatorId = props.uiStore.selectedIndicatorId;
+    const sortByChain = props.uiStore.groupByChain;
     // Either a gas gauge filter is applied, or an indicator has been selected, but not both
 
     // apply gas gauge filter
     let filteredIndicators = indicatorStore.filterIndicators(currentIndicatorFilter);
+
+    filteredIndicators = indicatorStore.sortIndicators(
+        props.rootStore.oldStyleLevels, sortByChain, filteredIndicators);
 
     if (selectedIndicatorId) {
         filteredIndicators = filteredIndicators.filter((i) => i.id == selectedIndicatorId);
@@ -275,6 +320,7 @@ export const IndicatorList = observer(function (props) {
             </div>
         }
 
-        <IndicatorListTable indicators={filteredIndicators} resultsMap={resultsMap} program={program} />
+        <IndicatorListTable indicators={filteredIndicators} resultsMap={resultsMap}
+                            program={program} oldStyleLevels={ props.rootStore.oldStyleLevels } />
     </React.Fragment>
 });

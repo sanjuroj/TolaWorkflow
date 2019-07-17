@@ -111,6 +111,14 @@ class TestLogframeSorting(test.TestCase, SortingTestsMixin):
         self.expected = reversed(self.expected)
         self.program_id = program.id
 
+class TestMixedSorting(test.TestCase, SortingTestsMixin):
+    def setUp(self):
+        program = w_factory.ProgramFactory()
+        self.expected = []
+        for x in reversed(['1', '1.1.1', '2.1.2', '3', '3.2.1.1', '10.1', '1.1a', '1.1b', '1.2a']):
+            self.expected.append(get_indicator(x, program).id)
+        self.expected = reversed(self.expected)
+        self.program_id = program.id
 
 class TestQueryCounts(test.TestCase):
     def setUp(self):

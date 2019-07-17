@@ -7,6 +7,7 @@ import browserPlugin from 'router5-plugin-browser';
 import {IndicatorList} from './components/indicator_list';
 import {ProgramMetrics} from './components/program_metrics';
 import {ProgramPageStore, ProgramPageUIStore, IndicatorFilterType} from './models';
+import {reloadPageIfCached} from '../../general_utilities';
 
 import './pinned_reports';
 
@@ -15,7 +16,7 @@ import './pinned_reports';
  * Model/Store setup
  */
 const rootStore = new ProgramPageStore(jsContext.indicators, jsContext.program);
-const uiStore = new ProgramPageUIStore();
+const uiStore = new ProgramPageUIStore(jsContext.result_chain_filter);
 
 
 /*
@@ -26,7 +27,7 @@ const uiStore = new ProgramPageUIStore();
 eventBus.on('open-indicator-update-modal', (indicatorId) => {
     // Note: depends on indicator_list_modals.html
 
-    let url = `/indicators/indicator_update/${indicatorId}/?modal=1`;
+    let url = `/indicators/indicator_update/${indicatorId}/`;
 
     $("#indicator_modal_content").empty();
     $("#modalmessages").empty();
@@ -56,8 +57,13 @@ eventBus.on('reload-indicator', indicatorId => {
     $.get(`/indicators/api/indicator/${indicatorId}`, rootStore.indicatorStore.updateIndicator);
 });
 
+// reload all indicators json obj
+eventBus.on('reload-all-indicators', programId => {
+    $.get(`/indicators/api/indicators/${programId}`, (data) => rootStore.indicatorStore.setIndicators(data.indicators));
+});
+
 // remove an indicator from the list
-eventBus.on('indicator-deleted', rootStore.indicatorStore.removeIndicator);
+//eventBus.on('indicator-deleted', rootStore.indicatorStore.removeIndicator);
 
 // close all expanded indicators in the table
 eventBus.on('close-all-indicators', () => {
@@ -141,26 +147,31 @@ $("#indicator-list-react-component").on("click", ".indicator-link[data-tab]", fu
 
 });
 
-// when indicator update modal is closed, update targets
-$('#indicator_modal_div').on('hide.bs.modal', function (e) {
-    let form = $(this).find('form');
-    let form_action = form.attr('action').split('/');
-    let indicator_id = parseInt(form_action[form_action.length -2]);
-    // if this form has just successfully deleted this indicator, don't update it, remove it
-    if (form.attr('deleted') === 'true') {
-        eventBus.emit('indicator-deleted', indicator_id);
-    } else {
-        eventBus.emit('reload-indicator', indicator_id);
-        
-        if (rootStore.resultsMap.has(indicator_id)) {
-            eventBus.emit('load-indicator-results', indicator_id);
-        }
+// when indicator creation modal form completes a save
+$('#indicator_modal_div').on('created.tola.indicator.save', (e, params) => {
+    eventBus.emit('reload-indicator', params.indicatorId);
+});
+
+// when indicator update modal form completes a save or change to periodic targets
+$('#indicator_modal_div').on('updated.tola.indicator.save', (e, params) => {
+    let indicatorId = params.indicatorId;
+    let programId = params.programId;
+
+    eventBus.emit('reload-all-indicators', programId);
+
+    if (rootStore.resultsMap.has(indicatorId)) {
+        eventBus.emit('load-indicator-results', indicatorId);
     }
+});
+
+// when indicator is deleted from modal
+$('#indicator_modal_div').on('deleted.tola.indicator.save', (e, params) => {
+    eventBus.emit('reload-all-indicators', params.programId);
 });
 
 // When "add results" modal is closed, the targets data needs refreshing
 // the indicator itself also needs refreshing for the gas tank gauge
-$('#indicator_results_div').on('hide.bs.modal', function (e) {
+$('#indicator_results_div').on('hidden.bs.modal', function (e) {
     let recordchanged = $(this).find('form').data('recordchanged');
     if (recordchanged === true) {
         let indicator_id = $(this).find('form #id_indicator').val();
@@ -226,17 +237,5 @@ eventBus.on('nav-select-indicator-to-filter', (selectedIndicatorId) => {
 });
 
 
-/*
- * Are we loading a cached page? If so, reload to avoid displaying stale indicator data
- * See ticket #1423
- */
-// moving the cache check to after page load as firefox calculates transfer size at the end
-$(function() {
-    let isCached = window.performance.getEntriesByType("navigation")[0].transferSize === 0;
-    //adding a second check to ensure that if for whatever reason teh transfersize reads wrong, we don't reload on
-    //a reload:
-    let isReload = window.performance.getEntriesByType("navigation")[0].type === "reload";
-    if (isCached && !isReload) {        
-        window.location.reload();
-    }
-});
+
+reloadPageIfCached();

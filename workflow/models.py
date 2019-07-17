@@ -227,6 +227,24 @@ class TolaUser(models.Model):
             user_country_codes.add(self.country.code)
         return bool(user_country_codes & settings.PROJECTS_ACCESS_WHITELIST_SET)
 
+
+    def program_role(self, program_id):
+        if self.user.is_superuser:
+            return 'high'
+
+        program = Program.objects.get(id=program_id)
+        access_level = None
+
+        for p_country in program.country.all():
+            if p_country in self.countries.all():
+                access_level = 'low'
+
+        try:
+            access_level = ProgramAccess.objects.get(tolauser=self, program=program).role
+        except Exception as e:
+            print e
+        return access_level
+
     @property
     def has_admin_management_access(self):
         #circular import avoidance
@@ -499,6 +517,10 @@ class ActiveProgramsManager(models.Manager):
             funding_status__iexact=self.ACTIVE_FUNDING_STATUS)
 
 class Program(models.Model):
+    NOT_MIGRATED = 1 # programs created before satsuma release which have not switched over yet
+    MIGRATED = 2 # programs created before satsuma which have switched to new RF levels
+    RF_ALWAYS = 3 # programs created after satsuma release - on new RF levels with no option
+
     gaitid = models.CharField(_("ID"), max_length=255, null=True, blank=True)
     name = models.CharField(_("Program Name"), max_length=255, blank=True)
     funding_status = models.CharField(_("Funding Status"), max_length=255, blank=True)
@@ -522,6 +544,15 @@ class Program(models.Model):
     end_date = models.DateField(_("Program End Date"), null=True, blank=True)
     reporting_period_start = models.DateField(_("Reporting Period Start Date"), null=True, blank=True)
     reporting_period_end = models.DateField(_("Reporting Period End Date"), null=True, blank=True)
+    auto_number_indicators = models.BooleanField(
+        # Translators: This is an option that users can select to use the new "results framework" option to organize their indicators.
+        _("Auto-number indicators according to the results framework"),
+        default=True, blank=False
+    )
+    _using_results_framework = models.IntegerField(
+        _("Group indicators according to the results framework"),
+        default=RF_ALWAYS, blank=False
+    )
 
     objects = models.Manager()
     active_programs = ActiveProgramsManager()
@@ -634,7 +665,7 @@ class Program(models.Model):
         """returns true if this program has any indicators which have a time-aware target frequency - used in program
         reporting period date validation"""
         return self.indicator_set.filter(
-            target_frequency__in=Indicator.TIME_AWARE_TARGET_FREQUENCIES
+            target_frequency__in=Indicator.REGULAR_TARGET_FREQUENCIES
             ).exists()
 
     @property
@@ -643,7 +674,7 @@ class Program(models.Model):
         indicators with a time-aware frequency - used in program reporting period date validation"""
         most_recent = PeriodicTarget.objects.filter(
             indicator__program=self,
-            indicator__target_frequency__in=Indicator.TIME_AWARE_TARGET_FREQUENCIES
+            indicator__target_frequency__in=Indicator.REGULAR_TARGET_FREQUENCIES
         ).order_by('-start_date').first()
         return most_recent if most_recent is None else most_recent.start_date
 
@@ -651,6 +682,10 @@ class Program(models.Model):
     def get_periods_for_frequency(self, frequency):
         period_generator = PeriodicTarget.generate_for_frequency(frequency)
         return period_generator(self.reporting_period_start, self.reporting_period_end)
+
+    @property
+    def target_frequencies(self):
+        return self.indicator_set.all().order_by().values('target_frequency').distinct().values_list('target_frequency', flat=True)
 
     @property
     def admin_logged_fields(self):
@@ -678,6 +713,39 @@ class Program(models.Model):
             "start_date": start_date,
             "end_date": end_date
         }
+
+    @property
+    def rf_chain_sort_label(self):
+        """Many pages ask whether you sort indicators "by Level" or "by <second tier name> chain"
+
+            This helper method provides the second option label"""
+        tier = self.level_tiers.filter(tier_depth=2).first() if self.results_framework else None
+        if tier:
+            # Translators: this labels a filter to sort indicators, for example, "by Outcome chain":
+            tier_name = _(tier.name)
+            return _('by %(level_name)s chain') % {'level_name': tier_name}
+        return None
+
+    @property
+    def rf_chain_group_label(self):
+        """IPTT labels filter options as "<second tier name> chains"
+        """
+        tier = self.level_tiers.filter(tier_depth=2).first() if self.results_framework else None
+        if tier:
+            # Translators: this labels a filter to sort indicators, for example, "by Outcome chain":
+            tier_name = _(tier.name)
+            return _('%(level_name)s chains') % {'level_name': tier_name}
+        return None
+
+    @property
+    def results_framework(self):
+        if hasattr(self, 'using_results_framework'):
+            return self.using_results_framework
+        return self._using_results_framework != self.NOT_MIGRATED
+
+    @property
+    def manual_numbering(self):
+        return self.results_framework and not self.auto_number_indicators
 
 
 PROGRAM_ROLE_CHOICES = (

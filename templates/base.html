@@ -160,7 +160,7 @@
             <div id="id_div_breadcrumb">{% block bread_crumb %}{% endblock %}</div>
             <header class="region-header">
                 {% block region_header %}
-                    <h1 class="page-title">{% block page_title %}{% endblock %}</h1>
+                <h1 class="page-title {% block extra_page_title_classes %}{% endblock %}">{% block page_title %}{% endblock %}</h1>
                     {% block header_extras %}{% endblock %}
                 {% endblock %}
             </header>
