@@ -89,45 +89,79 @@ def get_program_filter_data(request):
                 'reporting_period_end': end_formatted,
                 'result_chain_filter_label': program.rf_chain_sort_label,
                 'short_result_chain_label': program.rf_chain_group_label,
+                # blanks in below strings are placeholders until this moves to associative arrays:
                 'periodDateRanges': {
                     '1': [[
                         start_formatted,
-                        end_formatted
+                        end_formatted,
+                        '',
+                        '',
+                        '',
+                        program.reporting_period_start.isoformat(),
+                        program.reporting_period_end.isoformat(),
                         ]],
                     '2': [[
                         start_formatted,
                         end_formatted,
-                        ugettext('Midline')
+                        ugettext('Midline'),
+                        '',
+                        '',
+                        program.reporting_period_start.isoformat(),
+                        program.reporting_period_end.isoformat(),
                         ], [
                             start_formatted,
                             end_formatted,
-                            ugettext('Endline')
+                            ugettext('Endline'),
+                            '',
+                            '',
+                            program.reporting_period_start.isoformat(),
+                            program.reporting_period_end.isoformat(),
                         ]],
                     '3': [
                         [l10n_date_medium(period['start']),
                          l10n_date_medium(period['end']),
-                         period['start'] > timezone.now().date()]
+                         period['start'] > timezone.now().date(),
+                         '',
+                         '',
+                         period['start'].isoformat(),
+                         period['end'].isoformat(),
+                        ]
                         for period in PeriodicTarget.generate_for_frequency(3)(
                             program.reporting_period_start,
                             program.reporting_period_end)],
                     '4': [
                         [l10n_date_medium(period['start']),
                          l10n_date_medium(period['end']),
-                         period['start'] > timezone.now().date()]
+                         period['start'] > timezone.now().date(),
+                         '',
+                         '',
+                         period['start'].isoformat(),
+                         period['end'].isoformat(),
+                        ]
                         for period in PeriodicTarget.generate_for_frequency(4)(
                             program.reporting_period_start,
                             program.reporting_period_end)],
                     '5': [
                         [l10n_date_medium(period['start']),
                          l10n_date_medium(period['end']),
-                         period['start'] > timezone.now().date()]
+                         period['start'] > timezone.now().date(),
+                         '',
+                         '',
+                         period['start'].isoformat(),
+                         period['end'].isoformat(),
+                        ]
                         for period in PeriodicTarget.generate_for_frequency(5)(
                             program.reporting_period_start,
                             program.reporting_period_end)],
                     '6': [
                         [l10n_date_medium(period['start']),
                          l10n_date_medium(period['end']),
-                         period['start'] > timezone.now().date()]
+                         period['start'] > timezone.now().date(),
+                         '',
+                         '',
+                         period['start'].isoformat(),
+                         period['end'].isoformat(),
+                        ]
                         for period in PeriodicTarget.generate_for_frequency(6)(
                             program.reporting_period_start,
                             program.reporting_period_end)],
@@ -136,7 +170,9 @@ def get_program_filter_data(request):
                          l10n_date_medium(period['end']),
                          l10n_monthname(period['start']),
                          period['start'].year,
-                         period['start'] > timezone.now().date()]
+                         period['start'] > timezone.now().date(),
+                         period['start'].isoformat(),
+                         period['end'].isoformat()]
                         for period in PeriodicTarget.generate_for_frequency(7)(
                             program.reporting_period_start,
                             program.reporting_period_end)],
