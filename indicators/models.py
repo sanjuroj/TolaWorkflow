@@ -1203,8 +1203,8 @@ class Indicator(SafeDeleteModel):
     @cached_property
     def number_display(self):
         if self.results_framework and self.auto_number_indicators and self.level and self.level.leveltier:
-            return "{0} {1}{2}".format(
-                _(self.leveltier_name), self.level.display_ontology, self.level_order_display
+            return u'{0} {1}{2}'.format(
+                unicode(self.leveltier_name), self.level.display_ontology, self.level_order_display
             )
         elif self.results_framework and not self.program.auto_number_indicators:
             return self.number
