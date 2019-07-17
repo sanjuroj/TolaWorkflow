@@ -12,7 +12,9 @@
     let validation_msgs = {};
     let initialTrackedFieldsFormState;
     let initialLevelFormValue;  // level field is tracked independent of initialTrackedFieldsFormState
-    let allowModalToClose = false;  // Can the create modal be closed without prompting the user?
+    // this variable is set to TRUE meaning by default any modal that attempts to close can close
+    // in the Indicator Form Open function it is set to false to allow validation to proceed normally
+    let allowModalToClose = true;  // Can the create modal be closed without prompting the user?
 
     const DELETE_ALL_TARGETS_MESSAGE = "{% trans 'Any results assigned to these targets will need to be reassigned. For future reference, please provide a reason for deleting these targets.' %}"
     const DELETE_INDICATOR_MESSAGE = "{% trans 'All details about this indicator and results recorded to the indicator will be permanently removed. For future reference, please provide a reason for deleting this indicator.' %}"
@@ -85,7 +87,7 @@
 
         $("#indicator_modal_content").empty();
         $("#modalmessages").empty();
-
+        allowModalToClose = false;
         $("#indicator_modal_content").load(url);
         $("#indicator_modal_div").modal('show');
     }
