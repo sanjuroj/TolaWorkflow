@@ -577,8 +577,8 @@ function () {
     this.display = null;
     this.range = null;
     this.index = index;
-    this.start = new Date(periodJSON[0]);
-    this.end = new Date(periodJSON[1]);
+    this.start = new Date(periodJSON[5]);
+    this.end = new Date(periodJSON[6]);
     this.startDisplay = periodJSON[0];
     this.endDisplay = periodJSON[1];
 
@@ -2018,7 +2018,7 @@ var DateSelect = function DateSelect(props) {
   var selectId = Object(_formUtils__WEBPACK_IMPORTED_MODULE_3__["uniqueId"])('date-select');
   var formattedOptions = props.options && props.options.length == 1 && props.options[0].value !== undefined ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
     value: props.options[0].value
-  }, props.options[0].label) : props.options && props.options[0].options !== undefined ? props.options.map(function (optgroup, index) {
+  }, props.options[0].label) : props.options && props.options.length > 0 && props.options[0].options && props.options[0].options !== undefined ? props.options.map(function (optgroup, index) {
     return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("optgroup", {
       label: optgroup.label,
       key: index
@@ -5125,4 +5125,4 @@ function () {
 /***/ })
 
 },[["mYfJ","runtime","vendors"]]]);
-//# sourceMappingURL=iptt_report-bfce33e79b543406e684.js.map
+//# sourceMappingURL=iptt_report-80fe8016ecd9d507c2ec.js.map
