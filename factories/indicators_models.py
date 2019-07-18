@@ -2,7 +2,16 @@ from random import randint
 
 import faker
 from django.utils import timezone
-from factory import DjangoModelFactory, post_generation, SubFactory, lazy_attribute, Sequence
+from factory import (
+    DjangoModelFactory,
+    post_generation,
+    SubFactory,
+    RelatedFactory,
+    SelfAttribute,
+    lazy_attribute,
+    Sequence,
+    Trait,
+)
 from factory.fuzzy import FuzzyChoice
 
 from indicators.models import (
@@ -13,6 +22,7 @@ from indicators.models import (
     Indicator as IndicatorM,
     IndicatorType as IndicatorTypeM,
     Level as LevelM,
+    LevelTier as LevelTierM,
     Objective as ObjectiveM,
     PeriodicTarget as PeriodicTargetM,
     StrategicObjective as StrategicObjectiveM,
@@ -49,6 +59,19 @@ class IndicatorFactory(DjangoModelFactory):
         model = IndicatorM
         django_get_or_create = ('name',)
 
+    class Params:
+        lop_indicator = Trait(
+            lop_target=1000,
+            target_frequency=IndicatorM.LOP,
+            periodic_target=RelatedFactory(
+                'factories.indicators_models.PeriodicTargetFactory',
+                'indicator',
+                target=1000,
+                start_date=SelfAttribute('indicator.program.reporting_period_start'),
+                end_date=SelfAttribute('indicator.program.reporting_period_end'),
+            )
+        )
+
     name = Sequence(lambda n: 'Indicator {0}'.format(n))
 
 
@@ -78,6 +101,25 @@ class LevelFactory(DjangoModelFactory):
         model = LevelM
 
     name = Sequence(lambda n: 'Level: {0}'.format(n))
+
+
+class LevelTierFactory(DjangoModelFactory):
+    class Meta:
+        model = LevelTierM
+
+    class Params:
+        mc_template = Trait(
+            name=Sequence(
+                lambda n: LevelTierM.TEMPLATES['mc_standard']['tiers'][n]
+            )
+        )
+
+    name = Sequence(lambda n: 'LevelTier: {0}'.format(n))
+    tier_depth = Sequence(lambda n: n)
+
+    @classmethod
+    def build_mc_template(cls, program):
+        return cls.create_batch(4, program=program, mc_template=True)
 
 
 class ResultFactory(DjangoModelFactory):

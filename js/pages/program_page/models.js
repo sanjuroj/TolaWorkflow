@@ -22,6 +22,7 @@ export class IndicatorStore {
         this.updateIndicator = this.updateIndicator.bind(this);
         this.removeIndicator = this.removeIndicator.bind(this);
         this.filterIndicators = this.filterIndicators.bind(this);
+        this.setIndicators = this.setIndicators.bind(this);
     }
 
     @action
@@ -29,9 +30,16 @@ export class IndicatorStore {
         let i = this.indicators.findIndex(e => e.id === indicator.id);
         if (i > -1) {
             this.indicators[i] = indicator;
+        } else {
+            this.indicators.push(indicator);
         }
     }
-    
+
+    @action
+    setIndicators(indicators) {
+        this.indicators = indicators;
+    }
+
     @action
     removeIndicator(indicatorId) {
         this.indicators = this.indicators.filter(e => e.id != indicatorId);
@@ -75,6 +83,59 @@ export class IndicatorStore {
     @computed
     get getIndicatorsReporting() {
         return this.indicators.filter(i => i.reporting === true);
+    }
+    
+    sortIndicators(oldStyleLevels, sortByChain, indicators) {
+        if (oldStyleLevels) {
+            return indicators.slice().sort(
+                (a, b) => {
+                    return (a.old_level_pk < b.old_level_pk) ? -1
+                            : (a.old_level_pk < b.old_level_pk) ? 1
+                                : 0
+                }
+            );
+        } else if (!sortByChain) {
+            return indicators.slice().sort(
+                (a, b) => {
+                    if (a.level && a.level.level_depth) {
+                        if (b.level && b.level.level_depth) {
+                            if (a.level.level_depth === b.level.level_depth) {
+                                let a_ontology = a.level.ontology.split('.');
+                                let b_ontology = b.level.ontology.split('.');
+                                for (let i=0; i < a_ontology.length; i++) {
+                                    if (a_ontology[i] != b_ontology[i]) {
+                                        return a_ontology[i] - b_ontology[i]
+                                    }
+                                }
+                                return (a.level_order || 0) - (b.level_order || 0);
+                            }
+                            return a.level.level_depth - b.level.level_depth;
+                        }
+                        return -1;
+                    }
+                    return (b.level && b.level.level_depth) ? 1 : 0;
+                }
+            );
+        } else {
+            return indicators.slice().sort(
+                (a, b) => {
+                    if (a.level && a.level.ontology) {
+                        if (b.level && b.level.ontology) {
+                            let a_ontology = a.level.ontology.split('.');
+                            let b_ontology = b.level.ontology.split('.');
+                            for (let i=0; i < a_ontology.length; i++) {
+                                if (a_ontology[i] != b_ontology[i]) {
+                                    return a_ontology[i] - b_ontology[i]
+                                }
+                            }
+                            return 0;
+                        }
+                        return -1;
+                    }
+                    return (b.level && b.level.ontology) ? 1 : 0;
+                }
+            );
+        }
     }
 
     filterIndicators(filterType) {
@@ -126,7 +187,6 @@ export class ProgramPageStore {
     constructor(indicators, program) {
         this.indicatorStore = new IndicatorStore(indicators);
         this.program = program;
-
         this.addResultsHTML = this.addResultsHTML.bind(this);
         this.deleteResultsHTML = this.deleteResultsHTML.bind(this);
     }
@@ -145,13 +205,21 @@ export class ProgramPageStore {
     deleteAllResultsHTML() {
         this.resultsMap.clear();
     }
+    
+    @computed
+    get oldStyleLevels() {
+        return !this.program.results_framework;
+    }
+
 }
 
 export class ProgramPageUIStore {
     @observable currentIndicatorFilter;  // selected gas gauge filter
     @observable selectedIndicatorId; // indicators filter
+    @observable groupByChain = true;
 
-    constructor() {
+    constructor(resultChainFilterLabel) {
+        this.resultChainFilterLabel = resultChainFilterLabel;
         this.setIndicatorFilter = this.setIndicatorFilter.bind(this);
         this.clearIndicatorFilter = this.clearIndicatorFilter.bind(this);
         this.setSelectedIndicatorId = this.setSelectedIndicatorId.bind(this);
@@ -171,4 +239,29 @@ export class ProgramPageUIStore {
     setSelectedIndicatorId(selectedIndicatorId) {
         this.selectedIndicatorId = selectedIndicatorId;
     }
+    
+    @computed
+    get groupByOptions() {
+        return [
+            {
+                value: 1,
+                label: this.resultChainFilterLabel
+            },
+            {
+                value: 2,
+                label: gettext('by Level')
+            }
+        ];
+    }
+    
+    @computed
+    get selectedGroupByOption() {
+        return this.groupByChain ? this.groupByOptions[0] : this.groupByOptions[1];
+    }
+    
+    @action
+    setGroupBy(value) {
+        this.groupByChain = value == 1;
+    }
+
 }

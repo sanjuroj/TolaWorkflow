@@ -12,8 +12,7 @@
 <aside class="program__status">
     <h3>
         {% blocktrans %}Program metrics <small>for target periods completed to date</small>{% endblocktrans %}
-        {% include "indicators/program_target_period_info_helptext.html" %}
-        </small>
+        <small>{% include "indicators/program_target_period_info_helptext.html" %}</small>
     </h3>
     <div id="program-metrics-react-component"></div>
 </aside>
@@ -23,8 +22,19 @@
         <section class="sidebar__detail">
             <h3>{% trans "Program details" %}</h3>
             <ul class="list-unstyled">
-                <li><a href="{% url 'indicator_plan' program.id %}">{% trans "Indicator plan" %}</a></li>
+                {% if program.levels.first %}{# show RF link for all users, if RF is already built #}
+                {# Translators: a link to the results framework #}
+                <li><a href="{% url 'results_framework_builder' program.id %}"><i class="fas fa-sitemap"></i> {% trans "Results framework" %}</a></li>
+                    {% if program.results_framework %} {# Only show Logframe if they have also switched to RF level indicator grouping #}
+                        {# Translators: a link to the logistical framework model #}
+                        <li><a href="{% url 'logframe' program.id %}"><i class="fas fa-table"></i> {% trans "Logframe" %}</a></li>
+                    {% endif %}
+                {% elif not readonly %}{# otherwise prompt high-level users to create RF #}
+                {# Translators: a prompt to create the results framework #}
+                <li><a href="{% url 'results_framework_builder' program.id %}"><i class="fas fa-sitemap"></i> {% trans "Create results framework" %}</a></li>
+                {% endif %}
                 <li><a href="{% url 'tola_management_audit_log' program_id=program.id %}"><i class="fas fa-history"></i> {% trans "Change log" %}</a> </li>
+                <li><a href="{% url 'indicator_plan' program.id %}"><i class="fas fa-th"></i> {% trans "Indicator plan" %}</a></li>
             {% if program.gait_url %}
                 {% comment %}Translators: GAIT is the Grant and Award Information Tracker system used by MercyCorps {% endcomment %}
                 <li><a href="{{ program.gait_url }}">{% trans "View program in GAIT" %}</a></li>
