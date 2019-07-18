@@ -523,6 +523,9 @@ class IPTTFullReportSerializerMixin:
 
     @property
     def indicators(self):
+        if not self.program_data['results_framework']:
+            old_level_pk = {level: pk for (pk, level) in Indicator.OLD_LEVELS}
+            return sorted(self._indicators.get(self.frequency, []), key=lambda i: old_level_pk.get(i.old_level, 100))
         return self._indicators.get(self.frequency, [])
 
     @property
@@ -716,6 +719,13 @@ class IPTTExcelRendererBase(object):
         if end is not None:
             end = int(end) + 1
         return periods[start:end]
+
+    @property
+    def indicators(self):
+        if not self.program_data['results_framework']:
+            old_level_pk = {level: pk for (pk, level) in Indicator.OLD_LEVELS}
+            return sorted(self._indicators, key=lambda i: old_level_pk.get(i.old_level, 100))
+        return self._indicators
 
     def render(self, request):
         return self.renderer_class(self).render()
