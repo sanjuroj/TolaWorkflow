@@ -403,7 +403,7 @@ var DateSelect = function DateSelect(props) {
   var selectId = Object(_formUtils__WEBPACK_IMPORTED_MODULE_3__["uniqueId"])('date-select');
   var formattedOptions = props.options && props.options.length == 1 && props.options[0].value !== undefined ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
     value: props.options[0].value
-  }, props.options[0].label) : props.options && props.options[0].options !== undefined ? props.options.map(function (optgroup, index) {
+  }, props.options[0].label) : props.options && props.options.length > 0 && props.options[0].options && props.options[0].options !== undefined ? props.options.map(function (optgroup, index) {
     return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("optgroup", {
       label: optgroup.label,
       key: index
@@ -1037,4 +1037,4 @@ function (_React$Component) {
 /***/ })
 
 },[["+uhY","runtime","vendors"]]]);
-//# sourceMappingURL=logframe-5fe5a7ab257e1fc98176.js.map
+//# sourceMappingURL=logframe-d72d7bf27e391fff5b4a.js.map

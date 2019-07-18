@@ -35,7 +35,7 @@ export const DateSelect = ( props ) => {
     let formattedOptions =
         (props.options && props.options.length == 1 && props.options[0].value !== undefined) ?
             <option value={ props.options[0].value }>{ props.options[0].label }</option> :
-            (props.options && props.options[0].options !== undefined) ?
+            (props.options && props.options.length > 0 && props.options[0].options && props.options[0].options !== undefined) ?
                 props.options.map(
                     (optgroup, index) => {
                         return <optgroup label={ optgroup.label } key={ index }>
