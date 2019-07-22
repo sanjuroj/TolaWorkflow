@@ -569,6 +569,7 @@ class IndicatorSortingQSMixin(object):
     replaced with log frame sorting on release of Satsuma"""
     def with_logframe_sorting(self):
         numeric_re = r'^[[:space:]]*[0-9]+[[:space:]]*$'
+        castable_to_int_re = r'[0-9]+'
         logframe_re = r'^[[:space:]]*(([0-9]+)|([a-z]+))([[.period.]](([0-9]+)|([a-z]+)))?'\
                       '([[.period.]](([0-9]+)|([a-z]+)))?([[.period.]](([0-9]+)|([a-z]+)))?([[.period.]])?[[:space:]]*$'
         logframe_re2 = r'^[[:space:]]*(([0-9]+)|([a-z]+))[[.period.]](([0-9]+)|([a-z]+))([[.period.]](([0-9]+)|([a-z]+)))?([[.period.]](([0-9]+)|([a-z]+)))?([[.period.]])?[[:space:]]*$'
@@ -654,14 +655,39 @@ class IndicatorSortingQSMixin(object):
                 default=models.Value(0),
                 output_field=models.CharField()
             )
+        ).annotate(
+            logsort_a_int=models.Case(
+                models.When(
+                    logsort_a__regex=castable_to_int_re,
+                    then=models.F('logsort_a')
+                ),
+                default=models.Value(0),
+                output_field=models.IntegerField()
+            ),
+            logsort_b_int=models.Case(
+                models.When(
+                    logsort_b__regex=castable_to_int_re,
+                    then=models.F('logsort_b')
+                ),
+                default=models.Value(0),
+                output_field=models.IntegerField()
+            ),
+            logsort_c_int=models.Case(
+                models.When(
+                    logsort_c__regex=castable_to_int_re,
+                    then=models.F('logsort_c')
+                ),
+                default=models.Value(0),
+                output_field=models.IntegerField()
+            ),
         )
         return qs.order_by(
             'logsort_type',
-            models.functions.Cast('logsort_a', models.IntegerField()),
+            models.functions.Cast('logsort_a_int', models.IntegerField()),
             models.functions.Cast('logsort_a', models.CharField()),
-            models.functions.Cast('logsort_b', models.IntegerField()),
+            models.functions.Cast('logsort_b_int', models.IntegerField()),
             models.functions.Cast('logsort_b', models.CharField()),
-            models.functions.Cast('logsort_c', models.IntegerField()),
+            models.functions.Cast('logsort_c_int', models.IntegerField()),
             models.functions.Cast('logsort_c', models.CharField()),
             'number'
             )
