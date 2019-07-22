@@ -569,11 +569,11 @@ class IndicatorSortingQSMixin(object):
     replaced with log frame sorting on release of Satsuma"""
     def with_logframe_sorting(self):
         numeric_re = r'^[[:space:]]*[0-9]+[[:space:]]*$'
-        logframe_re = r'^[[:space:]]*[0-9]+([[.period.]][0-9]+)?'\
-                      '([[.period.]][0-9]+)?([[.period.]][0-9]+)?([[.period.]])?[[:space:]]*$'
-        logframe_re2 = r'^[[:space:]]*[0-9]+[[.period.]][0-9]+([[.period.]][0-9]+)?([[.period.]][0-9]+)?[[:space:]]*$'
-        logframe_re3 = r'^[[:space:]]*[0-9]+[[.period.]][0-9]+[[.period.]][0-9]+([[.period.]][0-9]+)?[[:space:]]*$'
-        logframe_re4 = r'^[[:space:]]*[0-9]+[[.period.]][0-9]+[[.period.]][0-9]+[[.period.]][0-9]+[[:space:]]*$'
+        logframe_re = r'^[[:space:]]*[0-9]+([a-z]+)?([[.period.]][0-9]+([a-z]+)?)?'\
+                      '([[.period.]][0-9]+([a-z]+)?)?([[.period.]][0-9]+([a-z]+)?)?([[.period.]])?[[:space:]]*$'
+        logframe_re2 = r'^[[:space:]]*[0-9]+[[.period.]][0-9]+([a-z]+)?([[.period.]][0-9]+([a-z]+)?)?([[.period.]][0-9]+([a-z]+)?)?[[:space:]]*$'
+        logframe_re3 = r'^[[:space:]]*[0-9]+[[.period.]][0-9]+[[.period.]][0-9]+([a-z]+)?([[.period.]][0-9]+([a-z]+)?)?[[:space:]]*$'
+        logframe_re4 = r'^[[:space:]]*[0-9]+[[.period.]][0-9]+[[.period.]][0-9]+[[.period.]][0-9]+([a-z]+)?[[:space:]]*$'
         old_level_whens = [
             models.When(
                 old_level=level_name,
@@ -628,7 +628,7 @@ class IndicatorSortingQSMixin(object):
                     then=models.F('number'),
                 ),
                 default=models.Value(0),
-                output_field=models.IntegerField()
+                output_field=models.CharField()
             ),
             logsort_b=models.Case(
                 models.When(
@@ -636,7 +636,7 @@ class IndicatorSortingQSMixin(object):
                     then=DoubleDecimalSplit('number', 2)
                 ),
                 default=models.Value(0),
-                output_field=models.IntegerField()
+                output_field=models.CharField()
             ),
             logsort_c=models.Case(
                 models.When(
@@ -644,7 +644,7 @@ class IndicatorSortingQSMixin(object):
                     then=DoubleDecimalSplit('number', 3)
                 ),
                 default=models.Value(0),
-                output_field=models.IntegerField()
+                output_field=models.CharField()
             ),
             logsort_d=models.Case(
                 models.When(
@@ -652,14 +652,14 @@ class IndicatorSortingQSMixin(object):
                     then=DoubleDecimalSplit('number', 4)
                 ),
                 default=models.Value(0),
-                output_field=models.IntegerField()
+                output_field=models.CharField()
             )
         )
         return qs.order_by(
             'logsort_type',
-            models.functions.Cast('logsort_a', models.IntegerField()),
-            models.functions.Cast('logsort_b', models.IntegerField()),
-            models.functions.Cast('logsort_c', models.IntegerField()),
+            models.functions.Cast('logsort_a', models.CharField()),
+            models.functions.Cast('logsort_b', models.CharField()),
+            models.functions.Cast('logsort_c', models.CharField()),
             'number'
             )
 
