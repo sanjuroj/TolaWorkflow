@@ -657,8 +657,11 @@ class IndicatorSortingQSMixin(object):
         )
         return qs.order_by(
             'logsort_type',
+            models.functions.Cast('logsort_a', models.IntegerField()),
             models.functions.Cast('logsort_a', models.CharField()),
+            models.functions.Cast('logsort_b', models.IntegerField()),
             models.functions.Cast('logsort_b', models.CharField()),
+            models.functions.Cast('logsort_c', models.IntegerField()),
             models.functions.Cast('logsort_c', models.CharField()),
             'number'
             )
