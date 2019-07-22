@@ -2,6 +2,7 @@
 from rest_framework import serializers
 from django.utils import timezone, formats
 from django.utils.translation import ugettext, ugettext_lazy
+from operator import attrgetter
 from tola.l10n_utils import l10n_date_medium
 
 from workflow.models import Program
@@ -138,6 +139,7 @@ class ProgramSerializer(serializers.ModelSerializer):
             'reporting_period_start',
             'reporting_period_end',
             'results_framework',
+            'auto_number_indicators'
         ]
 
 
@@ -721,12 +723,16 @@ class IPTTExcelRendererBase(object):
             end = int(end) + 1
         return periods[start:end]
 
+    def old_level_sort_indicators(self, indicators):
+        old_level_pk = {level: pk for (pk, level) in Indicator.OLD_LEVELS}
+        return sorted(indicators, key=attrgetter('old_level_pk'))
+
     @property
     def indicators(self):
+        indicators = self._indicators
         if not self.program_data['results_framework']:
-            old_level_pk = {level: pk for (pk, level) in Indicator.OLD_LEVELS}
-            return sorted(self._indicators, key=lambda i: old_level_pk.get(i.old_level, 100))
-        return self._indicators
+            indicators = self.old_level_sort_indicators(indicators)
+        return indicators
 
     def render(self, request):
         return self.renderer_class(self).render()
@@ -747,6 +753,8 @@ class IPTTSingleExcelRendererMixin(IPTTExcelRendererBase):
 
     def load_indicators(self):
         indicators = self.indicator_qs.filter(program_id=self.program_data['pk'])
+        if not self.program_data['results_framework'] or not self.program_data['auto_number_indicators']:
+            indicators = indicators.with_logframe_sorting()
         filter_params = ['sites', 'types', 'sectors', 'indicators']
         filters = {param: self.request.getlist(param) for param in self.request.viewkeys() & filter_params}
         if self.request.getlist('levels'):
