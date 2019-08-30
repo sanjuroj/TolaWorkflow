@@ -35,7 +35,7 @@ from indicators.views import views_program
 from django.contrib import admin
 admin.autodiscover()
 admin.site.site_header = 'Tola Activity administration'
-from workflow.views import dated_target_info
+from workflow.views import dated_target_info, ProgramDash
 
 #REST FRAMEWORK
 router = routers.DefaultRouter()
@@ -121,7 +121,7 @@ urlpatterns = [
 
                 url(r'^program/(?P<program>\d+)/logframe/$',
                     views_program.logframe_view, name='logframe'),
-                
+
                 url(r'^program/(?P<program>\d+)/logframe_excel/$',
                     views_program.logframe_excel_view, name='logframe_excel'),
 
@@ -164,7 +164,7 @@ urlpatterns = [
 
                 #url(r'^oauth/', include('social_django.urls', namespace='social')),
                 # Site home page
-                url(r'^$', views.index, name='index'),
+                url(r'^$', ProgramDash.as_view(), name='index'),
 
 
     ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

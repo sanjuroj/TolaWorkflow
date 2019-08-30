@@ -165,11 +165,16 @@ class ProgramDash(LoginRequiredMixin, ListView):
 
         getPrograms = self.request.user.tola_user.available_programs.filter(Q(agreement__isnull=False) | Q(complete__isnull=False), funding_status="Funded").distinct()
         filtered_program = None
-        if int(self.kwargs['pk']) == 0:
+        try:
+            program_pk = int(self.kwargs['pk'])
+        except KeyError:
+            program_pk = 0
+
+        if program_pk == 0:
             getDashboard = getPrograms.prefetch_related('agreement','agreement__projectcomplete','agreement__office').filter(funding_status="Funded").order_by('name').annotate(has_agreement=Count('agreement'),has_complete=Count('complete'))
         else:
             getDashboard = getPrograms.prefetch_related('agreement','agreement__projectcomplete','agreement__office').filter(id=self.kwargs['pk'], funding_status="Funded").order_by('name')
-            filtered_program = getPrograms.only('name').get(pk=self.kwargs['pk']).name
+            filtered_program = getPrograms.only('name').get(pk=program_pk).name
 
         if self.kwargs.get('status', None):
 
@@ -185,7 +190,7 @@ class ProgramDash(LoginRequiredMixin, ListView):
         else:
             status = None
 
-        return render(request, self.template_name, {'getDashboard': getDashboard, 'getPrograms': getPrograms, 'APPROVALS': APPROVALS, 'program_id':  self.kwargs['pk'], 'status': status, 'filtered_program': filtered_program})
+        return render(request, self.template_name, {'getDashboard': getDashboard, 'getPrograms': getPrograms, 'APPROVALS': APPROVALS, 'program_id':  program_pk, 'status': status, 'filtered_program': filtered_program})
 
 
 @method_decorator(has_projects_access, name='dispatch')
