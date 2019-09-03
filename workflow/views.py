@@ -230,10 +230,11 @@ class ProjectAgreementImport(LoginRequiredMixin, ListView):
     def get(self, request, *args, **kwargs):
         countries = getCountry(request.user)
         getPrograms = Program.objects.all().filter(funding_status="Funded", country__in=countries)
-        getServices = ExternalService.objects.all()
         getCountries = Country.objects.all().filter(country__in=countries)
 
-        return render(request, self.template_name, {'getPrograms': getPrograms, 'getServices': getServices , 'getCountries': getCountries})
+        return render(request, self.template_name, {
+            'getPrograms': getPrograms, 'getCountries': getCountries
+        })
 
 
 @method_decorator(has_projects_access, name='dispatch')
@@ -354,11 +355,7 @@ class ProjectAgreementUpdate(LoginRequiredMixin, UpdateView):
         context.update({'p_agreement': getAgreement.project_name})
         context.update({'p_agreement_program': getAgreement.program})
 
-
-        try:
-            getQuantitative = Result.objects.all().filter(agreement__id=self.kwargs['pk']).order_by('indicator')
-        except Result.DoesNotExist:
-            getQuantitative = None
+        getQuantitative = None
         context.update({'getQuantitative': getQuantitative})
 
         try:
@@ -494,11 +491,7 @@ class ProjectAgreementDetail(LoginRequiredMixin, DetailView):
             getDocuments = None
         context.update({'getDocuments': getDocuments})
 
-        try:
-            getQuantitativeOutputs = Result.objects.all().filter(agreement__id=self.kwargs['pk'])
-
-        except Result.DoesNotExist:
-            getQuantitativeOutputs = None
+        getQuantitativeOutputs = None
         context.update({'getQuantitativeOutputs': getQuantitativeOutputs})
 
         return context
@@ -637,9 +630,6 @@ class ProjectCompleteCreate(LoginRequiredMixin, CreateView):
         getComplete = ProjectComplete.objects.get(id=latest.id)
         getAgreement = ProjectAgreement.objects.get(id=self.request.POST['project_agreement'])
 
-        #update the quantitative data fields to include the newly created complete
-        Result.objects.filter(agreement__id=getComplete.project_agreement_id).update(complete=getComplete)
-
         #update the other budget items
         Budget.objects.filter(agreement__id=getComplete.project_agreement_id).update(complete=getComplete)
 
@@ -702,10 +692,7 @@ class ProjectCompleteUpdate(LoginRequiredMixin, UpdateView):
         context.update({'getBudget': getBudget})
 
         # get Quantitative data
-        try:
-            getQuantitative = Result.objects.all().filter(Q(agreement__id=getComplete.project_agreement_id) | Q(complete__id=getComplete.pk)).order_by('indicator')
-        except Result.DoesNotExist:
-            getQuantitative = None
+        getQuantitative = None
         context.update({'getQuantitative': getQuantitative})
 
         # get benchmark or project components
@@ -1134,18 +1121,18 @@ class DocumentationDelete(DeleteView):
 
     form_class = DocumentationForm
 
-class IndicatorDataBySite(LoginRequiredMixin, ListView):
-    template_name = 'workflow/site_indicatordata.html'
-    context_object_name = 'results'
-
-    def get_context_data(self, **kwargs):
-        context = super(IndicatorDataBySite, self).get_context_data(**kwargs)
-        context['site'] = SiteProfile.objects.get(pk=self.kwargs.get('site_id'))
-        return context
-
-    def get_queryset(self):
-        q = Result.objects.filter(site__id=self.kwargs.get('site_id'), program__in=self.request.user.tola_user.available_programs).order_by('program', 'indicator')
-        return q
+# class IndicatorDataBySite(LoginRequiredMixin, ListView):
+#     template_name = 'workflow/site_indicatordata.html'
+#     context_object_name = 'results'
+#
+#     def get_context_data(self, **kwargs):
+#         context = super(IndicatorDataBySite, self).get_context_data(**kwargs)
+#         context['site'] = SiteProfile.objects.get(pk=self.kwargs.get('site_id'))
+#         return context
+#
+#     def get_queryset(self):
+#         q = Result.objects.filter(site__id=self.kwargs.get('site_id'), program__in=self.request.user.tola_user.available_programs).order_by('program', 'indicator')
+#         return q
 
 
 class ProjectCompleteBySite(LoginRequiredMixin, ListView):
