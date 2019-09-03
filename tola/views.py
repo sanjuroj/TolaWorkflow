@@ -13,7 +13,6 @@ from django.db.models import Q
 from django.contrib.auth.models import Group
 from django.utils.translation import gettext as _
 from django.contrib.auth import views as authviews
-from indicators.queries import ProgramWithMetrics
 
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied

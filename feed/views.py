@@ -1,26 +1,19 @@
 from tola_management.permissions import verify_program_access_level
 from .serializers import (
-    PeriodicTargetSerializer, ProgramIndicatorSerializer, ProgramSerializer, UserSerializer,
-    SectorSerializer, ProjectTypeSerializer, OfficeSerializer, SiteProfileSerializer, CountrySerializer,
-    AgreementSerializer, CompleteSerializer, IndicatorSerializer, ReportingFrequencySerializer, TolaUserSerializer,
-    IndicatorTypeSerializer, ObjectiveSerializer, DisaggregationTypeSerializer, LevelSerializer, StakeholderSerializer,
-    ExternalServiceRecordSerializer, ExternalServiceSerializer, StrategicObjectiveSerializer, CapacitySerializer,
-    StakeholderTypeSerializer, EvaluateSerializer, ProfileTypeSerializer, ProvinceSerializer, DistrictSerializer,
-    AdminLevelThreeSerializer, TolaTableSerializer, DisaggregationValueSerializer, VillageSerializer,
-    ContactSerializer, DocumentationSerializer, ResultSerializer, LoggedUserSerializer,
-    ChecklistSerializer, OrganizationSerializer, SiteProfileLightSerializer, IndicatorIdAndNameSerializer,
-    SectorIdAndNameSerializer, ProgramTargetFrequenciesSerializer
+    ProgramSerializer, UserSerializer, SectorSerializer, ProjectTypeSerializer, OfficeSerializer,
+    SiteProfileSerializer, CountrySerializer, AgreementSerializer, CompleteSerializer,
+    TolaUserSerializer, StakeholderSerializer, CapacitySerializer, StakeholderTypeSerializer,
+    EvaluateSerializer, ProfileTypeSerializer, ProvinceSerializer, DistrictSerializer,
+    AdminLevelThreeSerializer, VillageSerializer, ContactSerializer, DocumentationSerializer,
+    LoggedUserSerializer, ChecklistSerializer, OrganizationSerializer, SiteProfileLightSerializer,
+    SectorIdAndNameSerializer
 )
 
 from workflow.models import (
     Program, Sector, ProjectType, Office, SiteProfile, Country, ProjectComplete, Organization,
     ProjectAgreement, Stakeholder, Capacity, Evaluate, ProfileType, LoggedUser,
-    Province, District, AdminLevelThree, Village, StakeholderType, Contact, Documentation, Checklist
-)
-from indicators.models import (
-    Indicator, Objective, ReportingFrequency, TolaUser, IndicatorType, DisaggregationType,
-    Level, ExternalService, ExternalServiceRecord, StrategicObjective, Result, TolaTable,
-    DisaggregationValue, PeriodicTarget
+    Province, District, AdminLevelThree, Village, StakeholderType, Contact, Documentation, Checklist,
+    TolaUser
 )
 from tola_management.permissions import verify_program_access_level
 from django.contrib.auth.models import User
@@ -52,37 +45,6 @@ class SmallResultsSetPagination(PageNumberPagination):
     page_size = 20
     page_size_query_param = 'page_size'
     max_page_size = 50
-
-
-class PeriodicTargetReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
-    serializer_class = PeriodicTargetSerializer
-
-    def get_queryset(self):
-        queryset = PeriodicTarget.objects.all()
-        indicator_id = self.request.query_params.get('indicator', None)
-        if indicator_id:
-            queryset = queryset.filter(indicator=indicator_id)
-        return queryset
-
-
-class PogramIndicatorReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
-    # serializer_class = ProgramIndicatorSerializer
-    pagination_class = StandardResultsSetPagination
-
-    def get_serializer_class(self):
-        if self.request.query_params.get('program', None):
-            return IndicatorIdAndNameSerializer
-        return ProgramIndicatorSerializer
-
-    def get_queryset(self):
-        program_id = self.request.query_params.get('program', None)
-        if program_id:
-            queryset = Indicator.objects.filter(program__in=[program_id]).values('id', 'name')
-        else:
-            queryset = Program.objects.prefetch_related(
-                'indicator_set', 'indicator_set__indicator_type', 'indicator_set__sector', 'indicator_set__level',
-                'indicator_set__result_set').all()
-        return queryset
 
 
 # API Classes
@@ -246,36 +208,6 @@ class CompleteViewSet(viewsets.ModelViewSet):
     pagination_class = SmallResultsSetPagination
 
 
-class IndicatorViewSet(viewsets.ModelViewSet):
-    def get_serializer_class(self):
-        if self.request.query_params.get('program', None):
-            return IndicatorIdAndNameSerializer
-        return IndicatorSerializer
-
-    def list(self, request):
-        program_id = request.query_params.get('program', None)
-        if program_id:
-            queryset = Indicator.objects.filter(program__in=[program_id])
-        else:
-            user_countries = getCountry(request.user)
-            queryset = Indicator.objects.filter(program__country__in=user_countries)
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
-
-    filter_fields = ('program__country__country', 'program__name')
-    filter_backends = (django_filters.rest_framework.DjangoFilterBackend,)
-    queryset = Indicator.objects.all()
-
-
-class ReportingFrequencyViewSet(viewsets.ModelViewSet):
-    """
-    This viewset automatically provides `list`, `create`, `retrieve`,
-    `update` and `destroy` actions.
-    """
-    queryset = ReportingFrequency.objects.all()
-    serializer_class = ReportingFrequencySerializer
-
-
 class TolaUserViewSet(viewsets.ModelViewSet):
     """
     A ViewSet for listing or retrieving TolaUsers.
@@ -296,62 +228,6 @@ class TolaUserViewSet(viewsets.ModelViewSet):
     serializer_class = TolaUserSerializer
 
 
-class IndicatorTypeViewSet(viewsets.ModelViewSet):
-    """
-    This viewset automatically provides `list`, `create`, `retrieve`,
-    `update` and `destroy` actions.
-    """
-    queryset = IndicatorType.objects.all()
-    serializer_class = IndicatorTypeSerializer
-
-    def get_queryset(self):
-        program_id = self.request.query_params.get('program', None)
-        if program_id:
-            type_ids = Indicator.objects.filter(program__in=[program_id]).values(
-                'indicator_type__id').distinct().order_by('indicator_type')
-            queryset = IndicatorType.objects.filter(id__in=type_ids).distinct()
-        else:
-            queryset = IndicatorType.objects.all()
-        return queryset
-
-
-class ObjectiveViewSet(viewsets.ModelViewSet):
-    """
-    This viewset automatically provides `list`, `create`, `retrieve`,
-    `update` and `destroy` actions.
-    """
-    queryset = Objective.objects.all()
-    serializer_class = ObjectiveSerializer
-
-
-class DisaggregationTypeViewSet(viewsets.ModelViewSet):
-    """
-    This viewset automatically provides `list`, `create`, `retrieve`,
-    `update` and `destroy` actions.
-    """
-    queryset = DisaggregationType.objects.all()
-    serializer_class = DisaggregationTypeSerializer
-
-
-class LevelViewSet(viewsets.ModelViewSet):
-    """
-    This viewset automatically provides `list`, `create`, `retrieve`,
-    `update` and `destroy` actions.
-    """
-    queryset = Level.objects.all()
-    serializer_class = LevelSerializer
-
-    def get_queryset(self):
-        program_id = self.request.query_params.get('program', None)
-        if program_id:
-            level_ids = Indicator.objects.filter(program__in=[program_id]).values(
-                'level__id').distinct().order_by('level')
-            queryset = Level.objects.filter(id__in=level_ids).distinct()
-        else:
-            queryset = Level.objects.all()
-        return queryset
-
-
 class StakeholderViewSet(viewsets.ModelViewSet):
     """
     This viewset automatically provides `list`, `create`, `retrieve`,
@@ -369,33 +245,6 @@ class StakeholderViewSet(viewsets.ModelViewSet):
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend,)
     queryset = Stakeholder.objects.all()
     serializer_class = StakeholderSerializer
-
-
-class ExternalServiceViewSet(viewsets.ModelViewSet):
-    """
-    This viewset automatically provides `list`, `create`, `retrieve`,
-    `update` and `destroy` actions.
-    """
-    queryset = ExternalService.objects.all()
-    serializer_class = ExternalServiceSerializer
-
-
-class ExternalServiceRecordViewSet(viewsets.ModelViewSet):
-    """
-    This viewset automatically provides `list`, `create`, `retrieve`,
-    `update` and `destroy` actions.
-    """
-    queryset = ExternalServiceRecord.objects.all()
-    serializer_class = ExternalServiceRecordSerializer
-
-
-class StrategicObjectiveViewSet(viewsets.ModelViewSet):
-    """
-    This viewset automatically provides `list`, `create`, `retrieve`,
-    `update` and `destroy` actions.
-    """
-    queryset = StrategicObjective.objects.all()
-    serializer_class = StrategicObjectiveSerializer
 
 
 class StakeholderTypeViewSet(viewsets.ModelViewSet):
@@ -488,71 +337,6 @@ class DocumentationViewSet(viewsets.ModelViewSet):
     serializer_class = DocumentationSerializer
 
 
-class ResultViewSet(viewsets.ModelViewSet):
-    """
-    This viewset automatically provides `list`, `create`, `retrieve`,
-    `update` and `destroy` actions.
-    """
-
-    def list(self, request):
-        user_countries = getCountry(request.user)
-        queryset = Result.objects.all().filter(program__country__in=user_countries)
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
-
-    filter_fields = ('indicator__program__country__country', 'indicator__program__name')
-    filter_backends = (django_filters.rest_framework.DjangoFilterBackend,)
-    queryset = Result.objects.all()
-    serializer_class = ResultSerializer
-    pagination_class = SmallResultsSetPagination
-
-
-class TolaTableViewSet(viewsets.ModelViewSet):
-    """
-    This viewset automatically provides `list`, `create`, `retrieve`,
-    `update` and `destroy` actions.
-    """
-
-    def list(self, request):
-        #user_countries = getCountry(request.user)
-        #queryset = TolaTable.objects.all().filter(country__in=user_countries)
-        queryset = self.get_queryset()
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
-
-    def get_queryset(self):
-        user_countries = getCountry(self.request.user)
-        queryset = TolaTable.objects.filter(country__in=user_countries)
-        table_id = self.request.query_params.get('table_id', None)
-        if table_id is not None:
-            queryset = queryset.filter(table_id=table_id)
-        return queryset
-
-    filter_fields = ('table_id', 'country__country', 'result__indicator__program__name')
-    filter_backends = (django_filters.rest_framework.DjangoFilterBackend,)
-    serializer_class = TolaTableSerializer
-    pagination_class = StandardResultsSetPagination
-
-
-class DisaggregationValueViewSet(viewsets.ModelViewSet):
-    """
-    This viewset automatically provides `list`, `create`, `retrieve`,
-    `update` and `destroy` actions.
-    """
-
-    def list(self, request):
-        user_countries = getCountry(request.user)
-        queryset = DisaggregationValue.objects.all().filter(country__in=user_countries)
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
-
-    filter_fields = ('country__country', 'indicator__program__name')
-    filter_backends = (django_filters.rest_framework.DjangoFilterBackend,)
-    queryset = DisaggregationValue.objects.all()
-    serializer_class = DisaggregationValueSerializer
-    pagination_class = StandardResultsSetPagination
-
-
 class ProjectAgreementViewSet(APIDefaultsMixin, viewsets.ModelViewSet):
     """API endpoint for getting ProjectAgreement."""
 
@@ -575,14 +359,3 @@ class ChecklistViewSet(APIDefaultsMixin, viewsets.ModelViewSet):
 class OrganizationViewSet(APIDefaultsMixin, viewsets.ModelViewSet):
     queryset = Organization.objects.all()
     serializer_class = OrganizationSerializer
-
-
-class ProgramTargetFrequencies(viewsets.ViewSet):
-    def list(self, request):
-        program = get_object_or_404(Program, pk=request.query_params.get('program_id', None))
-        verify_program_access_level(request, program.pk, 'low')
-        queryset = program.indicator_set.exclude(
-            models.Q(target_frequency=Indicator.EVENT) | models.Q(target_frequency__isnull=True)
-            ).values('target_frequency').distinct().order_by('target_frequency')
-        serializer = ProgramTargetFrequenciesSerializer(queryset, many=True)
-        return Response(serializer.data)

@@ -2,7 +2,6 @@ from django.shortcuts import render
 
 from tola_management.permissions import has_projects_access
 from workflow.models import ProjectAgreement, ProjectComplete, Program, SiteProfile,Country
-from indicators.models import Result
 
 from django.db.models import Sum
 from django.db.models import Q
@@ -27,11 +26,6 @@ def DefaultCustomDashboard(request,id=0,status=0):
     #transform to list if a submitted country
     selected_countries_list = Country.objects.all().filter(program__id=program_id)
 
-    getQuantitativeDataSums = Result.objects.filter(indicator__program__id=program_id,achieved__isnull=False, indicator__key_performance_indicator=True).exclude(achieved=None).order_by('indicator__number').values('indicator__number','indicator__name','indicator__id').annotate(targets=Sum('periodic_target__target'), actuals=Sum('achieved')).exclude(achieved=None)
-
-    totalTargets = getQuantitativeDataSums.aggregate(Sum('targets'))
-    totalActuals = getQuantitativeDataSums.aggregate(Sum('actuals'))
-
     getFilteredName=Program.objects.get(id=program_id)
 
     getProjectsCount = ProjectAgreement.objects.all().filter(program__id=program_id, program__country__in=countries).count()
@@ -42,8 +36,8 @@ def DefaultCustomDashboard(request,id=0,status=0):
     getInProgressCount = ProjectAgreement.objects.all().filter(program__id=program_id).filter(Q(Q(approval='in progress') | Q(approval=None)), program__country__in=countries).count()
     nostatus_count = ProjectAgreement.objects.all().filter(program__id=program_id).filter(Q(Q(approval=None) | Q(approval=""))).count()
 
-    getSiteProfile = SiteProfile.objects.all().filter(Q(projectagreement__program__id=program_id) | Q(result__program__id=program_id))
-    getSiteProfileIndicator = SiteProfile.objects.all().filter(Q(result__program__id=program_id))
+    getSiteProfile = SiteProfile.objects.all().filter(projectagreement__program__id=program_id)
+    getSiteProfileIndicator = SiteProfile.objects.all()
 
     if (status) =='Approved':
        getProjects = ProjectAgreement.objects.all().filter(program__id=program_id, program__country__in=countries, approval='approved').prefetch_related('projectcomplete')
@@ -71,9 +65,20 @@ def DefaultCustomDashboard(request,id=0,status=0):
 
                     get_project_completed.append(project)
 
-    return render(request, "customdashboard/customdashboard/visual_dashboard.html", {'getSiteProfile':getSiteProfile, 'getBudgetEstimated': getBudgetEstimated, 'getQuantitativeDataSums': getQuantitativeDataSums,
-                                                                     'country': countries, 'getAwaitingApprovalCount':getAwaitingApprovalCount,
-                                                                     'getFilteredName': getFilteredName,'getProjects': getProjects, 'getApprovedCount': getApprovedCount,
-                                                                     'getRejectedCount': getRejectedCount, 'getInProgressCount': getInProgressCount,'nostatus_count': nostatus_count,
-                                                                     'getProjectsCount': getProjectsCount, 'selected_countries_list': selected_countries_list,
-                                                                     'getSiteProfileIndicator': getSiteProfileIndicator, 'get_project_completed': get_project_completed, 'totalActuals': totalActuals, 'totalTargets': totalTargets, 'totalBudgetted': totalBudgetted, 'totalActual': totalActual})
+    return render(request, "customdashboard/customdashboard/visual_dashboard.html", {
+        'getSiteProfile':getSiteProfile,
+        'getBudgetEstimated': getBudgetEstimated,
+        'country': countries,
+        'getAwaitingApprovalCount':getAwaitingApprovalCount,
+        'getFilteredName': getFilteredName,
+        'getProjects': getProjects,
+        'getApprovedCount': getApprovedCount,
+        'getRejectedCount': getRejectedCount,
+        'getInProgressCount': getInProgressCount,
+        'nostatus_count': nostatus_count,
+        'getProjectsCount': getProjectsCount,
+        'selected_countries_list': selected_countries_list,
+        'getSiteProfileIndicator': getSiteProfileIndicator,
+        'get_project_completed': get_project_completed,
+        'totalBudgetted': totalBudgetted,
+        'totalActual': totalActual})

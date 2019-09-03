@@ -11,7 +11,6 @@ from .models import Program, Country, Province, AdminLevelThree, District, Proje
     Documentation, Monitor, Benchmarks, Budget, ApprovalAuthority, Checklist, ChecklistItem, Contact, Stakeholder, FormGuidance, \
     TolaUser
 from formlibrary.models import TrainingAttendance, Distribution
-from indicators.models import Result, ExternalService, Indicator
 from django.utils import timezone
 from django.utils.datastructures import MultiValueDictKeyError
 from django.urls import reverse

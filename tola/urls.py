@@ -1,8 +1,6 @@
 from tola import views
 from tola.views import *
-from feed.views import (
-    ProgramTargetFrequencies,
-)
+
 from tola_management.views import (
     UserAdminViewSet,
     OrganizationAdminViewSet,
@@ -12,8 +10,6 @@ from tola_management.programadmin import (
 )
 from tola_management.countryadmin import (
     CountryAdminViewSet,
-    CountryObjectiveViewset,
-    CountryDisaggregationViewSet,
 )
 from django.conf.urls import include, url
 # Import i18n_patterns
@@ -26,10 +22,6 @@ from rest_framework.authtoken import views as authtoken_views
 from django.contrib.auth import views as authviews
 
 from tola import views as tolaviews
-from indicators.views.views_indicators import ProgramPage, old_program_page
-from indicators.views.views_results_framework import (
-    LevelViewSet, insert_new_level, save_leveltiers, reorder_indicators, indicator_list)
-from indicators.views import views_program
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -54,7 +46,6 @@ router = routers.DefaultRouter()
 # router.register(r'indicatortype', IndicatorTypeViewSet)
 # router.register(r'objective', ObjectiveViewSet)
 # router.register(r'disaggregationtype', DisaggregationTypeViewSet)
-router.register(r'level', LevelViewSet)
 # router.register(r'externalservice', ExternalServiceViewSet)
 # router.register(r'externalservicerecord', ExternalServiceRecordViewSet)
 # router.register(r'strategicobjective', StrategicObjectiveViewSet)
@@ -78,15 +69,12 @@ router.register(r'level', LevelViewSet)
 # router.register(r'organization', OrganizationViewSet)
 # router.register(r'pindicators', PogramIndicatorReadOnlyViewSet, base_name='pindicators')
 # router.register(r'periodictargets', PeriodicTargetReadOnlyViewSet, base_name='periodictargets')
-router.register(r'programtargetfrequencies', ProgramTargetFrequencies, base_name='programtargetfrequencies')
 
 #tola admin
 router.register(r'tola_management/user', UserAdminViewSet, base_name='tolamanagementuser')
 router.register(r'tola_management/organization', OrganizationAdminViewSet, base_name='tolamanagementorganization')
 router.register(r'tola_management/program', ProgramAdminViewSet, base_name='tolamanagementprograms')
 router.register(r'tola_management/country', CountryAdminViewSet, base_name='tolamanagementcountry')
-router.register(r'tola_management/countryobjective', CountryObjectiveViewset, base_name='tolamanagementcountryobjective')
-router.register(r'tola_management/countrydisaggregation', CountryDisaggregationViewSet, base_name='tolamanagementcountrydisaggregation')
 
 
 urlpatterns = [
@@ -115,31 +103,8 @@ urlpatterns = [
                 # Site home page filtered by country
                 url(r'^(?P<selected_country>\w+)/$', views.index, name='index'),
 
-                # Program page
-                url(r'^program/(?P<program>\d+)/$',
-                    ProgramPage.as_view(), name='program_page'),
-
-                url(r'^program/(?P<program>\d+)/logframe/$',
-                    views_program.logframe_view, name='logframe'),
-
-                url(r'^program/(?P<program>\d+)/logframe_excel/$',
-                    views_program.logframe_excel_view, name='logframe_excel'),
-
-                # Results framework builder
-                url(r'^api/insert_new_level', insert_new_level, name='insert_new_level'),
-                url(r'^api/save_leveltiers', save_leveltiers, name='save_leveltiers'),
-                url(r'^api/reorder_indicators', reorder_indicators, name='reorder_indicators'),
-                url(r'^api/indicator_list/(?P<program_id>\d+)/$', indicator_list, name='indicator_list'),
-
-                # url redirect for people with old bookmarks
-                url(r'^program/(?P<program_id>\d+)/(?P<indicator_id>\d+)/(?P<indicator_type_id>\d+)/$',
-                    old_program_page, name='old_program_page'),
-
                 # app include of workflow urls
                 url(r'^workflow/', include('workflow.urls')),
-
-                # app include of indicator urls
-                url(r'^indicators/', include('indicators.urls')),
 
                 # app include of customdashboard urls
                 url(r'^customdashboard/', include('customdashboard.urls')),

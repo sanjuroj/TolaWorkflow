@@ -13,7 +13,6 @@ from .models import (
     Monitor, Budget, Capacity, Evaluate, Office, Checklist, ChecklistItem, Province, Stakeholder,
     TolaUser, Contact, Sector, Country
 )
-from indicators.models import Result, Indicator, PeriodicTarget
 from crispy_forms.layout import LayoutObject, TEMPLATE_PACK
 from tola.util import getCountry
 import ast

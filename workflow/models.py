@@ -1945,6 +1945,3 @@ def get_user_country(request):
     except Exception, e:
         response = "undefined"
         return response
-
-# importing at the bottom of the file so that there is not circular imports
-from indicators.models import Indicator, PeriodicTarget, Result

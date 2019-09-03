@@ -43,10 +43,6 @@ from workflow.models import (
     ProgramAccess
 )
 
-from indicators.models import (
-    Indicator,
-    Level)
-
 from .models import (
     ProgramAdminAuditLog,
     ProgramAuditLog
@@ -102,7 +98,7 @@ def get_audit_log_workbook(ws, program):
         # Translators: Part of change log, reason for the change as entered by the user
         Cell(ws, value=_('Rationale'))
     ]
-    
+
     title = Cell(ws, value=_("Change log"))
     title.font = Font(size=18)
     ws.append([title,])
@@ -313,28 +309,9 @@ class ProgramAdminSerializer(ModelSerializer):
         )
         return updated_instance
 
-class ProgramAuditLogIndicatorSerializer(ModelSerializer):
-    class Meta:
-        model = Indicator
-        fields = (
-            'name',
-            'leveltier_name',
-            'level_display_ontology',
-            'results_aware_number',
-        )
-
-class ProgramAuditLogLevelSerializer(ModelSerializer):
-    class Meta:
-        model = Level
-        fields = (
-            'name',
-            'display_ontology',
-        )
 
 class ProgramAuditLogSerializer(ModelSerializer):
     id = IntegerField(allow_null=True, required=False)
-    indicator = ProgramAuditLogIndicatorSerializer()
-    level = ProgramAuditLogLevelSerializer()
     user = CharField(source='user.name', read_only=True)
     organization = CharField(source='organization.name', read_only=True)
     date = DateTimeField(format="%Y-%m-%d %H:%M:%S")

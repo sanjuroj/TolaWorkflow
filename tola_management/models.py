@@ -14,9 +14,6 @@ from workflow.models import (
     Program,
 )
 
-from indicators.models import (
-    Indicator,
-    Level)
 
 def diff(previous, new, mapping):
     diff_list = []
@@ -195,8 +192,6 @@ class ProgramAuditLog(models.Model, DiffableLog):
     date = models.DateTimeField(_('Modification Date'), auto_now_add=True)
     user = models.ForeignKey(TolaUser, related_name="+")
     organization = models.ForeignKey(Organization, related_name="+")
-    indicator = models.ForeignKey(Indicator, related_name="+", null=True)
-    level = models.ForeignKey(Level, related_query_name="+", null=True)
     change_type = models.CharField(_('Modification Type'), max_length=255)
     previous_entry = models.TextField(null=True, blank=True)
     new_entry = models.TextField(null=True, blank=True)
