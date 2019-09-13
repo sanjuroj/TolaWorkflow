@@ -30,7 +30,7 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
     if created:
         Token.objects.create(user=instance)
 
-
+# TODO: fix up methods invalidated by Indicator deletion
 class TolaSites(models.Model):
     name = models.CharField(_("Name"), blank=True, null=True, max_length=255)
     agency_name = models.CharField(_("Agency name"), blank=True, null=True, max_length=255)
