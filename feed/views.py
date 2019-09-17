@@ -134,13 +134,8 @@ class SiteProfileViewSet(viewsets.ModelViewSet):
         return SiteProfileSerializer
 
     def list(self, request):
-        program_id = request.query_params.get('program', None)
-        if program_id:
-            program = Program.objects.get(pk=program_id)
-            queryset = program.get_sites()
-        else:
-            user_countries = getCountry(request.user)
-            queryset = SiteProfile.objects.all().filter(country__in=user_countries)
+        user_countries = getCountry(request.user)
+        queryset = SiteProfile.objects.all().filter(country__in=user_countries)
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 

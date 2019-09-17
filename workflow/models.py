@@ -30,7 +30,7 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
     if created:
         Token.objects.create(user=instance)
 
-# TODO: fix up methods invalidated by Indicator deletion
+
 class TolaSites(models.Model):
     name = models.CharField(_("Name"), blank=True, null=True, max_length=255)
     agency_name = models.CharField(_("Agency name"), blank=True, null=True, max_length=255)
@@ -614,74 +614,12 @@ class Program(models.Model):
                 gaitid=gaitid)
         return None
 
-    def get_sites(self):
-        indicator_ids = Indicator.objects.filter(program__in=[self.id]).values_list('id')
-        results = Result.objects.filter(indicator__id__in=indicator_ids)
-        return SiteProfile.objects.filter(result__id__in=results).distinct()
-
-    @property
-    def collected_record_count(self):
-        return Program.objects.filter(pk=self.pk).annotate(num_data=Count('indicator__result')) \
-                    .values('id', 'num_data')[0]['num_data']
-
-    @property
-    def does_it_need_additional_target_periods(self):
-        newest_targetperiod = PeriodicTarget.objects.filter(indicator=OuterRef('pk')).order_by('-end_date')
-        min_end_date_across_all_indicators = Indicator.objects.filter(program__in=[self.pk]).annotate(
-            newest_end_date=Subquery(newest_targetperiod.values('end_date')[:1])).aggregate(Min('newest_end_date'))
-        # print("min_end_date_across_all_indicators={}".format(min_end_date_across_all_indicators))
-        if self.reporting_period_end is None or min_end_date_across_all_indicators['newest_end_date__min'] is None:
-            return False
-
-        if self.reporting_period_end > min_end_date_across_all_indicators['newest_end_date__min']:
-            return True
-        return False
-
-    @property
-    def do_periodictargets_match_reporting_date(self):
-        min_starts = Indicator.objects.filter(program__in=[self.pk]) \
-                .annotate(minstarts=Min('periodictargets__start_date')) \
-                .values_list('minstarts', flat=True).distinct().exclude(minstarts=None).order_by('minstarts')
-        # print("min_starts.count()={}, min_starts[0]={}, self.reporting_period_start={}, self.does_it_need_additional_target_periods={}".format(min_starts.count(), min_starts.first(), self.reporting_period_start, self.does_it_need_additional_target_periods))
-        if min_starts and (
-                min_starts.count() > 1 or
-                min_starts.first() != self.reporting_period_start):
-            return False
-        return True
-
-    @property
-    def get_indicators_in_need_of_targetperiods_fixing(self):
-        indicators = Indicator.objects.filter(program__in=[self.pk]) \
-            .annotate(minstarts=Min('periodictargets__start_date')) \
-            .exclude(minstarts=self.reporting_period_start) \
-            .distinct() \
-            .values('pk', 'number', 'name', 'target_frequency', 'minstarts') \
-            .order_by('number', 'target_frequency')
-
-        return indicators
 
     @property
     def has_time_aware_targets(self):
         """returns true if this program has any indicators which have a time-aware target frequency - used in program
         reporting period date validation"""
-        return self.indicator_set.filter(
-            target_frequency__in=Indicator.REGULAR_TARGET_FREQUENCIES
-            ).exists()
-
-    @property
-    def last_time_aware_indicator_start_date(self):
-        """returns None if no time aware indicators, otherwise returns the most recent start date of all targets for
-        indicators with a time-aware frequency - used in program reporting period date validation"""
-        most_recent = PeriodicTarget.objects.filter(
-            indicator__program=self,
-            indicator__target_frequency__in=Indicator.REGULAR_TARGET_FREQUENCIES
-        ).order_by('-start_date').first()
-        return most_recent if most_recent is None else most_recent.start_date
-
-
-    def get_periods_for_frequency(self, frequency):
-        period_generator = PeriodicTarget.generate_for_frequency(frequency)
-        return period_generator(self.reporting_period_start, self.reporting_period_end)
+        return False
 
     @property
     def target_frequencies(self):
@@ -1762,7 +1700,7 @@ class BenchmarksAdmin(admin.ModelAdmin):
     list_display = ('description', 'agreement__name', 'create_date', 'edit_date')
     display = 'Project Components'
 
-
+# This says to delete this model but it's used in several places. Maybe it's just not surfaced on a page anywhere, but it's in the context variable for Projects.
 # TODO Delete not in use
 class Monitor(models.Model):
     responsible_person = models.CharField(_("Person Responsible"), max_length=25, blank=True, null=True)
