@@ -1013,8 +1013,8 @@ class DocumentationCreate(CreateView):
     @method_decorator(login_required)
     @method_decorator(group_excluded('ViewOnly', url='workflow/permission'))
     def dispatch(self, request, *args, **kwargs):
-        if not user_has_program_roles(request.user, request.user.tola_user.available_programs, ['medium', 'high']):
-            raise PermissionDenied
+        # if not user_has_program_roles(request.user, request.user.tola_user.available_programs, ['medium', 'high']):
+        #     raise PermissionDenied
 
         try:
             self.guidance = FormGuidance.objects.get(form="Documentation")
