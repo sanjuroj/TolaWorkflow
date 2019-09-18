@@ -838,7 +838,8 @@ def documentation_list(request):
     # distinct() needed as a program in multiple countries causes duplicate documents returned
     documents = Documentation.objects.all().select_related('project').filter(program__in=programs).distinct()
 
-    readonly = not user_has_program_roles(request.user, programs, ['medium', 'high'])
+    # Make document creation available to anyone until we're told it needs to be restricted.
+    readonly = False # not user_has_program_roles(request.user, programs, ['medium', 'high'])
 
     js_context = {
         'allowProjectsAccess': request.user.tola_user.allow_projects_access,
