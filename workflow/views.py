@@ -1183,9 +1183,7 @@ class SiteProfileList(ListView):
         elif program_id != 0:
             getSiteProfile = SiteProfile.objects.prefetch_related(\
                     'country','district','province')\
-                .filter(Q(projectagreement__program__id=program_id)\
-                        | Q(result__program__id=program_id))\
-                .distinct()
+                .filter(Q(projectagreement__program__id=program_id)).distinct()
         else:
             getSiteProfile = SiteProfile.objects.prefetch_related(\
                     'country','district','province')\
