@@ -418,13 +418,14 @@ class ProjectAgreementForm(forms.ModelForm):
         self.fields['program'].widget = forms.HiddenInput()
         self.fields['program2'].initial = self.instance.program
         self.fields['program2'].label = "Program"
-
-        self.fields['approved_by'].queryset = TolaUser.objects.filter(country__in=countries).distinct()
-        self.fields['estimated_by'].queryset = TolaUser.objects.filter(country__in=countries).distinct()
-        self.fields['reviewed_by'].queryset = TolaUser.objects.filter(country__in=countries).distinct()
-        self.fields['finance_reviewed_by'].queryset = TolaUser.objects.filter(country__in=countries).distinct()
-        self.fields['me_reviewed_by'].queryset = TolaUser.objects.filter(country__in=countries).distinct()
-        self.fields['approval_submitted_by'].queryset = TolaUser.objects.filter(country__in=countries).distinct()
+        afghanistan = Country.objects.get(country="Afghanistan")
+        # These filters are a total hack to work for Afghanistan.  Will need to be revised if project continues
+        self.fields['approved_by'].queryset = TolaUser.objects.filter(country__in=[afghanistan.pk])
+        self.fields['estimated_by'].queryset = TolaUser.objects.filter(country__in=[afghanistan.pk])
+        self.fields['reviewed_by'].queryset = TolaUser.objects.filter(country__in=[afghanistan.pk])
+        self.fields['finance_reviewed_by'].queryset = TolaUser.objects.filter(country__in=[afghanistan.pk])
+        self.fields['me_reviewed_by'].queryset = TolaUser.objects.filter(country__in=[afghanistan.pk])
+        self.fields['approval_submitted_by'].queryset = TolaUser.objects.filter(country__in=[afghanistan.pk])
 
         #override the office queryset to use request.user for country
         self.fields['office'].queryset = Office.objects.filter(province__country__in=countries)
@@ -1471,14 +1472,14 @@ class DocumentationForm(forms.ModelForm):
         #override the program queryset to use request.user for country
         self.fields['name'].required = True
         self.fields['url'].required = True
-        self.fields['project'].queryset = ProjectAgreement.objects.filter(
-            Q(program_id__in=self.request.user.tola_user.programaccess_set.filter(role='high').values('program_id'))
-            | Q(program_id__in=self.request.user.tola_user.programaccess_set.filter(role='medium').values('program_id'))
-        )
-        self.fields['program'].queryset = Program.active_programs.filter(
-            Q(id__in=self.request.user.tola_user.programaccess_set.filter(role='high').values('program_id'))
-            | Q(id__in=self.request.user.tola_user.programaccess_set.filter(role='medium').values('program_id'))
-        ).distinct()
+        self.fields['project'].queryset = ProjectAgreement.objects.filter(program__country__country__in=['Afghanistan',])
+        #     Q(program_id__in=self.request.user.tola_user.programaccess_set.filter(role='high').values('program_id'))
+        #     | Q(program_id__in=self.request.user.tola_user.programaccess_set.filter(role='medium').values('program_id'))
+        # )
+        self.fields['program'].queryset = Program.active_programs.filter(country__country__in=['Afghanistan',])
+        #     Q(id__in=self.request.user.tola_user.programaccess_set.filter(role='high').values('program_id'))
+        #     | Q(id__in=self.request.user.tola_user.programaccess_set.filter(role='medium').values('program_id'))
+        # ).distinct()
 
         # only display Project field to existing users
         if not self.request.user.tola_user.allow_projects_access:
