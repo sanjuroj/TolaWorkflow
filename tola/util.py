@@ -14,7 +14,7 @@ from django.contrib.auth.decorators import user_passes_test
 
 from django.utils.translation import ugettext as _
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('django')
 
 #CREATE NEW DATA DICTIONARY OBJECT
 def siloToDict(silo):
