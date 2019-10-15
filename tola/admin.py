@@ -53,11 +53,12 @@ class MyUserAdmin(UserAdmin):
     form = MyUserChangeForm
     add_form = MyUserCreationForm
 
+    # Added a bit to the queryset to ensure AF users are always included.
     def get_queryset(self, request):
         queryset = super(MyUserAdmin, self).get_queryset(request)
         if request.user.is_superuser is False:
             user_country = request.user.tola_user.country
-            queryset = queryset.filter(tola_user__country=user_country)
+            queryset = queryset.filter(tola_user__country__pk__in=[user_country.pk, 1])
         return queryset
 
 
