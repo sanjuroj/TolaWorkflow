@@ -329,6 +329,9 @@ class ProjectAgreementUpdate(LoginRequiredMixin, UpdateView):
 
     @method_decorator(group_excluded('ViewOnly', url='workflow/permission'))
     def dispatch(self, request, *args, **kwargs):
+        agreement_form = ProjectAgreement.objects.get(pk=kwargs['pk'])
+        if agreement_form.approval == "approved":
+            return HttpResponseRedirect(reverse('index'))
         try:
             self.guidance = FormGuidance.objects.get(form="Agreement")
         except FormGuidance.DoesNotExist:

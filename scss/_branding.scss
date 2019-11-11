@@ -38,7 +38,19 @@
 }
 .navbar-brand--tola {
     display: block;
-    margin-right: 25px;
+    margin-right: 50px;
+    margin-bottom: 5px;
+    max-width: 120px;
+    height: auto;
+    font-size: 1.5em;
+    color: #dbdcde;
+    &:hover, &:focus {
+        border-right-color: transparent;
+        color: #fff;
+    }
+    &.active {
+        border-color: $nav-tabs-border-color transparent $nav-tabs-border-color $nav-tabs-border-color;
+    }
 }
 .navbar-brand--tola-logo {
     display: block;
