@@ -14,7 +14,7 @@
 user=
 password=
 host="localhost"
-db_name="tola_workflow"
+db_name="tola_activity"
 
 
 backup_path="$HOME/sqlbackups"
